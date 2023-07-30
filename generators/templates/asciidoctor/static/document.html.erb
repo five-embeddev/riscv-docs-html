@@ -1,0 +1,22 @@
+<html>
+<head>
+<title><%= title %></title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> <%= document.attr 'specdoc' %></td></tr>
+<tr><th>Spec Revision</th><td> <%= document.attr 'specrev' %></td></tr>
+<tr><th>Spec Release Date</th><td> <%= document.attr 'specmonthyear' %></td></tr>
+<tr><th>Git Revision</th><td> <%= document.attr 'gitrev' %></td></tr>
+<tr><th>Git URL</th><td><a href=<%= document.attr 'giturl' %>><%= document.attr 'giturl' %></a></td></tr>
+<tr><th>Source</th><td><%= document.attr 'source' %></td></tr>
+<tr><th>Conversion Date</th><td><%= document.attr 'convert_date' %></td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<%= content %>
+
+</body>
+</html>

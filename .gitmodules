@@ -1,0 +1,21 @@
+[submodule "external/riscv-isa-manual/latest"]
+	path = external/riscv-isa-manual/latest
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "_references/riscv-opcodes"]
+	path = external/riscv-opcodes
+	url = https://github.com/riscv/riscv-opcodes.git
+[submodule "external/risc-v-spec/draft"]
+	path = external/riscv-v-spec/draft
+	url = https://github.com/riscv/riscv-v-spec
+[submodule "external/riscv-debug-spec/latest"]
+	path = external/riscv-debug-spec/latest
+	url = https://github.com/riscv/riscv-debug-spec.git
+[submodule "external/riscv-bitmanip/latest"]
+	path = external/riscv-bitmanip/draft
+	url = https://github.com/riscv/riscv-bitmanip.git
+[submodule "external/riscv-trace-spec"]
+	path = external/riscv-trace-spec/latest
+	url = https://github.com/riscv-non-isa/riscv-trace-spec
+[submodule "_data/riscv-isa-data"]
+	path = external/riscv-isa-data
+	url = https://github.com/five-embeddev/riscv-isa-data.git

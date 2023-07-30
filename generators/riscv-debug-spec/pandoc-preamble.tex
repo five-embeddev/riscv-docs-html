@@ -1,0 +1,199 @@
+% Package includes
+
+%\usepackage{graphicx}
+%\usepackage{geometry}
+%\usepackage{array}
+%\usepackage{colortbl}
+%\usepackage[svgnames]{xcolor}
+
+%\usepackage[colorlinks,citecolor=Navy,linkcolor=Navy]{hyperref}
+%\usepackage{placeins}
+%\usepackage{longtable}
+%\usepackage{multirow}
+%\usepackage{float}
+%\usepackage{listings}
+%\usepackage{comment}
+%\usepackage{enumitem}
+%\usepackage{verbatimbox}
+
+%\usepackage[olditem,oldenum]{paralist}
+
+
+% Setup margins
+
+\newcommand{\hyperref}{HYPERREF}
+
+% Useful macros
+
+\newcommand{\note}[1]{{\bf [ NOTE: #1 ]}}
+\newcommand{\fixme}[1]{{\bf [ FIXME: #1 ]}}
+\newcommand{\todo}[1]{\marginpar{\footnotesize #1}}
+
+\newcommand{\wunits}[2]{{#1} {#2}}
+\newcommand{\um}{\mbox{$\mu$m}}
+\newcommand{\xum}[1]{\wunits{#1}{\um}}
+\newcommand{\by}[2]{\mbox{#1$\times$#2}}
+\newcommand{\byby}[3]{\mbox{#1$\times$#2$\times$#3}}
+
+\newcommand\whline[1]{%
+  \noalign{%
+    \global\savedwidth\arrayrulewidth\global\arrayrulewidth 1.5pt%
+  }%
+  \cline{#1}%
+  \noalign{\vskip\arrayrulewidth}%
+  \noalign{\global\arrayrulewidth\savedwidth}%
+}
+
+% Custom list environments
+
+%\newlist{tightlist}{itemize}{1}
+%\setlist[tightlist]{label=\textbullet,nosep}
+
+\newenvironment{tightlist}
+{\begin{itemize}
+ \setlength{\parsep}{0pt}
+ \setlength{\itemsep}{-2pt}}
+{\end{itemize}}
+
+\newenvironment{titledtightlist}[1]
+{\noindent
+ ~~\textbf{#1}
+ \begin{tightlist}}
+{\end{tightlist}}
+
+\newenvironment{commentary}
+{ CUSTOMTAGBEGINCOMMENTARY
+}
+{ 
+  CUSTOMTAGENDCOMMENTARY
+}
+\newenvironment{samepage-commentary}
+{ CUSTOMTAGBEGINCOMMENTARY
+}
+{ 
+  CUSTOMTAGENDCOMMENTARY
+}
+
+
+\newenvironment{discussion}
+{ CUSTOMTAGBEGINDISCUSSION
+}
+{
+ CUSTOMTAGENDDISCUSSION
+}
+
+\newcommand{\bibliography}[1]{}
+% Other commands and parameters
+
+\newcommand{\input}[1]{\ref{#1}}
+\newcommand{\title}[1]{CUSTOMTAGBEGINTITLE #1 CUSTOMTAGENDTITLE}
+\newcommand{\Large}[1]{CUSTOMTAGBEGINLARGE #1 CUSTOMTAGENDLARGE}
+\newcommand{\author}[1]{CUSTOMTAGBEGINAUTHOR #1 CUSTOMTAGENDAUTHOR}
+\newcommand{\mbox}[1]{ {#1} }
+
+
+
+
+% Commands for register format figures.
+
+% New column types to use in tabular environment for instruction formats.
+% Allocate 0.18in per bit.
+%\newcolumntype{I}{>{\centering\arraybackslash}p{0.18in}}
+%% Two-bit centered column.
+%\newcolumntype{W}{>{\centering\arraybackslash}p{0.36in}}
+%% Three-bit centered column.
+%\newcolumntype{F}{>{\centering\arraybackslash}p{0.54in}}
+%% Four-bit centered column.
+%\newcolumntype{Y}{>{\centering\arraybackslash}p{0.72in}}
+%% Five-bit centered column.
+%\newcolumntype{R}{>{\centering\arraybackslash}p{0.9in}}
+%% Six-bit centered column.
+%\newcolumntype{S}{>{\centering\arraybackslash}p{1.08in}}
+%% Seven-bit centered column.
+%\newcolumntype{O}{>{\centering\arraybackslash}p{1.26in}}
+%% Eight-bit centered column.
+%\newcolumntype{E}{>{\centering\arraybackslash}p{1.44in}}
+%% Ten-bit centered column.
+%\newcolumntype{T}{>{\centering\arraybackslash}p{1.8in}}
+%% Twelve-bit centered column.
+%\newcolumntype{M}{>{\centering\arraybackslash}p{2.2in}}
+%% Sixteen-bit centered column.
+%\newcolumntype{K}{>{\centering\arraybackslash}p{2.88in}}
+%% Twenty-bit centered column.
+%\newcolumntype{U}{>{\centering\arraybackslash}p{3.6in}}
+%% Twenty-bit centered column.
+%\newcolumntype{L}{>{\centering\arraybackslash}p{3.6in}}
+%% Twenty-five-bit centered column.
+%\newcolumntype{J}{>{\centering\arraybackslash}p{4.5in}}
+
+\newcommand{\instbit}[1]{\mbox{\scriptsize #1}}
+\newcommand{\instbitrange}[2]{~\instbit{#1} \hfill \instbit{#2}~}
+\newcommand{\reglabel}[1]{\hfill {\tt #1}\hfill\ }
+
+\newcommand{\wiri}{\textbf{WIRI}}
+\newcommand{\wpri}{\textbf{WPRI}}
+\newcommand{\wlrl}{\textbf{WLRL}}
+\newcommand{\warl}{\textbf{WARL}}
+
+
+% Replace some style commands
+\newcommand{\vspace}[1]{{}}
+\newcommand{\parskip}[1]{{}}
+\newcommand{\itemsep}[1]{{}}
+%\newcommand{\tt}[1]{\texttt {#1}}
+
+\newcommand{\inst}[1]{{\tt #1}}
+\newcommand{\reg}[1]{{\tt #1}}
+\newcommand{\field}[1]{{\tt {#1}}}
+\newcommand{\defregname}[2]{\providecommand{#1}{\reg{#2}}}
+\newcommand{\deffieldname}[2]{\providecommand{#1}{\field{#2}}}
+\deffieldname{\FcsrMstatusMprv}{MPRV}
+\deffieldname{\FcsrMstatusMie}{MIE}
+\deffieldname{\FcsrSstatusSie}{SIE}
+\deffieldname{\Fmxl}{MXL}
+\defregname{\Rmisa}{misa}
+\defregname{\Rmtime}{mtime}
+\defregname{\Rtime}{time}
+\defregname{\Rmstatus}{mstatus}
+\defregname{\Rsstatus}{sstatus}
+\defregname{\Rvsstatus}{vsstatus}
+\defregname{\Rmcause}{mcause}
+\defregname{\Rmie}{mie}
+\defregname{\Rxepc}{xepc}
+\defregname{\Rmepc}{mepc}
+\defregname{\Rmedeleg}{medeleg}
+\defregname{\Rhedeleg}{hedeleg}
+\defregname{\Rmstateenzero}{mstateen0}
+\defregname{\Rhstateenzero}{hstateen0}
+
+\deffieldname{\Fasid}{ASID}
+\defregname{\Rsatp}{satp}
+\defregname{\Rvsatp}{vsatp}
+
+\defregname{\Azero}{a0}
+\defregname{\Aone}{a1}
+
+\defregname{\Rzero}{zero}
+\defregname{\Szero}{s0}
+\defregname{\Sone}{s1}
+
+\defregname{\Tzero}{t0}
+
+\defregname{\Xzero}{x0}
+\defregname{\Xone}{x1}
+\defregname{\Xeight}{x8}
+\defregname{\Xnine}{x9}
+\defregname{\Xten}{x10}
+\defregname{\Xeleven}{x11}
+\defregname{\Xthirtyone}{x31}
+\defregname{\Fone}{f1}
+\defregname{\Rpc}{pc}
+\defregname{\Rmhartid}{mhartid}
+\defregname{\Rdataone}{data1}
+
+
+\deffieldname{\Fhartsel}{\hyperref[hartsel]{hartsel}}
+\deffieldname{\Fsize}{\hyperref[sizelo]{size}}
+\deffieldname{\Fresethaltreq}{\hyperref[resethaltreq]{resethaltreq}}
+\deffieldname{\Fkeepalive}{\hyperref[keepalive]{keepalive}}
+

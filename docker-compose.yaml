@@ -1,0 +1,24 @@
+version: "3"
+services:
+  
+  generate:
+    user: "${UID}:${GID}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: riscv_docs_generate
+    image: five_embeddev/docs_generate
+    volumes:
+      - .:/project
+
+  shell:
+    user: "${UID}:${GID}"
+    depends_on:
+    - generate
+    image: five_embeddev/docs_generate
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t
+    command: ["bash"]
+    volumes:
+      - .:/project
+    
