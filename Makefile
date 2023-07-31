@@ -2,7 +2,7 @@ export UID=$(shell id -u)
 export GID=$(shell id -g)
 
 CONTAINER_BASE=/project
-DOCS_OUTPUT_DIR=references
+DOCS_OUTPUT_DIR=docs/
 MENU_OUTPUT_DIR=menu/
 DATA_OUTPUT_DIR=external/riscv-isa-data/
 
