@@ -1,0 +1,196 @@
+<html><head></head><body>
+<ul>
+<li><b>1</b><a href=priv-intro.html#introduction>Introduction</a><ul>
+  <li><b>1.1</b><a href=priv-intro.html#risc-v-privileged-software-stack-terminology>RISC-V Privileged Software Stack Terminology</a></li>
+  <li><b>1.2</b><a href=priv-intro.html#privilege-levels>Privilege Levels</a></li>
+  <li><b>1.3</b><a href=priv-intro.html#debug-mode>Debug Mode</a></li>
+</ul>
+</li>
+<li><b>2</b><a href=priv-csrs.html#chap:priv-csrs>Control and Status Registers (CSRs)</a><ul>
+  <li><b>2.1</b><a href=priv-csrs.html#csr-address-mapping-conventions>CSR Address Mapping Conventions</a></li>
+  <li><b>2.2</b><a href=priv-csrs.html#csr-listing>CSR Listing</a></li>
+  <li><b>2.3</b><a href=priv-csrs.html#csr-field-specifications>CSR Field Specifications</a><ul>
+    <li><b></b><a href=priv-csrs.html#reserved-writes-preserve-values-reads-ignore-values-wpri>Reserved Writes Preserve Values, Reads Ignore Values (WPRI)</a></li>
+    <li><b></b><a href=priv-csrs.html#writeread-only-legal-values-wlrl>Write/Read Only Legal Values (WLRL)</a></li>
+    <li><b></b><a href=priv-csrs.html#write-any-values-reads-legal-values-warl>Write Any Values, Reads Legal Values (WARL)</a></li>
+</ul>
+</li>
+  <li><b>2.4</b><a href=priv-csrs.html#csr-field-modulation>CSR Field Modulation</a></li>
+  <li><b>2.5</b><a href=priv-csrs.html#implicit-reads-of-csrs>Implicit Reads of CSRs</a></li>
+  <li><b>2.6</b><a href=priv-csrs.html#sec:csrwidthmodulation>CSR Width Modulation</a></li>
+</ul>
+</li>
+<li><b>3</b><a href=machine.html#machine>Machine-Level ISA, Version 1.12</a><ul>
+  <li><b>3.1</b><a href=machine.html#machine-level-csrs>Machine-Level CSRs</a><ul>
+    <li><b>3.1.1</b><a href=machine.html#sec:misa>Machine ISA Register <span>misa</span></a></li>
+    <li><b>3.1.2</b><a href=machine.html#machine-vendor-id-register-mvendorid>Machine Vendor ID Register <span>mvendorid</span></a></li>
+    <li><b>3.1.3</b><a href=machine.html#machine-architecture-id-register-marchid>Machine Architecture ID Register <span>marchid</span></a></li>
+    <li><b>3.1.4</b><a href=machine.html#machine-implementation-id-register-mimpid>Machine Implementation ID Register <span>mimpid</span></a></li>
+    <li><b>3.1.5</b><a href=machine.html#hart-id-register-mhartid>Hart ID Register <span>mhartid</span></a></li>
+    <li><b>3.1.6</b><a href=machine.html#machine-status-registers-mstatus-and-mstatush>Machine Status Registers (<span>mstatus</span> and <span>mstatush</span>)</a></li>
+    <li><b>3.1.7</b><a href=machine.html#machine-trap-vector-base-address-register-mtvec>Machine Trap-Vector Base-Address Register (<span>mtvec</span>)</a></li>
+    <li><b>3.1.8</b><a href=machine.html#machine-trap-delegation-registers-medeleg-and-mideleg>Machine Trap Delegation Registers (<span>medeleg</span> and <span>mideleg</span>)</a></li>
+    <li><b>3.1.9</b><a href=machine.html#machine-interrupt-registers-mip-and-mie>Machine Interrupt Registers (<span>mip</span> and <span>mie</span>)</a></li>
+    <li><b>3.1.10</b><a href=machine.html#hardware-performance-monitor>Hardware Performance Monitor</a></li>
+    <li><b>3.1.11</b><a href=machine.html#sec:mcounteren>Machine Counter-Enable Register (<span>mcounteren</span>)</a></li>
+    <li><b>3.1.12</b><a href=machine.html#machine-counter-inhibit-csr-mcountinhibit>Machine Counter-Inhibit CSR (<span>mcountinhibit</span>)</a></li>
+    <li><b>3.1.13</b><a href=machine.html#machine-scratch-register-mscratch>Machine Scratch Register (<span>mscratch</span>)</a></li>
+    <li><b>3.1.14</b><a href=machine.html#machine-exception-program-counter-mepc>Machine Exception Program Counter (<span>mepc</span>)</a></li>
+    <li><b>3.1.15</b><a href=machine.html#sec:mcause>Machine Cause Register (<span>mcause</span>)</a></li>
+    <li><b>3.1.16</b><a href=machine.html#machine-trap-value-register-mtval>Machine Trap Value Register (<span>mtval</span>)</a></li>
+    <li><b>3.1.17</b><a href=machine.html#machine-configuration-pointer-register-mconfigptr>Machine Configuration Pointer Register (<span>mconfigptr</span>)</a></li>
+    <li><b>3.1.19</b><a href=machine.html#sec:mseccfg>Machine Security Configuration Register (<span>mseccfg</span>)</a></li>
+</ul>
+</li>
+  <li><b>3.2</b><a href=machine.html#machine-level-memory-mapped-registers>Machine-Level Memory-Mapped Registers</a><ul>
+    <li><b>3.2.1</b><a href=machine.html#machine-timer-registers-mtime-and-mtimecmp>Machine Timer Registers (<span>mtime</span> and <span>mtimecmp</span>)</a></li>
+</ul>
+</li>
+  <li><b>3.3</b><a href=machine.html#machine-mode-privileged-instructions>Machine-Mode Privileged Instructions</a><ul>
+    <li><b>3.3.1</b><a href=machine.html#environment-call-and-breakpoint>Environment Call and Breakpoint</a></li>
+    <li><b>3.3.2</b><a href=machine.html#otherpriv>Trap-Return Instructions</a></li>
+    <li><b>3.3.3</b><a href=machine.html#wfi>Wait for Interrupt</a></li>
+    <li><b>3.3.4</b><a href=machine.html#sec:customsys>Custom SYSTEM Instructions</a></li>
+</ul>
+</li>
+  <li><b>3.4</b><a href=machine.html#sec:reset>Reset</a></li>
+  <li><b>3.5</b><a href=machine.html#sec:nmi>Non-Maskable Interrupts</a></li>
+  <li><b>3.6</b><a href=machine.html#sec:pma>Physical Memory Attributes</a><ul>
+    <li><b>3.6.1</b><a href=machine.html#main-memory-versus-io-versus-vacant-regions>Main Memory versus I/O versus Vacant Regions</a></li>
+    <li><b>3.6.2</b><a href=machine.html#supported-access-type-pmas>Supported Access Type PMAs</a></li>
+    <li><b>3.6.3</b><a href=machine.html#atomicity-pmas>Atomicity PMAs</a></li>
+    <li><b>3.6.4</b><a href=machine.html#memory-ordering-pmas>Memory-Ordering PMAs</a></li>
+    <li><b>3.6.5</b><a href=machine.html#coherence-and-cacheability-pmas>Coherence and Cacheability PMAs</a></li>
+    <li><b>3.6.6</b><a href=machine.html#idempotency-pmas>Idempotency PMAs</a></li>
+</ul>
+</li>
+  <li><b>3.7</b><a href=machine.html#sec:pmp>Physical Memory Protection</a><ul>
+    <li><b>3.7.1</b><a href=machine.html#physical-memory-protection-csrs>Physical Memory Protection CSRs</a></li>
+    <li><b>3.7.2</b><a href=machine.html#pmp-vmem>Physical Memory Protection and Paging</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><b>4</b><a href=supervisor.html#supervisor>Supervisor-Level ISA, Version 1.12</a><ul>
+  <li><b>4.1</b><a href=supervisor.html#supervisor-csrs>Supervisor CSRs</a><ul>
+    <li><b>4.1.1</b><a href=supervisor.html#sstatus>Supervisor Status Register (sstatus)</a></li>
+    <li><b>4.1.2</b><a href=supervisor.html#supervisor-trap-vector-base-address-register-stvec>Supervisor Trap Vector Base Address Register (<span>stvec</span>)</a></li>
+    <li><b>4.1.3</b><a href=supervisor.html#supervisor-interrupt-registers-sip-and-sie>Supervisor Interrupt Registers (<span>sip</span> and <span>sie</span>)</a></li>
+    <li><b>4.1.4</b><a href=supervisor.html#supervisor-timers-and-performance-counters>Supervisor Timers and Performance Counters</a></li>
+    <li><b>4.1.5</b><a href=supervisor.html#counter-enable-register-scounteren>Counter-Enable Register (<span>scounteren</span>)</a></li>
+    <li><b>4.1.6</b><a href=supervisor.html#supervisor-scratch-register-sscratch>Supervisor Scratch Register (<span>sscratch</span>)</a></li>
+    <li><b>4.1.7</b><a href=supervisor.html#supervisor-exception-program-counter-sepc>Supervisor Exception Program Counter (<span>sepc</span>)</a></li>
+    <li><b>4.1.8</b><a href=supervisor.html#sec:scause>Supervisor Cause Register (<span>scause</span>)</a></li>
+    <li><b>4.1.9</b><a href=supervisor.html#supervisor-trap-value-stval-register>Supervisor Trap Value (<span>stval</span>) Register</a></li>
+    <li><b>4.1.10</b><a href=supervisor.html#supervisor-environment-configuration-register-senvcfg>Supervisor Environment Configuration Register (<span>senvcfg</span>)</a></li>
+    <li><b>4.1.11</b><a href=supervisor.html#sec:satp>Supervisor Address Translation and Protection (<span>satp</span>) Register</a></li>
+</ul>
+</li>
+  <li><b>4.2</b><a href=supervisor.html#supervisor-instructions>Supervisor Instructions</a><ul>
+    <li><b>4.2.1</b><a href=supervisor.html#sec:sfence.vma>Supervisor Memory-Management Fence Instruction</a></li>
+</ul>
+</li>
+  <li><b>4.3</b><a href=supervisor.html#sec:sv32>Sv32: Page-Based 32-bit Virtual-Memory Systems</a><ul>
+    <li><b>4.3.1</b><a href=supervisor.html#sec:translation>Addressing and Memory Protection</a></li>
+    <li><b>4.3.2</b><a href=supervisor.html#sv32algorithm>Virtual Address Translation Process</a></li>
+</ul>
+</li>
+  <li><b>4.4</b><a href=supervisor.html#sec:sv39>Sv39: Page-Based 39-bit Virtual-Memory System</a><ul>
+    <li><b>4.4.1</b><a href=supervisor.html#addressing-and-memory-protection>Addressing and Memory Protection</a></li>
+</ul>
+</li>
+  <li><b>4.5</b><a href=supervisor.html#sec:sv48>Sv48: Page-Based 48-bit Virtual-Memory System</a><ul>
+    <li><b>4.5.1</b><a href=supervisor.html#addressing-and-memory-protection-1>Addressing and Memory Protection</a></li>
+</ul>
+</li>
+  <li><b>4.6</b><a href=supervisor.html#sec:sv57>Sv57: Page-Based 57-bit Virtual-Memory System</a><ul>
+    <li><b>4.6.1</b><a href=supervisor.html#addressing-and-memory-protection-2>Addressing and Memory Protection</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><b>5</b><a href=supervisor.html#svnapot>Svnapot Standard Extension for NAPOT Translation Contiguity, Version 1.0</a></li>
+<li><b>6</b><a href=supervisor.html#svpbmt>Svpbmt Standard Extension for Page-Based Memory Types, Version 1.0</a></li>
+<li><b>7</b><a href=supervisor.html#svinval>Svinval Standard Extension for Fine-Grained Address-Translation Cache Invalidation, Version 1.0</a></li>
+<li><b>5</b><a href=hypervisor.html#hypervisor>Hypervisor Extension, Version 1.0</a><ul>
+  <li><b>5.1</b><a href=hypervisor.html#privilege-modes>Privilege Modes</a></li>
+  <li><b>5.2</b><a href=hypervisor.html#hypervisor-and-virtual-supervisor-csrs>Hypervisor and Virtual Supervisor CSRs</a><ul>
+    <li><b>5.2.1</b><a href=hypervisor.html#hypervisor-status-register-hstatus>Hypervisor Status Register (<span>hstatus</span>)</a></li>
+    <li><b>5.2.2</b><a href=hypervisor.html#hypervisor-trap-delegation-registers-hedeleg-and-hideleg>Hypervisor Trap Delegation Registers (<span>hedeleg</span> and <span>hideleg</span>)</a></li>
+    <li><b>5.2.3</b><a href=hypervisor.html#sec:hinterruptregs>Hypervisor Interrupt Registers (<span>hvip</span>, <span>hip</span>, and <span>hie</span>)</a></li>
+    <li><b>5.2.4</b><a href=hypervisor.html#sec:hgeinterruptregs>Hypervisor Guest External Interrupt Registers (<span>hgeip</span> and <span>hgeie</span>)</a></li>
+    <li><b>5.2.6</b><a href=hypervisor.html#hypervisor-counter-enable-register-hcounteren>Hypervisor Counter-Enable Register (<span>hcounteren</span>)</a></li>
+    <li><b>5.2.7</b><a href=hypervisor.html#hypervisor-time-delta-registers-htimedelta-htimedeltah>Hypervisor Time Delta Registers (<span>htimedelta</span>, <span>htimedeltah</span>)</a></li>
+    <li><b>5.2.8</b><a href=hypervisor.html#hypervisor-trap-value-register-htval>Hypervisor Trap Value Register (<span>htval</span>)</a></li>
+    <li><b>5.2.9</b><a href=hypervisor.html#hypervisor-trap-instruction-register-htinst>Hypervisor Trap Instruction Register (<span>htinst</span>)</a></li>
+    <li><b>5.2.10</b><a href=hypervisor.html#sec:hgatp>Hypervisor Guest Address Translation and Protection Register (<span>hgatp</span>)</a></li>
+    <li><b>5.2.11</b><a href=hypervisor.html#virtual-supervisor-status-register-vsstatus>Virtual Supervisor Status Register (<span>vsstatus</span>)</a></li>
+    <li><b>5.2.12</b><a href=hypervisor.html#virtual-supervisor-interrupt-registers-vsip-and-vsie>Virtual Supervisor Interrupt Registers (<span>vsip</span> and <span>vsie</span>)</a></li>
+    <li><b>5.2.13</b><a href=hypervisor.html#virtual-supervisor-trap-vector-base-address-register-vstvec>Virtual Supervisor Trap Vector Base Address Register (<span>vstvec</span>)</a></li>
+    <li><b>5.2.14</b><a href=hypervisor.html#virtual-supervisor-scratch-register-vsscratch>Virtual Supervisor Scratch Register (<span>vsscratch</span>)</a></li>
+    <li><b>5.2.15</b><a href=hypervisor.html#virtual-supervisor-exception-program-counter-vsepc>Virtual Supervisor Exception Program Counter (<span>vsepc</span>)</a></li>
+    <li><b>5.2.16</b><a href=hypervisor.html#virtual-supervisor-cause-register-vscause>Virtual Supervisor Cause Register (<span>vscause</span>)</a></li>
+    <li><b>5.2.17</b><a href=hypervisor.html#virtual-supervisor-trap-value-register-vstval>Virtual Supervisor Trap Value Register (<span>vstval</span>)</a></li>
+    <li><b>5.2.18</b><a href=hypervisor.html#virtual-supervisor-address-translation-and-protection-register-vsatp>Virtual Supervisor Address Translation and Protection Register (<span>vsatp</span>)</a></li>
+</ul>
+</li>
+  <li><b>5.3</b><a href=hypervisor.html#hypervisor-instructions>Hypervisor Instructions</a><ul>
+    <li><b>5.3.1</b><a href=hypervisor.html#hypervisor-virtual-machine-load-and-store-instructions>Hypervisor Virtual-Machine Load and Store Instructions</a></li>
+    <li><b>5.3.2</b><a href=hypervisor.html#sec:hfence.vma>Hypervisor Memory-Management Fence Instructions</a></li>
+</ul>
+</li>
+  <li><b>5.4</b><a href=hypervisor.html#machine-level-csrs>Machine-Level CSRs</a><ul>
+    <li><b>5.4.1</b><a href=hypervisor.html#machine-status-registers-mstatus-and-mstatush>Machine Status Registers (<span>mstatus</span> and <span>mstatush</span>)</a></li>
+    <li><b>5.4.2</b><a href=hypervisor.html#machine-interrupt-delegation-register-mideleg>Machine Interrupt Delegation Register (<span>mideleg</span>)</a></li>
+    <li><b>5.4.3</b><a href=hypervisor.html#machine-interrupt-registers-mip-and-mie>Machine Interrupt Registers (<span>mip</span> and <span>mie</span>)</a></li>
+    <li><b>5.4.4</b><a href=hypervisor.html#machine-second-trap-value-register-mtval2>Machine Second Trap Value Register (<span>mtval2</span>)</a></li>
+    <li><b>5.4.5</b><a href=hypervisor.html#machine-trap-instruction-register-mtinst>Machine Trap Instruction Register (<span>mtinst</span>)</a></li>
+</ul>
+</li>
+  <li><b>5.5</b><a href=hypervisor.html#sec:two-stage-translation>Two-Stage Address Translation</a><ul>
+    <li><b>5.5.1</b><a href=hypervisor.html#sec:guest-addr-translation>Guest Physical Address Translation</a></li>
+    <li><b>5.5.2</b><a href=hypervisor.html#guest-page-faults>Guest-Page Faults</a></li>
+    <li><b>5.5.3</b><a href=hypervisor.html#memory-management-fences>Memory-Management Fences</a></li>
+</ul>
+</li>
+  <li><b>5.6</b><a href=hypervisor.html#traps>Traps</a><ul>
+    <li><b>5.6.1</b><a href=hypervisor.html#trap-cause-codes>Trap Cause Codes</a></li>
+    <li><b>5.6.2</b><a href=hypervisor.html#trap-entry>Trap Entry</a></li>
+    <li><b>5.6.3</b><a href=hypervisor.html#sec:tinst-vals>Transformed Instruction or Pseudoinstruction for <span>mtinst</span> or <span>htinst</span></a></li>
+    <li><b>5.6.4</b><a href=hypervisor.html#trap-return>Trap Return</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><b>6</b><a href=cfgstr.html#cfgstr>Machine Configuration Description</a><ul>
+  <li><b>6.1</b><a href=cfgstr.html#configuration-string-search-procedure>Configuration String Search Procedure</a></li>
+</ul>
+</li>
+<li><b>7</b><a href=plic.html#plic>Platform-Level Interrupt Controller (PLIC)</a><ul>
+  <li><b>7.1</b><a href=plic.html#plic-overview>PLIC Overview</a></li>
+  <li><b>7.2</b><a href=plic.html#interrupt-sources>Interrupt Sources</a><ul>
+    <li><b>7.2.1</b><a href=plic.html#local-interrupt-sources>Local Interrupt Sources</a></li>
+    <li><b>7.2.2</b><a href=plic.html#global-interrupt-sources>Global Interrupt Sources</a></li>
+</ul>
+</li>
+  <li><b>7.3</b><a href=plic.html#interrupt-targets-and-hart-contexts>Interrupt Targets and Hart Contexts</a></li>
+  <li><b>7.4</b><a href=plic.html#interrupt-gateways>Interrupt Gateways</a></li>
+  <li><b>7.5</b><a href=plic.html#interrupt-identifiers-ids>Interrupt Identifiers (IDs)</a></li>
+  <li><b>7.6</b><a href=plic.html#interrupt-priorities>Interrupt Priorities</a></li>
+  <li><b>7.7</b><a href=plic.html#interrupt-enables>Interrupt Enables</a></li>
+  <li><b>7.8</b><a href=plic.html#interrupt-priority-thresholds>Interrupt Priority Thresholds</a></li>
+  <li><b>7.9</b><a href=plic.html#interrupt-notifications>Interrupt Notifications</a></li>
+  <li><b>7.10</b><a href=plic.html#interrupt-claims>Interrupt Claims</a></li>
+  <li><b>7.11</b><a href=plic.html#interrupt-completion>Interrupt Completion</a></li>
+  <li><b>7.12</b><a href=plic.html#interrupt-flow>Interrupt Flow</a></li>
+  <li><b>7.13</b><a href=plic.html#plic-core-specification>PLIC Core Specification</a></li>
+  <li><b>7.14</b><a href=plic.html#controlling-access-to-the-plic>Controlling Access to the PLIC</a></li>
+</ul>
+</li>
+<li><b>8</b><a href=priv-insns.html#risc-v-privileged-instruction-set-listings>RISC-V Privileged Instruction Set Listings</a></li>
+<li><b>9</b><a href=priv-history.html#history>History</a><ul>
+  <li><b>9.1</b><a href=priv-history.html#research-funding-at-uc-berkeley>Research Funding at UC Berkeley</a></li>
+</ul>
+</li>
+</ul>
+</body></html>

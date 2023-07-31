@@ -1,0 +1,175 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>debugger_implementation.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="debugger-implementation">Debugger Implementation</h1>
+<p>This section details how an external debugger might use the described debug
+interface to perform some common operations on RISC-V cores using the JTAG DTM
+described in Section <a href="jtagdtm.html#sec:jtagdtm" data-reference-type="ref" data-reference="sec:jtagdtm">[sec:jtagdtm]</a>.
+All these examples assume a 32-bit core but it should be easy to adapt the
+examples to 64- or 128-bit cores.</p>
+<p>To keep the examples readable, they all assume that everything succeeds, and
+that they complete faster than the debugger can perform the next access. This
+will be the case in a typical JTAG setup. However, the debugger must always
+check the sticky error status bits after performing a sequence of actions. If
+it sees any that are set, then it should attempt the same actions again,
+possibly while adding in some delay, or explicit checks for status bits.</p>
+<h2 id="dmiaccess">Debug Module Interface Access</h2>
+<p>To read an arbitrary Debug Module register, select <span><span>dmi</span></span>, and scan in a value
+with set to 1, and set to the desired register address. In
+Update-DR the operation will start, and in Capture-DR its results will be
+captured into . If the operation didn’t complete in time, will be 3
+and the value in must be ignored. The busy condition must be cleared by
+writing in <span><span>dtmcs</span></span>, and then the second scan scan must be performed again.
+This process must be repeated until returns 0.
+In later operations the debugger should allow for more time between Capture-DR and
+Update-DR.</p>
+<p>To write an arbitrary Debug Bus register, select <span><span>dmi</span></span>, and scan in a value
+with set to 2, and and set to the desired register
+address and data respectively. From then on everything happens exactly as with
+a read, except that a write is performed instead of the read.</p>
+<p>It should almost never be necessary to scan IR, avoiding a big part of the
+inefficiency in typical JTAG use.</p>
+<h2 id="checking-for-halted-harts">Checking for Halted Harts</h2>
+<p>A user will want to know as quickly as possible when a hart is halted (e.g. due
+to a breakpoint). To efficiently determine which harts are halted when there
+are many harts, the debugger uses the <span>haltsum</span> registers. Assuming the
+maximum number of harts exist, first it checks <span><span>haltsum3</span></span>. For each bit set
+there, it writes , and checks <span><span>haltsum2</span></span>. This process repeats
+through <span><span>haltsum1</span></span>and <span><span>haltsum0</span></span>. Depending on how many harts exist, the
+process should start at one of the lower <span>haltsum</span> registers.</p>
+<h2 id="deb:halt">Halting</h2>
+<p>To halt one or more harts, the debugger selects them, sets , and then
+waits for to indicate the harts are halted. Then it can clear
+to 0, or leave it high to catch a hart that resets while halted.</p>
+<h2 id="running">Running</h2>
+<p>First, the debugger should restore any registers that it has overwritten.
+Then it can let the selected harts run by setting . Once
+is set, the debugger knows the hart has resumed, and it can
+clear . Harts might halt very quickly after resuming (e.g.
+by hitting a software breakpoint) so the debugger cannot use
+/to check whether the hart resumed.</p>
+<h2 id="single-step">Single Step</h2>
+<p>Using the hardware single step feature is almost the same as regular running.
+The debugger just sets in <span><span>dcsr</span></span>before letting the hart run. The hart
+behaves exactly as in the running case, except that interrupts may be disabled
+(depending on ) and it only fetches and executes a single instruction
+before re-entering Debug Mode.</p>
+<h2 id="accessing-registers">Accessing Registers</h2>
+<h3 id="deb:abstractreg">Using Abstract Command</h3>
+<p>Read <span>s0</span>using abstract command:</p>
+<p><img src="debugger_implementation_00.svg" alt="image" /></p>
+<p>Write <span>mstatus</span>using abstract command:</p>
+<p><img src="debugger_implementation_01.svg" alt="image" /></p>
+<h3 id="deb:regprogbuf">Using Program Buffer</h3>
+<p>Abstract commands are used to exchange data with GPRs. Using this mechanism, other
+registers can be accessed by moving their value into/out of GPRs.</p>
+<p>Write <span>mstatus</span>using program buffer:</p>
+<p><img src="debugger_implementation_02.svg" alt="image" /></p>
+<p>Read <span>f1</span>using program buffer:</p>
+<p><img src="debugger_implementation_03.svg" alt="image" /></p>
+<h2 id="reading-memory">Reading Memory</h2>
+<h3 id="deb:mrsysbus">Using System Bus Access</h3>
+<p>With system bus access, addresses are physical system bus addresses.</p>
+<p>Read a word from memory using system bus access:</p>
+<p><img src="debugger_implementation_04.svg" alt="image" /></p>
+<p>Read block of memory using system bus access:</p>
+<p><img src="debugger_implementation_05.svg" alt="image" /></p>
+<h3 id="deb:mrprogbuf">Using Program Buffer</h3>
+<p>Through the Program Buffer, the hart performs the memory accesses. Addresses
+are physical or virtual (depending on and other system
+configuration).</p>
+<p>Read a word from memory using program buffer:</p>
+<p><img src="debugger_implementation_06.svg" alt="image" /></p>
+<p>Read block of memory using program buffer:</p>
+<p><img src="debugger_implementation_07.svg" alt="image" /></p>
+<h3 id="deb:mrabstract">Using Abstract Memory Access</h3>
+<p>Abstract memory accesses act as if they are performed by the hart, although the
+actual implementation may differ.</p>
+<p>Read a word from memory using abstract memory access:</p>
+<p><img src="debugger_implementation_08.svg" alt="image" /></p>
+<p>Read block of memory using abstract memory access:</p>
+<p><img src="debugger_implementation_09.svg" alt="image" /></p>
+<h2 id="writemem">Writing Memory</h2>
+<h3 id="deb:mrsysbus">Using System Bus Access</h3>
+<p>With system bus access, addresses are physical system bus addresses.</p>
+<p>Write a word to memory using system bus access:</p>
+<p><img src="debugger_implementation_10.svg" alt="image" /></p>
+<p>Write a block of memory using system bus access:</p>
+<p><img src="debugger_implementation_11.svg" alt="image" /></p>
+<h3 id="deb:mrprogbuf">Using Program Buffer</h3>
+<p>Through the Program Buffer, the hart performs the memory accesses. Addresses
+are physical or virtual (depending on and other system
+configuration).</p>
+<p>Write a word to memory using program buffer:</p>
+<p><img src="debugger_implementation_12.svg" alt="image" /></p>
+<p>Write block of memory using program buffer:</p>
+<p><img src="debugger_implementation_13.svg" alt="image" /></p>
+<h3 id="deb:mwabstract">Using Abstract Memory Access</h3>
+<p>Abstract memory accesses act as if they are performed by the hart, although the
+actual implementation may differ.</p>
+<p>Write a word to memory using abstract memory access:</p>
+<p><img src="debugger_implementation_14.svg" alt="image" /></p>
+<p>Write a block of memory using abstract memory access:</p>
+<p><img src="debugger_implementation_15.svg" alt="image" /></p>
+<h2 id="triggers">Triggers</h2>
+<p>A debugger can use hardware triggers to halt a hart when a certain event
+occurs. Below are some examples, but as there is no requirement on the number
+of features of the triggers implemented by a hart, these examples may not be
+applicable to all implementations. When a debugger wants to set a trigger, it
+writes the desired configuration, and then reads back to see if that
+configuration is supported.</p>
+<p>Enter Debug Mode just before the instruction at 0x80001234 is
+executed, to be used as an instruction breakpoint in ROM:</p>
+<p><img src="debugger_implementation_16.svg" alt="image" /></p>
+<p>Enter Debug Mode right after the value at 0x80007f80 is read:</p>
+<p><img src="debugger_implementation_17.svg" alt="image" /></p>
+<p>Enter Debug Mode right before a write to an address between
+0x80007c80 and 0x80007cef (inclusive):</p>
+<p><img src="debugger_implementation_18.svg" alt="image" /></p>
+<p>Enter Debug Mode right before a write to an address between
+0x81230000 and 0x8123ffff (inclusive):</p>
+<p><img src="debugger_implementation_19.svg" alt="image" /></p>
+<p>Enter Debug Mode right after a read from an address between
+0x86753090 and 0x8675309f or between 0x96753090 and 0x9675309f (inclusive):</p>
+<p><img src="debugger_implementation_20.svg" alt="image" /></p>
+<h2 id="handling-exceptions">Handling Exceptions</h2>
+<p>Generally the debugger can avoid exceptions by being careful with the programs
+it writes. Sometimes they are unavoidable though, e.g. if the user asks to
+access memory or a CSR that is not implemented. A typical debugger will not
+know enough about the platform to know what’s going to happen, and must attempt
+the access to determine the outcome.</p>
+<p>When an exception occurs while executing the Program Buffer, becomes
+set. The debugger can check this field to see whether a program encountered an
+exception. If there was an exception, it’s left to the debugger to know what
+must have caused it.</p>
+<h2 id="quickaccess">Quick Access</h2>
+<p>There are a variety of instructions to transfer data between GPRs and the <span>
+data</span> registers. They are either loads/stores or CSR reads/writes. The specific
+addresses also vary. This is all specified in <span><span>hartinfo</span></span>. The examples here use
+the pseudo-op <span>transfer dest, src</span> to represent all these options.</p>
+<p>Halt the hart for a minimum amount of time to perform a single memory write:</p>
+<p><img src="debugger_implementation_21.svg" alt="image" /></p>
+<p>This shows an example of setting the bit in <span><span>mcontrol</span></span>to
+enable a hardware breakpoint in M-mode.
+Similar quick access instructions could have been used previously
+to configure the trigger that is being enabled here:</p>
+<p><img src="debugger_implementation_22.svg" alt="image" /></p>
+
+</body>
+</html>

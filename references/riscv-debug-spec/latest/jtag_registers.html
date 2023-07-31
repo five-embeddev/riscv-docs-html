@@ -1,0 +1,327 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>jtag_registers.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Address</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;">Page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0x00</td>
+<td style="text-align: left;">BYPASS</td>
+<td style="text-align: left;">JTAG recommends this encoding</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x01</td>
+<td style="text-align: left;">IDCODE</td>
+<td style="text-align: left;">JTAG recommends this encoding</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x10</td>
+<td style="text-align: left;">DTM Control and Status (<span>dtmcs</span>)</td>
+<td style="text-align: left;">For Debugging</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x11</td>
+<td style="text-align: left;">Debug Module Interface Access (<span>dmi</span>)</td>
+<td style="text-align: left;">For Debugging</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x12</td>
+<td style="text-align: left;">Reserved (BYPASS)</td>
+<td style="text-align: left;">Reserved for future RISC-V debugging</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x13</td>
+<td style="text-align: left;">Reserved (BYPASS)</td>
+<td style="text-align: left;">Reserved for future RISC-V debugging</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x14</td>
+<td style="text-align: left;">Reserved (BYPASS)</td>
+<td style="text-align: left;">Reserved for future RISC-V debugging</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x15</td>
+<td style="text-align: left;">Reserved (BYPASS)</td>
+<td style="text-align: left;">Reserved for future RISC-V standards</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x16</td>
+<td style="text-align: left;">Reserved (BYPASS)</td>
+<td style="text-align: left;">Reserved for future RISC-V standards</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x17</td>
+<td style="text-align: left;">Reserved (BYPASS)</td>
+<td style="text-align: left;">Reserved for future RISC-V standards</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x1f</td>
+<td style="text-align: left;">BYPASS</td>
+<td style="text-align: left;">JTAG requires this encoding</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><span id="table:jtag_registers" label="table:jtag_registers">[table:jtag_registers]</span></p>
+<h2 id="idcode-at-0x01">IDCODE (at 0x01)</h2>
+<p><span id="idcode" label="idcode">[idcode]</span>
+This register is selected (in IR) when the TAP state machine is reset.
+Its definition is exactly as defined in IEEE Std 1149.1-2013.</p>
+<p>This entire register is read-only.</p>
+<p><img src="jtag_registers_00.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: left;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="Version" label="Version">[Version]</span>
+|Version|</td>
+<td style="text-align: left;">Identifies the release version of this part.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="PartNumber" label="PartNumber">[PartNumber]</span>
+|PartNumber|</td>
+<td style="text-align: left;">Identifies the designer’s part number of this part.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="ManufId" label="ManufId">[ManufId]</span>
+|ManufId|</td>
+<td style="text-align: left;">Identifies the designer/manufacturer of this part. Bits 6:0 must be
+bits 6:0 of the designer/manufacturer’s Identification Code as
+assigned by JEDEC Standard JEP106. Bits 10:7 contain the modulo-16
+count of the number of continuation characters (0x7f) in that same
+Identification Code.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+</tbody>
+</table>
+<h2 id="dtm-control-and-status-dtmcs-at-0x10">DTM Control and Status (<span>dtmcs</span>, at 0x10)</h2>
+<p><span id="dtmcs" label="dtmcs">[dtmcs]</span>
+The size of this register will remain constant in future versions so
+that a debugger can always determine the version of the DTM.</p>
+<p><img src="jtag_registers_01.svg" alt="image" /></p>
+<p><img src="jtag_registers_02.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: left;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="dmihardreset" label="dmihardreset">[dmihardreset]</span>
+|dmihardreset|</td>
+<td style="text-align: left;">Writing 1 to this bit does a hard reset of the DTM,
+causing the DTM to forget about any outstanding DMI transactions.
+In general this should only be used when the Debugger has
+reason to expect that the outstanding DMI transaction will never
+complete (e.g. a reset condition caused an inflight DMI transaction to
+be cancelled).</td>
+<td style="text-align: center;">W1</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="dmireset" label="dmireset">[dmireset]</span>
+|dmireset|</td>
+<td style="text-align: left;">Writing 1 to this bit clears the sticky error state
+and allows the DTM to retry or complete the previous
+transaction.</td>
+<td style="text-align: center;">W1</td>
+<td style="text-align: left;">-</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="idle" label="idle">[idle]</span>
+|idle|</td>
+<td style="text-align: left;"><p>This is a hint to the debugger of the minimum number of
+cycles a debugger should spend in
+Run-Test/Idle after every DMI scan to avoid a ‘busy’
+return code (of 3). A debugger must still
+check when necessary.</p>
+<p>0: It is not necessary to enter Run-Test/Idle at all.</p>
+<p>1: Enter Run-Test/Idle and leave it immediately.</p>
+<p>2: Enter Run-Test/Idle and stay there for 1 cycle before leaving.</p>
+<p>And so on.</p></td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="dmistat" label="dmistat">[dmistat]</span>
+|dmistat|</td>
+<td style="text-align: left;"><p>0: No error.</p>
+<p>1: Reserved. Interpret the same as 2.</p>
+<p>2: An operation failed (resulted in of 2).</p>
+<p>3: An operation was attempted while a DMI access was still in
+progress (resulted in of 3).</p></td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="abits" label="abits">[abits]</span>
+|abits|</td>
+<td style="text-align: left;">The size of in <span><span>dmi</span></span>.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="version" label="version">[version]</span>
+|version|</td>
+<td style="text-align: left;"><p>0: Version described in spec version 0.11.</p>
+<p>1: Version described in spec version 0.13.</p>
+<p>15: Version not described in any available version of this spec.</p></td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">1</td>
+</tr>
+</tbody>
+</table>
+<h2 id="debug-module-interface-access-dmi-at-0x11">Debug Module Interface Access (<span>dmi</span>, at 0x11)</h2>
+<p><span id="dmi" label="dmi">[dmi]</span>
+This register allows access to the Debug Module Interface (DMI).</p>
+<p>In Update-DR, the DTM starts the operation specified in unless the
+current status reported in is sticky.</p>
+<p>In Capture-DR, the DTM updates with the result from that
+operation, updating if the current isn’t sticky.</p>
+<p>See Section <a href="debugger_implementation.html#dmiaccess" data-reference-type="ref" data-reference="dmiaccess">[dmiaccess]</a> and Table <a href="#tab:memread" data-reference-type="ref" data-reference="tab:memread">[tab:memread]</a> for examples
+of how this is used.</p>
+<div class=commentary>
+<p>The still-in-progress status is sticky to accommodate debuggers that
+batch together a number of scans, which must all be executed or stop as
+soon as there’s a problem.</p>
+<p>For instance a series of scans may write a Debug Program and execute
+it. If one of the writes fails but the execution continues, then the
+Debug Program may hang or have other unexpected side effects.</p>
+</div>
+<p><img src="jtag_registers_03.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: left;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="address" label="address">[address]</span>
+|address|</td>
+<td style="text-align: left;">Address used for DMI access. In Update-DR this value is used
+to access the DM over the DMI.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="data" label="data">[data]</span>
+|data|</td>
+<td style="text-align: left;">The data to send to the DM over the DMI during Update-DR, and
+the data returned from the DM as a result of the previous operation.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="op" label="op">[op]</span>
+|op|</td>
+<td style="text-align: left;"><p>When the debugger writes this field, it has the following meaning:</p>
+<p>0: Ignore and . (nop)</p>
+<p>Don’t send anything over the DMI during Update-DR.
+This operation should never result in a busy or error response.
+The address and data reported in the following Capture-DR
+are undefined.</p>
+<p>1: Read from . (read)</p>
+<p>2: Write to . (write)</p>
+<p>3: Reserved.</p>
+<p>When the debugger reads this field, it means the following:</p>
+<p>0: The previous operation completed successfully.</p>
+<p>1: Reserved.</p>
+<p>2: A previous operation failed. The data scanned into <span><span>dmi</span></span>in
+this access will be ignored. This status is sticky and can be
+cleared by writing in <span><span>dtmcs</span></span>.</p>
+<p>This indicates that the DM itself responded with an error.
+There are no specified cases in which the DM would
+respond with an error, and DMI is not required to support
+returning errors.</p>
+<p>3: An operation was attempted while a DMI request is still in
+progress. The data scanned into <span><span>dmi</span></span>in this access will be
+ignored. This status is sticky and can be cleared by writing
+in <span><span>dtmcs</span></span>. If a debugger sees this status, it
+needs to give the target more TCK edges between Update-DR and
+Capture-DR. The simplest way to do that is to add extra transitions
+in Run-Test/Idle.</p></td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="bypass-at-0x1f">BYPASS (at 0x1f)</h2>
+<p><span id="bypass" label="bypass">[bypass]</span>
+1-bit register that has no effect. It is used when a debugger does not
+want to communicate with this TAP.</p>
+<p>This entire register is read-only.</p>
+<p><img src="jtag_registers_04.svg" alt="image" /></p>
+
+</body>
+</html>

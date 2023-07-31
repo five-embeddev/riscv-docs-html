@@ -1,0 +1,393 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>debug_module.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="dm"><span class="header-section-number">4</span> Debug Module (DM)</h1>
+<p><span>The Debug Module implements a translation interface between abstract debug
+operations and their specific implementation. It might support the following
+operations:</span></p>
+<p>Give the debugger necessary information about the implementation. (Required)</p>
+<p>Allow any individual hart to be halted and resumed. (Required)</p>
+<p>Provide status on which harts are halted. (Required)</p>
+<p>Provide abstract read and write access to a halted hart’s GPRs. (Required)</p>
+<p>Provide access to a reset signal that allows debugging from the very
+first instruction after reset. (Required)</p>
+<p>Provide a mechanism to allow debugging harts immediately out of reset
+(regardless of the reset cause). (Optional)</p>
+<p>Provide abstract access to non-GPR hart registers. (Optional)</p>
+<p>Provide a Program Buffer to force the hart to execute arbitrary instructions. (Optional)</p>
+<p>Allow multiple harts to be halted, resumed, and/or reset at the same time. (Optional)</p>
+<p>Allow memory access from a hart’s point of view. (Optional)</p>
+<p>Allow direct System Bus Access. (Optional)</p>
+<p><span>In order to be compliant with this specification an
+implementation must:</span></p>
+<p>Implement all the required features listed above.</p>
+<p>Implement at least one of Program Buffer, System Bus Access, or Abstract
+Access Memory command mechanisms.</p>
+<p><span>Do at least one of:</span></p>
+<p>Implement the Program Buffer.</p>
+<p>Implement abstract access to all registers that are visible to
+software running on the hart including all the registers that are
+present on the hart and listed in Table <a href="abstract_commands.html#tab:regno" data-reference-type="ref" data-reference="tab:regno">[tab:regno]</a>.</p>
+<p>Implement abstract access to at least all GPRs, <span><span>dcsr</span></span>, and
+<span><span>dpc</span></span>, and advertise the implementation as conforming to the
+“Minimal RISC-V Debug Specification 0.13.2 ”, instead of the
+“RISC-V Debug Specification 0.13.2 ”.</p>
+<p>A single DM can debug up to <span class="math inline">2<sup>20</sup></span> harts.</p>
+<h2 id="dmi"><span class="header-section-number">4.1</span> Debug Module Interface (DMI)</h2>
+<p>Debug Modules are slaves to a bus called the Debug Module Interface (DMI). The
+master of the bus is the Debug Transport Module(s).
+The Debug Module Interface can be a trivial bus with one master and one slave,
+or use a more full-featured bus like TileLink or the AMBA Advanced Peripheral
+Bus. The details are left to the system designer.</p>
+<p>The DMI uses between 7 and 32 address bits. It supports read and write
+operations. The bottom of the address space is
+used for the first (and usually only) DM. Extra space can be used for custom
+debug devices, other cores, additional DMs, etc. If there are additional DMs
+on this DMI, the base address of the next DM in the DMI address space is given
+in <span><span>nextdm</span></span>.</p>
+<p>The Debug Module is controlled via register accesses to its DMI address space.</p>
+<h2 id="reset"><span class="header-section-number">4.2</span> Reset Control</h2>
+<p>The Debug Module controls a global reset signal,
+(non-debug module reset),
+which can reset, or hold in reset, every component in the platform,
+except for the Debug Module and Debug Transport Modules.
+Exactly what is affected by this reset is implementation dependent, as long as
+it is possible to debug programs from the first instruction executed.
+The Debug Module’s own state and registers should only be
+reset at power-up and while
+in <span><span>dmcontrol</span></span>is 0.
+The halt state of harts should be
+maintained across system reset provided that is 1,
+although trigger CSRs may be cleared.</p>
+<p>Due to clock and power domain crossing issues,
+it may not be possible to perform arbitrary DMI accesses across
+system reset.
+While or any external reset is asserted, the only supported DM
+operation is accessing <span><span>dmcontrol</span></span>. The behavior of other accesses is
+undefined.</p>
+<p>There is no requirement on the duration of the assertion of .
+The implementation must ensure that a write of to 1 followed by
+a write of to 0 triggers system reset. The system may take
+an arbitrarily long time to come out of reset, as reported by ,
+.</p>
+<p>Individual harts (or several at once) can be reset by selecting them, setting
+and then clearing . In this case an implementation may reset more
+harts than just the ones that are selected. The debugger can discover which
+other harts are reset (if any) by selecting them and checking
+and .</p>
+<p>When harts have been reset, they must set a sticky <span>havereset</span> state bit.
+The conceptual <span>havereset</span> state bits can be read for selected harts in
+and in <span><span>dmstatus</span></span>.
+These bits must be set regardless of the cause of the reset.
+The <span>havereset</span> bits for the selected harts
+can be cleared by writing 1 to in <span><span>dmcontrol</span></span>.
+The <span>havereset</span> bits may or may not be cleared
+when is low.</p>
+<p>When a hart comes out of reset and or are set, the
+hart will immediately enter Debug Mode. Otherwise it will execute normally.</p>
+<h2 id="selectingharts"><span class="header-section-number">4.3</span> Selecting Harts</h2>
+<p>Up to <span class="math inline">2<sup>20</sup></span> harts can be connected to a single DM. The debugger
+selects a hart, and then subsequent halt, resume, reset, and debugging
+commands are specific to that hart.</p>
+<p>To enumerate all the harts, a debugger must first determine <span>HARTSELLEN</span>
+by writing all ones to (assuming the maximum size) and reading back
+the value to see which bits were actually set. Then it selects each hart
+starting from 0 until either in <span><span>dmstatus</span></span>is 1, or the
+highest index (depending on <span>HARTSELLEN</span>) is reached.</p>
+<p>The debugger can discover the mapping between hart indices and
+<span>mhartid</span>by using the interface to read <span>mhartid</span>, or by
+reading the system’s configuration string.</p>
+<h3 id="selecting-a-single-hart"><span class="header-section-number">4.3.1</span> Selecting a Single Hart</h3>
+<p>All debug modules must support selecting a single hart.
+The debugger can select a hart by writing its index to .
+Hart indexes start at 0 and are contiguous until the final index.</p>
+<h3 id="hartarraymask"><span class="header-section-number">4.3.2</span> Selecting Multiple Harts</h3>
+<p>Debug Modules may implement a Hart Array Mask register to allow selecting
+multiple harts at once. The <span class="math inline"><em>n</em></span>th bit in the Hart Array Mask register applies to
+the hart with index <span class="math inline"><em>n</em></span>. If the bit is 1 then the hart is selected. Usually a DM
+will have a Hart Array Mask register exactly wide enough to select all the
+harts it supports, but it’s allowed to tie any of these bits to 0.</p>
+<p>The debugger can set bits in the hart array mask register using <span><span>hawindowsel</span></span>
+and <span><span>hawindow</span></span>, then apply actions to all selected harts by setting . If
+this feature is supported, multiple harts can be halted, resumed, and reset
+simultaneously. The state of the hart array mask register is not affected by
+setting or clearing .</p>
+<p>Only the actions initiated by <span><span>dmcontrol</span></span>can apply to multiple harts
+at once, Abstract Commands apply only to the hart selected by
+.</p>
+<h2 id="hart-states"><span class="header-section-number">4.4</span> Hart States</h2>
+<p>Every hart that can be selected is in exactly one of four states. Which state
+the selected harts are in is reflected by , ,
+, , , , , and
+.</p>
+<p>Harts are nonexistent if they will never be part of this system, no matter how
+long a user waits. E.g. in a simple single-hart system only one hart exists,
+and all others are nonexistent. Debuggers may assume that a system has no harts
+with indexes higher than the first nonexistent one.</p>
+<p>Harts are unavailable if they might exist/become available at a later time, or
+if there are other harts with higher indexes than this one. Harts may be
+unavailable for a variety of reasons including being reset, temporarily powered
+down, and not being plugged into the system.
+Systems with very large number of harts may
+permanently disable some during manufacturing, leaving holes in the otherwise
+continuous hart index space. In order to let the debugger discover all harts,
+they must show up as unavailable even if there is no chance of them ever
+becoming available.</p>
+<p>Harts are running when they are executing normally, as if no debugger was
+attached. This includes being in a low power mode or waiting for an interrupt,
+as long as a halt request will result in the hart being halted.</p>
+<p>Harts are halted when they are in Debug Mode, only performing tasks on behalf
+of the debugger.</p>
+<p>Which states a hart that is reset goes through is implementation dependent.
+Harts may be unavailable while reset is asserted, and some time after reset is
+deasserted. They might transition to running for some time after reset is
+deasserted. Finally they end up either running or halted, depending on
+and .</p>
+<h2 id="runcontrol"><span class="header-section-number">4.5</span> Run Control</h2>
+<p>For every hart, the Debug Module tracks 4 conceptual bits of state: halt
+request, resume ack, halt-on-reset request, and hart reset.
+(The hart reset and halt-on-reset request bits are optional.)
+These 4 bits reset to 0, except for resume ack, which may reset to either 0 or 1.
+The DM receives halted, running, and havereset signals from each hart.
+The debugger can observe the state of resume ack in and
+, and the state of halted, running, and havereset signals
+in , , , , ,
+and . The state of the other bits cannot be observed directly.</p>
+<p>When a debugger writes 1 to , each selected hart’s halt request bit is
+set.
+When a running hart, or a hart just coming out of reset, sees its halt request
+bit high, it responds by halting, deasserting its running signal, and asserting
+its halted signal.
+Halted harts ignore their halt request bit.</p>
+<p>When a debugger writes 1 to , each selected hart’s resume ack bit is
+cleared and each selected, halted hart is sent a resume request. Harts respond
+by resuming, clearing their halted signal, and asserting their running signal.
+At the end of this process the resume ack bit is set. These
+status signals of all selected harts are reflected in ,
+, , and . Resume requests are ignored by
+running harts.</p>
+<p>When halt or resume is requested, a hart must respond in
+less than one second, unless it is unavailable.
+(How this is implemented is not further specified. A few
+clock cycles will be a more typical latency).</p>
+<p>The DM can implement optional halt-on-reset bits for each hart,
+which it indicates by setting to 1.
+This means the DM implements the and bits.
+Writing 1 to sets the halt-on-reset request bit for each
+selected hart.
+When a hart’s halt-on-reset request bit is set, the hart will immediately enter
+debug mode on the next deassertion of its reset. This is true regardless of
+the reset’s cause.
+The hart’s halt-on-reset request bit remains set
+until cleared by the debugger writing 1 to
+while the hart is selected, or by DM reset.</p>
+<h2 id="abstractcommands"><span class="header-section-number">4.6</span> Abstract Commands</h2>
+<p>The DM supports a set of abstract commands, most of which
+are optional. Depending on the implementation, the debugger may
+be able to perform
+some abstract commands even when the selected hart is not halted.
+Debuggers can only determine which abstract commands
+are supported by a given hart in a given state by attempting them
+and then looking at in <span><span>abstractcs</span></span>to see if they were successful.
+Commands may be supported with some options set, but not with other options
+set. If a command has unsupported options set, the DM must set to 2
+(not supported).</p>
+<div class=commentary>
+<p>Example: Every system must support the Access Register command, but may not
+support accessing CSRs. If the debugger requests to read a CSR in that
+case, the command will return “not supported.”</p>
+</div>
+<p>Debuggers execute abstract commands by writing them to <span><span>command</span></span>. They
+can determine whether an abstract command is complete by reading in
+<span><span>abstractcs</span></span>. After completion, indicates whether the command was
+successful or not. Commands may fail because a hart is not halted, not running,
+unavailable, or because they encounter an error during execution.</p>
+<p>If the command takes arguments, the debugger
+must write them to the <span>data</span> registers before writing to <span><span>command</span></span>. If a
+command returns results, the Debug Module must ensure they are placed
+in the <span>data</span> registers before is cleared.
+Which <span>data</span> registers are used for the arguments is
+described in Table <a href="debug_module.html#tab:datareg" data-reference-type="ref" data-reference="tab:datareg">1.1</a>. In all cases the least-significant word
+is placed in the lowest-numbered <span>data</span> register. The argument width
+depends on the command being executed, and is DXLEN where not explicitly
+specified.</p>
+<figure>
+<img src="debug_module_00.svg" alt="Use of Data Registers" id="tab:datareg" /><figcaption>Use of Data Registers<span label="tab:datareg"></span></figcaption>
+</figure>
+<div class=commentary>
+<p>The Abstract Command interface is designed to allow a debugger to write
+commands as fast as possible, and then later check whether they completed
+without error. In the common case the debugger will be much slower than
+the target and commands succeed, which allows for maximum throughput. If
+there is a failure, the interface ensures that no commands execute after
+the failing one. To discover which command failed, the debugger has to
+look at the state of the DM (e.g. contents of <span><span>data0</span></span>) or hart (e.g. contents of a register modified by a Program Buffer program) to determine
+which one failed.</p>
+</div>
+<p>Before starting an abstract command, a debugger must ensure that ,
+, and are all 0.</p>
+<p>While an abstract command is executing (in <span><span>abstractcs</span></span>is high), a
+debugger must not change , and must not write 1 to ,
+, , , or .</p>
+<p>If an abstract command does not complete in the expected time and appears to be
+hung, the following procedure can be attempted to abort the command: First the
+debugger resets the hart (using or ), and then it resets
+the Debug Module (using ).</p>
+<p>If an abstract command is started while the selected hart is unavailable or if
+a hart becomes unavailable while executing an abstract command, then the
+Debug Module may terminate the abstract command, setting low, and
+to 4 (halt/resume). Alternatively, the command could just appear to be
+hung (never goes low).</p>
+<h3 id="abstract-command-listing"><span class="header-section-number">4.6.1</span> Abstract Command Listing</h3>
+<p>This section describes each of the different abstract commands
+and how their fields should be interpreted when
+they are written to <span><span>command</span></span>.</p>
+<p>Each abstract command is a 32-bit value. The top 8 bits contain which
+determines the kind of command. Table <a href="debug_module.html#tab:cmdtype" data-reference-type="ref" data-reference="tab:cmdtype">1.2</a> lists all commands.</p>
+<figure>
+<img src="debug_module_01.svg" alt="Meaning of " id="tab:cmdtype" /><figcaption>Meaning of <span label="tab:cmdtype"></span></figcaption>
+</figure>
+<p><a href="abstract_commands.html" data-reference-type="ref" data-reference="abstract_commands.tex">[abstract_commands.tex]</a></p>
+<h2 id="programbuffer"><span class="header-section-number">4.7</span> Program Buffer</h2>
+<p>To support executing arbitrary instructions on a halted hart,
+a Debug Module can include a Program Buffer that a debugger
+can write small programs to. Systems
+that support all necessary functionality using abstract commands
+only may choose to omit the Program Buffer.</p>
+<p>A debugger can write a small program to the Program Buffer, and then
+execute it exactly once with the Access Register Abstract Command,
+setting the bit in <span><span>command</span></span>.
+The debugger can write whatever program it likes (including jumps out of the
+Program Buffer), but the program must end with
+<span>ebreak</span> or <span>c.ebreak</span>. An implementation may support
+an implied <span>ebreak</span> that is executed when a hart runs off the end of the
+Program Buffer. This is indicated by . With this feature, a Program
+Buffer of just 2 32-bit words can offer efficient debugging.</p>
+<p>If is 1, must be 1. It is possible that the Program
+Buffer can hold only one 32- or 16-bit instruction, so the debugger must only
+write a single instruction in this case, regardless of its size.
+This instruction can be a 32-bit
+instruction, or a compressed instruction in the lower 16 bits accompanied by a
+compressed <span>nop</span> in the upper 16 bits.</p>
+<div class=commentary>
+<p>The slightly inconsistent behavior with a Program Buffer of size 1 is to
+accommodate hardware designs that prefer to stuff instructions directly
+into the pipeline when halted, instead of having the Program Buffer exist
+in the address space somewhere.</p>
+</div>
+<p>While these programs are executed, the hart does not leave Debug Mode (see
+Section <a href="core_debug.html#debugmode" data-reference-type="ref" data-reference="debugmode">[debugmode]</a>). If an exception is encountered during execution of
+the Program Buffer, no more instructions are executed, the hart remains in Debug
+Mode, and is set to 3 (<span>exception error</span>). If the debugger
+executes a program that doesn’t terminate with an <span>ebreak</span> instruction, the
+hart will remain in Debug Mode and the debugger will lose control of the hart.</p>
+<p>Executing the Program Buffer may clobber <span><span>dpc</span></span>. If that is the case, it must be
+possible to read/write <span><span>dpc</span></span>using an abstract command with not set.
+The debugger must attempt to save <span><span>dpc</span></span>between halting and
+executing a Program Buffer, and then restore <span><span>dpc</span></span>before leaving Debug Mode.</p>
+<div class=commentary>
+<p>Allowing Program Buffer execution to clobber <span><span>dpc</span></span>allows for direct
+implementations that don’t have a separate PC register, and do need to use
+the PC when executing the Program Buffer.</p>
+</div>
+<p>The Program Buffer may be implemented as RAM which is accessible to the
+hart. A debugger can determine if this is the case by executing small
+programs that attempt to write and read back relative to <span>pc</span>while executing
+from the Program Buffer.
+If so, the debugger has more flexibility in what it can do with the program buffer.</p>
+<h2 id="overview-of-states"><span class="header-section-number">4.8</span> Overview of States</h2>
+<p>Figure <a href="debug_module.html#fig:abstract_sm" data-reference-type="ref" data-reference="fig:abstract_sm">[fig:abstract_sm]</a> shows a conceptual view of the states
+passed through by a hart during run/halt debugging as influenced
+by the different fields of <span><span>dmcontrol</span></span>, <span><span>abstractcs</span></span>, <span><span>abstractauto</span></span>, and
+<span><span>command</span></span>.</p>
+<p><img src="debug_module_02.svg" alt="image" />
+<span id="fig:abstract_sm" label="fig:abstract_sm">[fig:abstract_sm]</span></p>
+<h2 id="systembusaccess"><span class="header-section-number">4.9</span> System Bus Access</h2>
+<p>A debugger can access memory from a hart’s point of view using a Program Buffer or
+the Abstract Access Memory command. (Both these features are optional.)
+A Debug Module may also include a System Bus Access block to provide memory
+access without
+involving a hart, regardless of whether Program Buffer is implemented.
+The System Bus Access block uses physical addresses.</p>
+<p>The System Bus Access block may support 8-, 16-, 32-, 64-, and 128-bit
+accesses. Table <a href="debug_module.html#tab:sbdatabits" data-reference-type="ref" data-reference="tab:sbdatabits">1.3</a> shows which bits in <span>sbdata</span> are used
+for each access size.</p>
+<figure>
+<img src="debug_module_03.svg" alt="System Bus Data Bits" id="tab:sbdatabits" /><figcaption>System Bus Data Bits<span label="tab:sbdatabits"></span></figcaption>
+</figure>
+<p>Depending on the microarchitecture, data accessed through System Bus Access may
+not always be coherent with that observed by each hart. It is up to the
+debugger to enforce coherency if the implementation does not. This
+specification does not define a standard way to do this.
+Possibilities may include
+writing to special memory-mapped
+locations, or executing special instructions via the Program Buffer.</p>
+<div class=commentary>
+<p>Implementing a System Bus Access block has several benefits even
+when a Debug Module also implements a Program Buffer.
+First, it is possible to
+access memory in a running system with minimal impact. Second, it may improve
+performance when accessing memory.
+Third, it may provide
+access to devices that a hart does not have access to.</p>
+</div>
+<h2 id="minimally-intrusive-debugging"><span class="header-section-number">4.10</span> Minimally Intrusive Debugging</h2>
+<p>Depending on the task it is performing, some harts can only be halted very briefly.
+There are several mechanisms that allow accessing resources in such a running system
+with a minimal impact on the running hart.</p>
+<p>First, an implementation may allow some abstract commands to execute without halting the hart.</p>
+<p>Second, the Quick Access abstract command can be used to halt a hart, quickly
+execute the contents of the Program Buffer, and let the hart run again.
+Combined with instructions that allow Program Buffer code to access the
+<span>data</span> registers, as described in <a href="dm_registers.html#hartinfo" data-reference-type="ref" data-reference="hartinfo">[hartinfo]</a>, this can be used to quickly
+perform a memory or register access. For some systems this will be too
+intrusive, but many systems that can’t be halted can bear an occasional hiccup
+of a hundred or less cycles.</p>
+<p>Third, if the System Bus Access block is implemented, it can be used while a
+hart is running to access system memory.</p>
+<h2 id="security"><span class="header-section-number">4.11</span> Security</h2>
+<p>To protect intellectual property it may be desirable to lock access to the
+Debug Module. To allow access during a manufacturing process and not
+afterwards, a reasonable solution could be to add a fuse bit to the Debug
+Module that can be used to be permanently disable it. Since this is technology
+specific, it is not further addressed in this spec.</p>
+<p>Another option is to allow the DM to be unlocked only by users who have an
+access key. Between , , and <span><span>authdata</span></span>arbitrarily
+complex authentication mechanism can be supported. When is
+clear, the DM must not interact with the rest of the platform, nor expose
+details about the harts connected to the DM. All DM registers should read 0,
+while writes should be ignored, with the following mandatory exceptions:</p>
+<p>in <span><span>dmstatus</span></span>is readable.</p>
+<p>in <span><span>dmstatus</span></span>is readable.</p>
+<p>in <span><span>dmstatus</span></span>is readable.</p>
+<p>in <span><span>dmcontrol</span></span>is readable and writable.</p>
+<p><span><span>authdata</span></span>is readable and writable.</p>
+<h2 id="dmdebbus"><span class="header-section-number">4.12</span> Debug Module Registers</h2>
+<p>The registers described in this section are accessed over the DMI bus. Each DM
+has a base address (which is 0 for the first DM). The register addresses below
+are offsets from this base address.</p>
+<p>When read, unimplemented Debug Module DMI Registers return 0. Writing them has
+no effect.</p>
+<p>For each register it is possible to determine that it is implemented by reading
+it and getting a non-zero value (e.g. <span><span>sbcs</span></span>), or by checking bits in another
+register (e.g. ).</p>
+<p><a href="dm_registers.html" data-reference-type="ref" data-reference="dm_registers.tex">[dm_registers.tex]</a></p>
+
+</body>
+</html>

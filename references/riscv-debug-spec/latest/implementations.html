@@ -1,0 +1,79 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>implementations.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="sec:implementations">Hardware Implementations</h1>
+<p>Below are two possible implementations. A designer could choose one, mix and
+match, or come up with their own design.</p>
+<h2 id="abstract-command-based">Abstract Command Based</h2>
+<p>Halting happens by stalling the hart execution pipeline.</p>
+<p>Muxes on the register file(s) allow for accessing GPRs and CSRs
+using the Access Register abstract command.</p>
+<p>Memory is accessed using the Abstract Access Memory command or through System
+Bus Access.</p>
+<p>This implementation could allow a debugger to collect information from the hart
+even when that hart is unable to execute instructions.</p>
+<h2 id="execution-based">Execution Based</h2>
+<p>This implementation only implements the Access Register abstract command
+for GPRs on a halted hart, and relies on the Program Buffer for all other
+operations.
+It uses the hart’s existing pipeline
+and ability to execute from arbitrary memory locations to avoid
+modifications to a hart’s datapath.</p>
+<p>When the halt request bit is set, the Debug Module raises a special interrupt
+to the selected harts. This interrupt causes each
+hart to enter Debug Mode and jump to a defined
+memory region that is serviced by the DM.
+When taking this exception, <span>pc</span>is saved to <span><span>dpc</span></span>and is updated
+in <span><span>dcsr</span></span>.</p>
+<p>The code in the Debug Module causes the hart to execute a “park loop.”
+In the park loop the hart writes its <span>mhartid</span>to a
+memory location within the Debug Module to indicate that it is halted.
+To allow the DM to individually control one out of several
+halted harts, each hart polls for flags in a DM-controlled memory location
+to determine whether the debugger wants it to
+execute the Program Buffer or perform a resume.</p>
+<p>To execute an abstract command, the DM first populates some internal words of
+program buffer according to <span><span>command</span></span>. When is set, the DM
+populates these words with <span>lw &lt;gpr&gt;, 0x400(zero)</span> or <span>sw 0x400(zero), &lt;gpr&gt;</span>.
+64- and 128-bit accesses use <span>ld</span>/<span>sd</span> and <span>lq</span>/<span>sq</span>
+respectively. If is not set, the DM populates these instructions as <span>nop</span>s.
+If is set, execution continues to the debugger-controlled Program Buffer,
+otherwise the DM causes a <span>ebreak</span> to execute immediately.</p>
+<p>When <span>ebreak</span> is executed (indicating the end of the
+Program Buffer code) the hart returns to its park loop. If an exception is
+encountered, the hart jumps to a debug exception address within
+the Debug Module. The code at that address causes the hart to
+write to an address in the Debug Module which indicates exception.
+This address is considered I/O for <span>fence</span> instructions (see #<a href="core_debug.html#fence" data-reference-type="ref" data-reference="fence">[fence]</a>
+on page ).
+Then the hart jumps back to the park loop.
+The DM infers from the write that there was an exception, and sets appropriately.</p>
+<p>To resume execution, the debug module sets a flag which causes the hart to execute a <span>dret</span>.
+When <span>dret</span> is executed, <span>pc</span>is restored from <span><span>dpc</span></span>and normal execution resumes at the
+privilege set by .</p>
+<p><span><span>data0</span></span>etc. are mapped into regular memory at an address relative to <span>zero</span>
+with only a 12-bit <span>imm</span>. The exact address is an implementation
+detail that a debugger must not rely on. For example, the <span>data</span>
+registers might be mapped to <span>0x400</span>.</p>
+<p>For additional flexibility, <span><span>progbuf0</span></span>, etc. are mapped into regular memory
+immediately preceding <span><span>data0</span></span>, in order to form a contiguous region of memory which
+can be used for either program execution or data transfer.</p>
+
+</body>
+</html>

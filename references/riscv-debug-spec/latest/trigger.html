@@ -1,0 +1,97 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>trigger.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="sec:trigger"><span class="header-section-number">6</span> Trigger Module</h1>
+<p>Triggers can cause a breakpoint exception, entry into Debug Mode, or a trace action
+without having to execute a special instruction. This makes them invaluable
+when debugging code from ROM. They can trigger on execution of instructions at
+a given memory address, or on the address/data in loads/stores. These are all
+features that can be useful without having the Debug Module present, so the
+Trigger Module is broken out as a separate piece that can be implemented
+separately.</p>
+<p>A hart can be compliant with this specification without implementing any
+trigger functionality at all, but if it is implemented then it must conform
+to this section.</p>
+<p>Triggers do not fire while in Debug Mode.</p>
+<p><span>Each trigger may support a variety of features. A debugger can
+build a list of all triggers and their features as follows:</span></p>
+<p>Write 0 to <span><span>tselect</span></span>.</p>
+<p>Read back <span><span>tselect</span></span>and check that it contains the written value. If not,
+exit the loop.</p>
+<p>Read <span><span>tinfo</span></span>.</p>
+<p>If that caused an exception, the debugger must read <span><span>tdata1</span></span>to
+discover the type. (If is 0, this trigger doesn’t exist. Exit the
+loop.)</p>
+<p>If is 1, this trigger doesn’t exist. Exit the loop.</p>
+<p>Otherwise, the selected trigger supports the types discovered in .</p>
+<p>Repeat, incrementing the value in <span><span>tselect</span></span>.</p>
+<div class=commentary>
+<p>The above algorithm reads back <span><span>tselect</span></span>so that implementations which have
+<span class="math inline">2<sup><em>n</em></sup></span> triggers only need to implement <span class="math inline"><em>n</em></span> bits of <span><span>tselect</span></span>.</p>
+<p>The algorithm checks <span><span>tinfo</span></span>and in case the implementation has <span class="math inline"><em>m</em></span>
+bits of <span><span>tselect</span></span>but fewer than <span class="math inline">2<sup><em>m</em></sup></span> triggers.</p>
+</div>
+<p>It is possible for a trigger with the “enter Debug Mode” action (1) and another
+trigger with the “raise a breakpoint exception” action (0) to fire at the same
+time. The preferred behavior is to have both actions take place. It is
+implementation-dependent which of the two happens first. This ensures both
+that the presence of an external debugger doesn’t affect execution and that a
+trigger set by user code doesn’t affect the external debugger. If this is not
+implemented, then the hart must enter Debug Mode and ignore the breakpoint
+exception. In the latter case, of the trigger whose action is 0 must still
+be set, giving a debugger an opportunity to handle this case. What happens with
+trace actions when triggers with different actions are also firing is left to
+the trace specification.</p>
+<h2 id="sec:mmtrigger"><span class="header-section-number">6.1</span> Native M-Mode Triggers</h2>
+<p>Triggers can be used for native debugging. On a fully featured system triggers
+will be set using or , and when firing they can cause a breakpoint exception
+to trap to a more privileged mode. It is possible to set triggers natively to
+fire in M mode as well. In that case there is no higher privilege mode to trap
+to. When such a trigger causes a breakpoint exception while already in a trap
+handler, this will leave the system unable to resume normal execution.</p>
+<p>On full-featured systems this is a remote corner case that can probably be
+ignored. On systems that only implement M mode, however, it is recommended to
+implement one of two solutions to this problem. This way triggers can be useful
+for native debugging of even M mode code.</p>
+<p>The simple solution is to have the hardware prevent triggers with action=0 from
+firing while in M mode and while in <span>mstatus</span>is 0. Its limitation is
+that interrupts might be disabled at other times when a user might want
+triggers to fire.</p>
+<p>A more complex solution is to implement and in <span><span>tcontrol</span></span>. This
+solution has the benefit that it only disables triggers during the trap
+handler.</p>
+<p>A user setting M mode triggers that cause breakpoint exceptions will have to be
+aware of any problems that might come up with the particular system they are
+working on.</p>
+<h2 id="trigger-registers"><span class="header-section-number">6.2</span> Trigger Registers</h2>
+<p>These registers are CSRs, accessible using the RISC-V <span>csr</span> opcodes and
+optionally also using abstract debug commands.</p>
+<p>Most trigger functionality is optional. All <span>tdata</span> registers follow
+write-any-read-legal semantics. If a debugger writes an unsupported
+configuration, the register will read back a value that is supported (which may
+simply be a disabled trigger). This means that a debugger must always read
+back values it writes to <span>tdata</span> registers, unless it already knows already
+what is
+supported. Writes to one <span>tdata</span> register may not modify the contents of
+other <span>tdata</span> registers, nor the configuration of any trigger besides the
+one that is currently selected.</p>
+<p><a href="hwbp_registers.html" data-reference-type="ref" data-reference="hwbp_registers.tex">[hwbp_registers.tex]</a></p>
+
+</body>
+</html>

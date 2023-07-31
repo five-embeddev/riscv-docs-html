@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20191214-</td></tr>
+<tr><th>Spec Release Date</th><td> December 2019</td></tr>
+<tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/gmaps.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="rv3264g-instruction-set-listings"><span class="header-section-number">25</span> RV32/64G Instruction Set Listings</h1>
+<p>One goal of the RISC-V project is that it be used as a stable software
+development target. For this purpose, we define a combination of a
+base ISA (RV32I or RV64I) plus selected standard extensions (IMAFD, Zicsr, Zifencei) as
+a “general-purpose” ISA, and we use the abbreviation G for the IMAFDZicsr_Zifencei
+combination of instruction-set extensions. This chapter presents
+opcode maps and instruction-set listings for RV32G and RV64G.</p>
+<p><a href="opcode-map.html" data-reference-type="ref" data-reference="opcode-map">[opcode-map]</a></p>
+<p>Table <a href="opcode-map.html#opcodemap" data-reference-type="ref" data-reference="opcodemap">[opcodemap]</a> shows a map of the major opcodes for RVG. Major
+opcodes with 3 or more lower bits set are reserved for instruction
+lengths greater than 32 bits. Opcodes marked as <span><em>reserved</em></span> should
+be avoided for custom instruction-set extensions as they might be used
+by future standard extensions. Major opcodes marked as <span><em>custom-0</em></span>
+and <span><em>custom-1</em></span> will be avoided by future standard extensions and
+are recommended for use by custom instruction-set extensions within
+the base 32-bit instruction format. The opcodes marked <span>
+<em>custom-2/rv128</em></span> and <span><em>custom-3/rv128</em></span> are reserved for future use
+by RV128, but will otherwise be avoided for standard extensions and so
+can also be used for custom instruction-set extensions in RV32 and
+RV64.</p>
+<p>We believe RV32G and RV64G provide simple but complete instruction
+sets for a broad range of general-purpose computing. The optional
+compressed instruction set described in Chapter <a href="c.html#compressed" data-reference-type="ref" data-reference="compressed">[compressed]</a> can
+be added (forming RV32GC and RV64GC) to improve performance, code
+size, and energy efficiency, though with some additional hardware
+complexity.</p>
+<p>As we move beyond IMAFDC into further instruction-set extensions, the
+added instructions tend to be more domain-specific and only provide
+benefits to a restricted class of applications, e.g., for multimedia
+or security. Unlike most commercial ISAs, the RISC-V ISA design
+clearly separates the base ISA and broadly applicable standard
+extensions from these more specialized additions.
+Chapter <a href="extensions.html#extensions" data-reference-type="ref" data-reference="extensions">[extensions]</a> has a more extensive discussion of ways to
+add extensions to the RISC-V ISA.</p>
+<p><a href="instr-table.html" data-reference-type="ref" data-reference="instr-table">[instr-table]</a></p>
+<p>Table <a href="gmaps.html#rvgcsrnames" data-reference-type="ref" data-reference="rvgcsrnames">1.1</a> lists the CSRs that have
+currently been allocated CSR addresses. The timers, counters, and
+floating-point CSRs are the only CSRs defined in this specification.</p>
+<figure>
+<img src="gmaps_00.svg" alt="RISC-V control and status register (CSR) address map." id="rvgcsrnames" /><figcaption>RISC-V control and status register (CSR) address map.<span label="rvgcsrnames"></span></figcaption>
+</figure>
+
+</body>
+</html>

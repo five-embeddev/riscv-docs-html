@@ -1,0 +1,41 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>dtm.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="dtm"><span class="header-section-number">7</span> Debug Transport Module (DTM)</h1>
+<p>Debug Transport Modules provide access to the DM over one or more transports
+(e.g. JTAG or USB).</p>
+<p>There may be multiple DTMs in a single platform. Ideally every component that
+communicates with the outside world includes a DTM, allowing a platform to be
+debugged through every transport it supports. For instance a USB component
+could include a DTM. This would trivially allow any platform to be debugged
+over USB. All that is required is that the USB module already in use also has
+access to the Debug Module Interface.</p>
+<p>Using multiple DTMs at the same time is not supported. It is left to the user
+to ensure this does not happen.</p>
+<p>This specification defines a JTAG DTM in Section <a href="jtagdtm.html#sec:jtagdtm" data-reference-type="ref" data-reference="sec:jtagdtm">[sec:jtagdtm]</a>. Additional DTMs
+may be added in future versions of this specification.</p>
+<p>An implementation can be compliant with this specification without implementing
+any of this section. In that case it must be advertised as conforming to
+“RISC-V Debug Specification 0.13.2 , with custom DTM.” If the JTAG DTM
+described here is implemented, it must be advertised as conforming to the
+“RISC-V Debug Specification 0.13.2 , with JTAG DTM.”</p>
+<p><a href="jtagdtm.html" data-reference-type="ref" data-reference="jtagdtm">[jtagdtm]</a></p>
+
+</body>
+</html>

@@ -1,0 +1,151 @@
+<html><head></head><body>
+<ul>
+<li><b></b><a href=riscv-debug-spec.html#change-log>Change Log</a></li>
+<li><b></b><a href=preface.html#preface>Preface</a></li>
+<li><b>1</b><a href=introduction.html#sec:intro>Introduction</a><ul>
+  <li><b>1.1</b><a href=introduction.html#terminology>Terminology</a><ul>
+    <li><b>1.1.1</b><a href=introduction.html#context>Context</a></li>
+    <li><b>1.1.2</b><a href=introduction.html#versions>Versions</a></li>
+</ul>
+</li>
+  <li><b>1.2</b><a href=introduction.html#about-this-document>About This Document</a><ul>
+    <li><b>1.2.1</b><a href=introduction.html#structure>Structure</a></li>
+    <li><b>1.2.2</b><a href=introduction.html#register-definition-format>Register Definition Format</a></li>
+</ul>
+</li>
+  <li><b>1.3</b><a href=introduction.html#background>Background</a></li>
+  <li><b>1.4</b><a href=introduction.html#supported-features>Supported Features</a></li>
+</ul>
+</li>
+<li><b>2</b><a href=reading_order.html#reading-order>Reading Order</a><ul>
+<li><b></b><a href=></a><ul>
+    <li><b>2.0.1</b><a href=reading_order.html#haltresume>Halt/Resume</a></li>
+    <li><b>2.0.2</b><a href=reading_order.html#abstract-register-access>Abstract Register Access</a></li>
+    <li><b>2.0.3</b><a href=reading_order.html#program-buffer>Program Buffer</a></li>
+    <li><b>2.0.4</b><a href=reading_order.html#jtag-debug-transport-module>JTAG Debug Transport Module</a></li>
+    <li><b>2.0.5</b><a href=reading_order.html#system-bus-master>System Bus Master</a></li>
+    <li><b>2.0.6</b><a href=reading_order.html#reset>Reset</a></li>
+    <li><b>2.0.7</b><a href=reading_order.html#security>Security</a></li>
+    <li><b>2.0.8</b><a href=reading_order.html#triggers>Triggers</a></li>
+    <li><b>2.0.9</b><a href=reading_order.html#serial-ports>Serial Ports</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><b>3</b><a href=overview.html#overview>System Overview</a></li>
+<li><b>4</b><a href=debug_module.html#dm>Debug Module (DM)</a><ul>
+  <li><b>4.1</b><a href=debug_module.html#dmi>Debug Module Interface (DMI)</a></li>
+  <li><b>4.2</b><a href=debug_module.html#reset>Reset Control</a></li>
+  <li><b>4.3</b><a href=debug_module.html#selectingharts>Selecting Harts</a><ul>
+    <li><b>4.3.1</b><a href=debug_module.html#selecting-a-single-hart>Selecting a Single Hart</a></li>
+    <li><b>4.3.2</b><a href=debug_module.html#hartarraymask>Selecting Multiple Harts</a></li>
+</ul>
+</li>
+  <li><b>4.4</b><a href=debug_module.html#hart-states>Hart States</a></li>
+  <li><b>4.5</b><a href=debug_module.html#runcontrol>Run Control</a></li>
+  <li><b>4.6</b><a href=debug_module.html#abstractcommands>Abstract Commands</a><ul>
+    <li><b>4.6.1</b><a href=debug_module.html#abstract-command-listing>Abstract Command Listing</a></li>
+</ul>
+</li>
+  <li><b>4.7</b><a href=debug_module.html#programbuffer>Program Buffer</a></li>
+  <li><b>4.8</b><a href=debug_module.html#overview-of-states>Overview of States</a></li>
+  <li><b>4.9</b><a href=debug_module.html#systembusaccess>System Bus Access</a></li>
+  <li><b>4.10</b><a href=debug_module.html#minimally-intrusive-debugging>Minimally Intrusive Debugging</a></li>
+  <li><b>4.11</b><a href=debug_module.html#security>Security</a></li>
+  <li><b>4.12</b><a href=debug_module.html#dmdebbus>Debug Module Registers</a></li>
+</ul>
+</li>
+<li><b>5</b><a href=core_debug.html#sec:core_debug>RISC-V Debug</a><ul>
+  <li><b>5.1</b><a href=core_debug.html#debugmode>Debug Mode</a></li>
+  <li><b>5.2</b><a href=core_debug.html#load-reservedstore-conditional-instructions>Load-Reserved/Store-Conditional Instructions</a></li>
+  <li><b>5.3</b><a href=core_debug.html#wait-for-interrupt-instruction>Wait for Interrupt Instruction</a></li>
+  <li><b>5.4</b><a href=core_debug.html#single-step>Single Step</a></li>
+  <li><b>5.5</b><a href=core_debug.html#reset>Reset</a></li>
+  <li><b>5.7</b><a href=core_debug.html#xlen>XLEN</a></li>
+  <li><b>5.8</b><a href=core_debug.html#debreg>Core Debug Registers</a></li>
+  <li><b>5.9</b><a href=core_debug.html#virtreg>Virtual Debug Registers</a></li>
+</ul>
+</li>
+<li><b>6</b><a href=trigger.html#sec:trigger>Trigger Module</a><ul>
+  <li><b>6.1</b><a href=trigger.html#sec:mmtrigger>Native M-Mode Triggers</a></li>
+  <li><b>6.2</b><a href=trigger.html#trigger-registers>Trigger Registers</a></li>
+</ul>
+</li>
+<li><b>7</b><a href=dtm.html#dtm>Debug Transport Module (DTM)</a></li>
+<li><b>8</b><a href=jtagdtm.html#sec:jtagdtm>JTAG Debug Transport Module</a><ul>
+  <li><b>8.1</b><a href=jtagdtm.html#jtag-background>JTAG Background</a></li>
+  <li><b>8.2</b><a href=jtagdtm.html#jtag-dtm-registers>JTAG DTM Registers</a></li>
+  <li><b>8.3</b><a href=jtagdtm.html#recommended-jtag-connector>Recommended JTAG Connector</a></li>
+</ul>
+</li>
+<li><b></b><a href=implementations.html#sec:implementations>Hardware Implementations</a><ul>
+  <li><b></b><a href=implementations.html#abstract-command-based>Abstract Command Based</a></li>
+  <li><b></b><a href=implementations.html#execution-based>Execution Based</a></li>
+</ul>
+</li>
+<li><b></b><a href=debugger_implementation.html#debugger-implementation>Debugger Implementation</a><ul>
+  <li><b></b><a href=debugger_implementation.html#dmiaccess>Debug Module Interface Access</a></li>
+  <li><b></b><a href=debugger_implementation.html#checking-for-halted-harts>Checking for Halted Harts</a></li>
+  <li><b></b><a href=debugger_implementation.html#deb:halt>Halting</a></li>
+  <li><b></b><a href=debugger_implementation.html#running>Running</a></li>
+  <li><b></b><a href=debugger_implementation.html#single-step>Single Step</a></li>
+  <li><b></b><a href=debugger_implementation.html#accessing-registers>Accessing Registers</a><ul>
+    <li><b></b><a href=debugger_implementation.html#deb:abstractreg>Using Abstract Command</a></li>
+    <li><b></b><a href=debugger_implementation.html#deb:regprogbuf>Using Program Buffer</a></li>
+</ul>
+</li>
+  <li><b></b><a href=debugger_implementation.html#reading-memory>Reading Memory</a><ul>
+    <li><b></b><a href=debugger_implementation.html#deb:mrsysbus>Using System Bus Access</a></li>
+    <li><b></b><a href=debugger_implementation.html#deb:mrprogbuf>Using Program Buffer</a></li>
+    <li><b></b><a href=debugger_implementation.html#deb:mrabstract>Using Abstract Memory Access</a></li>
+</ul>
+</li>
+  <li><b></b><a href=debugger_implementation.html#writemem>Writing Memory</a><ul>
+    <li><b></b><a href=debugger_implementation.html#deb:mrsysbus>Using System Bus Access</a></li>
+    <li><b></b><a href=debugger_implementation.html#deb:mrprogbuf>Using Program Buffer</a></li>
+    <li><b></b><a href=debugger_implementation.html#deb:mwabstract>Using Abstract Memory Access</a></li>
+</ul>
+</li>
+  <li><b></b><a href=debugger_implementation.html#triggers>Triggers</a></li>
+  <li><b></b><a href=debugger_implementation.html#handling-exceptions>Handling Exceptions</a></li>
+  <li><b></b><a href=debugger_implementation.html#quickaccess>Quick Access</a></li>
+  <li><b></b><a href=jtag_registers.html#idcode-at-0x01>IDCODE (at 0x01)</a></li>
+  <li><b></b><a href=jtag_registers.html#dtm-control-and-status-dtmcs-at-0x10>DTM Control and Status (<span>dtmcs</span>, at 0x10)</a></li>
+  <li><b></b><a href=jtag_registers.html#debug-module-interface-access-dmi-at-0x11>Debug Module Interface Access (<span>dmi</span>, at 0x11)</a></li>
+  <li><b></b><a href=jtag_registers.html#bypass-at-0x1f>BYPASS (at 0x1f)</a></li>
+  <li><b></b><a href=core_registers.html#debug-control-and-status-dcsr-at-0x7b0>Debug Control and Status (<span>dcsr</span>, at 0x7b0)</a></li>
+  <li><b></b><a href=core_registers.html#debug-pc-dpc-at-0x7b1>Debug PC (<span>dpc</span>, at 0x7b1)</a></li>
+  <li><b></b><a href=hwbp_registers.html#trigger-select-tselect-at-0x7a0>Trigger Select (<span>tselect</span>, at 0x7a0)</a></li>
+  <li><b></b><a href=hwbp_registers.html#trigger-info-tinfo-at-0x7a4>Trigger Info (<span>tinfo</span>, at 0x7a4)</a></li>
+  <li><b></b><a href=hwbp_registers.html#trigger-control-tcontrol-at-0x7a5>Trigger Control (<span>tcontrol</span>, at 0x7a5)</a></li>
+  <li><b></b><a href=hwbp_registers.html#machine-context-mcontext-at-0x7a8>Machine Context (<span>mcontext</span>, at 0x7a8)</a></li>
+  <li><b></b><a href=hwbp_registers.html#supervisor-context-scontext-at-0x7aa>Supervisor Context (<span>scontext</span>, at 0x7aa)</a></li>
+  <li><b></b><a href=hwbp_registers.html#match-control-mcontrol-at-0x7a1>Match Control (<span>mcontrol</span>, at 0x7a1)</a></li>
+  <li><b></b><a href=hwbp_registers.html#instruction-count-icount-at-0x7a1>Instruction Count (<span>icount</span>, at 0x7a1)</a></li>
+  <li><b></b><a href=hwbp_registers.html#interrupt-trigger-itrigger-at-0x7a1>Interrupt Trigger (<span>itrigger</span>, at 0x7a1)</a></li>
+  <li><b></b><a href=hwbp_registers.html#exception-trigger-etrigger-at-0x7a1>Exception Trigger (<span>etrigger</span>, at 0x7a1)</a></li>
+  <li><b></b><a href=dm_registers.html#debug-module-status-dmstatus-at-0x11>Debug Module Status (<span>dmstatus</span>, at 0x11)</a></li>
+  <li><b></b><a href=dm_registers.html#debug-module-control-dmcontrol-at-0x10>Debug Module Control (<span>dmcontrol</span>, at 0x10)</a></li>
+  <li><b></b><a href=dm_registers.html#hart-info-hartinfo-at-0x12>Hart Info (<span>hartinfo</span>, at 0x12)</a></li>
+  <li><b></b><a href=dm_registers.html#hart-array-window-select-hawindowsel-at-0x14>Hart Array Window Select (<span>hawindowsel</span>, at 0x14)</a></li>
+  <li><b></b><a href=dm_registers.html#hart-array-window-hawindow-at-0x15>Hart Array Window (<span>hawindow</span>, at 0x15)</a></li>
+  <li><b></b><a href=dm_registers.html#abstract-control-and-status-abstractcs-at-0x16>Abstract Control and Status (<span>abstractcs</span>, at 0x16)</a></li>
+  <li><b></b><a href=dm_registers.html#abstract-command-command-at-0x17>Abstract Command (<span>command</span>, at 0x17)</a></li>
+  <li><b></b><a href=dm_registers.html#abstract-command-autoexec-abstractauto-at-0x18>Abstract Command Autoexec (<span>abstractauto</span>, at 0x18)</a></li>
+  <li><b></b><a href=dm_registers.html#next-debug-module-nextdm-at-0x1d>Next Debug Module (<span>nextdm</span>, at 0x1d)</a></li>
+  <li><b></b><a href=dm_registers.html#authentication-data-authdata-at-0x30>Authentication Data (<span>authdata</span>, at 0x30)</a></li>
+  <li><b></b><a href=dm_registers.html#system-bus-access-control-and-status-sbcs-at-0x38>System Bus Access Control and Status (<span>sbcs</span>, at 0x38)</a><ul>
+    <li><b></b><a href=sample_registers.html#long-name-shortname-at-0x123>Long Name (<span>shortname</span>, at 0x123)</a></li>
+    <li><b></b><a href=abstract_commands.html#access-register>Access Register</a></li>
+    <li><b></b><a href=abstract_commands.html#quick-access>Quick Access</a></li>
+    <li><b></b><a href=abstract_commands.html#access-memory>Access Memory</a></li>
+</ul>
+</li>
+  <li><b></b><a href=sw_registers.html#privilege-level-priv-at-virtual>Privilege Level (<span>priv</span>, at virtual)</a></li>
+  <li><b></b><a href=serial.html#serial-control-and-status-sercs-at-0x34>Serial Control and Status (<span>sercs</span>, at 0x34)</a></li>
+  <li><b></b><a href=serial.html#serial-tx-data-sertx-at-0x35>Serial TX Data (<span>sertx</span>, at 0x35)</a></li>
+  <li><b></b><a href=serial.html#serial-rx-data-serrx-at-0x36>Serial RX Data (<span>serrx</span>, at 0x36)</a></li>
+</ul>
+</li>
+</ul>
+</body></html>

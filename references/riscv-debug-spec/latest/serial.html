@@ -1,0 +1,129 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>serial.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/07/31</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Address</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0x34</td>
+<td style="text-align: left;">Serial Control and Status (<span>sercs</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x35</td>
+<td style="text-align: left;">Serial TX Data (<span>sertx</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x36</td>
+<td style="text-align: left;">Serial RX Data (<span>serrx</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="serial-control-and-status-sercs-at-0x34">Serial Control and Status (<span>sercs</span>, at 0x34)</h2>
+<p><span id="sercs" label="sercs">[sercs]</span>
+If is 0, this register is not present.</p>
+<p><img src="serial_00.svg" alt="image" /></p>
+<p><img src="serial_01.svg" alt="image" /></p>
+<p><img src="serial_02.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: left;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="serialcount" label="serialcount">[serialcount]</span>
+|serialcount|</td>
+<td style="text-align: left;">Number of supported serial ports.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="serial" label="serial">[serial]</span>
+|serial|</td>
+<td style="text-align: left;">Select which serial port is accessed by <span><span>serrx</span></span>and <span><span>sertx</span></span>.</td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="error0" label="error0">[error0]</span>
+|error0|</td>
+<td style="text-align: left;">1 when the debugger-to-core queue for serial port 0 has
+over or underflowed. This bit will remain set until it is reset by
+writing 1 to this bit.</td>
+<td style="text-align: center;">R/W1C</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="valid0" label="valid0">[valid0]</span>
+|valid0|</td>
+<td style="text-align: left;">1 when the core-to-debugger queue for serial port 0 is not empty.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="full0" label="full0">[full0]</span>
+|full0|</td>
+<td style="text-align: left;">1 when the debugger-to-core queue for serial port 0 is full.</td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">0</td>
+</tr>
+</tbody>
+</table>
+<h2 id="serial-tx-data-sertx-at-0x35">Serial TX Data (<span>sertx</span>, at 0x35)</h2>
+<p><span id="sertx" label="sertx">[sertx]</span>
+If is 0, this register is not present.</p>
+<p>This register provides access to the write data queue of the serial port
+selected by in <span><span>sercs</span></span>.</p>
+<p>If the <span>error</span> bit is not set and the queue is not full, a write to this register
+adds the written data to the core-to-debugger queue.
+Otherwise the <span>error</span> bit is set and the write returns error.</p>
+<p>A read to this register returns the last data written.</p>
+<p><img src="serial_03.svg" alt="image" /></p>
+<h2 id="serial-rx-data-serrx-at-0x36">Serial RX Data (<span>serrx</span>, at 0x36)</h2>
+<p><span id="serrx" label="serrx">[serrx]</span>
+If is 0, this register is not present.</p>
+<p>This register provides access to the read data queues of the serial port
+selected by in <span><span>sercs</span></span>.</p>
+<p>If the <span>error</span> bit is not set and the queue is not empty, a read from this register reads the
+oldest entry in the debugger-to-core queue, and removes that entry from the queue.
+Otherwise the <span>error</span> bit is set and the read returns error.</p>
+<p>This entire register is read-only.</p>
+<p><img src="serial_04.svg" alt="image" /></p>
+
+</body>
+</html>
