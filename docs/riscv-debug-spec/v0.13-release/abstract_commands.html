@@ -44,15 +44,15 @@ or accessing registers when the hart is running.
 Each individual register (aside from GPRs) may be supported differently
 across read, write, and halt status.</p>
 <figure>
-<img src="tmp.v0.13-release//abstract_commands_00.svg" alt="Abstract Register Numbers" id="tab:regno" /><figcaption>Abstract Register Numbers<span label="tab:regno"></span></figcaption>
+<img src="abstract_commands_00.svg" alt="Abstract Register Numbers" id="tab:regno" /><figcaption>Abstract Register Numbers<span label="tab:regno"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>The encoding of was chosen to match in <span><span>sbcs</span></span>.</p>
 </div>
 <p>This command modifies <span>arg0</span> only when a register is read. The
 other <span>data</span> registers are not changed.</p>
-<p><img src="tmp.v0.13-release//abstract_commands_01.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//abstract_commands_02.svg" alt="image" /></p>
+<p><img src="abstract_commands_01.svg" alt="image" /></p>
+<p><img src="abstract_commands_02.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -136,7 +136,7 @@ and the program buffer execution ends, but the quick access command continues.</
 <p>Resume the hart.</p>
 <p>Implementing this command is optional.</p>
 <p>This command does not touch the <span>data</span> registers.</p>
-<p><img src="tmp.v0.13-release//abstract_commands_03.svg" alt="image" /></p>
+<p><img src="abstract_commands_03.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -186,8 +186,8 @@ support memory accesses while the hart is halted.</p>
 <p>This command modifies <span>arg0</span> only when memory is read. It modifies
 <span>arg1</span> only if is set. The other <span>data</span>
 registers are not changed.</p>
-<p><img src="tmp.v0.13-release//abstract_commands_04.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//abstract_commands_05.svg" alt="image" /></p>
+<p><img src="abstract_commands_04.svg" alt="image" /></p>
+<p><img src="abstract_commands_05.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">

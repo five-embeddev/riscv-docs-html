@@ -189,10 +189,10 @@ This register reports status for the overall Debug Module as well as
 the currently selected harts, as defined in . Its address will
 not change in the future, because it contains .</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_00.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//dm_registers_01.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//dm_registers_02.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//dm_registers_03.svg" alt="image" /></p>
+<p><img src="dm_registers_00.svg" alt="image" /></p>
+<p><img src="dm_registers_01.svg" alt="image" /></p>
+<p><img src="dm_registers_02.svg" alt="image" /></p>
+<p><img src="dm_registers_03.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -391,8 +391,8 @@ following bits: , , ,
 <p><span id="resethaltreq" label="resethaltreq">[resethaltreq]</span>
 is an optional internal bit of per-hart state that cannot be
 read, but can be written with and .</p>
-<p><img src="tmp.v0.13-release//dm_registers_04.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//dm_registers_05.svg" alt="image" /></p>
+<p><img src="dm_registers_04.svg" alt="image" /></p>
+<p><img src="dm_registers_05.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -556,7 +556,7 @@ the Program Buffer by writing programs which
 explicitly access the <span>data</span> and/or <span>dscratch</span>
 registers.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_06.svg" alt="image" /></p>
+<p><img src="dm_registers_06.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -622,7 +622,7 @@ registers are shadowed, to be used to access relative to <span>zero</span>.</p><
 <p><span id="hawindowsel" label="hawindowsel">[hawindowsel]</span>
 This register selects which of the 32-bit portion of the hart array mask
 register (see Section <a href="debug_module.html#hartarraymask" data-reference-type="ref" data-reference="hartarraymask">[hartarraymask]</a>) is accessible in <span><span>hawindow</span></span>.</p>
-<p><img src="tmp.v0.13-release//dm_registers_07.svg" alt="image" /></p>
+<p><img src="dm_registers_07.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -660,7 +660,7 @@ refers to hart <span class="math inline">${\tt {hawindowsel}}* 32$</span>, while
 <p>Since some bits in the hart array mask register may be constant 0, some
 bits in this register may be constant 0, depending on the current value
 of .</p>
-<p><img src="tmp.v0.13-release//dm_registers_08.svg" alt="image" /></p>
+<p><img src="dm_registers_08.svg" alt="image" /></p>
 <h2 id="abstract-control-and-status-abstractcs-at-0x16">Abstract Control and Status (<span>abstractcs</span>, at 0x16)</h2>
 <p><span id="abstractcs" label="abstractcs">[abstractcs]</span>
 Writing this register while an abstract command is executing causes
@@ -669,7 +669,7 @@ to be set to 1 (busy) if it is 0.</p>
 <p>must be at least 1 to support RV32 harts, 2 to support
 RV64 harts, or 4 to support RV128 harts.</p>
 </div>
-<p><img src="tmp.v0.13-release//dm_registers_09.svg" alt="image" /></p>
+<p><img src="dm_registers_09.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -750,7 +750,7 @@ so and check at the end without worrying that one command
 failed but then a later command (which might have depended on the
 previous one succeeding) passed.</p>
 </div>
-<p><img src="tmp.v0.13-release//dm_registers_10.svg" alt="image" /></p>
+<p><img src="dm_registers_10.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -792,7 +792,7 @@ accesses. A debugger can detect whether it is support by setting bits
 and reading them back.</p>
 <p>Writing this register while an abstract command is executing causes
 to be set to 1 (busy) if it is 0.</p>
-<p><img src="tmp.v0.13-release//dm_registers_11.svg" alt="image" /></p>
+<p><img src="dm_registers_11.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -843,14 +843,14 @@ hold identifier information which is not
 further specified in this document.</p>
 <p>The configuration string itself is described in the Privileged Spec.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_12.svg" alt="image" /></p>
+<p><img src="dm_registers_12.svg" alt="image" /></p>
 <h2 id="next-debug-module-nextdm-at-0x1d">Next Debug Module (<span>nextdm</span>, at 0x1d)</h2>
 <p><span id="nextdm" label="nextdm">[nextdm]</span>
 If there is more than one DM accessible on this DMI, this register
 contains the base address of the next one in the chain, or 0 if this is
 the last one in the chain.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_13.svg" alt="image" /></p>
+<p><img src="dm_registers_13.svg" alt="image" /></p>
 <h2 id="abstract-data-0-data0-at-0x04">Abstract Data 0 (<span>data0</span>, at 0x04)</h2>
 <p><span id="data0" label="data0">[data0]</span>
 <span><span>data0</span></span>through <span><span>data11</span></span>are basic read/write registers that may
@@ -865,7 +865,7 @@ to be set to 1 (busy) if it is 0.</p>
 command is executed. The only guarantees on their contents are the ones
 offered by the command in question. If the command fails, no
 assumptions can be made about the contents of these registers.</p>
-<p><img src="tmp.v0.13-release//dm_registers_14.svg" alt="image" /></p>
+<p><img src="dm_registers_14.svg" alt="image" /></p>
 <h2 id="program-buffer-0-progbuf0-at-0x20">Program Buffer 0 (<span>progbuf0</span>, at 0x20)</h2>
 <p><span id="progbuf0" label="progbuf0">[progbuf0]</span>
 <span><span>progbuf0</span></span>through <span><span>progbuf15</span></span>provide read/write access to the
@@ -874,7 +874,7 @@ implemented starting at <span><span>progbuf0</span></span>, counting up.</p>
 <p>Accessing these registers while an abstract command is executing causes
 to be set to 1 (busy) if it is 0.</p>
 <p>Attempts to write them while is set does not change their value.</p>
-<p><img src="tmp.v0.13-release//dm_registers_15.svg" alt="image" /></p>
+<p><img src="dm_registers_15.svg" alt="image" /></p>
 <h2 id="authentication-data-authdata-at-0x30">Authentication Data (<span>authdata</span>, at 0x30)</h2>
 <p><span id="authdata" label="authdata">[authdata]</span>
 This register serves as a 32-bit serial port to/from the authentication
@@ -882,7 +882,7 @@ module.</p>
 <p>When is clear, the debugger can communicate with the
 authentication module by reading or writing this register. There is no
 separate mechanism to signal overflow/underflow.</p>
-<p><img src="tmp.v0.13-release//dm_registers_16.svg" alt="image" /></p>
+<p><img src="dm_registers_16.svg" alt="image" /></p>
 <h2 id="halt-summary-0-haltsum0-at-0x40">Halt Summary 0 (<span>haltsum0</span>, at 0x40)</h2>
 <p><span id="haltsum0" label="haltsum0">[haltsum0]</span>
 Each bit in this read-only register indicates whether one specific hart
@@ -891,7 +891,7 @@ be halted.</p>
 <p>The LSB reflects the halt status of hart {hartsel[19:5],5’h0}, and the
 MSB reflects halt status of hart {hartsel[19:5],5’h1f}.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_17.svg" alt="image" /></p>
+<p><img src="dm_registers_17.svg" alt="image" /></p>
 <h2 id="halt-summary-1-haltsum1-at-0x13">Halt Summary 1 (<span>haltsum1</span>, at 0x13)</h2>
 <p><span id="haltsum1" label="haltsum1">[haltsum1]</span>
 Each bit in this read-only register indicates whether any of a group of
@@ -904,7 +904,7 @@ through {hartsel[19:10],10’h1f}.
 The MSB reflects the halt status of harts {hartsel[19:10],10’h3e0}
 through {hartsel[19:10],10’h3ff}.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_18.svg" alt="image" /></p>
+<p><img src="dm_registers_18.svg" alt="image" /></p>
 <h2 id="halt-summary-2-haltsum2-at-0x34">Halt Summary 2 (<span>haltsum2</span>, at 0x34)</h2>
 <p><span id="haltsum2" label="haltsum2">[haltsum2]</span>
 Each bit in this read-only register indicates whether any of a group of
@@ -917,7 +917,7 @@ through {hartsel[19:15],15’h3ff}.
 The MSB reflects the halt status of harts {hartsel[19:15],15’h7c00}
 through {hartsel[19:15],15’h7fff}.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_19.svg" alt="image" /></p>
+<p><img src="dm_registers_19.svg" alt="image" /></p>
 <h2 id="halt-summary-3-haltsum3-at-0x35">Halt Summary 3 (<span>haltsum3</span>, at 0x35)</h2>
 <p><span id="haltsum3" label="haltsum3">[haltsum3]</span>
 Each bit in this read-only register indicates whether any of a group of
@@ -928,12 +928,12 @@ be halted.</p>
 <p>The LSB reflects the halt status of harts 20’h0 through 20’h7fff.
 The MSB reflects the halt status of harts 20’hf8000 through 20’hfffff.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//dm_registers_20.svg" alt="image" /></p>
+<p><img src="dm_registers_20.svg" alt="image" /></p>
 <h2 id="system-bus-access-control-and-status-sbcs-at-0x38">System Bus Access Control and Status (<span>sbcs</span>, at 0x38)</h2>
 <p><span id="sbcs" label="sbcs">[sbcs]</span></p>
-<p><img src="tmp.v0.13-release//dm_registers_21.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//dm_registers_22.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//dm_registers_23.svg" alt="image" /></p>
+<p><img src="dm_registers_21.svg" alt="image" /></p>
+<p><img src="dm_registers_22.svg" alt="image" /></p>
+<p><img src="dm_registers_23.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1098,7 +1098,7 @@ is set then writes to this register start the following:</span></p>
 <p>If the read succeeded and is set, increment
 <span>sbaddress</span>.</p>
 <p>Clear .</p>
-<p><img src="tmp.v0.13-release//dm_registers_24.svg" alt="image" /></p>
+<p><img src="dm_registers_24.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1129,7 +1129,7 @@ is set then writes to this register start the following:</span></p>
 If is less than 33, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
 and don’t do anything else.</p>
-<p><img src="tmp.v0.13-release//dm_registers_25.svg" alt="image" /></p>
+<p><img src="dm_registers_25.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1161,7 +1161,7 @@ the system address bus is that wide).</td>
 If is less than 65, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
 and don’t do anything else.</p>
-<p><img src="tmp.v0.13-release//dm_registers_26.svg" alt="image" /></p>
+<p><img src="dm_registers_26.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1193,7 +1193,7 @@ the system address bus is that wide).</td>
 If is less than 97, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
 and don’t do anything else.</p>
-<p><img src="tmp.v0.13-release//dm_registers_27.svg" alt="image" /></p>
+<p><img src="dm_registers_27.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1248,7 +1248,7 @@ sbdata</span>.</p>
 have no side effects. On systems that have buses wider than 32 bits, a
 debugger should access <span><span>sbdata0</span></span>after accessing the other <span>
 sbdata</span> registers.</p>
-<p><img src="tmp.v0.13-release//dm_registers_28.svg" alt="image" /></p>
+<p><img src="dm_registers_28.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1280,7 +1280,7 @@ If and are 0, then this
 register is not present.</p>
 <p>If the bus master is busy then accesses set , and don’t do
 anything else.</p>
-<p><img src="tmp.v0.13-release//dm_registers_29.svg" alt="image" /></p>
+<p><img src="dm_registers_29.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1312,7 +1312,7 @@ wide).</td>
 This register only exists if is 1.</p>
 <p>If the bus master is busy then accesses set , and don’t do
 anything else.</p>
-<p><img src="tmp.v0.13-release//dm_registers_30.svg" alt="image" /></p>
+<p><img src="dm_registers_30.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -1344,7 +1344,7 @@ wide).</td>
 This register only exists if is 1.</p>
 <p>If the bus master is busy then accesses set , and don’t do
 anything else.</p>
-<p><img src="tmp.v0.13-release//dm_registers_31.svg" alt="image" /></p>
+<p><img src="dm_registers_31.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">

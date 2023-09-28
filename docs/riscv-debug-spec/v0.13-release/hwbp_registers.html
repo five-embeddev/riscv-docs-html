@@ -123,10 +123,10 @@ written. To verify that what they wrote is a valid index, debuggers can
 read back the value and check that <span><span>tselect</span></span>holds what they wrote.</p>
 <p>Since triggers can be used both by Debug Mode and M-mode, the debugger
 must restore this register if it modifies it.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_00.svg" alt="image" /></p>
+<p><img src="hwbp_registers_00.svg" alt="image" /></p>
 <h2 id="trigger-data-1-tdata1-at-0x7a1">Trigger Data 1 (<span>tdata1</span>, at 0x7a1)</h2>
 <p><span id="tdata1" label="tdata1">[tdata1]</span></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_01.svg" alt="image" /></p>
+<p><img src="hwbp_registers_01.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -187,16 +187,16 @@ selected <span><span>tselect</span></span>. Writes from other modes are ignored.
 <p><span id="tdata2" label="tdata2">[tdata2]</span>
 Trigger-specific data.</p>
 <p>If XLEN is less than DXLEN, writes to this register are sign-extended.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_02.svg" alt="image" /></p>
+<p><img src="hwbp_registers_02.svg" alt="image" /></p>
 <h2 id="trigger-data-3-tdata3-at-0x7a3">Trigger Data 3 (<span>tdata3</span>, at 0x7a3)</h2>
 <p><span id="tdata3" label="tdata3">[tdata3]</span>
 Trigger-specific data.</p>
 <p>If XLEN is less than DXLEN, writes to this register are sign-extended.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_03.svg" alt="image" /></p>
+<p><img src="hwbp_registers_03.svg" alt="image" /></p>
 <h2 id="trigger-info-tinfo-at-0x7a4">Trigger Info (<span>tinfo</span>, at 0x7a4)</h2>
 <p><span id="tinfo" label="tinfo">[tinfo]</span></p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_04.svg" alt="image" /></p>
+<p><img src="hwbp_registers_04.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -235,7 +235,7 @@ this case the debugger can read the only supported type from
 This optional register is one solution to a problem regarding triggers
 with action=0 firing in M-mode trap handlers. See
 Section <a href="trigger.html#sec:mmtrigger" data-reference-type="ref" data-reference="sec:mmtrigger">[sec:mmtrigger]</a> for more details.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_05.svg" alt="image" /></p>
+<p><img src="hwbp_registers_05.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -277,7 +277,7 @@ mret</span> is executed, is set to the value of .</p></td>
 <h2 id="machine-context-mcontext-at-0x7a8">Machine Context (<span>mcontext</span>, at 0x7a8)</h2>
 <p><span id="mcontext" label="mcontext">[mcontext]</span>
 This register is only writable in M mode and Debug Mode.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_06.svg" alt="image" /></p>
+<p><img src="hwbp_registers_06.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -311,7 +311,7 @@ context.</p>
 <h2 id="supervisor-context-scontext-at-0x7aa">Supervisor Context (<span>scontext</span>, at 0x7aa)</h2>
 <p><span id="scontext" label="scontext">[scontext]</span>
 This register is only writable in S mode, M mode and Debug Mode.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_07.svg" alt="image" /></p>
+<p><img src="hwbp_registers_07.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -402,9 +402,9 @@ Table <a href="hwbp_registers.html#tab:hwbp_timing" data-reference-type="ref" d
 always 0) only. If that is the case, then <span><span>tdata2</span></span>must be able to
 hold all valid virtual addresses but it need not be capable of holding
 other values.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_08.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_09.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_10.svg" alt="image" /></p>
+<p><img src="hwbp_registers_08.svg" alt="image" /></p>
+<p><img src="hwbp_registers_09.svg" alt="image" /></p>
+<p><img src="hwbp_registers_10.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -630,8 +630,8 @@ bits. One for , and one for and tied together. If
 only the external debugger or only a software monitor needs to be
 supported, a single bit is enough.</p>
 </div>
-<p><img src="tmp.v0.13-release//hwbp_registers_11.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_12.svg" alt="image" /></p>
+<p><img src="hwbp_registers_11.svg" alt="image" /></p>
+<p><img src="hwbp_registers_12.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -719,8 +719,8 @@ interrupt is not enabled in <span>mie</span>.)</p>
 <p>When the trigger fires, all CSRs are updated as defined by the
 Privileged Spec, and the requested action is taken just before the
 first instruction of the interrupt/exception handler is executed.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_13.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_14.svg" alt="image" /></p>
+<p><img src="hwbp_registers_13.svg" alt="image" /></p>
+<p><img src="hwbp_registers_14.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -796,8 +796,8 @@ is actually supported.</p>
 <p>When the trigger fires, all CSRs are updated as defined by the
 Privileged Spec, and the requested action is taken just before the
 first instruction of the interrupt/exception handler is executed.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_15.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_16.svg" alt="image" /></p>
+<p><img src="hwbp_registers_15.svg" alt="image" /></p>
+<p><img src="hwbp_registers_16.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -866,7 +866,7 @@ This register is accessible as <span><span>tdata3</span></span>when is 2, 3, 4, 
 <p>All functionality in this register is optional. The <span class="math inline">|<em>v</em><em>a</em><em>l</em><em>u</em><em>e</em>|</span> bits may
 tie any number of upper bits to 0. The <span class="math inline">|<em>s</em><em>e</em><em>l</em><em>e</em><em>c</em><em>t</em>|</span> bits may only support
 0 (ignore).</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_17.svg" alt="image" /></p>
+<p><img src="hwbp_registers_17.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -924,8 +924,8 @@ equals the lower ASIDMAX (defined in the Privileged Spec) bits of
 <p><span id="textra64" label="textra64">[textra64]</span>
 This is the layout of <span>textra</span> if XLEN is 64. The fields are defined
 above, in <span><span>textra32</span></span>.</p>
-<p><img src="tmp.v0.13-release//hwbp_registers_18.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//hwbp_registers_19.svg" alt="image" /></p>
+<p><img src="hwbp_registers_18.svg" alt="image" /></p>
+<p><img src="hwbp_registers_19.svg" alt="image" /></p>
 
 </body>
 </html>

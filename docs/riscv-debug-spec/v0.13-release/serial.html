@@ -46,9 +46,9 @@
 <h2 id="serial-control-and-status-sercs-at-0x34">Serial Control and Status (<span>sercs</span>, at 0x34)</h2>
 <p><span id="sercs" label="sercs">[sercs]</span>
 If is 0, this register is not present.</p>
-<p><img src="tmp.v0.13-release//serial_00.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//serial_01.svg" alt="image" /></p>
-<p><img src="tmp.v0.13-release//serial_02.svg" alt="image" /></p>
+<p><img src="serial_00.svg" alt="image" /></p>
+<p><img src="serial_01.svg" alt="image" /></p>
+<p><img src="serial_02.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">
@@ -113,7 +113,7 @@ selected by in <span><span>sercs</span></span>.</p>
 adds the written data to the core-to-debugger queue.
 Otherwise the <span>error</span> bit is set and the write returns error.</p>
 <p>A read to this register returns the last data written.</p>
-<p><img src="tmp.v0.13-release//serial_03.svg" alt="image" /></p>
+<p><img src="serial_03.svg" alt="image" /></p>
 <h2 id="serial-rx-data-serrx-at-0x36">Serial RX Data (<span>serrx</span>, at 0x36)</h2>
 <p><span id="serrx" label="serrx">[serrx]</span>
 If is 0, this register is not present.</p>
@@ -123,7 +123,7 @@ selected by in <span><span>sercs</span></span>.</p>
 oldest entry in the debugger-to-core queue, and removes that entry from the queue.
 Otherwise the <span>error</span> bit is set and the read returns error.</p>
 <p>This entire register is read-only.</p>
-<p><img src="tmp.v0.13-release//serial_04.svg" alt="image" /></p>
+<p><img src="serial_04.svg" alt="image" /></p>
 
 </body>
 </html>

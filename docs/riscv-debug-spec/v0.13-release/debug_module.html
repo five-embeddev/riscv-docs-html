@@ -228,7 +228,7 @@ is placed in the lowest-numbered <span>data</span> register. The argument width
 depends on the command being executed, and is DXLEN where not explicitly
 specified.</p>
 <figure>
-<img src="tmp.v0.13-release//debug_module_00.svg" alt="Use of Data Registers" id="tab:datareg" /><figcaption>Use of Data Registers<span label="tab:datareg"></span></figcaption>
+<img src="debug_module_00.svg" alt="Use of Data Registers" id="tab:datareg" /><figcaption>Use of Data Registers<span label="tab:datareg"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>The Abstract Command interface is designed to allow a debugger to write
@@ -261,7 +261,7 @@ they are written to <span><span>command</span></span>.</p>
 <p>Each abstract command is a 32-bit value. The top 8 bits contain which
 determines the kind of command. Table <a href="debug_module.html#tab:cmdtype" data-reference-type="ref" data-reference="tab:cmdtype">1.2</a> lists all commands.</p>
 <figure>
-<img src="tmp.v0.13-release//debug_module_01.svg" alt="Meaning of " id="tab:cmdtype" /><figcaption>Meaning of <span label="tab:cmdtype"></span></figcaption>
+<img src="debug_module_01.svg" alt="Meaning of " id="tab:cmdtype" /><figcaption>Meaning of <span label="tab:cmdtype"></span></figcaption>
 </figure>
 <p><a href="abstract_commands.html" data-reference-type="ref" data-reference="abstract_commands.tex">[abstract_commands.tex]</a></p>
 <h2 id="programbuffer"><span class="header-section-number">4.7</span> Program Buffer</h2>
@@ -316,7 +316,7 @@ If so, the debugger has more flexibility in what it can do with the program buff
 passed through by a hart during run/halt debugging as influenced
 by the different fields of <span><span>dmcontrol</span></span>, <span><span>abstractcs</span></span>, <span><span>abstractauto</span></span>, and
 <span><span>command</span></span>.</p>
-<p><img src="tmp.v0.13-release//debug_module_02.svg" alt="image" />
+<p><img src="debug_module_02.svg" alt="image" />
 <span id="fig:abstract_sm" label="fig:abstract_sm">[fig:abstract_sm]</span></p>
 <h2 id="systembusaccess"><span class="header-section-number">4.9</span> System Bus Access</h2>
 <p>A debugger can access memory from a hart’s point of view using a Program Buffer or
@@ -329,7 +329,7 @@ The System Bus Access block uses physical addresses.</p>
 accesses. Table <a href="debug_module.html#tab:sbdatabits" data-reference-type="ref" data-reference="tab:sbdatabits">1.3</a> shows which bits in <span>sbdata</span> are used
 for each access size.</p>
 <figure>
-<img src="tmp.v0.13-release//debug_module_03.svg" alt="System Bus Data Bits" id="tab:sbdatabits" /><figcaption>System Bus Data Bits<span label="tab:sbdatabits"></span></figcaption>
+<img src="debug_module_03.svg" alt="System Bus Data Bits" id="tab:sbdatabits" /><figcaption>System Bus Data Bits<span label="tab:sbdatabits"></span></figcaption>
 </figure>
 <p>Depending on the microarchitecture, data accessed through System Bus Access may
 not always be coherent with that observed by each hart. It is up to the

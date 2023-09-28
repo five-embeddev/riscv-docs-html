@@ -46,7 +46,7 @@ preserve the sign-extension property. A few new instructions
 performance for 32-bit values.</p>
 </div>
 <h4 id="integer-register-immediate-instructions" class="unnumbered">Integer Register-Immediate Instructions</h4>
-<p><img src="tmp.IMFDQC-Ratification-20190305//rv64_00.svg" alt="image" /></p>
+<p><img src="rv64_00.svg" alt="image" /></p>
 <p>ADDIW is an RV64I instruction that adds the sign-extended 12-bit
 immediate to register <span><em>rs1</em></span> and produces the proper sign-extension
 of a 32-bit result in <span><em>rd</em></span>. Overflows are ignored and the result
@@ -54,7 +54,7 @@ is the low 32 bits of the result sign-extended to 64 bits. Note,
 ADDIW <span><em>rd, rs1, 0</em></span> writes the sign-extension of the lower 32 bits
 of register <span><em>rs1</em></span> into register <span><em>rd</em></span> (assembler pseudoinstruction
 SEXT.W).</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//rv64_01.svg" alt="image" /></p>
+<p><img src="rv64_01.svg" alt="image" /></p>
 <p>Shifts by a constant are encoded as a specialization of the I-type
 format using the same instruction opcode as RV32I. The operand to be
 shifted is in <span><em>rs1</em></span>, and the shift amount is encoded in the lower
@@ -72,7 +72,7 @@ with <span class="math inline"><em>i</em><em>m</em><em>m</em>[5] ≠ 0</span
 cause illegal instruction exceptions, whereas now they are marked as
 reserved. This is a backwards-compatible change.</p>
 </div>
-<p><img src="tmp.IMFDQC-Ratification-20190305//rv64_02.svg" alt="image" /></p>
+<p><img src="rv64_02.svg" alt="image" /></p>
 <p>LUI (load upper immediate) uses the same opcode as RV32I. LUI places
 the 20-bit U-immediate into bits 31–12 of register <span><em>rd</em></span> and
 places zero in the lowest 12 bits. The 32-bit result is
@@ -84,7 +84,7 @@ low-order zero bits to the 20-bit U-immediate, sign-extends the result
 to 64 bits, then adds it to the <span>pc</span> and places the result in
 register <span><em>rd</em></span>.</p>
 <h4 id="integer-register-register-operations" class="unnumbered">Integer Register-Register Operations</h4>
-<p><img src="tmp.IMFDQC-Ratification-20190305//rv64_03.svg" alt="image" /></p>
+<p><img src="rv64_03.svg" alt="image" /></p>
 <p>ADDW and SUBW are RV64I-only instructions that are defined analogously
 to ADD and SUB but operate on 32-bit values and produce signed 32-bit
 results. Overflows are ignored, and the low 32-bits of the result is
@@ -99,8 +99,8 @@ results. The shift amount is given by <span><em>rs2[4:0]</em></span>.</p>
 <h2 id="load-and-store-instructions"><span class="header-section-number">6.3</span> Load and Store Instructions</h2>
 <p>RV64I extends the address space to 64 bits. The execution environment
 will define what portions of the address space are legal to access.</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//rv64_04.svg" alt="image" /></p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//rv64_05.svg" alt="image" /></p>
+<p><img src="rv64_04.svg" alt="image" /></p>
+<p><img src="rv64_05.svg" alt="image" /></p>
 <p>The LD instruction loads a 64-bit value from memory into register <span>
 <em>rd</em></span> for RV64I.</p>
 <p>The LW instruction loads a 32-bit value from memory and sign-extends
@@ -120,7 +120,7 @@ space is reserved for standard HINTs, but none are presently defined. The
 remainder of the HINT space is reserved for custom HINTs: no standard HINTs
 will ever be defined in this subspace.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//rv64_06.svg" alt="RV64I HINT instructions." id="tab:rv64i-hints" /><figcaption>RV64I HINT instructions.<span label="tab:rv64i-hints"></span></figcaption>
+<img src="rv64_06.svg" alt="RV64I HINT instructions." id="tab:rv64i-hints" /><figcaption>RV64I HINT instructions.<span label="tab:rv64i-hints"></span></figcaption>
 </figure>
 
 </body>

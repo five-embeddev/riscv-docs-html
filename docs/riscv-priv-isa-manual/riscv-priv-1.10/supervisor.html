@@ -49,10 +49,10 @@ formatted as shown in Figure <a href="supervisor.html#sstatusreg-rv32" data-ref
 Figure <a href="supervisor.html#sstatusreg" data-reference-type="ref" data-reference="sstatusreg">1.2</a> for RV64 and RV128. The <span>sstatus</span>
 register keeps track of the processor’s current operating state.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_00.svg" alt="Supervisor-mode status register (sstatus) for RV32." id="sstatusreg-rv32" /><figcaption>Supervisor-mode status register (<span>sstatus</span>) for RV32.<span label="sstatusreg-rv32"></span></figcaption>
+<img src="supervisor_00.svg" alt="Supervisor-mode status register (sstatus) for RV32." id="sstatusreg-rv32" /><figcaption>Supervisor-mode status register (<span>sstatus</span>) for RV32.<span label="sstatusreg-rv32"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_01.svg" alt="Supervisor-mode status register (sstatus) for RV64 and RV128." id="sstatusreg" /><figcaption>Supervisor-mode status register (<span>sstatus</span>) for RV64 and RV128.<span label="sstatusreg"></span></figcaption>
+<img src="supervisor_01.svg" alt="Supervisor-mode status register (sstatus) for RV64 and RV128." id="sstatusreg" /><figcaption>Supervisor-mode status register (<span>sstatus</span>) for RV64 and RV128.<span label="sstatusreg"></span></figcaption>
 </figure>
 <p>The SPP bit indicates the privilege level at which a hart was executing before
 entering supervisor mode. When a trap is taken, SPP is set to 0 if the trap
@@ -115,7 +115,7 @@ SUM.</p>
 trap vector configuration, consisting of a vector base address (BASE) and a
 vector mode (MODE).</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_02.svg" alt="Supervisor trap vector base address register (stvec)." id="stvecreg" /><figcaption>Supervisor trap vector base address register (<span>stvec</span>).<span label="stvecreg"></span></figcaption>
+<img src="supervisor_02.svg" alt="Supervisor trap vector base address register (stvec)." id="stvecreg" /><figcaption>Supervisor trap vector base address register (<span>stvec</span>).<span label="stvecreg"></span></figcaption>
 </figure>
 <p>The BASE field in <span>stvec</span> is a <strong>WARL</strong> field that can hold any valid virtual
 or physical address, subject to the following alignment constraints: the
@@ -169,10 +169,10 @@ user-mode software interrupts are either disabled or delegated to user mode.</p>
 information on pending interrupts, while <span>sie</span> is the corresponding
 XLEN-bit read/write register containing interrupt enable bits.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_03.svg" alt="Supervisor interrupt-pending register (sip)." id="sipreg" /><figcaption>Supervisor interrupt-pending register (<span>sip</span>).<span label="sipreg"></span></figcaption>
+<img src="supervisor_03.svg" alt="Supervisor interrupt-pending register (sip)." id="sipreg" /><figcaption>Supervisor interrupt-pending register (<span>sip</span>).<span label="sipreg"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_04.svg" alt="Supervisor interrupt-enable register (sie)." id="siereg" /><figcaption>Supervisor interrupt-enable register (<span>sie</span>).<span label="siereg"></span></figcaption>
+<img src="supervisor_04.svg" alt="Supervisor interrupt-enable register (sie)." id="siereg" /><figcaption>Supervisor interrupt-enable register (<span>sie</span>).<span label="siereg"></span></figcaption>
 </figure>
 <p>Three types of interrupts are defined: software interrupts, timer interrupts,
 and external interrupts. A supervisor-level software interrupt is triggered
@@ -241,7 +241,7 @@ counter values.</p>
 of the real-time counter, <span>time</span>.</p>
 <h3 id="counter-enable-register-scounteren"><span class="header-section-number">4.1.7</span> Counter-Enable Register (<span>scounteren</span>)</h3>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_05.svg" alt="Counter-enable register (scounteren)." id="scounteren" /><figcaption>Counter-enable register (<span>scounteren</span>).<span label="scounteren"></span></figcaption>
+<img src="supervisor_05.svg" alt="Counter-enable register (scounteren)." id="scounteren" /><figcaption>Counter-enable register (<span>scounteren</span>).<span label="scounteren"></span></figcaption>
 </figure>
 <p>The counter-enable register <span>scounteren</span> controls
 the availability of the
@@ -263,7 +263,7 @@ hart is executing user code. At the beginning of a trap handler, <span>
 sscratch</span> is swapped with a user register to provide an initial
 working register.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_06.svg" alt="Supervisor Scratch Register." id="kregs" /><figcaption>Supervisor Scratch Register.<span label="kregs"></span></figcaption>
+<img src="supervisor_06.svg" alt="Supervisor Scratch Register." id="kregs" /><figcaption>Supervisor Scratch Register.<span label="kregs"></span></figcaption>
 </figure>
 <h3 id="supervisor-exception-program-counter-sepc"><span class="header-section-number">4.1.9</span> Supervisor Exception Program Counter (<span>sepc</span>)</h3>
 <p><span>sepc</span> is an XLEN-bit read/write register formatted as shown in
@@ -280,7 +280,7 @@ address of the instruction that encountered the exception. Otherwise,
 <span>sepc</span> is never written by the implementation, though it may be
 explicitly written by software.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_07.svg" alt="Supervisor exception program counter register." id="epcreg" /><figcaption>Supervisor exception program counter register.<span label="epcreg"></span></figcaption>
+<img src="supervisor_07.svg" alt="Supervisor exception program counter register." id="epcreg" /><figcaption>Supervisor exception program counter register.<span label="epcreg"></span></figcaption>
 </figure>
 <h3 id="supervisor-cause-register-scause"><span class="header-section-number">4.1.10</span> Supervisor Cause Register (<span>scause</span>)</h3>
 <p>The <span>scause</span> register is an XLEN-bit read-write register formatted as
@@ -294,7 +294,7 @@ lists the possible exception codes for the current supervisor ISAs, in
 descending order of priority. The Exception Code is an <strong>WLRL</strong> field,
 so is only guaranteed to hold supported exception codes.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_08.svg" alt="Supervisor Cause register scause." id="scausereg" /><figcaption>Supervisor Cause register <span>scause</span>.<span label="scausereg"></span></figcaption>
+<img src="supervisor_08.svg" alt="Supervisor Cause register scause." id="scausereg" /><figcaption>Supervisor Cause register <span>scause</span>.<span label="scausereg"></span></figcaption>
 </figure>
 <table>
 <thead>
@@ -466,7 +466,7 @@ For other exceptions, <span>stval</span> is
 set to zero, but a future standard may redefine <span>stval</span>’s setting for
 other exceptions.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_09.svg" alt="Supervisor Trap Value register." id="stvalreg" /><figcaption>Supervisor Trap Value register.<span label="stvalreg"></span></figcaption>
+<img src="supervisor_09.svg" alt="Supervisor Trap Value register." id="stvalreg" /><figcaption>Supervisor Trap Value register.<span label="stvalreg"></span></figcaption>
 </figure>
 <p>For instruction-fetch access faults and page faults on RISC-V systems with
 variable-length instructions, <span>stval</span> will point to the portion
@@ -500,14 +500,14 @@ an address space identifier (ASID), which facilitates address-translation
 fences on a per-address-space basis; and the MODE field, which selects the
 current address-translation scheme.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_10.svg" alt="RV32 Supervisor address translation and protection register satp." id="rv32satp" /><figcaption>RV32 Supervisor address translation and protection register <span>satp</span>.<span label="rv32satp"></span></figcaption>
+<img src="supervisor_10.svg" alt="RV32 Supervisor address translation and protection register satp." id="rv32satp" /><figcaption>RV32 Supervisor address translation and protection register <span>satp</span>.<span label="rv32satp"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>Storing a PPN in <span>satp</span>, rather than a physical address, supports
 a physical address space larger than <span>4</span><span>GiB</span> for RV32.</p>
 </div>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_11.svg" alt="RV64 Supervisor address translation and protection register satp, for MODE values Sv39 and Sv48." id="rv64satp" /><figcaption>RV64 Supervisor address translation and protection register <span>satp</span>, for MODE
+<img src="supervisor_11.svg" alt="RV64 Supervisor address translation and protection register satp, for MODE values Sv39 and Sv48." id="rv64satp" /><figcaption>RV64 Supervisor address translation and protection register <span>satp</span>, for MODE
 values Sv39 and Sv48.<span label="rv64satp"></span></figcaption>
 </figure>
 <div class=commentary>
@@ -535,7 +535,7 @@ for future use and may define different interpretations of the other fields in
 and if <span>satp</span> is written with an unsupported MODE, the entire write has
 no effect; no fields in <span>satp</span> are modified.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_12.svg" alt="Encoding of satp MODE field." id="tab:satp-mode" /><figcaption>Encoding of <span>satp</span> MODE field.<span label="tab:satp-mode"></span></figcaption>
+<img src="supervisor_12.svg" alt="Encoding of satp MODE field." id="tab:satp-mode" /><figcaption>Encoding of <span>satp</span> MODE field.<span label="tab:satp-mode"></span></figcaption>
 </figure>
 <p>The number of supervisor physical address bits is implementation-defined; any
 unimplemented address bits are hardwired to zero in the <span>satp</span> register.
@@ -575,7 +575,7 @@ a sufficiently large ASID space.</p>
 Section <a href="machine.html#otherpriv" data-reference-type="ref" data-reference="otherpriv">[otherpriv]</a>, one new supervisor-level instruction is
 provided.</p>
 <h3 id="sec:sfence.vma"><span class="header-section-number">4.2.1</span> Supervisor Memory-Management Fence Instruction</h3>
-<p><img src="tmp.riscv-priv-1.10//supervisor_13.svg" alt="image" /></p>
+<p><img src="supervisor_13.svg" alt="image" /></p>
 <p>The supervisor memory-management fence instruction SFENCE.VMA is used to
 synchronize updates to in-memory memory-management data structures with
 current execution. Instruction execution causes implicit reads and writes to
@@ -668,13 +668,13 @@ resulting supervisor-level physical addresses are then checked using
 any physical memory protection structures (Sections <a href="machine.html#sec:pmp" data-reference-type="ref" data-reference="sec:pmp">[sec:pmp]</a>),
 before being directly converted to machine-level physical addresses.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_14.svg" alt="Sv32 virtual address." id="sv32va" /><figcaption>Sv32 virtual address.<span label="sv32va"></span></figcaption>
+<img src="supervisor_14.svg" alt="Sv32 virtual address." id="sv32va" /><figcaption>Sv32 virtual address.<span label="sv32va"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_15.svg" alt="Sv32 physical address." id="rv32va" /><figcaption>Sv32 physical address.<span label="rv32va"></span></figcaption>
+<img src="supervisor_15.svg" alt="Sv32 physical address." id="rv32va" /><figcaption>Sv32 physical address.<span label="rv32va"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_16.svg" alt="Sv32 page table entry." id="sv32pte" /><figcaption>Sv32 page table entry.<span label="sv32pte"></span></figcaption>
+<img src="supervisor_16.svg" alt="Sv32 page table entry." id="sv32pte" /><figcaption>Sv32 page table entry.<span label="sv32pte"></span></figcaption>
 </figure>
 <p>Sv32 page tables consist of <span class="math inline">2<sup>10</sup></span> page-table entries (PTEs), each
 of four bytes. A page table is exactly the size of a page and must
@@ -872,13 +872,13 @@ a page-fault exception will occur. The 27-bit VPN is translated into a
 44-bit PPN via a three-level page table, while the 12-bit page offset
 is untranslated.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_17.svg" alt="Sv39 virtual address." id="sv39va" /><figcaption>Sv39 virtual address.<span label="sv39va"></span></figcaption>
+<img src="supervisor_17.svg" alt="Sv39 virtual address." id="sv39va" /><figcaption>Sv39 virtual address.<span label="sv39va"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_18.svg" alt="Sv39 physical address." id="sv39pa" /><figcaption>Sv39 physical address.<span label="sv39pa"></span></figcaption>
+<img src="supervisor_18.svg" alt="Sv39 physical address." id="sv39pa" /><figcaption>Sv39 physical address.<span label="sv39pa"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_19.svg" alt="Sv39 page table entry." id="sv39pte" /><figcaption>Sv39 page table entry.<span label="sv39pte"></span></figcaption>
+<img src="supervisor_19.svg" alt="Sv39 page table entry." id="sv39pte" /><figcaption>Sv39 page table entry.<span label="sv39pte"></span></figcaption>
 </figure>
 <p>Sv39 page tables contain <span class="math inline">2<sup>9</sup></span> page table entries (PTEs), eight
 bytes each. A page table is exactly the size of a page and must
@@ -927,13 +927,13 @@ a page-fault exception will occur. The 36-bit VPN is translated into a
 44-bit PPN via a four-level page table, while the 12-bit page offset
 is untranslated.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_20.svg" alt="Sv48 virtual address." id="sv48va" /><figcaption>Sv48 virtual address.<span label="sv48va"></span></figcaption>
+<img src="supervisor_20.svg" alt="Sv48 virtual address." id="sv48va" /><figcaption>Sv48 virtual address.<span label="sv48va"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_21.svg" alt="Sv48 physical address." id="sv48pa" /><figcaption>Sv48 physical address.<span label="sv48pa"></span></figcaption>
+<img src="supervisor_21.svg" alt="Sv48 physical address." id="sv48pa" /><figcaption>Sv48 physical address.<span label="sv48pa"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//supervisor_22.svg" alt="Sv48 page table entry." id="sv48pte" /><figcaption>Sv48 page table entry.<span label="sv48pte"></span></figcaption>
+<img src="supervisor_22.svg" alt="Sv48 page table entry." id="sv48pte" /><figcaption>Sv48 page table entry.<span label="sv48pte"></span></figcaption>
 </figure>
 <p>The PTE format for Sv48 is shown in Figure <a href="supervisor.html#sv48pte" data-reference-type="ref" data-reference="sv48pte">1.22</a>. Bits 9–0
 have the same meaning as for Sv32. Any level of PTE may be a leaf

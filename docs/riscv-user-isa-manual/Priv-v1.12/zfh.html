@@ -43,8 +43,8 @@ narrow their results—e.g., half<span class="math inline">+</span>single<span c
 <h2 id="half-precision-load-and-store-instructions"><span class="header-section-number">15.1</span> Half-Precision Load and Store Instructions</h2>
 <p>New 16-bit variants of LOAD-FP and STORE-FP instructions are added,
 encoded with a new value for the funct3 width field.</p>
-<p><img src="tmp.Priv-v1.12//zfh_00.svg" alt="image" /></p>
-<p><img src="tmp.Priv-v1.12//zfh_01.svg" alt="image" /></p>
+<p><img src="zfh_00.svg" alt="image" /></p>
+<p><img src="zfh_01.svg" alt="image" /></p>
 <p>FLH and FSH are only guaranteed to execute atomically if the effective address
 is naturally aligned.</p>
 <p>FLH and FSH do not modify the bits being transferred; in particular, the
@@ -88,8 +88,8 @@ instructions, as shown in Table <a href="zfh.html#tab:fpextfmth" data-reference
 <p>The half-precision floating-point computational instructions are
 defined analogously to their single-precision counterparts, but operate on
 half-precision operands and produce half-precision results.</p>
-<p><img src="tmp.Priv-v1.12//zfh_02.svg" alt="image" /></p>
-<p><img src="tmp.Priv-v1.12//zfh_03.svg" alt="image" /></p>
+<p><img src="zfh_02.svg" alt="image" /></p>
+<p><img src="zfh_03.svg" alt="image" /></p>
 <h2 id="half-precision-convert-and-move-instructions"><span class="header-section-number">15.3</span> Half-Precision Convert and Move Instructions</h2>
 <p>New floating-point-to-integer and integer-to-floating-point conversion
 instructions are added. These instructions are defined analogously to the
@@ -100,7 +100,7 @@ FCVT.H.L converts a 32-bit or 64-bit signed integer, respectively, into a
 half-precision floating-point number. FCVT.WU.H, FCVT.LU.H, FCVT.H.WU, and
 FCVT.H.LU variants convert to or from unsigned integer values. FCVT.L[U].H and
 FCVT.H.L[U] are RV64-only instructions.</p>
-<p><img src="tmp.Priv-v1.12//zfh_04.svg" alt="image" /></p>
+<p><img src="zfh_04.svg" alt="image" /></p>
 <p>New floating-point-to-floating-point conversion instructions are added. These
 instructions are defined analogously to the double-precision
 floating-point-to-floating-point conversion instructions.
@@ -112,11 +112,11 @@ vice-versa, respectively.
 If the Q extension is present, FCVT.Q.H or FCVT.H.Q converts a half-precision
 floating-point number to a quad-precision floating-point number, or
 vice-versa, respectively.</p>
-<p><img src="tmp.Priv-v1.12//zfh_05.svg" alt="image" /></p>
+<p><img src="zfh_05.svg" alt="image" /></p>
 <p>Floating-point to floating-point sign-injection instructions, FSGNJ.H,
 FSGNJN.H, and FSGNJX.H are defined analogously to the single-precision
 sign-injection instruction.</p>
-<p><img src="tmp.Priv-v1.12//zfh_06.svg" alt="image" /></p>
+<p><img src="zfh_06.svg" alt="image" /></p>
 <p>Instructions are provided to move bit patterns between the floating-point and
 integer registers.
 FMV.X.H moves the half-precision value in floating-point register <span><em>rs1</em></span> to
@@ -128,17 +128,17 @@ encoding from the lower 16 bits of integer register <span><em>rs1</em></span> to
 floating-point register <span><em>rd</em></span>, NaN-boxing the result.</p>
 <p>FMV.X.H and FMV.H.X do not modify the bits being transferred; in particular,
 the payloads of non-canonical NaNs are preserved.</p>
-<p><img src="tmp.Priv-v1.12//zfh_07.svg" alt="image" /></p>
+<p><img src="zfh_07.svg" alt="image" /></p>
 <h2 id="half-precision-floating-point-compare-instructions"><span class="header-section-number">15.4</span> Half-Precision Floating-Point Compare Instructions</h2>
 <p>The half-precision floating-point compare instructions are
 defined analogously to their single-precision counterparts, but operate on
 half-precision operands.</p>
-<p><img src="tmp.Priv-v1.12//zfh_08.svg" alt="image" /></p>
+<p><img src="zfh_08.svg" alt="image" /></p>
 <h2 id="half-precision-floating-point-classify-instruction"><span class="header-section-number">15.5</span> Half-Precision Floating-Point Classify Instruction</h2>
 <p>The half-precision floating-point classify instruction, FCLASS.H, is
 defined analogously to its single-precision counterpart, but operates on
 half-precision operands.</p>
-<p><img src="tmp.Priv-v1.12//zfh_09.svg" alt="image" /></p>
+<p><img src="zfh_09.svg" alt="image" /></p>
 <h2 id="zfhmin-standard-extension-for-minimal-half-precision-floating-point-support"><span class="header-section-number">15.6</span> “Zfhmin” Standard Extension for Minimal Half-Precision Floating-Point Support</h2>
 <p><span><strong>Warning! This draft specification may change before being
 accepted as standard by RISC-V International.</strong></span></p>

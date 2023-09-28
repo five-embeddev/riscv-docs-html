@@ -83,7 +83,7 @@ atomicity, embodied in local processor ordering rules together with
 single-writer cache coherence protocols.</p>
 </div>
 <h2 id="load-reservedstore-conditional-instructions"><span class="header-section-number">9.2</span> Load-Reserved/Store-Conditional Instructions</h2>
-<p><img src="tmp.riscv-user-2.2//a_00.svg" alt="image" /></p>
+<p><img src="a_00.svg" alt="image" /></p>
 <p>Complex atomic memory operations on a single memory word are performed
 with the load-reserved (LR) and store-conditional (SC) instructions.
 LR loads a word from the address in <span><em>rs1</em></span>, places the
@@ -190,7 +190,7 @@ using LR/SC to implement a compare-and-swap function is shown in
 Figure <a href="a.html#cas" data-reference-type="ref" data-reference="cas">1.1</a>. If inlined, compare-and-swap functionality need
 only take three instructions.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//a_01.svg" alt="Sample code for compare-and-swap function using LR/SC." id="cas" /><figcaption>Sample code for compare-and-swap function using LR/SC.<span label="cas"></span></figcaption>
+<img src="a_01.svg" alt="Sample code for compare-and-swap function using LR/SC." id="cas" /><figcaption>Sample code for compare-and-swap function using LR/SC.<span label="cas"></span></figcaption>
 </figure>
 <p>An SC instruction can never be observed by another RISC-V hart
 before the immediately preceding LR. Due to the atomic nature of the
@@ -216,7 +216,7 @@ memory buffer along the lines of the original transactional memory
 proposals as an optional standard extension “T”.</p>
 </div>
 <h2 id="atomic-memory-operations"><span class="header-section-number">9.3</span> Atomic Memory Operations</h2>
-<p><img src="tmp.riscv-user-2.2//a_02.svg" alt="image" /></p>
+<p><img src="a_02.svg" alt="image" /></p>
 <p>The atomic memory operation (AMO) instructions perform
 read-modify-write operations for multiprocessor synchronization and
 are encoded with an R-type instruction format. These AMO instructions
@@ -268,7 +268,7 @@ first AMO is marked <span><em>aq</em></span> to order the lock acquisition befor
 critical section, and the second AMO is marked <span><em>rl</em></span> to order
 the critical section before the lock relinquishment.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//a_03.svg" alt="Sample code for mutual exclusion. a0 contains the address of the lock." id="critical" /><figcaption>Sample code for mutual exclusion. <span>a0</span> contains the address of the lock.<span label="critical"></span></figcaption>
+<img src="a_03.svg" alt="Sample code for mutual exclusion. a0 contains the address of the lock." id="critical" /><figcaption>Sample code for mutual exclusion. <span>a0</span> contains the address of the lock.<span label="critical"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>We recommend the use of the AMO Swap idiom shown above for both lock

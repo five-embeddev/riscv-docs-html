@@ -42,7 +42,7 @@ Figure <a href="memory.html#fig:litmus:sample" data-reference-type="ref" data-r
 As a convention for this figure and for all figures that follow in this chapter, we assume that <span>s0</span>–<span>s2</span> are pre-set to the same value in all harts and that <span>s0</span> holds the address labeled <span>x</span>, <span>s1</span> holds <span>y</span>, and <span>s2</span> holds <span>z</span>, where <span>x</span>, <span>y</span>, and <span>z</span> are disjoint memory locations aligned to 8 byte boundaries.
 Each figure shows the litmus test code on the left, and a visualization of one particular valid or invalid execution on the right.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_00.svg" alt="A sample litmus test and one forbidden execution (a0=1)." id="fig:litmus:sample" /><figcaption>A sample litmus test and one forbidden execution (<span>a0=1</span>).<span label="fig:litmus:sample"></span></figcaption>
+<img src="memory_00.svg" alt="A sample litmus test and one forbidden execution (a0=1)." id="fig:litmus:sample" /><figcaption>A sample litmus test and one forbidden execution (<span>a0=1</span>).<span label="fig:litmus:sample"></span></figcaption>
 </figure>
 <p>Litmus tests are used to understand the implications of the memory model in specific concrete situations.
 For example, in the litmus test of Figure <a href="memory.html#fig:litmus:sample" data-reference-type="ref" data-reference="fig:litmus:sample">1.1</a>, the final value of <span>a0</span> in the first hart can be either 2, 4, or 5, depending on the dynamic interleaving of the instruction stream from each hart at runtime.
@@ -128,13 +128,13 @@ This discrepancy captures (among other things) the reordering effects of bufferi
 For example, <span class="math inline"><em>b</em></span> may have returned a value from a store in the store buffer, while <span class="math inline"><em>a</em></span> may have ignored that younger store and read an older value from memory instead.
 To account for this, at the time each load performs, the value it returns is determined by the load value axiom, not just strictly by determining the most recent store to the same address in the global memory order, as described below.</p>
 <h3 id="sec:memory:loadvalueaxiom"></h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_01.svg" alt="image" /></p>
+<p><img src="memory_01.svg" alt="image" /></p>
 <p>Preserved program order is <span><em>not</em></span> required to respect the ordering of a store followed by a load to an overlapping address.
 This complexity arises due to the ubiquity of store buffers in nearly all implementations.
 Informally, the load may perform (return a value) by forwarding from the store while the store is still in the store buffer, and hence before the store itself performs (writes back to globally visible memory).
 Any other hart will therefore observe the load as performing before the store.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_02.svg" alt="A store buffer forwarding litmus test (outcome permitted)" id="fig:litmus:storebuffer" /><figcaption>A store buffer forwarding litmus test (outcome permitted)<span label="fig:litmus:storebuffer"></span></figcaption>
+<img src="memory_02.svg" alt="A store buffer forwarding litmus test (outcome permitted)" id="fig:litmus:storebuffer" /><figcaption>A store buffer forwarding litmus test (outcome permitted)<span label="fig:litmus:storebuffer"></span></figcaption>
 </figure>
 <p>Consider the litmus test of Figure <a href="memory.html#fig:litmus:storebuffer" data-reference-type="ref" data-reference="fig:litmus:storebuffer">1.2</a>.
 When running this program on an implementation with store buffers, it is possible to arrive at the final outcome
@@ -170,7 +170,7 @@ Even though (b) precedes (a) in the global memory order, (a) will still be visib
 Therefore, even if (b) precedes (a) in the global memory order, (b) should return the value written by (a) because (a) precedes (b) in program order.
 Likewise for (e) and (f).</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_03.svg" alt="The “PPOCA” store buffer forwarding litmus test (outcome permitted)" id="fig:litmus:ppoca" /><figcaption>The “PPOCA” store buffer forwarding litmus test (outcome permitted)<span label="fig:litmus:ppoca"></span></figcaption>
+<img src="memory_03.svg" alt="The “PPOCA” store buffer forwarding litmus test (outcome permitted)" id="fig:litmus:ppoca" /><figcaption>The “PPOCA” store buffer forwarding litmus test (outcome permitted)<span label="fig:litmus:ppoca"></span></figcaption>
 </figure>
 <p>Another test that highlights the behavior of store buffers is shown in Figure <a href="memory.html#fig:litmus:ppoca" data-reference-type="ref" data-reference="fig:litmus:ppoca">1.3</a>.
 In this example, (d) is ordered before (e) because of the control dependency, and (f) is ordered before (g) because of the address dependency.
@@ -188,7 +188,7 @@ This could correspond to the following sequence of events:</p>
 <li><p>(e) drains from the store buffer to memory</p></li>
 </ul>
 <h3 id="sec:memory:atomicityaxiom"></h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_04.svg" alt="image" /></p>
+<p><img src="memory_04.svg" alt="image" /></p>
 <p>The RISC-V architecture decouples the notion of atomicity from the notion of ordering. Unlike architectures such as TSO, RISC-V atomics under RVWMO do not impose any ordering requirements by default. Ordering semantics are only guaranteed by the PPO rules that otherwise apply.</p>
 <p>RISC-V contains two types of atomics: AMOs and LR/SC pairs.
 These conceptually behave differently, in the following way.
@@ -196,7 +196,7 @@ LR/SC behave as if the old value is brought up to the core, modified, and writte
 AMOs on the other hand conceptually behave as if they are performed directly in memory.
 AMOs are therefore inherently atomic, while LR/SC pairs are atomic in the slightly different sense that the memory location in question will not be modified by another hart during the time the original hart holds the reservation.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_05.svg" alt="In all four (independent) code snippets, the store-conditional (c) is permitted but not guaranteed to succeed" id="fig:litmus:lrsdsc" /><figcaption>In all four (independent) code snippets, the store-conditional (c) is permitted but not guaranteed to succeed<span label="fig:litmus:lrsdsc"></span></figcaption>
+<img src="memory_05.svg" alt="In all four (independent) code snippets, the store-conditional (c) is permitted but not guaranteed to succeed" id="fig:litmus:lrsdsc" /><figcaption>In all four (independent) code snippets, the store-conditional (c) is permitted but not guaranteed to succeed<span label="fig:litmus:lrsdsc"></span></figcaption>
 </figure>
 <p>The atomicity axiom forbids stores from other harts from being interleaved in global memory order between an LR and the SC paired with that LR.
 The atomicity axiom does not forbid loads from being interleaved between the paired operations in program order or in the global memory order, nor does it forbid stores from the same hart or stores to non-overlapping locations from appearing between the paired operations in either program order or in the global memory order.
@@ -206,7 +206,7 @@ This way, a memory system that tracks memory accesses at cache line granularity 
 <p>The atomicity axiom also technically supports cases in which the LR and SC touch different addresses and/or use different access sizes; however, use cases for such behaviors are expected to be rare in practice.
 Likewise, scenarios in which stores from the same hart between an LR/SC pair actually overlap the memory location(s) referenced by the LR or SC are expected to be rare compared to scenarios where the intervening store may simply fall onto the same cache line.</p>
 <h3 id="sec:memory:progress"></h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_06.svg" alt="image" /></p>
+<p><img src="memory_06.svg" alt="image" /></p>
 <p>The progress axiom ensures a minimal forward progress guarantee.
 It ensures that stores from one hart will eventually be made visible to other harts in the system in a finite amount of time, and that loads from other harts will eventually be able to read those values (or successors thereof).
 Without this rule, it would be legal, for example, for a spinlock to spin infinitely on a value, even with a store from another hart waiting to unlock the spinlock.</p>
@@ -215,7 +215,7 @@ Any stronger notions of fairness are up to the rest of the ISA and/or up to the 
 <p>The forward progress axiom will in almost all cases be naturally satisfied by any standard cache coherence protocol.
 Implementations with non-coherent caches may have to provide some other mechanism to ensure the eventual visibility of all stores (or successors thereof) to all harts.</p>
 <h3 id="sec:memory:overlap">Overlapping-Address Orderings (Rules <a href="#ppo:-&gt;st" data-reference-type="ref" data-reference="ppo:-&gt;st">[ppo:-&gt;st]</a>–<a href="rvwmo.html#ppo:amoforward" data-reference-type="ref" data-reference="ppo:amoforward">[ppo:amoforward]</a>)</h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_07.svg" alt="image" /></p>
+<p><img src="memory_07.svg" alt="image" /></p>
 <p>Same-address orderings where the latter is a store are straightforward: a load or store can never be reordered with a later store to an overlapping memory location. From a microarchitecture perspective, generally speaking, it is difficult or impossible to undo a speculatively reordered store if the speculation turns out to be invalid, so such behavior is simply disallowed by the model.
 Same-address orderings from a store to a later load, on the other hand, do not need to be enforced.
 As discussed in Section <a href="memory.html#sec:memory:loadvalueaxiom" data-reference-type="ref" data-reference="sec:memory:loadvalueaxiom">1.3.2</a>, this reflects the observable behavior of implementations that forward values from buffered stores to later loads.</p>
@@ -224,7 +224,7 @@ The basic requirement is that a younger load must not return a value that is old
 Some architectures in the past have relaxed same-address load-load ordering, but in hindsight this is generally considered to complicate the programming model too much, and so RVWMO requires CoRR ordering to be enforced.
 However, because the global memory order corresponds to the order in which loads perform rather than the ordering of the values being returned, capturing CoRR requirements in terms of the global memory order requires a bit of indirection.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_08.svg" alt="Litmus test MP+fence.w.w+fri-rfi-addr (outcome permitted)" id="fig:litmus:frirfi" /><figcaption>Litmus test MP+fence.w.w+fri-rfi-addr (outcome permitted)<span label="fig:litmus:frirfi"></span></figcaption>
+<img src="memory_08.svg" alt="Litmus test MP+fence.w.w+fri-rfi-addr (outcome permitted)" id="fig:litmus:frirfi" /><figcaption>Litmus test MP+fence.w.w+fri-rfi-addr (outcome permitted)<span label="fig:litmus:frirfi"></span></figcaption>
 </figure>
 <p>Consider the litmus test of Figure <a href="memory.html#fig:litmus:frirfi" data-reference-type="ref" data-reference="fig:litmus:frirfi">1.5</a>, which is one particular instance of the more general “fri-rfi” pattern.
 The term “fri-rfi” refers to the sequence (d), (e), (f): (d) “from-reads” (i.e., reads from an earlier write than) (e) which is the same hart, and (f) reads from (e) which is in the same hart.</p>
@@ -243,7 +243,7 @@ Note that even though (f) performs before (d), the value returned by (f) is newe
 Therefore, this execution is legal and does not violate the CoRR requirements.</p>
 <p>Likewise, if two back-to-back loads return the values written by the same store, then they may also appear out-of-order in the global memory order without violating CoRR. Note that this is not the same as saying that the two loads return the same value, since two different stores may write the same value.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_09.svg" alt="Litmus test RSW (outcome permitted)" id="fig:litmus:rsw" /><figcaption>Litmus test RSW (outcome permitted)<span label="fig:litmus:rsw"></span></figcaption>
+<img src="memory_09.svg" alt="Litmus test RSW (outcome permitted)" id="fig:litmus:rsw" /><figcaption>Litmus test RSW (outcome permitted)<span label="fig:litmus:rsw"></span></figcaption>
 </figure>
 <p>Consider the litmus test of Figure <a href="memory.html#fig:litmus:rsw" data-reference-type="ref" data-reference="fig:litmus:rsw">1.6</a>.
 The outcome <span>a0=1</span>, <span>a1=<span class="math inline"><em>v</em></span></span>, <span>a2=<span class="math inline"><em>v</em></span></span>, <span>a3=0</span> (where <span class="math inline"><em>v</em></span> is some value written by another hart) can be observed by allowing (g) and (h) to be reordered. This might be done speculatively, and the speculation can be justified by the microarchitecture (e.g., by snooping for cache invalidations and finding none) because replaying (h) after (g) would return the value written by the same store anyway.
@@ -262,7 +262,7 @@ This can occur, for example, when accesses of different sizes are used to access
 Note also that the base addresses of two overlapping memory operations need not necessarily be the same for two memory accesses to overlap.
 When misaligned memory accesses are being used, the overlapping-address PPO rules apply to each of the component memory accesses independently.</p>
 <h3 id="sec:mm:fence">Fences (Rule <a href="rvwmo.html#ppo:fence" data-reference-type="ref" data-reference="ppo:fence">[ppo:fence]</a>)</h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_10.svg" alt="image" /></p>
+<p><img src="memory_10.svg" alt="image" /></p>
 <p>By default, the FENCE instruction ensures that all memory accesses from instructions preceding the fence in program order (the “predecessor set”) appear earlier in the global memory order than memory accesses from instructions appearing after the fence in program order (the “successor set”).
 However, fences can optionally further restrict the predecessor set and/or the successor set to a smaller set of memory accesses in order to provide some speedup.
 Specifically, fences have PR, PW, SR, and SW bits which restrict the predecessor and/or successor sets.
@@ -283,18 +283,18 @@ Of the ten non-trivial options, only six are commonly used in practice:</p>
 Other combinations may have unknown or unexpected interactions with the memory model.</p>
 <p>Finally, we note that since RISC-V uses a multi-copy atomic memory model, programmers can reason about fences bits in a thread-local manner. There is no complex notion of “fence cumulativity” as found in memory models that are not multi-copy atomic.</p>
 <h3 id="sec:memory:acqrel">Explicit Synchronization (Rules <a href="rvwmo.html#ppo:acquire" data-reference-type="ref" data-reference="ppo:acquire">[ppo:acquire]</a>–<a href="rvwmo.html#ppo:pair" data-reference-type="ref" data-reference="ppo:pair">[ppo:pair]</a>)</h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_11.svg" alt="image" /></p>
+<p><img src="memory_11.svg" alt="image" /></p>
 <p>An <span><em>acquire</em></span> operation, as would be used at the start of a critical section, requires all memory operations following the acquire in program order to also follow the acquire in the global memory order.
 This ensures, for example, that all loads and stores inside the critical section are up to date with respect to the synchronization variable being used to protect it.
 Acquire ordering can be enforced in one of two ways: with an acquire annotation, which enforces ordering with respect to just the synchronization variable itself, or with a FENCE R,RW, which enforces ordering with respect to all previous loads.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_12.svg" alt="A spinlock with atomics" /><figcaption>A spinlock with atomics</figcaption>
+<img src="memory_12.svg" alt="A spinlock with atomics" /><figcaption>A spinlock with atomics</figcaption>
 </figure>
 <p><span id="fig:litmus:spinlock_atomics" label="fig:litmus:spinlock_atomics">[fig:litmus:spinlock_atomics]</span></p>
 <p>Consider Figure <a href="memory.html#fig:litmus:spinlock_atomics" data-reference-type="ref" data-reference="fig:litmus:spinlock_atomics">[fig:litmus:spinlock_atomics]</a>.
 Because this example uses <span><em>aq</em></span>, the loads and stores in the critical section are guaranteed to appear in the global memory order after the AMOSWAP used to acquire the lock. However, assuming <span>a0</span>, <span>a1</span>, and <span>a2</span> point to different memory locations, the loads and stores in the critical section may or may not appear after the “Arbitrary unrelated load” at the beginning of the example in the global memory order.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_13.svg" alt="A spinlock with fences" /><figcaption>A spinlock with fences</figcaption>
+<img src="memory_13.svg" alt="A spinlock with fences" /><figcaption>A spinlock with fences</figcaption>
 </figure>
 <p><span id="fig:litmus:spinlock_fences" label="fig:litmus:spinlock_fences">[fig:litmus:spinlock_fences]</span></p>
 <p>Now, consider the alternative in Figure <a href="memory.html#fig:litmus:spinlock_fences" data-reference-type="ref" data-reference="fig:litmus:spinlock_fences">[fig:litmus:spinlock_fences]</a>.
@@ -311,7 +311,7 @@ This will follow naturally from the common use of LR/SC to perform an atomic rea
 However, PPO rule <a href="rvwmo.html#ppo:pair" data-reference-type="ref" data-reference="ppo:pair">[ppo:pair]</a> also applies even when the value being stored does not syntactically depend on the value returned by the paired LR.</p>
 <p>Lastly, we note that just as with fences, programmers need not worry about “cumulativity” when analyzing ordering annotations.</p>
 <h3 id="sec:memory:dependencies">Syntactic Dependencies (Rules <a href="rvwmo.html#ppo:addr" data-reference-type="ref" data-reference="ppo:addr">[ppo:addr]</a>–<a href="rvwmo.html#ppo:ctrl" data-reference-type="ref" data-reference="ppo:ctrl">[ppo:ctrl]</a>)</h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_14.svg" alt="image" /></p>
+<p><img src="memory_14.svg" alt="image" /></p>
 <p>Dependencies from a load to a later memory operation in the same hart are respected by the RVWMO memory model.
 The Alpha memory model was notable for choosing <span><em>not</em></span> to enforce the ordering of such dependencies, but most modern hardware and software memory models consider allowing dependent instructions to be reordered too confusing and counterintuitive.
 Furthermore, modern code sometimes intentionally uses such dependencies as a particularly lightweight ordering enforcement mechanism.</p>
@@ -325,7 +325,7 @@ In the case of unconditional jumps, the value written into the destination regis
 (b) fadd f6,f4,f5
 (c) csrrs a0,fflags,x0</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_15.svg" alt="(c) has a syntactic dependency on both (a) and (b) via fflags, a destination register that both (a) and (b) implicitly accumulate into" id="fig:litmus:fflags" /><figcaption>(c) has a syntactic dependency on both (a) and (b) via <span>fflags</span>, a destination register that both (a) and (b) implicitly accumulate into<span label="fig:litmus:fflags"></span></figcaption>
+<img src="memory_15.svg" alt="(c) has a syntactic dependency on both (a) and (b) via fflags, a destination register that both (a) and (b) implicitly accumulate into" id="fig:litmus:fflags" /><figcaption>(c) has a syntactic dependency on both (a) and (b) via <span>fflags</span>, a destination register that both (a) and (b) implicitly accumulate into<span label="fig:litmus:fflags"></span></figcaption>
 </figure>
 <p>The notion of accumulating into a destination register rather than writing into it reflects the behavior of CSRs such as <span>fflags</span>.
 In particular, an accumulation into a register does not clobber any previous writes or accumulations into the same register.
@@ -342,7 +342,7 @@ xor a2,a1,a1
 add s1,s1,a2
 ld a5,0(s1)</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_16.svg" alt="A syntactic address dependency" id="fig:litmus:address" /><figcaption>A syntactic address dependency<span label="fig:litmus:address"></span></figcaption>
+<img src="memory_16.svg" alt="A syntactic address dependency" id="fig:litmus:address" /><figcaption>A syntactic address dependency<span label="fig:litmus:address"></span></figcaption>
 </figure>
 <p>For example, there is a syntactic address
 dependency from the memory operation generated by the first instruction to the memory operation generated by the last instruction in
@@ -357,7 +357,7 @@ bne x1,x0,next
 sw x3,0(x4)
 next: sw x5,0(x6)</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_17.svg" alt="A syntactic control dependency" id="fig:litmus:control1" /><figcaption>A syntactic control dependency<span label="fig:litmus:control1"></span></figcaption>
+<img src="memory_17.svg" alt="A syntactic control dependency" id="fig:litmus:control1" /><figcaption>A syntactic control dependency<span label="fig:litmus:control1"></span></figcaption>
 </figure>
 <p>Control dependencies behave differently from address and data dependencies in the sense that a control dependency always extends to all instructions following the original target in program order.
 Consider Figure <a href="memory.html#fig:litmus:control1" data-reference-type="ref" data-reference="fig:litmus:control1">1.9</a>: the instruction at <span>next</span> will always execute, but the memory operation generated by that last instruction nevertheless still has a control dependency from the memory operation generated by the first instruction.</p>
@@ -365,7 +365,7 @@ Consider Figure <a href="memory.html#fig:litmus:control1" data-reference-type="
 bne x1,x0,next
 next: sw x3,0(x4)</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_18.svg" alt="Another syntactic control dependency" id="fig:litmus:control2" /><figcaption>Another syntactic control dependency<span label="fig:litmus:control2"></span></figcaption>
+<img src="memory_18.svg" alt="Another syntactic control dependency" id="fig:litmus:control2" /><figcaption>Another syntactic control dependency<span label="fig:litmus:control2"></span></figcaption>
 </figure>
 <p>Likewise, consider Figure <a href="memory.html#fig:litmus:control2" data-reference-type="ref" data-reference="fig:litmus:control2">1.10</a>.
 Even though both branch outcomes have the same target, there is still a control dependency from the memory operation generated by the first instruction in this snippet to the memory operation generated by the last instruction.
@@ -376,7 +376,7 @@ PPO rule <a href="rvwmo.html#ppo:ctrl" data-reference-type="ref" data-reference
 However, since control, address, and data dependencies are defined over memory operations, and since an unsuccessful SC does not generate a memory operation, no order is enforced between unsuccessful SC and its dependent instructions.
 Moreover, since SC is defined to carry dependencies from its source registers to <span><em>rd</em></span> only when the SC is successful, an unsuccessful SC has no effect on the global memory order.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_19.svg" alt="A variant of the LB litmus test (outcome forbidden)" id="fig:litmus:successdeps" /><figcaption>A variant of the LB litmus test (outcome forbidden)<span label="fig:litmus:successdeps"></span></figcaption>
+<img src="memory_19.svg" alt="A variant of the LB litmus test (outcome forbidden)" id="fig:litmus:successdeps" /><figcaption>A variant of the LB litmus test (outcome forbidden)<span label="fig:litmus:successdeps"></span></figcaption>
 </figure>
 <p>In addition, the choice to respect dependencies originating at store-conditional instructions ensures that certain out-of-thin-air-like behaviors will be prevented.
 Consider Figure <a href="memory.html#fig:litmus:successdeps" data-reference-type="ref" data-reference="fig:litmus:successdeps">1.11</a>.
@@ -388,9 +388,9 @@ Fortunately, this situation and others like it are prevented by the fact that RV
 For example: a syntactic dependency between two “F” instructions via one of the “accumulating CSRs” in Section <a href="dep-table.html#sec:source-dest-regs" data-reference-type="ref" data-reference="sec:source-dest-regs">[sec:source-dest-regs]</a> does <span><em>not</em></span> imply that the two “F” instructions must be executed in order.
 Such a dependency would only serve to ultimately set up later a dependency from both “F” instructions to a later CSR instruction accessing the CSR flag in question.</p>
 <h3 id="sec:memory:ppopipeline">Pipeline Dependencies (Rules <a href="rvwmo.html#ppo:addrdatarfi" data-reference-type="ref" data-reference="ppo:addrdatarfi">[ppo:addrdatarfi]</a>–<a href="rvwmo.html#ppo:addrpo" data-reference-type="ref" data-reference="ppo:addrpo">[ppo:addrpo]</a>)</h3>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory_20.svg" alt="image" /></p>
+<p><img src="memory_20.svg" alt="image" /></p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_21.svg" alt="Because of PPO rule [ppo:addrdatarfi] and the data dependency from (d) to (e), (d) must also precede (f) in the global memory order (outcome forbidden)" id="fig:litmus:addrdatarfi" /><figcaption>Because of PPO rule <a href="rvwmo.html#ppo:addrdatarfi" data-reference-type="ref" data-reference="ppo:addrdatarfi">[ppo:addrdatarfi]</a> and the data dependency from (d) to (e), (d) must also precede (f) in the global memory order (outcome forbidden)<span label="fig:litmus:addrdatarfi"></span></figcaption>
+<img src="memory_21.svg" alt="Because of PPO rule [ppo:addrdatarfi] and the data dependency from (d) to (e), (d) must also precede (f) in the global memory order (outcome forbidden)" id="fig:litmus:addrdatarfi" /><figcaption>Because of PPO rule <a href="rvwmo.html#ppo:addrdatarfi" data-reference-type="ref" data-reference="ppo:addrdatarfi">[ppo:addrdatarfi]</a> and the data dependency from (d) to (e), (d) must also precede (f) in the global memory order (outcome forbidden)<span label="fig:litmus:addrdatarfi"></span></figcaption>
 </figure>
 <p>PPO rules <a href="rvwmo.html#ppo:addrdatarfi" data-reference-type="ref" data-reference="ppo:addrdatarfi">[ppo:addrdatarfi]</a> and <a href="rvwmo.html#ppo:addrpo" data-reference-type="ref" data-reference="ppo:addrpo">[ppo:addrpo]</a> reflect behaviors of almost all real processor pipeline implementations.
 Rule <a href="rvwmo.html#ppo:addrdatarfi" data-reference-type="ref" data-reference="ppo:addrdatarfi">[ppo:addrdatarfi]</a> states that a load cannot forward from a store until the address and data for that store are known.
@@ -398,7 +398,7 @@ Consider Figure <a href="memory.html#fig:litmus:addrdatarfi" data-reference-typ
 (f) cannot be executed until the data for (e) has been resolved, because (f) must return the value written by (e) (or by something even later in the global memory order), and the old value must not be clobbered by the writeback of (e) before (d) has had a chance to perform.
 Therefore, (f) will never perform before (d) has performed.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_22.svg" alt="Because of the extra store between (e) and (g), (d) no longer necessarily precedes (g) (outcome permitted)" /><figcaption>Because of the extra store between (e) and (g), (d) no longer necessarily precedes (g) (outcome permitted)</figcaption>
+<img src="memory_22.svg" alt="Because of the extra store between (e) and (g), (d) no longer necessarily precedes (g) (outcome permitted)" /><figcaption>Because of the extra store between (e) and (g), (d) no longer necessarily precedes (g) (outcome permitted)</figcaption>
 </figure>
 <p><span id="fig:litmus:addrdatarfi_no" label="fig:litmus:addrdatarfi_no">[fig:litmus:addrdatarfi_no]</span></p>
 <p>If there were another store to the same address in between (e) and (f), as in Figure <a href="memory.html#fig:litmus:addrdatarfi_no" data-reference-type="ref" data-reference="fig:litmus:addrdatarfi_no">[fig:litmus:addrdatarfi_no]</a>, then (f) would no longer be dependent on the data of (e) being resolved, and hence the dependency of (f) on (d), which produces the data for (e), would be broken.</p>
@@ -406,7 +406,7 @@ Therefore, (f) will never perform before (d) has performed.</p>
 Such a load must appear to execute before the store, but it cannot do so if the store were to overwrite the value in memory before the load had a chance to read the old value.
 Likewise, a store generally cannot be performed until it is known that preceding instructions will not cause an exception due to failed address resolution, and in this sense, rule <a href="rvwmo.html#ppo:addrpo" data-reference-type="ref" data-reference="ppo:addrpo">[ppo:addrpo]</a> can be seen as somewhat of a special case of rule <a href="rvwmo.html#ppo:ctrl" data-reference-type="ref" data-reference="ppo:ctrl">[ppo:ctrl]</a>.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_23.svg" alt="Because of the address dependency from (d) to (e), (d) also precedes (f) (outcome forbidden)" id="fig:litmus:addrpo" /><figcaption>Because of the address dependency from (d) to (e), (d) also precedes (f) (outcome forbidden)<span label="fig:litmus:addrpo"></span></figcaption>
+<img src="memory_23.svg" alt="Because of the address dependency from (d) to (e), (d) also precedes (f) (outcome forbidden)" id="fig:litmus:addrpo" /><figcaption>Because of the address dependency from (d) to (e), (d) also precedes (f) (outcome forbidden)<span label="fig:litmus:addrpo"></span></figcaption>
 </figure>
 <p>Consider Figure <a href="memory.html#fig:litmus:addrpo" data-reference-type="ref" data-reference="fig:litmus:addrpo">1.13</a>:
 (f) cannot be executed until the address for (e) is resolved, because it may turn out that the addresses match; i.e., that <span>a1=s0</span>. Therefore, (f) cannot be sent to memory before (d) has executed and confirmed whether the addresses do indeed overlap.</p>
@@ -443,7 +443,7 @@ For example, to enforce ordering between a write to main memory and an I/O write
 fence w,o
 sd a0, 0(a1)</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_24.svg" alt="Ordering memory and I/O accesses" id="fig:litmus:wo" /><figcaption>Ordering memory and I/O accesses<span label="fig:litmus:wo"></span></figcaption>
+<img src="memory_24.svg" alt="Ordering memory and I/O accesses" id="fig:litmus:wo" /><figcaption>Ordering memory and I/O accesses<span label="fig:litmus:wo"></span></figcaption>
 </figure>
 <p>When a fence is in fact used, implementations must assume that the device may attempt to access memory immediately after receiving the MMIO signal, and subsequent memory accesses from that device to memory must observe the effects of all accesses ordered prior to that MMIO operation.
 In other words, in Figure <a href="memory.html#fig:litmus:wo" data-reference-type="ref" data-reference="fig:litmus:wo">1.14</a>, suppose <span>0(a0)</span> is in main memory and <span>0(a1)</span> is the address of a device register in I/O memory.
@@ -462,7 +462,7 @@ Implementations that do not conform to the Unix Platform Specification and/or in
 <p>The ordering guarantees in this section may not apply beyond a platform-specific boundary between the RISC-V cores and the device. In particular, I/O accesses sent across an external bus (e.g., PCIe) may be reordered before they reach their ultimate destination. Ordering must be enforced in such situations according to the platform-specific rules of those external devices and buses.</p>
 <h2 id="sec:memory:porting">Code Porting and Mapping Guidelines</h2>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_25.svg" alt="Mappings from TSO operations to RISC-V operations" id="tab:tsomappings" /><figcaption>Mappings from TSO operations to RISC-V operations<span label="tab:tsomappings"></span></figcaption>
+<img src="memory_25.svg" alt="Mappings from TSO operations to RISC-V operations" id="tab:tsomappings" /><figcaption>Mappings from TSO operations to RISC-V operations<span label="tab:tsomappings"></span></figcaption>
 </figure>
 <p>Table <a href="memory.html#tab:tsomappings" data-reference-type="ref" data-reference="tab:tsomappings">1.15</a> provides a mapping from TSO memory operations onto RISC-V memory instructions.
 Normal x86 loads and stores are all inherently acquire-RCpc and release-RCpc operations: TSO enforces all load-load, load-store, and store-store ordering by default.
@@ -578,7 +578,7 @@ Furthermore, in order to enforce store-release-to-load-acquire ordering, there m
 ARM load-exclusive and store-exclusive instructions can likewise map onto their RISC-V LR and SC equivalents, but instead of placing a FENCE RW,RW in front of an LR with <span><em>aq</em></span> set, we simply also set <span><em>rl</em></span> instead.
 ARM ISB maps on RISC-V to FENCE.I followed by FENCE R,R similarly to how ISYNC maps for Power.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_26.svg" alt="Mappings from Linux memory primitives to RISC-V primitives. Other constructs (such as spinlocks) should follow accordingly. Platforms or devices with non-coherent DMA may need additional synchronization (such as cache flush or invalidate mechanisms); currently any such extra synchronization will be device-specific." id="tab:linuxmappings" /><figcaption>Mappings from Linux memory primitives to RISC-V primitives. Other constructs (such as spinlocks) should follow accordingly. Platforms or devices with non-coherent DMA may need additional synchronization (such as cache flush or invalidate mechanisms); currently any such extra synchronization will be device-specific.<span label="tab:linuxmappings"></span></figcaption>
+<img src="memory_26.svg" alt="Mappings from Linux memory primitives to RISC-V primitives. Other constructs (such as spinlocks) should follow accordingly. Platforms or devices with non-coherent DMA may need additional synchronization (such as cache flush or invalidate mechanisms); currently any such extra synchronization will be device-specific." id="tab:linuxmappings" /><figcaption>Mappings from Linux memory primitives to RISC-V primitives. Other constructs (such as spinlocks) should follow accordingly. Platforms or devices with non-coherent DMA may need additional synchronization (such as cache flush or invalidate mechanisms); currently any such extra synchronization will be device-specific.<span label="tab:linuxmappings"></span></figcaption>
 </figure>
 <p>Table <a href="memory.html#tab:linuxmappings" data-reference-type="ref" data-reference="tab:linuxmappings">1.16</a> provides a mapping of Linux memory ordering macros onto RISC-V memory instructions.
 The Linux fences <span>dma_rmb()</span> and <span>dma_wmb()</span> map onto FENCE R,R and FENCE W,W, respectively, since the RISC-V Unix Platform requires coherent DMA, but would be mapped onto FENCE RI,RI and FENCE WO,WO, respectively, on a platform with non-coherent DMA.
@@ -594,17 +594,17 @@ There are a few ways around this problem, including:</p>
 <li><p>Strengthen the mappings of release operations such that they would enforce sufficient orderings in the presence of either type of acquire mapping. This is the currently-recommended solution, and the one shown in Table <a href="memory.html#tab:linuxmappings" data-reference-type="ref" data-reference="tab:linuxmappings">1.16</a>.</p></li>
 </ol>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_27.svg" alt="Orderings between critical sections in Linux" /><figcaption>Orderings between critical sections in Linux</figcaption>
+<img src="memory_27.svg" alt="Orderings between critical sections in Linux" /><figcaption>Orderings between critical sections in Linux</figcaption>
 </figure>
 <p><span id="fig:litmus:lkmm_ll" label="fig:litmus:lkmm_ll">[fig:litmus:lkmm_ll]</span></p>
 <p>For example, the critical section ordering rule currently being debated by the Linux community would require (a) to be ordered before (e) in Figure <a href="memory.html#fig:litmus:lkmm_ll" data-reference-type="ref" data-reference="fig:litmus:lkmm_ll">[fig:litmus:lkmm_ll]</a>.
 If that will indeed be required, then it would be insufficient for (b) to map as FENCE RW,W.
 That said, these mappings are subject to change as the Linux Kernel Memory Model evolves.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_28.svg" alt="Mappings from C/C++ primitives to RISC-V primitives." id="tab:c11mappings" /><figcaption>Mappings from C/C++ primitives to RISC-V primitives.<span label="tab:c11mappings"></span></figcaption>
+<img src="memory_28.svg" alt="Mappings from C/C++ primitives to RISC-V primitives." id="tab:c11mappings" /><figcaption>Mappings from C/C++ primitives to RISC-V primitives.<span label="tab:c11mappings"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_29.svg" alt="Hypothetical mappings from C/C++ primitives to RISC-V primitives, if native load-acquire and store-release opcodes are introduced." /><figcaption>Hypothetical mappings from C/C++ primitives to RISC-V primitives, if native load-acquire and store-release opcodes are introduced.</figcaption>
+<img src="memory_29.svg" alt="Hypothetical mappings from C/C++ primitives to RISC-V primitives, if native load-acquire and store-release opcodes are introduced." /><figcaption>Hypothetical mappings from C/C++ primitives to RISC-V primitives, if native load-acquire and store-release opcodes are introduced.</figcaption>
 </figure>
 <p><span id="tab:c11mappings_hypothetical" label="tab:c11mappings_hypothetical">[tab:c11mappings_hypothetical]</span></p>
 <p>Table <a href="memory.html#tab:c11mappings" data-reference-type="ref" data-reference="tab:c11mappings">1.17</a> provides a mapping of C11/C++11 atomic operations onto RISC-V memory instructions.
@@ -664,7 +664,7 @@ Of course, microarchitectures may (and high-performance implementations likely w
 </ul>
 <p>The question of write subsumption can be understood from the following example:</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_30.svg" alt="Write subsumption litmus test, allowed execution." id="fig:litmus:subsumption" /><figcaption>Write subsumption litmus test, allowed execution.<span label="fig:litmus:subsumption"></span></figcaption>
+<img src="memory_30.svg" alt="Write subsumption litmus test, allowed execution." id="fig:litmus:subsumption" /><figcaption>Write subsumption litmus test, allowed execution.<span label="fig:litmus:subsumption"></span></figcaption>
 </figure>
 <p>As written, if the load  (d) reads value <span class="math inline">1</span>, then (a) must precede (f) in the global memory order:</p>
 <ul>
@@ -690,13 +690,13 @@ Write subsumption may in other cases be legal, if for example there were no data
 <h2 id="sec:memory:discrepancies">Known Issues</h2>
 <h3 id="sec:memory:discrepancies:mixedrsw">Mixed-size RSW</h3>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_31.svg" alt="Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)" id="fig:litmus:discrepancy:rsw1" /><figcaption>Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)<span label="fig:litmus:discrepancy:rsw1"></span></figcaption>
+<img src="memory_31.svg" alt="Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)" id="fig:litmus:discrepancy:rsw1" /><figcaption>Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)<span label="fig:litmus:discrepancy:rsw1"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_32.svg" alt="Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)" id="fig:litmus:discrepancy:rsw2" /><figcaption>Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)<span label="fig:litmus:discrepancy:rsw2"></span></figcaption>
+<img src="memory_32.svg" alt="Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)" id="fig:litmus:discrepancy:rsw2" /><figcaption>Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)<span label="fig:litmus:discrepancy:rsw2"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//memory_33.svg" alt="Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)" id="fig:litmus:discrepancy:rsw3" /><figcaption>Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)<span label="fig:litmus:discrepancy:rsw3"></span></figcaption>
+<img src="memory_33.svg" alt="Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)" id="fig:litmus:discrepancy:rsw3" /><figcaption>Mixed-size discrepancy (permitted by axiomatic models, forbidden by operational model)<span label="fig:litmus:discrepancy:rsw3"></span></figcaption>
 </figure>
 <p>There is a known discrepancy between the operational and axiomatic specifications within the family of mixed-size RSW variants shown in Figures <a href="memory.html#fig:litmus:discrepancy:rsw1" data-reference-type="ref" data-reference="fig:litmus:discrepancy:rsw1">1.19</a>–<a href="memory.html#fig:litmus:discrepancy:rsw3" data-reference-type="ref" data-reference="fig:litmus:discrepancy:rsw3">1.21</a>.
 To address this, we may choose to add something like the following new PPO rule:

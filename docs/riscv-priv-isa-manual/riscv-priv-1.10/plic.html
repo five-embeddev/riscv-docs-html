@@ -48,7 +48,7 @@ for the same source to the PLIC. The rest of this chapter describes
 each of these components in detail, though many details are
 necessarily platform specific.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//plic_00.svg" alt="Platform-Level Interrupt Controller (PLIC) conceptual block diagram. The figure shows the first two of potentially many interrupt sources, and the first two of potentially many interrupt targets. The figure is just intended to show the logic of the PLIC’s operation, not to represent a realistic implementation strategy." id="fig:plic" /><figcaption>Platform-Level Interrupt Controller (PLIC) conceptual block
+<img src="plic_00.svg" alt="Platform-Level Interrupt Controller (PLIC) conceptual block diagram. The figure shows the first two of potentially many interrupt sources, and the first two of potentially many interrupt targets. The figure is just intended to show the logic of the PLIC’s operation, not to represent a realistic implementation strategy." id="fig:plic" /><figcaption>Platform-Level Interrupt Controller (PLIC) conceptual block
 diagram. The figure shows the first two of potentially many
 interrupt sources, and the first two of potentially many interrupt
 targets. The figure is just intended to show the logic of the
@@ -308,7 +308,7 @@ receiving the completion message.</p>
 <p>Figure <a href="plic.html#fig:intflow" data-reference-type="ref" data-reference="fig:intflow">1.2</a> shows the messages flowing between agents
 when handling interrupts via the PLIC.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//plic_01.svg" alt=" Flow of interrupt processing via the PLIC." id="fig:intflow" /><figcaption> Flow of interrupt processing via the PLIC.<span label="fig:intflow"></span></figcaption>
+<img src="plic_01.svg" alt=" Flow of interrupt processing via the PLIC." id="fig:intflow" /><figcaption> Flow of interrupt processing via the PLIC.<span label="fig:intflow"></span></figcaption>
 </figure>
 <p>The gateway will only forward a single interrupt request at a time to
 the PLIC, and not forward subsequent interrupts requests until an

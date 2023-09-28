@@ -72,7 +72,7 @@ instruction-set extensions could support a much larger register space
 RV32E subset, which only has 16 registers (Chapter <a href="rv32e.html#rv32e" data-reference-type="ref" data-reference="rv32e">[rv32e]</a>).</p>
 </div>
 <figure>
-<img src="tmp.riscv-user-2.2//rv32_00.svg" alt="RISC-V user-level base integer register state." id="gprs" /><figcaption>RISC-V user-level base integer register state.<span label="gprs"></span></figcaption>
+<img src="rv32_00.svg" alt="RISC-V user-level base integer register state." id="gprs" /><figcaption>RISC-V user-level base integer register state.<span label="gprs"></span></figcaption>
 </figure>
 <h2 id="base-instruction-formats"><span class="header-section-number">2.2</span> Base Instruction Formats</h2>
 <p>In the base ISA, there are four core instruction formats (R/I/S/U), as
@@ -87,7 +87,7 @@ two-byte boundary when instruction extensions with 16-bit lengths or
 other odd multiples of 16-bit lengths are added.</p>
 </div>
 <figure>
-<img src="tmp.riscv-user-2.2//rv32_01.svg" alt="RISC-V base instruction formats. Each immediate subfield is labeled with the bit position (imm[x ]) in the immediate value being produced, rather than the bit position within the instruction’s immediate field as is usually done. " id="fig:baseinstformats" /><figcaption>RISC-V base instruction formats. Each immediate subfield is
+<img src="rv32_01.svg" alt="RISC-V base instruction formats. Each immediate subfield is labeled with the bit position (imm[x ]) in the immediate value being produced, rather than the bit position within the instruction’s immediate field as is usually done. " id="fig:baseinstformats" /><figcaption>RISC-V base instruction formats. Each immediate subfield is
 labeled with the bit position (imm[<span><em>x</em></span> ]) in the immediate
 value being produced, rather than the bit position within the
 instruction’s immediate field as is usually done. <span label="fig:baseinstformats"></span></figcaption>
@@ -131,13 +131,13 @@ immediates and by 1 bit to form J immediates. The location of
 instruction bits in the U and J format immediates is chosen to
 maximize overlap with the other formats and with each other.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//rv32_02.svg" alt="RISC-V base instruction formats showing immediate variants." id="fig:baseinstformatsimm" /><figcaption>RISC-V base instruction formats showing immediate variants.<span label="fig:baseinstformatsimm"></span></figcaption>
+<img src="rv32_02.svg" alt="RISC-V base instruction formats showing immediate variants." id="fig:baseinstformatsimm" /><figcaption>RISC-V base instruction formats showing immediate variants.<span label="fig:baseinstformatsimm"></span></figcaption>
 </figure>
 <p>Figure <a href="rv32.html#fig:immtypes" data-reference-type="ref" data-reference="fig:immtypes">1.4</a> shows the immediates produced by each of the
 base instruction formats, and is labeled to show which instruction
 bit (inst[<span><em>y</em></span> ]) produces each bit of the immediate value.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//rv32_03.svg" alt="Types of immediate produced by RISC-V instructions. The fields are labeled with the instruction bits used to construct their value. Sign extension always uses inst[31]." id="fig:immtypes" /><figcaption>Types of immediate produced by RISC-V instructions. The fields are labeled with the
+<img src="rv32_03.svg" alt="Types of immediate produced by RISC-V instructions. The fields are labeled with the instruction bits used to construct their value. Sign extension always uses inst[31]." id="fig:immtypes" /><figcaption>Types of immediate produced by RISC-V instructions. The fields are labeled with the
 instruction bits used to construct their value. Sign extension
 always uses inst[31].<span label="fig:immtypes"></span></figcaption>
 </figure>
@@ -190,7 +190,7 @@ negative.</p>
 comparing the results of ADD and ADDW on the operands.</p>
 </div>
 <h4 id="integer-register-immediate-instructions" class="unnumbered">Integer Register-Immediate Instructions</h4>
-<p><img src="tmp.riscv-user-2.2//rv32_04.svg" alt="image" /></p>
+<p><img src="rv32_04.svg" alt="image" /></p>
 <p>ADDI adds the sign-extended 12-bit immediate to register <span><em>rs1</em></span>.
 Arithmetic overflow is ignored and the result is simply the low
 XLEN bits of the result. ADDI <span><em>rd, rs1, 0</em></span> is used to implement the
@@ -208,7 +208,7 @@ and XOR on register <span><em>rs1</em></span> and the sign-extended 12-bit immed
 and place the result in <span><em>rd</em></span>. Note, XORI <span><em>rd, rs1, -1</em></span>
 performs a bitwise logical inversion of register <span><em>rs1</em></span> (assembler
 pseudo-instruction NOT <span><em>rd, rs</em></span>).</p>
-<p><img src="tmp.riscv-user-2.2//rv32_05.svg" alt="image" /></p>
+<p><img src="rv32_05.svg" alt="image" /></p>
 <p>Shifts by a constant are encoded as a specialization of the
 I-type format. The operand to be shifted is in <span><em>rs1</em></span>, and the
 shift amount is encoded in the lower 5 bits of the I-immediate field.
@@ -217,7 +217,7 @@ SLLI is a logical left shift (zeros are shifted into the lower bits);
 SRLI is a logical right shift (zeros are shifted into the upper bits);
 and SRAI is an arithmetic right shift (the original sign bit is copied
 into the vacated upper bits).</p>
-<p><img src="tmp.riscv-user-2.2//rv32_06.svg" alt="image" /></p>
+<p><img src="rv32_06.svg" alt="image" /></p>
 <p>LUI (load upper immediate) is used to build 32-bit constants and uses
 the U-type format. LUI places the U-immediate value in the top 20
 bits of the destination register <span><em>rd</em></span>, filling in the lowest 12
@@ -243,7 +243,7 @@ more complex microarchitectures.</p>
 read the <span><em>rs1</em></span> and <span><em>rs2</em></span> registers as source operands and
 write the result into register <span><em>rd</em></span>. The <span><em>funct7</em></span> and <span>
 <em>funct3</em></span> fields select the type of operation.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_07.svg" alt="image" /></p>
+<p><img src="rv32_07.svg" alt="image" /></p>
 <p>ADD and SUB perform addition and subtraction respectively. Overflows
 are ignored and the low XLEN bits of results are written to the
 destination. SLT and SLTU perform signed and unsigned compares
@@ -256,7 +256,7 @@ XOR perform bitwise logical operations.</p>
 right shifts on the value in register <span><em>rs1</em></span> by the shift amount
 held in the lower 5 bits of register <span><em>rs2</em></span>.</p>
 <h4 id="nop-instruction" class="unnumbered">NOP Instruction</h4>
-<p><img src="tmp.riscv-user-2.2//rv32_08.svg" alt="image" /></p>
+<p><img src="rv32_08.svg" alt="image" /></p>
 <p>The NOP instruction does not change any user-visible state, except
 for advancing the <span>pc</span>. NOP is encoded as ADDI <span><em>x0, x0, 0</em></span>.</p>
 <div class=commentary>
@@ -290,7 +290,7 @@ bit different than the regular link register.</p>
 </div>
 <p>Plain unconditional jumps (assembler pseudo-op J) are encoded as a JAL
 with <span><em>rd</em></span>=<span>x0</span>.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_09.svg" alt="image" /></p>
+<p><img src="rv32_09.svg" alt="image" /></p>
 <p>The indirect jump instruction JALR (jump and link register) uses the
 I-type encoding. The target address is obtained by adding the 12-bit
 signed I-immediate to the register <span><em>rs1</em></span>, then setting the
@@ -298,7 +298,7 @@ least-significant bit of the result to zero. The address of
 the instruction following the jump (<span>pc</span>+4) is written to register
 <span><em>rd</em></span>. Register <span>x0</span> can be used as the destination if the
 result is not required.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_10.svg" alt="image" /></p>
+<p><img src="rv32_10.svg" alt="image" /></p>
 <div class=commentary>
 <p>The unconditional jump instructions all use PC-relative addressing to
 help support position-independent code. The JALR instruction was
@@ -398,7 +398,7 @@ enable macro-op fusion of the sequences:  and  <span>auipc ra, imm20; jalr ra,
 12-bit B-immediate encodes signed offsets in multiples of 2, and is
 added to the current <span>pc</span> to give the target address. The
 conditional branch range is <span class="math inline">±</span><span>4</span><span>KiB</span>.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_11.svg" alt="image" /></p>
+<p><img src="rv32_11.svg" alt="image" /></p>
 <p>Branch instructions compare two registers. BEQ and BNE take the
 branch if registers <span><em>rs1</em></span> and <span><em>rs2</em></span> are equal or unequal
 respectively. BLT and BLTU take the branch if <span><em>rs1</em></span> is less than
@@ -485,8 +485,8 @@ byte-addressed and little-endian. The execution environment will
 define what portions of the address space are legal to access. Loads
 with a destination of <span>x0</span> must still raise any exceptions and
 action any other side effects even though the load value is discarded.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_12.svg" alt="image" /></p>
-<p><img src="tmp.riscv-user-2.2//rv32_13.svg" alt="image" /></p>
+<p><img src="rv32_12.svg" alt="image" /></p>
+<p><img src="rv32_13.svg" alt="image" /></p>
 <p>Load and store instructions transfer a value between the registers and
 memory. Loads are encoded in the I-type format and stores are
 S-type. The effective byte address is obtained by adding register
@@ -566,7 +566,7 @@ FENCE instruction to guarantee ordering between memory
 operations from different RISC-V harts. Chapter <a href="a.html#atomics" data-reference-type="ref" data-reference="atomics">[atomics]</a>
 describes the optional atomic memory instruction extensions “A”,
 which provide additional synchronization operations.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_14.svg" alt="image" /></p>
+<p><img src="rv32_14.svg" alt="image" /></p>
 <p>The FENCE instruction is used to order device I/O and
 memory accesses as viewed by other RISC-V harts and external devices
 or coprocessors. Any combination of device input (I), device output
@@ -600,7 +600,7 @@ to control added coprocessors or I/O devices. Simple implementations
 may additionally ignore the <span><em>predecessor</em></span> and <span><em>successor</em></span>
 fields and always execute a conservative fence on all operations.</p>
 </div>
-<p><img src="tmp.riscv-user-2.2//rv32_15.svg" alt="image" /></p>
+<p><img src="rv32_15.svg" alt="image" /></p>
 <p>The FENCE.I instruction is used to synchronize the instruction and
 data streams. RISC-V does not guarantee that stores to instruction
 memory will be made visible to instruction fetches on the same RISC-V
@@ -650,7 +650,7 @@ hardware.</p>
 <h4 id="csr-instructions" class="unnumbered">CSR Instructions</h4>
 <p>We define the full set of CSR instructions here, although in the standard
 user-level base ISA, only a handful of read-only counter CSRs are accessible.</p>
-<p><img src="tmp.riscv-user-2.2//rv32_16.svg" alt="image" /></p>
+<p><img src="rv32_16.svg" alt="image" /></p>
 <p>The CSRRW (Atomic Read/Write CSR) instruction atomically swaps values
 in the CSRs and integer registers. CSRRW reads the old value of the
 CSR, zero-extends the value to XLEN bits, then writes it to integer
@@ -707,7 +707,7 @@ csr, uimm</em></span>.</p>
 bits in the CSR when the old value is not required: CSRS/CSRC <span>
 <em>csr, rs1</em></span>; CSRSI/CSRCI <span><em>csr, uimm</em></span>.</p>
 <h4 id="timers-and-counters" class="unnumbered">Timers and Counters</h4>
-<p><img src="tmp.riscv-user-2.2//rv32_17.svg" alt="image" /></p>
+<p><img src="rv32_17.svg" alt="image" /></p>
 <p>RV32I provides a number of 64-bit read-only user-level counters, which
 are mapped into the 12-bit CSR address space and accessed in 32-bit
 pieces using CSRRS instructions.</p>
@@ -742,7 +742,7 @@ overflow in practice.</p>
 <span>x3</span>:<span>x2</span>, even if the counter overflows between reading its upper
 and lower halves.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//rv32_18.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="critical" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="critical"></span></figcaption>
+<img src="rv32_18.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="critical" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="critical"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>We mandate these basic counters be provided in all implementations as
@@ -770,7 +770,7 @@ values atomically, but this would increase the size of the user
 context, especially for implementations with a richer set of counters.</p>
 </div>
 <h2 id="environment-call-and-breakpoints"><span class="header-section-number">2.9</span> Environment Call and Breakpoints</h2>
-<p><img src="tmp.riscv-user-2.2//rv32_19.svg" alt="image" /></p>
+<p><img src="rv32_19.svg" alt="image" /></p>
 <p>The ECALL instruction is used to make a request to the supporting
 execution environment, which is usually an operating system. The ABI
 for the system will define how parameters for the environment request

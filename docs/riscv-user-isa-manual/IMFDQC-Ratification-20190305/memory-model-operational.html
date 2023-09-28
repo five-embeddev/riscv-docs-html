@@ -66,7 +66,7 @@ The term “acquire” refers to an instruction (or its memory operation) with t
 The term “release” refers to an instruction (or its memory operation) with the release-RCpc or release-RCsc annotation.</p>
 <h4 id="model-states">Model states</h4>
 <p>A model state consists of a shared memory and a tuple of hart states.</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory-model-operational_00.svg" alt="image" /></p>
+<p><img src="memory-model-operational_00.svg" alt="image" /></p>
 <p>The shared memory state records all the memory store operations that have propagated so far, in the order they propagated (this can be made more efficient, but for simplicity of the presentation we keep it this way).</p>
 <p>Each hart state consists principally of a tree of instruction instances, some of which have been <em>finished</em>, and some of which have not.
 Non-finished instruction instances can be subject to <em>restart</em>, e.g. if they depend on an out-of-order or speculative load that turns out to be unsound.</p>
@@ -162,7 +162,7 @@ Given a pseudocode execution state, it computes the next state. Most
 states identify a pending memory or register operation, requested by
 the pseudocode, which the memory model has to do. The
 states are (this is a tagged union; tags in small-caps):</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory-model-operational_01.svg" alt="image" /></p>
+<p><img src="memory-model-operational_01.svg" alt="image" /></p>
 <p>Here:</p>
 <p><span><em>mem_value</em></span> and <span><em>reg_value</em></span> are lists of bytes;</p>
 <p><span><em>address</em></span> is an integer of XLEN bits;</p>
@@ -202,7 +202,7 @@ fact that each register read has to wait for the appropriate register write to b
 <li><p><span><em>src_regs</em></span>, the set of source <span><em>reg_name</em></span>s (including system registers), as statically determined from the pseudocode of the instruction;</p></li>
 <li><p><span><em>dst_regs</em></span>, the destination <span><em>reg_name</em></span>s (including system registers), as statically determined from the pseudocode of the instruction;</p></li>
 <li><p><span><em>pseudocode_state</em></span> (or sometimes just ‘state’ for short), one of (this is a tagged union; tags in small-caps):</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//memory-model-operational_02.svg" alt="image" /></p></li>
+<p><img src="memory-model-operational_02.svg" alt="image" /></p></li>
 <li><p><span><em>reg_reads</em></span>, the register reads the instance has performed, including, for each one, the register write slices it read from;</p></li>
 <li><p><span><em>reg_writes</em></span>, the register writes the instance has performed;</p></li>
 <li><p><span><em>mem_loads</em></span>, a set of memory load operations, and for each one

@@ -29,7 +29,7 @@ counters (CYCLE, TIME, and INSTRET), which
 have dedicated functions (cycle
 count, real-time clock, and instructions retired, respectively).
 The Zicntr extension depends on the Zicsr extension.</p>
-<p><img src="tmp.Priv-v1.12//counters_00.svg" alt="image" /></p>
+<p><img src="counters_00.svg" alt="image" /></p>
 <p>RV32I provides a number of 64-bit read-only user-level counters, which
 are mapped into the 12-bit CSR address space and accessed in 32-bit
 pieces using CSRRS instructions. In RV64I, the CSR instructions can
@@ -132,7 +132,7 @@ are not considered to retire and hence do not increment the <span>instret</span>
 <span>x3</span>:<span>x2</span>, even if the counter overflows its lower half between reading its upper
 and lower halves.</p>
 <figure>
-<img src="tmp.Priv-v1.12//counters_01.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="rdcycle" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="rdcycle"></span></figcaption>
+<img src="counters_01.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="rdcycle" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="rdcycle"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>We recommend provision of these basic counters in implementations

@@ -39,7 +39,7 @@ indicate the <span>misa</span> register has not been implemented, requiring
 that CPU capabilities be determined through a separate non-standard
 mechanism.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_00.svg" alt="Machine ISA register (misa)." id="misareg" /><figcaption>Machine ISA register (<span>misa</span>).<span label="misareg"></span></figcaption>
+<img src="machine_00.svg" alt="Machine ISA register (misa)." id="misareg" /><figcaption>Machine ISA register (<span>misa</span>).<span label="misareg"></span></figcaption>
 </figure>
 <p>The MXL (Machine XLEN) field encodes the native base integer ISA width
 as shown in Table <a href="machine.html#misabase" data-reference-type="ref" data-reference="misabase">[misabase]</a>. The MXL field may be writable in
@@ -267,7 +267,7 @@ must be readable in any implementation, but a value of 0 can be
 returned to indicate the field is not implemented or that this is a
 non-commercial implementation.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_01.svg" alt="Vendor ID register (mvendorid)." id="mvendorreg" /><figcaption>Vendor ID register (<span>mvendorid</span>).<span label="mvendorreg"></span></figcaption>
+<img src="machine_01.svg" alt="Vendor ID register (mvendorid)." id="mvendorreg" /><figcaption>Vendor ID register (<span>mvendorid</span>).<span label="mvendorreg"></span></figcaption>
 </figure>
 <p>JEDEC manufacturer IDs are ordinarily encoded as a sequence of one-byte
 continuation codes <span>0x7f</span>, terminated by a one-byte ID not equal to
@@ -292,7 +292,7 @@ field is not implemented. The combination of <span>mvendorid</span> and <span>
 marchid</span> should uniquely identify the type of hart microarchitecture
 that is implemented.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_02.svg" alt="Machine Architecture ID register (marchid)." id="marchreg" /><figcaption>Machine Architecture ID register (<span>marchid</span>).<span label="marchreg"></span></figcaption>
+<img src="machine_02.svg" alt="Machine Architecture ID register (marchid)." id="marchreg" /><figcaption>Machine Architecture ID register (<span>marchid</span>).<span label="marchreg"></span></figcaption>
 </figure>
 <p>Open-source project architecture IDs are allocated globally by the
 RISC-V Foundation, and have non-zero architecture IDs with a zero
@@ -326,7 +326,7 @@ implementation, but a value of 0 can be returned to indicate that the
 field is not implemented. The Implementation value should reflect the
 design of the RISC-V processor itself and not any surrounding system.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_03.svg" alt="Machine Implementation ID register (mimpid)." id="mimpidreg" /><figcaption>Machine Implementation ID register (<span>mimpid</span>).<span label="mimpidreg"></span></figcaption>
+<img src="machine_03.svg" alt="Machine Implementation ID register (mimpid)." id="mimpidreg" /><figcaption>Machine Implementation ID register (<span>mimpid</span>).<span label="mimpidreg"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>The format of this field is left to the provider of the architecture
@@ -343,7 +343,7 @@ This register must be readable in any implementation. Hart IDs might
 not necessarily be numbered contiguously in a multiprocessor system,
 but at least one hart must have a hart ID of zero.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_04.svg" alt="Hart ID register (mhartid)." id="mhartidreg" /><figcaption>Hart ID register (<span>mhartid</span>).<span label="mhartidreg"></span></figcaption>
+<img src="machine_04.svg" alt="Hart ID register (mhartid)." id="mhartidreg" /><figcaption>Hart ID register (<span>mhartid</span>).<span label="mhartidreg"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>In certain cases, we must ensure exactly one hart runs some code
@@ -361,10 +361,10 @@ state. Restricted views of the <span>mstatus</span> register appear as the
 <span>sstatus</span> and <span>ustatus</span> registers in the S-level and U-level
 ISAs respectively.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_05.svg" alt="Machine-mode status register (mstatus) for RV32." id="mstatusreg-rv32" /><figcaption>Machine-mode status register (<span>mstatus</span>) for RV32.<span label="mstatusreg-rv32"></span></figcaption>
+<img src="machine_05.svg" alt="Machine-mode status register (mstatus) for RV32." id="mstatusreg-rv32" /><figcaption>Machine-mode status register (<span>mstatus</span>) for RV32.<span label="mstatusreg-rv32"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_06.svg" alt="Machine-mode status register (mstatus) for RV64 and RV128." id="mstatusreg" /><figcaption>Machine-mode status register (<span>mstatus</span>) for RV64 and RV128.<span label="mstatusreg"></span></figcaption>
+<img src="machine_06.svg" alt="Machine-mode status register (mstatus) for RV64 and RV128." id="mstatusreg" /><figcaption>Machine-mode status register (<span>mstatus</span>) for RV64 and RV128.<span label="mstatusreg"></span></figcaption>
 </figure>
 <h3 id="privstack"><span class="header-section-number">3.1.7</span> Privilege and Global Interrupt-Enable Stack in <span>mstatus</span> register</h3>
 <p>Interrupt-enable bits, MIE, SIE, and UIE, are provided for each privilege
@@ -657,7 +657,7 @@ the FS or XS status bits. Note that the standard floating-point
 extensions do not support user-mode unconfigure or disable/enable
 instructions.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_07.svg" alt="FS and XS state transitions." id="fsxsstates" /><figcaption>FS and XS state transitions.<span label="fsxsstates"></span></figcaption>
+<img src="machine_07.svg" alt="FS and XS state transitions." id="fsxsstates" /><figcaption>FS and XS state transitions.<span label="fsxsstates"></span></figcaption>
 </figure>
 <p>Standard privileged instructions to initialize, save, and restore
 extension state are provided to insulate privileged code from details
@@ -709,7 +709,7 @@ interrupts, unless the interrupt results in a user-level context swap.</p>
 trap vector configuration, consisting of a vector base address (BASE) and a
 vector mode (MODE).</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_08.svg" alt="Machine trap-vector base-address register (mtvec)." id="mtvecreg" /><figcaption>Machine trap-vector base-address register (<span>mtvec</span>).<span label="mtvecreg"></span></figcaption>
+<img src="machine_08.svg" alt="Machine trap-vector base-address register (mtvec)." id="mtvecreg" /><figcaption>Machine trap-vector base-address register (<span>mtvec</span>).<span label="mtvecreg"></span></figcaption>
 </figure>
 <p>The <span>mtvec</span> register must always be implemented, but can contain
 a hardwired read-only value. If <span>mtvec</span> is writable, the set of values
@@ -820,7 +820,7 @@ taken horizontally. Using the same example, if M-mode has delegated illegal
 instruction traps to S-mode, and S-mode software later executes an illegal
 instruction, the trap is taken in S-mode.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_09.svg" alt="Machine Exception Delegation Register medeleg." id="medelegreg" /><figcaption>Machine Exception Delegation Register <span>medeleg</span>.<span label="medelegreg"></span></figcaption>
+<img src="machine_09.svg" alt="Machine Exception Delegation Register medeleg." id="medelegreg" /><figcaption>Machine Exception Delegation Register <span>medeleg</span>.<span label="medelegreg"></span></figcaption>
 </figure>
 <p><span>medeleg</span> has a bit position allocated for every synchronous exception
 shown in Table <a href="machine.html#mcauses" data-reference-type="ref" data-reference="mcauses">[mcauses]</a>, with the index of the bit position equal to the
@@ -828,7 +828,7 @@ value returned in the <span>mcause</span> register (i.e., setting bit 8 allows
 user-mode environment calls to be delegated to a lower-privilege trap
 handler).</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_10.svg" alt="Machine Exception Delegation Register mideleg." id="midelegreg" /><figcaption>Machine Exception Delegation Register <span>mideleg</span>.<span label="midelegreg"></span></figcaption>
+<img src="machine_10.svg" alt="Machine Exception Delegation Register mideleg." id="midelegreg" /><figcaption>Machine Exception Delegation Register <span>mideleg</span>.<span label="midelegreg"></span></figcaption>
 </figure>
 <p><span>mideleg</span> holds trap delegation bits for individual interrupts, with the
 layout of bits matching those in the <span>mip</span> register (i.e., STIP interrupt
@@ -854,10 +854,10 @@ using the <span><em>x</em></span> <span>ie</span> register. Otherwise, the cor
 bits in <span><em>x</em></span> <span>ip</span> and <span><em>x</em></span> <span>ie</span> appear to be hardwired
 to zero.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_11.svg" alt="Machine interrupt-pending register (mip)." id="mipreg" /><figcaption>Machine interrupt-pending register (<span>mip</span>).<span label="mipreg"></span></figcaption>
+<img src="machine_11.svg" alt="Machine interrupt-pending register (mip)." id="mipreg" /><figcaption>Machine interrupt-pending register (<span>mip</span>).<span label="mipreg"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_12.svg" alt="Machine interrupt-enable register (mie)." id="miereg" /><figcaption>Machine interrupt-enable register (<span>mie</span>).<span label="miereg"></span></figcaption>
+<img src="machine_12.svg" alt="Machine interrupt-enable register (mie)." id="miereg" /><figcaption>Machine interrupt-enable register (<span>mie</span>).<span label="miereg"></span></figcaption>
 </figure>
 <p>The MTIP, STIP, UTIP bits correspond to timer interrupt-pending bits
 for machine, supervisor, and user timer interrupts, respectively. The
@@ -963,10 +963,10 @@ The interrupt remains posted until it is cleared by writing the <span>
 mtimecmp</span> register. The interrupt will only be taken if interrupts
 are enabled and the MTIE bit is set in the <span>mie</span> register.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_13.svg" alt="Machine time register (memory-mapped control register)." /><figcaption>Machine time register (memory-mapped control register).</figcaption>
+<img src="machine_13.svg" alt="Machine time register (memory-mapped control register)." /><figcaption>Machine time register (memory-mapped control register).</figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_14.svg" alt="Machine time compare register (memory-mapped control register)." /><figcaption>Machine time compare register (memory-mapped control register).</figcaption>
+<img src="machine_14.svg" alt="Machine time compare register (memory-mapped control register)." /><figcaption>Machine time compare register (memory-mapped control register).</figcaption>
 </figure>
 <div class=commentary>
 <p>The timer facility is defined to use wall-clock time rather than a
@@ -993,7 +993,7 @@ part of the register. The following code sequence sets a 64-bit <span>
 mtimecmp</span> value without spuriously generating a timer interrupt due
 to the intermediate value of the comparand:</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_15.svg" alt="Sample code for setting the 64-bit time comparand in RV32 assuming the registers live in a strongly ordered I/O region." id="mtimecmph" /><figcaption>Sample code for setting the 64-bit time comparand in RV32
+<img src="machine_15.svg" alt="Sample code for setting the 64-bit time comparand in RV32 assuming the registers live in a strongly ordered I/O region." id="mtimecmph" /><figcaption>Sample code for setting the 64-bit time comparand in RV32
 assuming the registers live in a strongly ordered I/O region.<span label="mtimecmph"></span></figcaption>
 </figure>
 <h3 id="hardware-performance-monitor"><span class="header-section-number">3.1.16</span> Hardware Performance Monitor</h3>
@@ -1011,7 +1011,7 @@ defined by the platform, but event 0 is reserved to mean “no event.”
 All counters should be implemented, but a legal implementation is to hard-wire
 both the counter and its corresponding event selector to 0.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_16.svg" alt="Hardware performance monitor counters." /><figcaption>Hardware performance monitor counters.</figcaption>
+<img src="machine_16.svg" alt="Hardware performance monitor counters." /><figcaption>Hardware performance monitor counters.</figcaption>
 </figure>
 <p>All of these counters have 64-bit precision on RV32, RV64, and RV128.</p>
 <p>On RV32 only, reads of the <span>mcycle</span>, <span>minstret</span>, and <span>
@@ -1019,7 +1019,7 @@ mhpmcounter<span><em>n</em></span></span> CSRs return the low 32 bits, while rea
 mcycleh</span>, <span>minstreth</span>, and <span>mhpmcounter<span><em>n</em></span>h</span> CSRs return bits
 63–32 of the corresponding counter.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_17.svg" alt="Upper 32 bits of hardware performance monitor counters, RV32 only." /><figcaption>Upper 32 bits of hardware performance monitor counters, RV32 only.</figcaption>
+<img src="machine_17.svg" alt="Upper 32 bits of hardware performance monitor counters, RV32 only." /><figcaption>Upper 32 bits of hardware performance monitor counters, RV32 only.</figcaption>
 </figure>
 <p>On RV128 systems, the 64-bit values in <span>mcycle</span>, <span>minstret</span>, and
 <span>mhpmcounter<span><em>n</em></span></span> are sign-extended to 128-bits when read.
@@ -1035,7 +1035,7 @@ circuitry.</p>
 </div>
 <h3 id="sec:mcounteren"><span class="header-section-number">3.1.17</span> Counter-Enable Registers (<span>counteren</span>)</h3>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_18.svg" alt="Counter-enable registers (mcounteren and scounteren)." id="mcounteren" /><figcaption>Counter-enable registers (<span>mcounteren</span> and <span>scounteren</span>).<span label="mcounteren"></span></figcaption>
+<img src="machine_18.svg" alt="Counter-enable registers (mcounteren and scounteren)." id="mcounteren" /><figcaption>Counter-enable registers (<span>mcounteren</span> and <span>scounteren</span>).<span label="mcounteren"></span></figcaption>
 </figure>
 <p>The counter-enable registers <span>mcounteren</span> and <span>scounteren</span>
 control the availability of the hardware performance monitoring
@@ -1081,7 +1081,7 @@ dedicated for use by machine mode. Typically, it is used to hold a
 pointer to a machine-mode hart-local context space and swapped with a
 user register upon entry to an M-mode trap handler.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_19.svg" alt="Machine-mode scratch register." id="mscratchreg" /><figcaption>Machine-mode scratch register.<span label="mscratchreg"></span></figcaption>
+<img src="machine_19.svg" alt="Machine-mode scratch register." id="mscratchreg" /><figcaption>Machine-mode scratch register.<span label="mscratchreg"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>The MIPS ISA allocated two user registers (<span>k0</span>/<span>k1</span>) for use
@@ -1117,7 +1117,7 @@ address of the instruction that encountered the exception. Otherwise,
 <span>mepc</span> is never written by the implementation, though it may be
 explicitly written by software.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_20.svg" alt="Machine exception program counter register." id="mepcreg" /><figcaption>Machine exception program counter register.<span label="mepcreg"></span></figcaption>
+<img src="machine_20.svg" alt="Machine exception program counter register." id="mepcreg" /><figcaption>Machine exception program counter register.<span label="mepcreg"></span></figcaption>
 </figure>
 <h3 id="machine-cause-register-mcause"><span class="header-section-number">3.1.20</span> Machine Cause Register (<span>mcause</span>)</h3>
 <p>The <span>mcause</span> register is an XLEN-bit read-write register formatted as
@@ -1132,7 +1132,7 @@ lists the possible machine-level exception codes. The Exception Code
 is an <strong>WLRL</strong> field, so is only guaranteed to hold supported exception
 codes.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_21.svg" alt="Machine Cause register mcause." id="mcausereg" /><figcaption>Machine Cause register <span>mcause</span>.<span label="mcausereg"></span></figcaption>
+<img src="machine_21.svg" alt="Machine Cause register mcause." id="mcausereg" /><figcaption>Machine Cause register <span>mcause</span>.<span label="mcausereg"></span></figcaption>
 </figure>
 <table>
 <thead>
@@ -1370,7 +1370,7 @@ This design reduces datapath cost for most implementations, particularly
 those with hardware page-table walkers.</p>
 </div>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_22.svg" alt="Machine Trap Value register." id="mtvalreg" /><figcaption>Machine Trap Value register.<span label="mtvalreg"></span></figcaption>
+<img src="machine_22.svg" alt="Machine Trap Value register." id="mtvalreg" /><figcaption>Machine Trap Value register.<span label="mtvalreg"></span></figcaption>
 </figure>
 <p>For instruction-fetch access faults on RISC-V systems with
 variable-length instructions, <span>mtval</span> will contain a pointer to
@@ -1416,7 +1416,7 @@ mtval</span> must also be able to hold all values less than <span class="math in
 smaller of XLEN and the width of the longest supported instruction.</p>
 <h2 id="machine-mode-privileged-instructions"><span class="header-section-number">3.2</span> Machine-Mode Privileged Instructions</h2>
 <h3 id="environment-call-and-breakpoint"><span class="header-section-number">3.2.1</span> Environment Call and Breakpoint</h3>
-<p><img src="tmp.riscv-priv-1.10//machine_23.svg" alt="image" /></p>
+<p><img src="machine_23.svg" alt="image" /></p>
 <p>The ECALL instruction is used to make a request to the supporting execution
 environment. When executed in U-mode, S-mode, or M-mode, it generates an
 environment-call-from-U-mode exception, environment-call-from-S-mode exception, or environment-call-from-M-mode exception, respectively, and performs no other operation.
@@ -1440,7 +1440,7 @@ the address of the following instruction.</p>
 <h3 id="otherpriv"><span class="header-section-number">3.2.2</span> Trap-Return Instructions</h3>
 <p>Instructions to return from trap are encoded under the PRIV
 minor opcode.</p>
-<p><img src="tmp.riscv-priv-1.10//machine_24.svg" alt="image" /></p>
+<p><img src="machine_24.svg" alt="image" /></p>
 <p>To return after handling a trap, there are separate trap return
 instructions per privilege level: MRET, SRET, and URET. MRET is
 always provided, while SRET must be provided if supervisor mode is
@@ -1467,7 +1467,7 @@ used to inform the hardware platform that suitable interrupts should
 preferentially be routed to this hart. WFI is available in all of the
 supported S and M privilege modes, and optionally available to
 U-mode for implementations that support U-mode interrupts.</p>
-<p><img src="tmp.riscv-priv-1.10//machine_25.svg" alt="image" /></p>
+<p><img src="machine_25.svg" alt="image" /></p>
 <p>If an enabled interrupt is present or later becomes present while the
 hart is stalled, the interrupt exception will be taken on the
 following instruction, i.e., execution resumes in the trap handler and
@@ -1898,10 +1898,10 @@ supporting multiple M-XLEN values, since the configurations for PMP
 entries 8–11 appear in <span>pmpcfg2</span>[31:0] for both RV32 and RV64.</p>
 </div>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_26.svg" alt="RV32 PMP configuration CSR layout." id="pmpcfg-rv32" /><figcaption>RV32 PMP configuration CSR layout.<span label="pmpcfg-rv32"></span></figcaption>
+<img src="machine_26.svg" alt="RV32 PMP configuration CSR layout." id="pmpcfg-rv32" /><figcaption>RV32 PMP configuration CSR layout.<span label="pmpcfg-rv32"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_27.svg" alt="RV64 PMP configuration CSR layout." id="pmpcfg-rv64" /><figcaption>RV64 PMP configuration CSR layout.<span label="pmpcfg-rv64"></span></figcaption>
+<img src="machine_27.svg" alt="RV64 PMP configuration CSR layout." id="pmpcfg-rv64" /><figcaption>RV64 PMP configuration CSR layout.<span label="pmpcfg-rv64"></span></figcaption>
 </figure>
 <p>The PMP address registers are CSRs named <span>pmpaddr0</span>–<span>pmpaddr15</span>.
 Each PMP address register encodes bits 33–2 of a 34-bit physical address for
@@ -1918,10 +1918,10 @@ Sections <a href="supervisor.html#sec:sv39" data-reference-type="ref" data-refe
 space, so the RV64 PMP address registers impose the same limit.</p>
 </div>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_28.svg" alt="PMP address register format, RV32." id="pmpaddr-rv32" /><figcaption>PMP address register format, RV32.<span label="pmpaddr-rv32"></span></figcaption>
+<img src="machine_28.svg" alt="PMP address register format, RV32." id="pmpaddr-rv32" /><figcaption>PMP address register format, RV32.<span label="pmpaddr-rv32"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_29.svg" alt="PMP address register format, RV64." id="pmpaddr-rv64" /><figcaption>PMP address register format, RV64.<span label="pmpaddr-rv64"></span></figcaption>
+<img src="machine_29.svg" alt="PMP address register format, RV64." id="pmpaddr-rv64" /><figcaption>PMP address register format, RV64.<span label="pmpaddr-rv64"></span></figcaption>
 </figure>
 <p>Figure <a href="machine.html#pmpcfg" data-reference-type="ref" data-reference="pmpcfg">1.24</a> shows the layout of a PMP configuration register. The R,
 W, and X bits, when set, indicate that the PMP entry permits read, write, and
@@ -1929,7 +1929,7 @@ instruction execution, respectively. When one of these bits is clear, the
 corresponding access type is denied. The remaining two fields, A and L, are
 described in the following sections.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_30.svg" alt="PMP configuration register format." id="pmpcfg" /><figcaption>PMP configuration register format.<span label="pmpcfg"></span></figcaption>
+<img src="machine_30.svg" alt="PMP configuration register format." id="pmpcfg" /><figcaption>PMP configuration register format.<span label="pmpcfg"></span></figcaption>
 </figure>
 <h4 id="address-matching" class="unnumbered">Address Matching</h4>
 <p>The A field in a PMP entry’s configuration register encodes the
@@ -1973,7 +1973,7 @@ arbitrary range (TOR). These modes support four-byte granularity.</p>
 <p>NAPOT ranges make use of the low-order bits of the associated address register
 to encode the size of the range, as shown in Table <a href="machine.html#pmpcfg-napot" data-reference-type="ref" data-reference="pmpcfg-napot">1.25</a>.</p>
 <figure>
-<img src="tmp.riscv-priv-1.10//machine_31.svg" alt="NAPOT range encoding in PMP address and configuration registers." id="pmpcfg-napot" /><figcaption>NAPOT range encoding in PMP address and configuration registers.<span label="pmpcfg-napot"></span></figcaption>
+<img src="machine_31.svg" alt="NAPOT range encoding in PMP address and configuration registers." id="pmpcfg-napot" /><figcaption>NAPOT range encoding in PMP address and configuration registers.<span label="pmpcfg-napot"></span></figcaption>
 </figure>
 <p>If TOR is selected, the associated address register forms the top of the
 address range, and the preceding PMP address register forms the bottom of the

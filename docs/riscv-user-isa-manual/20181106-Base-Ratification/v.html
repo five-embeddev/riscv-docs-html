@@ -98,7 +98,7 @@ of an element numeric representation and an element bitwidth is called
 an element <span><em>format</em></span>. Each vector register can also be disabled to
 free physical vector storage for other architectural vector registers.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_00.svg" alt="Location of subfields within a single vtypen field." id="fig:vtype" /><figcaption>Location of subfields within a single <span>vtype</span><span class="math inline"><em>n</em></span> field.<span label="fig:vtype"></span></figcaption>
+<img src="v_00.svg" alt="Location of subfields within a single vtypen field." id="fig:vtype" /><figcaption>Location of subfields within a single <span>vtype</span><span class="math inline"><em>n</em></span> field.<span label="fig:vtype"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>It was also common in earlier vector machines to support multiple
@@ -114,7 +114,7 @@ double throughput.</p>
 the vector register. In the base vector extension, the shape can be
 set to either scalar or vector.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_01.svg" alt="Base vector encoding of vshapen field." id="tab:vshape" /><figcaption>Base vector encoding of <span>vshape</span><span class="math inline"><em>n</em></span> field.<span label="tab:vshape"></span></figcaption>
+<img src="v_01.svg" alt="Base vector encoding of vshapen field." id="tab:vshape" /><figcaption>Base vector encoding of <span>vshape</span><span class="math inline"><em>n</em></span> field.<span label="tab:vshape"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>For the base vector ISA, only a single bit is required in each <span>
@@ -206,7 +206,7 @@ extension, the representation can be set to unsigned integer,
 two’s-complement signed integer, or floating-point. The
 floating-point representations follow the IEEE 754 standards.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_02.svg" alt="Base vector representation encoding." id="tab:verep" /><figcaption>Base vector representation encoding.<span label="tab:verep"></span></figcaption>
+<img src="v_02.svg" alt="Base vector representation encoding." id="tab:verep" /><figcaption>Base vector representation encoding.<span label="tab:verep"></span></figcaption>
 </figure>
 <table>
 <thead>
@@ -303,11 +303,11 @@ and floating-point type widths:
 For the base vector ISA, the bit width can be set at any power of two
 between 8 and ELEN.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_03.svg" alt="Base vector ISA encoding of vector element width ( vewn) register fields." id="tab:basevew" /><figcaption>Base vector ISA encoding of vector element width (<span>
+<img src="v_03.svg" alt="Base vector ISA encoding of vector element width ( vewn) register fields." id="tab:basevew" /><figcaption>Base vector ISA encoding of vector element width (<span>
 vew</span><span class="math inline"><em>n</em></span>) register fields.<span label="tab:basevew"></span></figcaption>
 </figure>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_04.svg" alt="Proposed extended encoding of vector element width ( vewn) register fields. Every bit width between 1 and 16 can be supported. Bit widths in steps of 2 between 16 to 32 (i.e., 16, 18, 20, ...). Bit widths in steps of 4 between 32 to 64 (i.e., 32, 36, 40, ...). Bit widths in steps of 8 between 64 and 128 (i.e., 64, 72, 80,...). For bit widths greater than 128, all powers-of-two up to 16384 and all widths 1.5\times greater are supported (128, 384, 512, 768,...). " id="tab:extvew" /><figcaption>Proposed extended encoding of vector element width (<span>
+<img src="v_04.svg" alt="Proposed extended encoding of vector element width ( vewn) register fields. Every bit width between 1 and 16 can be supported. Bit widths in steps of 2 between 16 to 32 (i.e., 16, 18, 20, ...). Bit widths in steps of 4 between 32 to 64 (i.e., 32, 36, 40, ...). Bit widths in steps of 8 between 64 and 128 (i.e., 64, 72, 80,...). For bit widths greater than 128, all powers-of-two up to 16384 and all widths 1.5\times greater are supported (128, 384, 512, 768,...). " id="tab:extvew" /><figcaption>Proposed extended encoding of vector element width (<span>
 vew</span><span class="math inline"><em>n</em></span>) register fields. Every bit width between 1 and 16 can
 be supported. Bit widths in steps of 2 between 16 to 32 (i.e.,
 16, 18, 20, ...). Bit widths in steps of 4 between 32 to 64
@@ -333,7 +333,7 @@ added to a base scalar ISA, it must support the vector data element
 types implied by the supported scalar types as defined by
 Table <a href="v.html#tab:velemtypes" data-reference-type="ref" data-reference="tab:velemtypes">1.6</a>.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_05.svg" alt="Supported data element formats depending on base integer ISA and supported floating-point extensions. Ix indicates a signed integer of x bits, Ux indicates an unsigned integer of x bits, and Fx indicates an IEEE floating-point number of x bits." id="tab:velemtypes" /><figcaption>Supported data element formats depending on base integer ISA
+<img src="v_05.svg" alt="Supported data element formats depending on base integer ISA and supported floating-point extensions. Ix indicates a signed integer of x bits, Ux indicates an unsigned integer of x bits, and Fx indicates an IEEE floating-point number of x bits." id="tab:velemtypes" /><figcaption>Supported data element formats depending on base integer ISA
 and supported floating-point extensions. I<span class="math inline"><em>x</em></span> indicates a signed
 integer of <span class="math inline"><em>x</em></span> bits, U<span class="math inline"><em>x</em></span> indicates an unsigned integer of <span class="math inline"><em>x</em></span> bits,
 and F<span class="math inline"><em>x</em></span> indicates an IEEE floating-point number of <span class="math inline"><em>x</em></span> bits.<span label="tab:velemtypes"></span></figcaption>
@@ -404,7 +404,7 @@ register allocation is also simplified with this constraint.</p>
 </div>
 <h2 id="vector-unit-csrs"><span class="header-section-number">21.10</span> Vector Unit CSRs</h2>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_06.svg" alt="Vector extension CSRs." id="tab:vcsrs" /><figcaption>Vector extension CSRs.<span label="tab:vcsrs"></span></figcaption>
+<img src="v_06.svg" alt="Vector extension CSRs." id="tab:vcsrs" /><figcaption>Vector extension CSRs.<span label="tab:vcsrs"></span></figcaption>
 </figure>
 <h2 id="maximum-vector-length-mvl"><span class="header-section-number">21.11</span> Maximum Vector Length (MVL)</h2>
 <p>The implementation determines an available <span><em>maximum vector length</em></span>
@@ -555,7 +555,7 @@ The VR4 form is used for fused multiply-add instructions. The
 existing RISC-V instruction formats are used for other vector-related
 instructions, such as the vector configuration instructions.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_07.svg" alt="New V extension instruction formats. " id="fig:vinstformats" /><figcaption>New V extension instruction formats. <span label="fig:vinstformats"></span></figcaption>
+<img src="v_07.svg" alt="New V extension instruction formats. " id="fig:vinstformats" /><figcaption>New V extension instruction formats. <span label="fig:vinstformats"></span></figcaption>
 </figure>
 <p>Most vector instructions are available in both vector-vector and
 vector-scalar variants. Vector-vector instructions take the first
@@ -594,7 +594,7 @@ and outputs. Table <a href="v.html#tab:vtypemix" data-reference-type="ref" data
 integer and floating-point instructions, but the detailed instruction
 listing should be consulted for accurate information.</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_08.svg" alt="General rules for supported types per instruction in base vector extension. X represents the number of bits in an integer type and F represents the number of bits in a floating-point type. Individual instruction types will provide more detailed listings. Note that the type of a scalar floating-point operand can never be different from that of the vector in Src2, hence the Src1=2F case is missing from vector-scalar operations." id="tab:vtypemix" /><figcaption>General rules for supported types per instruction in base
+<img src="v_08.svg" alt="General rules for supported types per instruction in base vector extension. X represents the number of bits in an integer type and F represents the number of bits in a floating-point type. Individual instruction types will provide more detailed listings. Note that the type of a scalar floating-point operand can never be different from that of the vector in Src2, hence the Src1=2F case is missing from vector-scalar operations." id="tab:vtypemix" /><figcaption>General rules for supported types per instruction in base
 vector extension. X represents the number of bits in an integer
 type and F represents the number of bits in a floating-point type.
 Individual instruction types will provide more detailed listings.
@@ -635,7 +635,7 @@ the hardware cost (area, latency) to support a larger number of
 different types is justified.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_09.svg" alt="Format of the vsetdcfg value. The value contains three pairs of a 5-bit type and a 5-bit number of registers to create of that type. A value of 0 for the number of a type indicates that 32 registers should be allocated. A value of 0 for the type indicates this pair should be skipped. The types must be of monotonically increasing size from type0 to type2. " id="fig:vcfg" /><figcaption>Format of the <span>vsetdcfg</span> value. The value contains
+<img src="v_09.svg" alt="Format of the vsetdcfg value. The value contains three pairs of a 5-bit type and a 5-bit number of registers to create of that type. A value of 0 for the number of a type indicates that 32 registers should be allocated. A value of 0 for the type indicates this pair should be skipped. The types must be of monotonically increasing size from type0 to type2. " id="fig:vcfg" /><figcaption>Format of the <span>vsetdcfg</span> value. The value contains
 three pairs of a 5-bit type and a 5-bit number of registers
 to create of that type. A value of 0 for the number of a type
 indicates that 32 registers should be allocated. A value of 0 for
@@ -811,7 +811,7 @@ not provide a clear advantage beyond seeming more consistent with
 <span>vl</span>&gt;0 case.</p>
 </div>
 <figure>
-<img src="tmp.20181106-Base-Ratification//v_10.svg" alt="Example vector-vector add loop." id="fig:vvadd" /><figcaption>Example vector-vector add loop.<span label="fig:vvadd"></span></figcaption>
+<img src="v_10.svg" alt="Example vector-vector add loop." id="fig:vvadd" /><figcaption>Example vector-vector add loop.<span label="fig:vvadd"></span></figcaption>
 </figure>
 <h2 id="predicated-execution"><span class="header-section-number">21.17</span> Predicated Execution</h2>
 <div class=commentary>

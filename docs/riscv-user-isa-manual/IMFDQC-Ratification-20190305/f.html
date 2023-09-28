@@ -38,7 +38,7 @@ Floating-point load and store instructions transfer floating-point
 values between registers and memory. Instructions to transfer values
 to and from the integer register file are also provided.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//f_00.svg" alt="RISC-V standard F extension single-precision floating-point state." id="fprs" /><figcaption>RISC-V standard F extension single-precision floating-point state.<span label="fprs"></span></figcaption>
+<img src="f_00.svg" alt="RISC-V standard F extension single-precision floating-point state." id="fprs" /><figcaption>RISC-V standard F extension single-precision floating-point state.<span label="fprs"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>We considered a unified register file for both integer and
@@ -59,7 +59,7 @@ control and status register (CSR). It is a 32-bit read/write register that
 selects the dynamic rounding mode for floating-point arithmetic operations and
 holds the accrued exception flags, as shown in Figure <a href="f.html#fcsr" data-reference-type="ref" data-reference="fcsr">1.2</a>.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//f_01.svg" alt="Floating-point control and status register." id="fcsr" /><figcaption>Floating-point control and status register.<span label="fcsr"></span></figcaption>
+<img src="f_01.svg" alt="Floating-point control and status register." id="fcsr" /><figcaption>Floating-point control and status register.<span label="fcsr"></span></figcaption>
 </figure>
 <p>The <span>fcsr</span> register can be read and written with the FRCSR and
 FSCSR instructions, which are assembler pseudoinstructions built on the
@@ -101,7 +101,7 @@ operations that often have to switch frequently between different
 rounding modes.</p>
 </div>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//f_02.svg" alt="Rounding mode encoding." id="rm" /><figcaption>Rounding mode encoding.<span label="rm"></span></figcaption>
+<img src="f_02.svg" alt="Rounding mode encoding." id="rm" /><figcaption>Rounding mode encoding.<span label="rm"></span></figcaption>
 </figure>
 <p>The accrued exception flags indicate the exception conditions that
 have arisen on any floating-point arithmetic instruction since the
@@ -110,7 +110,7 @@ The base RISC-V ISA
 does not support generating a trap on the setting of a floating-point
 exception flag.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//f_03.svg" alt="Accrued exception flag encoding." id="bitdef" /><figcaption>Accrued exception flag encoding.<span label="bitdef"></span></figcaption>
+<img src="f_03.svg" alt="Accrued exception flag encoding." id="bitdef" /><figcaption>Accrued exception flag encoding.<span label="bitdef"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>As allowed by the standard, we do not support traps on floating-point
@@ -158,8 +158,8 @@ mode as the integer base ISA, with a base address in register <span>
 single-precision floating-point value from memory into floating-point
 register <span><em>rd</em></span>. FSW stores a single-precision value from
 floating-point register <span><em>rs2</em></span> to memory.</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_04.svg" alt="image" /></p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_05.svg" alt="image" /></p>
+<p><img src="f_04.svg" alt="image" /></p>
+<p><img src="f_05.svg" alt="image" /></p>
 <p>FLW and FSW are only guaranteed to execute atomically if the effective address
 is naturally aligned.</p>
 <p>FLW and FSW do not modify the bits being transferred; in particular, the
@@ -224,7 +224,7 @@ minimumNumber and maximumNumber operations, rather than the IEEE 754-2008
 minNum and maxNum operations. These operations differ in their handling of
 signaling NaNs.</p>
 </div>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_06.svg" alt="image" /></p>
+<p><img src="f_06.svg" alt="image" /></p>
 <p>Floating-point fused multiply-add instructions require a new standard
 instruction format. R4-type instructions specify three source
 registers (<span><em>rs1</em></span>, <span><em>rs2</em></span>, and <span><em>rs3</em></span>) and a destination
@@ -254,7 +254,7 @@ definition matches the behavior of the x86 and ARM fused multiply-add
 instructions, but unfortunately the RISC-V FNMSUB and FNMADD instruction
 names are swapped compared to x86 and ARM.</p>
 </div>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_07.svg" alt="image" /></p>
+<p><img src="f_07.svg" alt="image" /></p>
 <div class=commentary>
 <p>The fused multiply-add (FMA) instructions consume a large part of the
 32-bit instruction encoding space. Some alternatives considered were
@@ -351,7 +351,7 @@ and the behavior for invalid inputs.</p>
 instructions round according to the <span><em>rm</em></span> field. A floating-point register
 can be initialized to floating-point positive zero using FCVT.S.W <span><em>rd</em></span>,
 <span>x0</span>, which will never set any exception flags.</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_08.svg" alt="image" /></p>
+<p><img src="f_08.svg" alt="image" /></p>
 <p>Floating-point to floating-point sign-injection instructions, FSGNJ.S,
 FSGNJN.S, and FSGNJX.S, produce a result that takes all bits except
 the sign bit from <span><em>rs1</em></span>. For FSGNJ, the result’s sign bit is <span>
@@ -365,7 +365,7 @@ ry</em></span>); FSGNJN.S <span><em>rx, ry, ry</em></span> moves the negation of
 <span><em>rx</em></span> (assembler pseudoinstruction FNEG.S <span><em>rx, ry</em></span>); and FSGNJX.S <span><em>rx,
 ry, ry</em></span> moves the absolute value of <span><em>ry</em></span> to <span><em>rx</em></span> (assembler
 pseudoinstruction FABS.S <span><em>rx, ry</em></span>).</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_09.svg" alt="image" /></p>
+<p><img src="f_09.svg" alt="image" /></p>
 <div class=commentary>
 <p>The sign-injection instructions
 provide floating-point MV, ABS, and NEG,
@@ -401,7 +401,7 @@ an instruction that moves 32 bits without interpreting them. This
 became clearer after defining NaN-boxing. To avoid disturbing
 existing code, both the W and S versions will be supported by tools.</p>
 </div>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_10.svg" alt="image" /></p>
+<p><img src="f_10.svg" alt="image" /></p>
 <div class=commentary>
 <p>The base floating-point ISA was defined so as to allow implementations
 to employ an internal recoding of the floating-point format in
@@ -426,7 +426,7 @@ if either input is NaN. FEQ.S performs a <span><em>quiet</em></span> comparison:
 sets the invalid operation exception flag if either input is a signaling NaN.
 For all three instructions,
 the result is 0 if either operand is NaN.</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_11.svg" alt="image" /></p>
+<p><img src="f_11.svg" alt="image" /></p>
 <h2 id="single-precision-floating-point-classify-instruction"><span class="header-section-number">12.9</span> Single-Precision Floating-Point Classify Instruction</h2>
 <p>The FCLASS.S instruction examines the value in floating-point register <span>
 <em>rs1</em></span> and writes to integer register <span><em>rd</em></span> a 10-bit mask that indicates
@@ -435,7 +435,7 @@ described in Table <a href="f.html#tab:fclass" data-reference-type="ref" data-r
 be set if the property is true and clear otherwise. All other bits in
 <span><em>rd</em></span> are cleared. Note that exactly one bit in <span><em>rd</em></span> will be set.
 FCLASS.S does not set the floating-point exception flags.</p>
-<p><img src="tmp.IMFDQC-Ratification-20190305//f_12.svg" alt="image" /></p>
+<p><img src="f_12.svg" alt="image" /></p>
 <table>
 <thead>
 <tr class="header">

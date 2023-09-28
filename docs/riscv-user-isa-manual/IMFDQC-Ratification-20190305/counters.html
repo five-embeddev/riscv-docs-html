@@ -27,7 +27,7 @@ count, real-time clock, and instructions-retired respectively), while
 the remaining counters, if implemented, provide programmable event
 counting.</p>
 <h2 id="base-counters-and-timers"><span class="header-section-number">11.1</span> Base Counters and Timers</h2>
-<p><img src="tmp.IMFDQC-Ratification-20190305//counters_00.svg" alt="image" /></p>
+<p><img src="counters_00.svg" alt="image" /></p>
 <p>RV32I provides a number of 64-bit read-only user-level counters, which
 are mapped into the 12-bit CSR address space and accessed in 32-bit
 pieces using CSRRS instructions. In RV64I, the CSR instructions can
@@ -122,7 +122,7 @@ overflow in practice.</p>
 <span>x3</span>:<span>x2</span>, even if the counter overflows between reading its upper
 and lower halves.</p>
 <figure>
-<img src="tmp.IMFDQC-Ratification-20190305//counters_01.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="rdcycle" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="rdcycle"></span></figcaption>
+<img src="counters_01.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="rdcycle" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="rdcycle"></span></figcaption>
 </figure>
 <div class=commentary>
 <p>We recommend provision of these basic counters in implementations

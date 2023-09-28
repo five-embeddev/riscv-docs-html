@@ -112,16 +112,16 @@ value from the floating-point registers to memory.
 <div class=commentary>
 <p>The double-precision value may be a NaN-boxed single-precision value.</p>
 </div>
-<p><img src="tmp.riscv-user-2.2//d_00.svg" alt="image" /></p>
-<p><img src="tmp.riscv-user-2.2//d_01.svg" alt="image" /></p>
+<p><img src="d_00.svg" alt="image" /></p>
+<p><img src="d_01.svg" alt="image" /></p>
 <p>FLD and FSD are only guaranteed to execute atomically if the effective address
 is naturally aligned and XLEN<span class="math inline">≥</span>64.</p>
 <h2 id="double-precision-floating-point-computational-instructions"><span class="header-section-number">13.4</span> Double-Precision Floating-Point Computational Instructions</h2>
 <p>The double-precision floating-point computational instructions are
 defined analogously to their single-precision counterparts, but operate on
 double-precision operands and produce double-precision results.</p>
-<p><img src="tmp.riscv-user-2.2//d_02.svg" alt="image" /></p>
-<p><img src="tmp.riscv-user-2.2//d_03.svg" alt="image" /></p>
+<p><img src="d_02.svg" alt="image" /></p>
+<p><img src="d_03.svg" alt="image" /></p>
 <h2 id="double-precision-floating-point-conversion-and-move-instructions"><span class="header-section-number">13.5</span> Double-Precision Floating-Point Conversion and Move Instructions</h2>
 <p>Floating-point-to-integer and integer-to-floating-point conversion
 instructions are encoded in the OP-FP major opcode space.
@@ -140,7 +140,7 @@ the behavior for invalid inputs are the same as for FCVT.<span><em>int</em></spa
 <p>All floating-point to integer and integer to floating-point conversion
 instructions round according to the <span><em>rm</em></span> field. Note FCVT.D.W[U] always
 produces an exact result and is unaffected by rounding mode.</p>
-<p><img src="tmp.riscv-user-2.2//d_04.svg" alt="image" /></p>
+<p><img src="d_04.svg" alt="image" /></p>
 <p>The double-precision to single-precision and single-precision to
 double-precision conversion instructions, FCVT.S.D and FCVT.D.S, are
 encoded in the OP-FP major opcode space and both the source and
@@ -148,11 +148,11 @@ destination are floating-point registers. The <span><em>rs2</em></span> field
 encodes the datatype of the source, and the <span><em>fmt</em></span> field encodes
 the datatype of the destination. FCVT.S.D rounds according to the
 RM field; FCVT.D.S will never round.</p>
-<p><img src="tmp.riscv-user-2.2//d_05.svg" alt="image" /></p>
+<p><img src="d_05.svg" alt="image" /></p>
 <p>Floating-point to floating-point sign-injection instructions, FSGNJ.D,
 FSGNJN.D, and FSGNJX.D are defined analogously to the single-precision
 sign-injection instruction.</p>
-<p><img src="tmp.riscv-user-2.2//d_06.svg" alt="image" /></p>
+<p><img src="d_06.svg" alt="image" /></p>
 <p>For RV64 only, instructions are provided to move bit patterns between
 the floating-point and integer registers. FMV.X.D moves the
 double-precision value in floating-point register <span><em>rs1</em></span> to a
@@ -160,17 +160,17 @@ representation in IEEE 754-2008 standard encoding in integer register
 <span><em>rd</em></span>. FMV.D.X moves the double-precision value encoded in IEEE
 754-2008 standard encoding from the integer register <span><em>rs1</em></span> to the
 floating-point register <span><em>rd</em></span>.</p>
-<p><img src="tmp.riscv-user-2.2//d_07.svg" alt="image" /></p>
+<p><img src="d_07.svg" alt="image" /></p>
 <h2 id="double-precision-floating-point-compare-instructions"><span class="header-section-number">13.6</span> Double-Precision Floating-Point Compare Instructions</h2>
 <p>The double-precision floating-point compare instructions are
 defined analogously to their single-precision counterparts, but operate on
 double-precision operands.</p>
-<p><img src="tmp.riscv-user-2.2//d_08.svg" alt="image" /></p>
+<p><img src="d_08.svg" alt="image" /></p>
 <h2 id="double-precision-floating-point-classify-instruction"><span class="header-section-number">13.7</span> Double-Precision Floating-Point Classify Instruction</h2>
 <p>The double-precision floating-point classify instruction, FCLASS.D, is
 defined analogously to its single-precision counterpart, but operates on
 double-precision operands.</p>
-<p><img src="tmp.riscv-user-2.2//d_09.svg" alt="image" /></p>
+<p><img src="d_09.svg" alt="image" /></p>
 
 </body>
 </html>

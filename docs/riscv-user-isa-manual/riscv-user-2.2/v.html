@@ -160,7 +160,7 @@ hardware-supported data types are supported by both scalar and
 vector instructions.</p>
 </div>
 <figure>
-<img src="tmp.riscv-user-2.2//v_00.svg" alt="Supported data element widths depending on base integer ISA and supported floating-point extensions. Note that supporting a given floating-point width mandates support for all narrower floating-point widths." id="tab:velemtypes" /><figcaption>Supported data element widths depending on base integer ISA
+<img src="v_00.svg" alt="Supported data element widths depending on base integer ISA and supported floating-point extensions. Note that supporting a given floating-point width mandates support for all narrower floating-point widths." id="tab:velemtypes" /><figcaption>Supported data element widths depending on base integer ISA
 and supported floating-point extensions. Note that supporting a
 given floating-point width mandates support for all narrower
 floating-point widths.<span label="tab:velemtypes"></span></figcaption>
@@ -419,7 +419,7 @@ all bits set (largest unsigned integer).</p>
 <p>No element operations are performed for any vector instruction when
 <span>vl</span>=0.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//v_01.svg" alt="Example vector-vector add loop." id="fig:vvadd" /><figcaption>Example vector-vector add loop.<span label="fig:vvadd"></span></figcaption>
+<img src="v_01.svg" alt="Example vector-vector add loop." id="fig:vvadd" /><figcaption>Example vector-vector add loop.<span label="fig:vvadd"></span></figcaption>
 </figure>
 <h2 id="rapid-configuration-instructions"><span class="header-section-number">21.5</span> Rapid Configuration Instructions</h2>
 <p>It can take several instructions to set <span>vcmaxw</span>, <span>vctype</span> and
@@ -443,7 +443,7 @@ vector unit for these operation.</p>
 <p>The <span>vcfgd</span> instruction also clears the <span>vcnpred</span> register, so
 no predicate registers are allocated.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//v_02.svg" alt="Format of the vcfgd value for different base ISAs, holding 5-bit vector register numbers for each supported type. Fields must either contain 0 indicating no vector registers are allocated for that type, or a vector register number greater than all to the right. All vector register numbers inbetween two non-zero fields are allocated to the type with the higher vector register number. " id="fig:vdcfg" /><figcaption>Format of the <span>vcfgd</span> value for different base ISAs,
+<img src="v_02.svg" alt="Format of the vcfgd value for different base ISAs, holding 5-bit vector register numbers for each supported type. Fields must either contain 0 indicating no vector registers are allocated for that type, or a vector register number greater than all to the right. All vector register numbers inbetween two non-zero fields are allocated to the type with the higher vector register number. " id="fig:vdcfg" /><figcaption>Format of the <span>vcfgd</span> value for different base ISAs,
 holding 5-bit vector register numbers for each supported
 type. Fields must either contain 0 indicating no vector registers
 are allocated for that type, or a vector register number greater
@@ -466,7 +466,7 @@ vector registers (<span>v0</span> and <span>v1</span>) allocated to the narrowes
 required type. An example allocation is shown in
 Figure <a href="v.html#fig:vcfgdexample" data-reference-type="ref" data-reference="fig:vcfgdexample">1.4</a>.</p>
 <figure>
-<img src="tmp.riscv-user-2.2//v_03.svg" alt="Example use of vcfgd value to set configuration." id="fig:vcfgdexample" /><figcaption>Example use of <span>vcfgd</span> value to set configuration.<span label="fig:vcfgdexample"></span></figcaption>
+<img src="v_03.svg" alt="Example use of vcfgd value to set configuration." id="fig:vcfgdexample" /><figcaption>Example use of <span>vcfgd</span> value to set configuration.<span label="fig:vcfgdexample"></span></figcaption>
 </figure>
 <p>Separate <span>vcfgp</span> and <span>vcfgpi</span> instructions are provided, using
 the CSRRW and CSRRWI encodings respectively, that write the source
