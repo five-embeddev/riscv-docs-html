@@ -23,22 +23,33 @@ MENU_OUTPUT_DIR=${TOP_DIR}/data
 DATA_OUTPUT_DIR=${TOP_DIR}/data
 OUTPUT_FORMAT=plain
 
+#VERSION_user=riscv-user-2.2
+VERSION_user=Priv-v1.12
+VERSION_priv=Priv-v1.12
+VERSION_vector=v1.0
+VERSION_debug=v0.13-release
+VERSION_bitmanip=1.0.0
+
+#VERSION?=${VERSION_${DOC}}
+
+
 # Output paths
 HTML_DST_DIR=${DOCS_OUTPUT_DIR}/${OUT_DOC}/${VERSION}
 MENU_DST_DIR=${MENU_OUTPUT_DIR}/${OUT_DOC}/${VERSION}
 
 SRC_DOCS=\
-	riscv-user-isa-manual/latest/user \
-	riscv-priv-isa-manual/latest/priv \
-	riscv-debug-spec/latest/debug \
-	riscv-v-spec/draft/vector \
-	riscv-bitmanip/draft/bitmanip
+	riscv-user-isa-manual/${VERSION_user}/user \
+	riscv-priv-isa-manual/${VERSION_priv}/priv \
+	riscv-debug-spec/${VERSION_debug}/debug \
+	riscv-v-spec/${VERSION_vector}/vector \
+	riscv-bitmanip/${VERSION_bitmanip}/bitmanip
 
 # Common data files
 KEYWORDS_YAML=${DATA_OUTPUT_DIR}/keywords.yaml
 KEYWORDS_DOCS=${SRC_DOCS:%=%-keywords.yaml}
 CSR_YAML=${DATA_OUTPUT_DIR}/csr.yaml
 OPCODE_YAML=${DATA_OUTPUT_DIR}/opcodes.yaml
+DOCS_OPCODE_YAML=${DOCS_OUTPUT_DIR}/opcodes.yaml
 
 # Helper Vars
 CONVERT_DATE:=${shell date +%Y/%m/%d}
@@ -51,4 +62,7 @@ HTML_TMP0_DIR=tmp.${VERSION}
 __MKDIR_DST=-if [ ! -d ${HTML_DST_DIR} ] ; then mkdir -p ${HTML_DST_DIR} ; fi
 __MKDIR_TMP=-if [ ! -d ${HTML_TMP0_DIR} ] ; then mkdir -p ${HTML_TMP0_DIR} ; fi
 __MKDIR_DATA=-if [ ! -d ${DATA_OUTPUT_DIR} ] ; then mkdir -p ${DATA_OUTPUT_DIR} ; fi
+
+# Misc paths
+ISA_MANUAL_DIR=${TOP_DIR}/generators/riscv-isa-manual/
 

@@ -6,21 +6,27 @@ require 'optparse'
 
 options = {
   :opcode_path=>"../../external/riscv-opcodes/",
-  :manual_path=>"/riscv-isa-manual/latest/",
+  :user_manual_path=>"/riscv-user-isa-manual/latest/",
+  :priv_manual_path=>"/riscv-priv-isa-manual/latest/",
+  :vector_manual_path=>"/riscv-v-spec/v1.0/",
   :html_path=>"../../references/",
   :output_file=>"../../data/riscv-isa-data/opcodes.yaml",
 }
 OptionParser.new do |opt|
   opt.on('--opcode-path OPCODE_PATH') { |o| options[:opcode_path] = o }
-  opt.on('--manual-path MANUAL_PATH') { |o| options[:manual_path] = o }
+  opt.on('--user-manual-path MANUAL_PATH') { |o| options[:user_manual_path] = o }
+  opt.on('--priv-manual-path MANUAL_PATH') { |o| options[:priv_manual_path] = o }
+  opt.on('--vector-manual-path MANUAL_PATH') { |o| options[:vector_manual_path] = o }
   opt.on('--html-path HTML_PATH') { |o| options[:html_path] = o }
   opt.on('--output-file OUTPUT_YAML') { |o| options[:output_file] = o }
 end.parse!
 
 
+# These are the files that will be read from  https://github.com/riscv/riscv-opcodes.git
 OPCODE_FILES=%w{opcodes opcodes-custom opcodes-pseudo opcodes-rvc opcodes-rvc-pseudo opcodes-rvv}
 
-ISA_LIST=%w{
+# These are the html files that will be read after conversion from tex/adoc
+USER_ISA_LIST=%w{
    rv32 
    rv32e 
    rv64 
@@ -44,9 +50,13 @@ ISA_LIST=%w{
    zam 
    zfinx 
    ztso 
-   machine supervisor hypervisor} 
+}
+PRIV_ISA_LIST=%w{
+   machine 
+   supervisor 
+   hypervisor} 
 
-
+ISA_LIST=USER_ISA_LIST+PRIV_ISA_LIST
 
 OPCODE_GROUP_MAP= {
   "opcodes-rvv" => "v",
@@ -58,10 +68,10 @@ first_section = {}
 section_labels = {}
 
 OPCODE_GROUP_DEFAULT_DESC= {
-  "opcodes-custom" => {"custom" => {"#" => {"url"=>"/riscv-isa-manual/latest/", "headers"=>[],}}},
-  "opcodes-psuedo" => {"psuedo" => {"#" => {"url"=>"/riscv-isa-manual/latest/", "headers"=>[]}}},
-  "opcodes-rvv" => {"v" => {"#_introduction" => {"url"=>"/riscv-v-spec/draft/v-spec.html#_introduction", "headers"=>[]}}},
-  "opcodes-rvc" => {"c" => {"#compressed" => {"url"=>"/riscv-isa-manual/latest/c.html#compressed", "headers"=>[]}}},
+  "opcodes-custom" => {"custom" => {"#" => {"url"=> options[:user_manual_path], "headers"=>[],}}},
+  "opcodes-psuedo" => {"psuedo" => {"#" => {"url"=>options[:user_manual_path], "headers"=>[]}}},
+  "opcodes-rvv" => {"v" => {"#_introduction" => {"url"=> options[:vector_manual_path] + "/v-spec.html#_introduction", "headers"=>[]}}},
+  "opcodes-rvc" => {"c" => {"#compressed" => {"url"=> options[:user_manual_path] + "/c.html#compressed", "headers"=>[]}}},
 }
 OPCODE_GROUP_DEFAULT_DESC["opcodes-rvc-pseudo"]  =OPCODE_GROUP_DEFAULT_DESC["opcodes-rvc"]
 
@@ -74,6 +84,11 @@ def opcode_alias(opcode_aliases,opcode)
 end
 
 
+# The opcodes data file includes the opcode arguments as they are encoded in the instruction word
+# sometimes that requires splitting immediate values
+# This map restores the hi/lo etc parts to a single parameter that the assembler will use
+# Left side: opcode encoding
+# Right side: assembler opcode arguments
 OPCODE_TYPES={
   ["bimm12hi", "rs1", "rs2", "bimm12lo"]=>["rs1", "rs2", "bimm12"],
   ["rd", "rs1", "imm12"]=>["rd", "rs1", "imm12"],
@@ -81,7 +96,7 @@ OPCODE_TYPES={
   ["rd", "imm20"]=>["rd", "imm20"],
   ["rd", "rs1"]=>["rd", "rs1"],
   ["rd", "rs1", "rs2"]=>["rd", "rs1", "rs2"],
-  ["imm12hi", "rs1", "rs2", "imm12lo"]=>["imm12hi", "rs1", "rs2", "imm12lo"],
+  ["imm12hi", "rs1", "rs2", "imm12lo"]=>["rs1", "rs2", "imm12"],
   ["rs1", "rd"]=>["rs1", "rd"],
   ["imm12", "rs1", "rd"]=>["imm12", "rs1", "rd"],
   ["rs1", "rs2"]=>["rs1", "rs2"],
@@ -125,9 +140,9 @@ def opcode_args(data)
 end
 
 
-def get_op_desc(options, opcode_data, opcode_aliases, section_labels, isa_name)
+def get_op_desc(options, opcode_data, opcode_aliases, section_labels, isa_name, manual_path)
   fname_base = isa_name + ".html"
-  fname =  File.join( options[:manual_path], fname_base)
+  fname =  File.join(manual_path, fname_base)
   get_op_desc_fname(options, opcode_data, opcode_aliases, section_labels, isa_name, fname)
 end
 
@@ -223,6 +238,7 @@ def get_op_desc_fname(options, opcode_data, opcode_aliases, section_labels, isa_
           #p opcode
           if opcode_data.has_key?(opcode)
             if not opcode_data[opcode].has_key?("desc")
+              opcode_data[opcode]["main_url_base"] = url_base
               opcode_data[opcode]["main_desc"] = isa_name
               opcode_data[opcode]["main_id"] = id
               opcode_data[opcode]["desc"] = {}
@@ -278,7 +294,7 @@ def float_alias(options, opcode_desc,opcode_data,section_labels, type,size)
           if info_src.has_key?("desc")
             id = info_src["main_id"]
 
-            url =  options[:manual_path] + "/" + type + ".html"
+            url =  options[:user_manual_path] + "/" + type + ".html"
             if not section_labels[type].has_key?(id)
               section_labels[type][id] = {
                 "headers" => section_labels["f"][id]["headers"],
@@ -393,11 +409,15 @@ opcode_data.each_pair do  | opcode, info |
 end
 
 
-ISA_LIST.each do | isa |
+USER_ISA_LIST.each do | isa |
   next if isa == "v"
-  get_op_desc(options, opcode_data,opcode_aliases,section_labels,isa)
+  get_op_desc(options, opcode_data,opcode_aliases,section_labels,isa, options[:user_manual_path])
 end
-get_op_desc_fname(options, opcode_data,opcode_aliases,section_labels, "v","/riscv-v-spec/draft/v-spec.html")
+PRIV_ISA_LIST.each do | isa |
+  next if isa == "v"
+  get_op_desc(options, opcode_data,opcode_aliases,section_labels,isa, options[:priv_manual_path])
+end
+get_op_desc_fname(options, opcode_data,opcode_aliases,section_labels, "v",options[:vector_manual_path] + "/v-spec.html")
 
 resolve_desc(desc, opcode_data)
 
@@ -437,7 +457,7 @@ top_data["groups"] = sort_hash_list(groups)
 top_data["sections"] = sort_hash_hash_list(collect_sections(opcode_data))
 top_data["sections_labels"] = sort_hash_hash(section_labels)
 top_data["isa"] = sort_hash_list(desc)
-top_data["args"] = OPCODE_TYPES
+top_data["opcode_args_to_asm_args"] = OPCODE_TYPES.values
 
 File.open(options[:output_file],"w") do | fout |
   fout.write(top_data.to_yaml)

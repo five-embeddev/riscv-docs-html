@@ -2,13 +2,11 @@
 DOC ?= user
 
 # Configuratin for targets.mak
-VERSION=latest
 TOP_DIR=../../
 SRC_REPO=riscv-isa-manual
 OUT_DOC_user=riscv-user-isa-manual
 OUT_DOC_priv=riscv-priv-isa-manual
 OUT_DOC=${OUT_DOC_${DOC}}
-SRC_DIR=${TOP_DIR}/external/${SRC_REPO}/${VERSION}/src
 BIB_FILES=riscv-spec.bib
 
 TITLE_user="RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA"
@@ -23,14 +21,16 @@ TITLE=${TITLE_${DOC}}
 CATEGORY=${CATEGORY_${DOC}}
 TOP=${TOP_${DOC}}
 
-
 include ../vars.mak
 
+SRC_DIR=${TOP_DIR}/external/${SRC_REPO}/${VERSION}/src
+
+AVAILABLE_FILES=$(basename $(notdir $(wildcard ${SRC_DIR}/*.tex)))
 
 PREFACE=${PREFACE_${DOC}}
 CHAPTERS=${CHAPTERS_${DOC}}
 APPENDIX=${APPENDIX_${DOC}}
-ALL=${TOP} ${PREFACE} ${CHAPTERS} ${APPENDIX}
+ALL=$(filter ${AVAILABLE_FILES}, ${TOP} ${PREFACE} ${CHAPTERS} ${APPENDIX})
 
 SPECREV_user:=$(shell grep '{\\specrev}' ${SRC_DIR}/${TOP_user}.tex | cut -f 4 -d'{' | cut -f1 -d'}' )
 SPECMONTHYEAR_user:=$(shell grep '{\\specmonthyear}' ${SRC_DIR}/${TOP}.tex | cut -f 4 -d'{' | cut -f1 -d'}' )
@@ -131,3 +131,8 @@ ${HTML_TMP0_DIR}/version.tex:
 	echo '\\newcommand{\\privrev}{${SPECREV_priv}}' >> $@
 	echo '\\newcommand{\\specmonthyear}{${SPECMONTHYEAR_user}}' >> $@
 	echo '\\newcommand{\\privmonthyear}{${SPECMONTHYEAR_priv}}' >> $@
+
+
+info::
+	@echo "AVAILABLE_FILES=${AVAILABLE_FILES}"
+

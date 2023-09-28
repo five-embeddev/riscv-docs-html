@@ -1,13 +1,13 @@
 TOP_DIR=../..
 
-override VERSION:=draft
 override SRC_REPO:=riscv-v-spec
 override OUT_DOC:=${SRC_REPO}
-override DOC_DIR:=${SRC_REPO}/${VERSION}
-override SRC_DIR:=${TOP_DIR}/external/${DOC_DIR}
 override DOC:=vector
 
 include ../vars.mak
+
+override DOC_DIR:=${SRC_REPO}/${VERSION}
+override SRC_DIR:=${TOP_DIR}/external/${DOC_DIR}
 
 TITLE=RISC-V Base Vector Extension
 CATEGORY=RISC-V ISA: User-Level
