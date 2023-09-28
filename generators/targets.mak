@@ -1,13 +1,13 @@
-all :: ${TARGETS}
+all text :: ${TARGETS}
 
 menu : ${MENU_DST_DIR}/${DOC}.yaml
 
 COLLECT_HEADING=${SCRIPTS}/collect-headings.rb
 
-${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml :  ${SCRIPTS}/collect-headings.rb ${ALL:%=${HTML_DST_DIR}/%.html}
+${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml :  ${COLLECT_HEADING} ${ALL:%=${HTML_DST_DIR}/%.html}
 	-mkdir -p ${MENU_DST_DIR} 2> /dev/null
 	rm -rf ${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml
-	ruby ${SCRIPTS}/collect-headings.rb \
+	ruby ${COLLECT_HEADING} \
 		--keywords-yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml \
 		--base-path ${DOCS_OUTPUT_DIR} \
 		--yaml-out ${MENU_DST_DIR}/${DOC}.yaml \
@@ -37,17 +37,17 @@ imgs :
 	-cp ${HTML_TMP0_DIR}/*.png ${HTML_DST_DIR}/ 2> /dev/null
 	-cp ${HTML_TMP0_DIR}/*.svg ${HTML_DST_DIR}/ 2> /dev/null
 
-${MENU_OUTPUT_DIR}/riscv-isa-manual/latest/user-keywords.yaml :
+${MENU_OUTPUT_DIR}/riscv-user-isa-manual/${VERSION_user}/user-keywords.yaml :
 	${MAKE} DOC=user -C ../riscv-isa-manual menu
 
-${MENU_OUTPUT_DIR}/riscv-isa-manual/latest/priv-keywords.yaml :
+${MENU_OUTPUT_DIR}/riscv-priv-isa-manual/${VERSION_priv}/priv-keywords.yaml :
 	${MAKE} DOC=priv -C ../riscv-isa-manual menu
 
-${MENU_OUTPUT_DIR}/riscv-debug-spec/latest/debug-keywords.yaml :
+${MENU_OUTPUT_DIR}/riscv-debug-spec/${VERSION_debug}/debug-keywords.yaml :
 	${MAKE} -C ../riscv-debug-spec menu
 
-${MENU_OUTPUT_DIR}/riscv-v-spec/draft/vector-keywords.yaml :
+${MENU_OUTPUT_DIR}/riscv-v-spec/${VERSION_vector}/vector-keywords.yaml :
 	${MAKE} -C ../riscv-v-spec menu
 
-${MENU_OUTPUT_DIR}/riscv-bitmanip/latest/bitmanip-keywords.yaml :
+${MENU_OUTPUT_DIR}/riscv-bitmanip/${VERSION_bitmanip}/bitmanip-keywords.yaml :
 	${MAKE} -C ../riscv-bitmanip menu

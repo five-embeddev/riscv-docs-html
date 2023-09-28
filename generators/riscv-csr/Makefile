@@ -5,9 +5,7 @@ include ../vars.mak
 CONVERT_RB=${SCRIPTS}/convert_csrs.rb
 CONVERT_PY=${SCRIPTS}/convert_csrs.py
 
-SRC_DIR=${TOP_DIR}/external/riscv-isa-manual/latest
-
-TEX_SRC=${TOP_DIR}/external/riscv-isa-manual/latest/src/priv-csrs.tex
+TEX_SRC=${TOP_DIR}/external/riscv-isa-manual/${VERSION_priv}/src/priv-csrs.tex
 PYTHON_SRC=${TOP_DIR}/external/riscv-opcodes/parse-opcodes
 
 TARGETS=${CSR_YAML}

@@ -1,15 +1,14 @@
 TOP_DIR=../../
 
-
-override VERSION=draft
 override SRC_REPO:=riscv-bitmanip
 override OUT_DOC:=${SRC_REPO}
-override SRC_DIR=${TOP_DIR}/external/${DOC_DIR}/bitmanip/
-override DOC_DIR=${SRC_REPO}/draft
 override DOC=bitmanip
 
-
 include ../vars.mak
+
+override DOC_DIR=${SRC_REPO}/${VERSION}
+override SRC_DIR=${TOP_DIR}/external/${DOC_DIR}/bitmanip/
+
 
 TITLE=RISC-V Bit-manipulation A, B, C and S Extensions
 CATEGORY=RISC-V ISA: Bitmanip

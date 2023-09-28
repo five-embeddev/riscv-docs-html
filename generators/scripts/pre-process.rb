@@ -110,6 +110,11 @@ def convert_file(infile, outpath)
 
       lines.each_with_index do | line, index |
 
+        if line =~ /^\s*\%\%/
+          
+          next
+        end
+
         line.gsub!("\{figure\*\}","\{figure\}")
         line.gsub!("\{table\*\}","\{table\}")
         line.gsub!(/\s+on\s+page\~\\pageref\{[\w]+\}/,"")

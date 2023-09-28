@@ -1,17 +1,8 @@
-[submodule "external/riscv-isa-manual/latest"]
-	path = external/riscv-isa-manual/latest
-	url = https://github.com/riscv/riscv-isa-manual.git
 [submodule "_references/riscv-opcodes"]
 	path = external/riscv-opcodes
 	url = https://github.com/riscv/riscv-opcodes.git
-[submodule "external/risc-v-spec/draft"]
-	path = external/riscv-v-spec/draft
-	url = https://github.com/riscv/riscv-v-spec
-[submodule "external/riscv-debug-spec/latest"]
-	path = external/riscv-debug-spec/latest
-	url = https://github.com/riscv/riscv-debug-spec.git
 [submodule "external/riscv-bitmanip/latest"]
-	path = external/riscv-bitmanip/draft
+	path = external/riscv-bitmanip/latest
 	url = https://github.com/riscv/riscv-bitmanip.git
 [submodule "external/riscv-trace-spec"]
 	path = external/riscv-trace-spec/latest
@@ -19,3 +10,42 @@
 [submodule "_data/riscv-isa-data"]
 	path = external/riscv-isa-data
 	url = https://github.com/five-embeddev/riscv-isa-data.git
+[submodule "external/riscv-isa-manual/risc-user-2.2"]
+	path = external/riscv-isa-manual/riscv-user-2.2/
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-isa-manual/riscv-isa-release-2023-05-23"]
+	path = external/riscv-isa-manual/riscv-isa-release-2023-05-23
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-isa-manual/IMFDQC-Ratification-20190305"]
+	path = external/riscv-isa-manual/IMFDQC-Ratification-20190305
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-v-spec/0.7.1"]
+	path = external/riscv-v-spec/0.7.1
+	url = https://github.com/riscv/riscv-v-spec
+[submodule "external/riscv-v-spec/v1.0"]
+	path = external/riscv-v-spec/v1.0
+	url = https://github.com/riscv/riscv-v-spec
+[submodule "external/riscv-v-spec/zvfh"]
+	path = external/riscv-v-spec/zvfh
+	url = https://github.com/riscv/riscv-v-spec
+[submodule "external/riscv-debug-spec/v0.13-release"]
+	path = external/riscv-debug-spec/v0.13-release
+	url = https://github.com/riscv/riscv-debug-spec.git
+[submodule "external/riscv-bitmanip/1.0.0"]
+	path = external/riscv-bitmanip/1.0.0
+	url = https://github.com/riscv/riscv-bitmanip.git
+[submodule "external/riscv-isa-manual/Priv-v1.12"]
+	path = external/riscv-isa-manual/Priv-v1.12
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-isa-manual/riscv-priv-1.10"]
+	path = external/riscv-isa-manual/riscv-priv-1.10
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-isa-manual/20181106-Base-Ratification"]
+	path = external/riscv-isa-manual/20181106-Base-Ratification
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-isa-manual/riscv-user-2.2"]
+	path = external/riscv-isa-manual/riscv-user-2.2
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-v-spec/latest"]
+	path = external/riscv-v-spec/latest
+	url = https://github.com/riscv/riscv-v-spec
