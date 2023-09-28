@@ -1,0 +1,245 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>core_registers.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<p>These registers are only accessible from Debug Mode.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Address</th>
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Page</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0x7b0</td>
+<td style="text-align: left;">Debug Control and Status (<span>dcsr</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x7b1</td>
+<td style="text-align: left;">Debug PC (<span>dpc</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0x7b2</td>
+<td style="text-align: left;">Debug Scratch Register 0 (<span>dscratch0</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0x7b3</td>
+<td style="text-align: left;">Debug Scratch Register 1 (<span>dscratch1</span>)</td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h2 id="debug-control-and-status-dcsr-at-0x7b0">Debug Control and Status (<span>dcsr</span>, at 0x7b0)</h2>
+<p><span id="dcsr" label="dcsr">[dcsr]</span>
+<div class=commentary>
+<p>priorities are assigned such that the least predictable
+events have the highest priority.</p>
+</div>
+<p><img src="tmp.v0.13-release//core_registers_00.svg" alt="image" /></p>
+<p><img src="tmp.v0.13-release//core_registers_01.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: center;">Access</th>
+<th style="text-align: left;">Reset</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="xdebugver" label="xdebugver">[xdebugver]</span>
+|xdebugver|</td>
+<td style="text-align: left;"><p>0: There is no external debug support.</p>
+<p>4: External debug support exists as it is described in this document.</p>
+<p>15: There is external debug support, but it does not conform to any
+available version of this spec.</p></td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="ebreakm" label="ebreakm">[ebreakm]</span>
+|ebreakm|</td>
+<td style="text-align: left;"><p>0: <span>ebreak</span> instructions in M-mode behave as described in the
+Privileged Spec.</p>
+<p>1: <span>ebreak</span> instructions in M-mode enter Debug Mode.</p></td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="ebreaks" label="ebreaks">[ebreaks]</span>
+|ebreaks|</td>
+<td style="text-align: left;"><p>0: <span>ebreak</span> instructions in S-mode behave as described in the
+Privileged Spec.</p>
+<p>1: <span>ebreak</span> instructions in S-mode enter Debug Mode.</p></td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="ebreaku" label="ebreaku">[ebreaku]</span>
+|ebreaku|</td>
+<td style="text-align: left;"><p>0: <span>ebreak</span> instructions in U-mode behave as described in the
+Privileged Spec.</p>
+<p>1: <span>ebreak</span> instructions in U-mode enter Debug Mode.</p></td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="stepie" label="stepie">[stepie]</span>
+|stepie|</td>
+<td style="text-align: left;"><p>0: Interrupts are disabled during single stepping.</p>
+<p>1: Interrupts are enabled during single stepping.</p>
+<p>Implementations may hard wire this bit to 0.
+In that case interrupt behavior can be emulated by the debugger.</p>
+<p>The debugger must not change the value of this bit while the hart
+is running.</p></td>
+<td style="text-align: center;">WARL</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="stopcount" label="stopcount">[stopcount]</span>
+|stopcount|</td>
+<td style="text-align: left;"><p>0: Increment counters as usual.</p>
+<p>1: Don’t increment any counters while in Debug Mode or on <span>
+ebreak</span> instructions that cause entry into Debug Mode. These
+counters include the <span>cycle</span> and <span>instret</span> CSRs. This is
+preferred for most debugging scenarios.</p>
+<p>An implementation may hardwire this bit to 0 or 1.</p></td>
+<td style="text-align: center;">WARL</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="stoptime" label="stoptime">[stoptime]</span>
+|stoptime|</td>
+<td style="text-align: left;"><p>0: Increment timers as usual.</p>
+<p>1: Don’t increment any hart-local timers while in Debug Mode.</p>
+<p>An implementation may hardwire this bit to 0 or 1.</p></td>
+<td style="text-align: center;">WARL</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="cause" label="cause">[cause]</span>
+|cause|</td>
+<td style="text-align: left;"><p>Explains why Debug Mode was entered.</p>
+<p>When there are multiple reasons to enter Debug Mode in a single
+cycle, hardware should set to the cause with the highest
+priority.</p>
+<p>1: An <span>ebreak</span> instruction was executed. (priority 3)</p>
+<p>2: The Trigger Module caused a breakpoint exception. (priority 4, highest)</p>
+<p>3: The debugger requested entry to Debug Mode using .
+(priority 1)</p>
+<p>4: The hart single stepped because was set. (priority 0, lowest)</p>
+<p>5: The hart halted directly out of reset due to . It
+is also acceptable to report 3 when this happens. (priority 2)</p>
+<p>Other values are reserved for future use.</p></td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="mprven" label="mprven">[mprven]</span>
+|mprven|</td>
+<td style="text-align: left;"><p>0: in <span>mstatus</span>is ignored in Debug Mode.</p>
+<p>1: in <span>mstatus</span>takes effect in Debug Mode.</p>
+<p>Implementing this bit is optional. It may be tied to either 0 or 1.</p></td>
+<td style="text-align: center;">WARL</td>
+<td style="text-align: left;">Preset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="nmip" label="nmip">[nmip]</span>
+|nmip|</td>
+<td style="text-align: left;"><p>When set, there is a Non-Maskable-Interrupt (NMI) pending for the hart.</p>
+<p>Since an NMI can indicate a hardware error condition,
+reliable debugging may no longer be possible once this bit becomes set.
+This is implementation-dependent.</p></td>
+<td style="text-align: center;">R</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="step" label="step">[step]</span>
+|step|</td>
+<td style="text-align: left;"><p>When set and not in Debug Mode, the hart will only execute a single
+instruction and then enter Debug Mode.
+If the instruction does not complete due to an exception,
+the hart will immediately enter Debug Mode before executing
+the trap handler, with appropriate exception registers set.</p>
+<p>The debugger must not change the value of this bit while the hart
+is running.</p></td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="prv" label="prv">[prv]</span>
+|prv|</td>
+<td style="text-align: left;"><p>Contains the privilege level the hart was operating in when Debug
+Mode was entered. The encoding is described in Table
+<a href="sw_registers.html#tab:privlevel" data-reference-type="ref" data-reference="tab:privlevel">[tab:privlevel]</a>. A debugger can change this value to change
+the hart’s privilege level when exiting Debug Mode.</p>
+<p>Not all privilege levels are supported on all harts. If the
+encoding written is not supported or the debugger is not allowed to
+change to it, the hart may change to any supported privilege level.</p></td>
+<td style="text-align: center;">R/W</td>
+<td style="text-align: left;">3</td>
+</tr>
+</tbody>
+</table>
+<h2 id="debug-pc-dpc-at-0x7b1">Debug PC (<span>dpc</span>, at 0x7b1)</h2>
+<p><span id="dpc" label="dpc">[dpc]</span>
+Upon entry to debug mode, <span><span>dpc</span></span>is updated with the virtual address of
+the next instruction to be executed. The behavior is described in more
+detail in Table <a href="core_registers.html#tab:dpc" data-reference-type="ref" data-reference="tab:dpc">[tab:dpc]</a>.</p>
+<p><span>|l|L|</span>
+Cause &amp; Virtual Address in DPC<br />
+&amp; Address of the <span>ebreak</span> instruction<br />
+single step &amp; Address of the instruction that would be executed
+next if no debugging was going on. Ie. <span class="math inline">${\tt pc}+4$</span> for 32-bit instructions
+that don’t change program flow, the destination PC on taken
+jumps/branches, etc.<br />
+trigger module &amp; If is 0, the address of the
+instruction which caused the trigger to fire. If is 1, the
+address of the next instruction to be executed at the time that
+debug mode was entered.<br />
+halt request &amp; Address of the next instruction to be
+executed at the time that debug mode was entered<br />
+</p>
+<p>When resuming, the hart’s PC is updated to the virtual address stored in
+<span><span>dpc</span></span>. A debugger may write <span><span>dpc</span></span>to change where the hart resumes.</p>
+<p><img src="tmp.v0.13-release//core_registers_02.svg" alt="image" /></p>
+<h2 id="debug-scratch-register-0-dscratch0-at-0x7b2">Debug Scratch Register 0 (<span>dscratch0</span>, at 0x7b2)</h2>
+<p><span id="dscratch0" label="dscratch0">[dscratch0]</span>
+Optional scratch register that can be used by implementations that need
+it. A debugger must not write to this register unless <span><span>hartinfo</span></span>
+explicitly mentions it (the Debug Module may use this register internally).</p>
+<h2 id="debug-scratch-register-1-dscratch1-at-0x7b3">Debug Scratch Register 1 (<span>dscratch1</span>, at 0x7b3)</h2>
+<p><span id="dscratch1" label="dscratch1">[dscratch1]</span>
+Optional scratch register that can be used by implementations that need
+it. A debugger must not write to this register unless <span><span>hartinfo</span></span>
+explicitly mentions it (the Debug Module may use this register internally).</p>
+
+</body>
+</html>

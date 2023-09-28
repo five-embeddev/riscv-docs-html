@@ -1,0 +1,251 @@
+<html>
+<head>
+<title>RISC-V External Debug Support</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> debug</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
+<tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
+<tr><th>Source</th><td>abstract_commands.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h3 id="access-register">Access Register</h3>
+<p><span id="access register" label="access register">[access register]</span></p>
+<p><span>This command gives the debugger access to CPU registers
+and allows it to execute the Program Buffer.
+It performs the following sequence of operations:</span></p>
+<p>If is clear and is set, then copy data from
+the register specified by into the <span>arg0</span> region of
+<span>data</span>, and perform any side effects that occur when this
+register is read from M-mode.</p>
+<p>If is set and is set, then copy data from the
+<span>arg0</span> region of <span>data</span> into the register specified by
+, and perform any side effects that occur when this register
+is written from M-mode.</p>
+<p>If is set, increment .</p>
+<p>Execute the Program Buffer, if is set.</p>
+<p>If any of these operations fail, is set and none of the
+remaining steps are executed. An implementation may detect an upcoming
+failure early, and fail the overall command before it reaches the step
+that would cause failure. If the failure is that the requested register
+does not exist in the hart, must be set to 3 (exception).</p>
+<p>Debug Modules must implement this command
+and must support read and write access to all GPRs when the selected hart is halted.
+Debug Modules may optionally support accessing other registers,
+or accessing registers when the hart is running.
+Each individual register (aside from GPRs) may be supported differently
+across read, write, and halt status.</p>
+<figure>
+<img src="tmp.v0.13-release//abstract_commands_00.svg" alt="Abstract Register Numbers" id="tab:regno" /><figcaption>Abstract Register Numbers<span label="tab:regno"></span></figcaption>
+</figure>
+<div class=commentary>
+<p>The encoding of was chosen to match in <span><span>sbcs</span></span>.</p>
+</div>
+<p>This command modifies <span>arg0</span> only when a register is read. The
+other <span>data</span> registers are not changed.</p>
+<p><img src="tmp.v0.13-release//abstract_commands_01.svg" alt="image" /></p>
+<p><img src="tmp.v0.13-release//abstract_commands_02.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="cmdtype" label="cmdtype">[cmdtype]</span>
+|cmdtype|</td>
+<td style="text-align: left;">This is 0 to indicate Access Register Command.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="aarsize" label="aarsize">[aarsize]</span>
+|aarsize|</td>
+<td style="text-align: left;"><p>2: Access the lowest 32 bits of the register.</p>
+<p>3: Access the lowest 64 bits of the register.</p>
+<p>4: Access the lowest 128 bits of the register.</p>
+<p>If specifies a size larger than the register’s actual size,
+then the access must fail. If a register is accessible, then reads of
+less than or equal to the register’s actual size must be supported.</p>
+<p>This field controls the Argument Width as referenced in
+Table <a href="debug_module.html#tab:datareg" data-reference-type="ref" data-reference="tab:datareg">[tab:datareg]</a>.</p></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="aarpostincrement" label="aarpostincrement">[aarpostincrement]</span>
+|aarpostincrement|</td>
+<td style="text-align: left;"><p>0: No effect. This variant must be supported.</p>
+<p>1: After a successful register access, is incremented
+(wrapping around to 0). Supporting this variant is optional.</p></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="postexec" label="postexec">[postexec]</span>
+|postexec|</td>
+<td style="text-align: left;"><p>0: No effect. This variant must be supported, and is the only
+supported one if is 0.</p>
+<p>1: Execute the program in the Program Buffer exactly once after
+performing the transfer, if any. Supporting this variant is
+optional.</p></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="transfer" label="transfer">[transfer]</span>
+|transfer|</td>
+<td style="text-align: left;"><p>0: Don’t do the operation specified by .</p>
+<p>1: Do the operation specified by .</p>
+<p>This bit can be used to just execute the Program Buffer without
+having to worry about placing valid values into or .</p></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="write" label="write">[write]</span>
+|write|</td>
+<td style="text-align: left;"><p>When is set:
+0: Copy data from the specified register into <span>arg0</span> portion
+of <span>data</span>.</p>
+<p>1: Copy data from <span>arg0</span> portion of <span>data</span> into the
+specified register.</p></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="regno" label="regno">[regno]</span>
+|regno|</td>
+<td style="text-align: left;">Number of the register to access, as described in
+Table <a href="abstract_commands.html#tab:regno" data-reference-type="ref" data-reference="tab:regno">1</a>.
+<span><span>dpc</span></span>may be used as an alias for PC if this command is
+supported on a non-halted hart.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="quick-access">Quick Access</h3>
+<p><span id="quick access" label="quick access">[quick access]</span></p>
+<p><span>Perform the following sequence of operations:</span></p>
+<p>If the hart is halted, the command sets to “halt/resume” and does not continue.</p>
+<p>Halt the hart. If the hart halts for some other reason (e.g. breakpoint), the command
+sets to “halt/resume” and does not continue.</p>
+<p>Execute the Program Buffer. If an exception occurs, is set to “exception”
+and the program buffer execution ends, but the quick access command continues.</p>
+<p>Resume the hart.</p>
+<p>Implementing this command is optional.</p>
+<p>This command does not touch the <span>data</span> registers.</p>
+<p><img src="tmp.v0.13-release//abstract_commands_03.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="cmdtype" label="cmdtype">[cmdtype]</span>
+|cmdtype|</td>
+<td style="text-align: left;">This is 1 to indicate Quick Access command.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="access-memory">Access Memory</h3>
+<p><span id="access memory" label="access memory">[access memory]</span></p>
+<p><span>This command lets the debugger perform memory accesses,
+with the exact same memory view and permissions as the selected
+hart has. This includes access to hart-local memory-mapped
+registers, etc. The command performs the following sequence of
+operations:</span></p>
+<p>Copy data from the memory location specified in <span>arg1</span> into the
+<span>arg0</span> portion of <span>data</span>, if is clear.</p>
+<p>Copy data from the <span>arg0</span> portion of <span>data</span> into the
+memory location specified in <span>arg1</span>, if is set.</p>
+<p>If is set, increment <span>arg1</span>.</p>
+<p>If any of these operations fail, is set and none of the
+remaining steps are executed. An access may only fail if the hart,
+running M-mode code, might encounter that same failure when it attempts
+the same access.
+An implementation may detect an upcoming
+failure early, and fail the overall command before it reaches the step
+that would cause failure.</p>
+<p>Debug Modules may optionally implement this command
+and may support read and write access to memory locations when the selected hart is running or halted.
+If this command supports memory accesses
+while the hart is running, it must also
+support memory accesses while the hart is halted.</p>
+<div class=commentary>
+<p>The encoding of was chosen to match in <span><span>sbcs</span></span>.</p>
+</div>
+<p>This command modifies <span>arg0</span> only when memory is read. It modifies
+<span>arg1</span> only if is set. The other <span>data</span>
+registers are not changed.</p>
+<p><img src="tmp.v0.13-release//abstract_commands_04.svg" alt="image" /></p>
+<p><img src="tmp.v0.13-release//abstract_commands_05.svg" alt="image" /></p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="cmdtype" label="cmdtype">[cmdtype]</span>
+|cmdtype|</td>
+<td style="text-align: left;">This is 2 to indicate Access Memory Command.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="aamvirtual" label="aamvirtual">[aamvirtual]</span>
+|aamvirtual|</td>
+<td style="text-align: left;"><p>An implementation does not have to implement both virtual and
+physical accesses, but it must fail accesses that it doesn’t
+support.</p>
+<p>0: Addresses are physical (to the hart they are performed on).</p>
+<p>1: Addresses are virtual, and translated the way they would be from
+M-mode, with set.</p></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="aamsize" label="aamsize">[aamsize]</span>
+|aamsize|</td>
+<td style="text-align: left;"><p>0: Access the lowest 8 bits of the memory location.</p>
+<p>1: Access the lowest 16 bits of the memory location.</p>
+<p>2: Access the lowest 32 bits of the memory location.</p>
+<p>3: Access the lowest 64 bits of the memory location.</p>
+<p>4: Access the lowest 128 bits of the memory location.</p></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="aampostincrement" label="aampostincrement">[aampostincrement]</span>
+|aampostincrement|</td>
+<td style="text-align: left;">After a memory access has completed, if this bit is 1, increment
+<span>arg1</span> (which contains the address used) by the number of bytes
+encoded in .</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><span id="write" label="write">[write]</span>
+|write|</td>
+<td style="text-align: left;"><p>0: Copy data from the memory location specified in <span>arg1</span> into <span>arg0</span> portion
+of <span>data</span>.</p>
+<p>1: Copy data from <span>arg0</span> portion of <span>data</span> into the
+memory location specified in <span>arg1</span>.</p></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><span id="target-specific" label="target-specific">[target-specific]</span>
+|target-specific|</td>
+<td style="text-align: left;">These bits are reserved for target-specific uses.</td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

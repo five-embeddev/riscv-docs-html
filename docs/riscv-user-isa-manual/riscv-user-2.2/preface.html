@@ -1,0 +1,256 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/preface.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="preface">Preface</h1>
+<p>This is version  of the document describing the RISC-V
+user-level architecture. The document contains the following
+versions of the RISC-V ISA modules:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Base</th>
+<th style="text-align: left;">Version</th>
+<th style="text-align: center;">Frozen?</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">RV32I</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">RV32E</td>
+<td style="text-align: left;">1.9</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">RV64I</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">RV128I</td>
+<td style="text-align: left;">1.7</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">Extension</td>
+<td style="text-align: left;">Version</td>
+<td style="text-align: center;">Frozen?</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">M</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">A</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">F</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">D</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">Q</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">L</td>
+<td style="text-align: left;">0.0</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">C</td>
+<td style="text-align: left;">2.0</td>
+<td style="text-align: center;">Y</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">B</td>
+<td style="text-align: left;">0.0</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">J</td>
+<td style="text-align: left;">0.0</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">T</td>
+<td style="text-align: left;">0.0</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">P</td>
+<td style="text-align: left;">0.1</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">V</td>
+<td style="text-align: left;">0.2</td>
+<td style="text-align: center;">N</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">N</td>
+<td style="text-align: left;">1.1</td>
+<td style="text-align: center;">N</td>
+</tr>
+</tbody>
+</table>
+<p>To date, no parts of the standard have been officially ratified by the
+RISC-V Foundation, but the components labeled “frozen” above are not
+expected to change during the ratification process beyond resolving
+ambiguities and holes in the specification.</p>
+<p>The major changes in this version of the document include:</p>
+<ul>
+<li><p>The previous version of this document was released under a
+Creative Commons Attribution 4.0 International Licence by the
+original authors, and this and future versions of this document will
+be released under the same licence.</p></li>
+<li><p>Rearranged chapters to put all extensions first in canonical order.</p></li>
+<li><p>Improvements to the description and commentary.</p></li>
+<li><p>Modified implicit hinting suggestion on JALR to support more efficient
+macro-op fusion of LUI/JALR and AUIPC/JALR pairs.</p></li>
+<li><p>Clarification of constraints on load-reserved/store-conditional sequences.</p></li>
+<li><p>A new table of control and status register (CSR) mappings.</p></li>
+<li><p>Clarified purpose and behavior of high-order bits of <span>fcsr</span>.</p></li>
+<li><p>Corrected the description of the FNMADD.<span><em>fmt</em></span> and FNMSUB.<span><em>fmt</em></span>
+instructions, which had suggested the incorrect sign of a zero result.</p></li>
+<li><p>Instructions FMV.S.X and FMV.X.S were renamed to FMV.W.X and
+FMV.X.W respectively to be more consistent with their
+semantics, which did not change.
+The old names will continue to be supported in the tools.</p></li>
+<li><p>Specified behavior of narrower (<span class="math inline">&lt;</span>FLEN) floating-point values held in
+wider <span>f</span> registers using NaN-boxing model.</p></li>
+<li><p>Defined the exception behavior of FMA(<span class="math inline">∞</span>, 0, qNaN).</p></li>
+<li><p>Added note indicating that the P extension might be reworked
+into an integer packed-SIMD proposal for fixed-point operations
+using the integer registers.</p></li>
+<li><p>A draft proposal of the V vector instruction set extension.</p></li>
+<li><p>An early draft proposal of the N user-level traps extension.</p></li>
+<li><p>An expanded pseudoinstruction listing.</p></li>
+<li><p>Removal of the calling convention chapter, which has been superseded by
+the RISC-V ELF psABI Specification <span class="citation" data-cites="riscv-elf-psabi"><a href="#ref-riscv-elf-psabi">[riscv-elf-psabi]</a></span>.</p></li>
+<li><p>The C extension has been frozen and renumbered version 2.0.</p></li>
+</ul>
+<h2 id="preface-to-document-version-2.1" class="unnumbered">Preface to Document Version 2.1</h2>
+<p>This is version 2.1 of the document describing the RISC-V user-level
+architecture. Note the frozen user-level ISA base and extensions
+IMAFDQ version 2.0 have not changed from the previous version of this
+document <span class="citation" data-cites="riscvtr2"><a href="#ref-riscvtr2">[riscvtr2]</a></span>, but some specification holes have been fixed
+and the documentation has been improved. Some changes have been made
+to the software conventions.</p>
+<ul>
+<li><p>Numerous additions and improvements to the commentary sections.</p></li>
+<li><p>Separate version numbers for each chapter.</p></li>
+<li><p>Modification to long instruction encodings <span class="math inline">&gt;</span>64 bits to avoid
+moving the <span><em>rd</em></span> specifier in very long instruction formats.</p></li>
+<li><p>CSR instructions are now described in the base integer format
+where the counter registers are introduced, as opposed to only being
+introduced later in the floating-point section (and the companion
+privileged architecture manual).</p></li>
+<li><p>The SCALL and SBREAK instructions have been renamed to ECALL and
+EBREAK, respectively. Their encoding and functionality are unchanged.</p></li>
+<li><p>Clarification of floating-point NaN handling, and a new canonical NaN
+value.</p></li>
+<li><p>Clarification of values returned by floating-point to integer
+conversions that overflow.</p></li>
+<li><p>Clarification of LR/SC allowed successes and required failures,
+including use of compressed instructions in the sequence.</p></li>
+<li><p>A new RV32E base ISA proposal for reduced integer register
+counts, supports MAC extensions.</p></li>
+<li><p>A revised calling convention.</p></li>
+<li><p>Relaxed stack alignment for soft-float calling convention, and
+description of the RV32E calling convention.</p></li>
+<li><p>A revised proposal for the C compressed extension, version 1.9.</p></li>
+</ul>
+<h2 id="preface-to-version-2.0" class="unnumbered">Preface to Version 2.0</h2>
+<p>This is the second release of the user ISA specification, and we
+intend the specification of the base user ISA plus general extensions
+(i.e., IMAFD) to remain fixed for future development. The following
+changes have been made since Version 1.0 <span class="citation" data-cites="riscvtr"><a href="#ref-riscvtr">[riscvtr]</a></span> of this ISA
+specification.</p>
+<ul>
+<li><p>The ISA has been divided into an integer base with several
+standard extensions.</p></li>
+<li><p>The instruction formats have been rearranged to make immediate
+encoding more efficient.</p></li>
+<li><p>The base ISA has been defined to have a little-endian memory system, with
+big-endian or bi-endian as non-standard variants.</p></li>
+<li><p>Load-Reserved/Store-Conditional (LR/SC) instructions have been added in
+the atomic instruction extension.</p></li>
+<li><p>AMOs and LR/SC can support the release consistency model.</p></li>
+<li><p>The FENCE instruction provides finer-grain memory and I/O
+orderings.</p></li>
+<li><p>An AMO for fetch-and-XOR (AMOXOR) has been added, and the
+encoding for AMOSWAP has been changed to make room.</p></li>
+<li><p>The AUIPC instruction, which adds a 20-bit upper immediate to
+the PC, replaces the RDNPC instruction, which only read the current
+PC value. This results in significant savings for position-independent
+code.</p></li>
+<li><p>The JAL instruction has now moved to the U-Type format with an
+explicit destination register, and the J instruction has been
+dropped being replaced by JAL with <span><em>rd</em></span>=<span>x0</span>. This removes
+the only instruction with an implicit destination register and
+removes the J-Type instruction format from the base ISA. There is
+an accompanying reduction in JAL reach, but a significant reduction
+in base ISA complexity.</p></li>
+<li><p>The static hints on the JALR instruction have been dropped. The
+hints are redundant with the <span><em>rd</em></span> and <span><em>rs1</em></span> register
+specifiers for code compliant with the standard calling convention.</p></li>
+<li><p>The JALR instruction now clears the lowest bit of the calculated
+target address, to simplify hardware and to allow auxiliary information
+to be stored in function pointers.</p></li>
+<li><p>The MFTX.S and MFTX.D instructions have been renamed to FMV.X.S and
+FMV.X.D, respectively. Similarly, MXTF.S and MXTF.D instructions have been
+renamed to FMV.S.X and FMV.D.X, respectively.</p></li>
+<li><p>The MFFSR and MTFSR instructions have been renamed to FRCSR and FSCSR,
+respectively. FRRM, FSRM, FRFLAGS, and FSFLAGS instructions have been added
+to individually access the rounding mode and exception flags subfields of
+the <span>fcsr</span>.</p></li>
+<li><p>The FMV.X.S and FMV.X.D instructions now source their operands
+from <span><em>rs1</em></span>, instead of <span><em>rs2</em></span>. This change simplifies datapath
+design.</p></li>
+<li><p>FCLASS.S and FCLASS.D floating-point classify instructions have been
+added.</p></li>
+<li><p>A simpler NaN generation and propagation scheme has been
+adopted.</p></li>
+<li><p>For RV32I, the system performance counters have been extended to
+64-bits wide, with separate read access to the upper and lower 32 bits.</p></li>
+<li><p>Canonical NOP and MV encodings have been defined.</p></li>
+<li><p>Standard instruction-length encodings have been defined for 48-bit,
+64-bit, and <span class="math inline">&gt;</span>64-bit instructions.</p></li>
+<li><p>Description of a 128-bit address space variant, RV128, has been added.</p></li>
+<li><p>Major opcodes in the 32-bit base instruction format have been
+allocated for user-defined custom extensions.</p></li>
+<li><p>A typographical error that suggested that stores source their
+data from <span><em>rd</em></span> has been corrected to refer to <span><em>rs2</em></span>.</p></li>
+</ul>
+
+</body>
+</html>

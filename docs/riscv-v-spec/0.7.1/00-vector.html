@@ -1,0 +1,149 @@
+<html><head></head><body>
+<ul>
+  <li><b>1</b><a href=v-spec.html#_introduction>Introduction</a></li>
+  <li><b>2</b><a href=v-spec.html#_implementation_defined_constant_parameters>Implementation-defined Constant Parameters</a></li>
+  <li><b>3</b><a href=v-spec.html#_vector_extension_programmers_model>Vector Extension Programmer&#8217;s Model</a><ul>
+    <li><b>3.1</b><a href=v-spec.html#_vector_registers>Vector Registers</a></li>
+    <li><b>3.2</b><a href=v-spec.html#_vector_type_register_vtype>Vector type register, <code>vtype</code></a></li>
+    <li><b>3.3</b><a href=v-spec.html#_vector_length_register_vl>Vector Length Register <code>vl</code></a></li>
+    <li><b>3.4</b><a href=v-spec.html#_vector_start_index_csr_vstart>Vector Start Index CSR <code>vstart</code></a></li>
+    <li><b>3.5</b><a href=v-spec.html#_vector_fixed_point_rounding_mode_register_vxrm>Vector Fixed-Point Rounding Mode Register <code>vxrm</code></a></li>
+    <li><b>3.6</b><a href=v-spec.html#_vector_fixed_point_saturation_flag_vxsat>Vector Fixed-Point Saturation Flag <code>vxsat</code></a></li>
+    <li><b>3.7</b><a href=v-spec.html#_vector_fixed_point_fields_in_fcsr>Vector Fixed-Point Fields in <code>fcsr</code></a></li>
+    <li><b>3.8</b><a href=v-spec.html#_state_of_vector_extension_at_reset>State of Vector Extension at Reset</a></li>
+</ul>
+</li>
+  <li><b>4</b><a href=v-spec.html#_mapping_of_vector_elements_to_vector_register_state>Mapping of Vector Elements to Vector Register State</a><ul>
+    <li><b>4.1</b><a href=v-spec.html#_mapping_with_lmul1>Mapping with LMUL=1</a></li>
+    <li><b>4.2</b><a href=v-spec.html#_mapping_with_lmul_1>Mapping with LMUL &gt; 1</a></li>
+    <li><b>4.3</b><a href=v-spec.html#_mapping_across_mixed_width_operations>Mapping across Mixed-Width Operations</a></li>
+    <li><b>4.4</b><a href=v-spec.html#sec-mask-register-layout>Mask Register Layout</a></li>
+</ul>
+</li>
+  <li><b>5</b><a href=v-spec.html#_vector_instruction_formats>Vector Instruction Formats</a><ul>
+    <li><b>5.1</b><a href=v-spec.html#_scalar_operands>Scalar operands</a></li>
+    <li><b>5.2</b><a href=v-spec.html#_vector_operands>Vector Operands</a></li>
+    <li><b>5.3</b><a href=v-spec.html#_vector_masking>Vector Masking</a></li>
+    <li><b>5.4</b><a href=v-spec.html#_prestart_active_inactive_body_and_tail_element_definitions>Prestart, Active, Inactive, Body, and Tail Element Definitions</a></li>
+</ul>
+</li>
+  <li><b>6</b><a href=v-spec.html#_configuration_setting_instructions>Configuration-Setting Instructions</a><ul>
+    <li><b>6.2</b><a href=v-spec.html#_constraints_on_setting_vl>Constraints on Setting <code>vl</code></a></li>
+    <li><b>6.4</b><a href=v-spec.html#_examples>Examples</a></li>
+</ul>
+</li>
+  <li><b>7</b><a href=v-spec.html#_vector_loads_and_stores>Vector Loads and Stores</a><ul>
+    <li><b>7.1</b><a href=v-spec.html#_vector_loadstore_instruction_encoding>Vector Load/Store Instruction Encoding</a></li>
+    <li><b>7.2</b><a href=v-spec.html#_vector_loadstore_addressing_modes>Vector Load/Store Addressing Modes</a></li>
+    <li><b>7.3</b><a href=v-spec.html#_vector_loadstore_width_encoding>Vector Load/Store Width Encoding</a></li>
+    <li><b>7.4</b><a href=v-spec.html#_vector_unit_stride_instructions>Vector Unit-Stride Instructions</a></li>
+    <li><b>7.5</b><a href=v-spec.html#_vector_strided_instructions>Vector Strided Instructions</a></li>
+    <li><b>7.6</b><a href=v-spec.html#_vector_indexed_instructions>Vector Indexed Instructions</a></li>
+    <li><b>7.7</b><a href=v-spec.html#_unit_stride_fault_only_first_loads>Unit-stride Fault-Only-First Loads</a></li>
+    <li><b>7.8</b><a href=v-spec.html#sec-aos>Vector Load/Store Segment Instructions (<code>Zvlsseg</code>)</a></li>
+</ul>
+</li>
+  <li><b>8</b><a href=v-spec.html#_vector_amo_operations_zvamo>Vector AMO Operations (<code>Zvamo</code>)</a></li>
+  <li><b>9</b><a href=v-spec.html#_vector_memory_alignment_constraints>Vector Memory Alignment Constraints</a></li>
+  <li><b>10</b><a href=v-spec.html#_vector_memory_consistency_model>Vector Memory Consistency Model</a></li>
+  <li><b>11</b><a href=v-spec.html#_vector_arithmetic_instruction_formats>Vector Arithmetic Instruction Formats</a><ul>
+    <li><b>11.1</b><a href=v-spec.html#_vector_arithmetic_instruction_encoding>Vector Arithmetic Instruction encoding</a></li>
+    <li><b>11.2</b><a href=v-spec.html#_widening_vector_arithmetic_instructions>Widening Vector Arithmetic Instructions</a></li>
+    <li><b>11.3</b><a href=v-spec.html#_narrowing_vector_arithmetic_instructions>Narrowing Vector Arithmetic Instructions</a></li>
+</ul>
+</li>
+  <li><b>12</b><a href=v-spec.html#_vector_integer_arithmetic_instructions>Vector Integer Arithmetic Instructions</a><ul>
+    <li><b>12.1</b><a href=v-spec.html#_vector_single_width_integer_add_and_subtract>Vector Single-Width Integer Add and Subtract</a></li>
+    <li><b>12.2</b><a href=v-spec.html#_vector_widening_integer_addsubtract>Vector Widening Integer Add/Subtract</a></li>
+    <li><b>12.3</b><a href=v-spec.html#_vector_integer_add_with_carry_subtract_with_borrow_instructions>Vector Integer Add-with-Carry / Subtract-with-Borrow Instructions</a></li>
+    <li><b>12.4</b><a href=v-spec.html#_vector_bitwise_logical_instructions>Vector Bitwise Logical Instructions</a></li>
+    <li><b>12.5</b><a href=v-spec.html#_vector_single_width_bit_shift_instructions>Vector Single-Width Bit Shift Instructions</a></li>
+    <li><b>12.6</b><a href=v-spec.html#_vector_narrowing_integer_right_shift_instructions>Vector Narrowing Integer Right Shift Instructions</a></li>
+    <li><b>12.7</b><a href=v-spec.html#_vector_integer_comparison_instructions>Vector Integer Comparison Instructions</a></li>
+    <li><b>12.8</b><a href=v-spec.html#_vector_integer_minmax_instructions>Vector Integer Min/Max Instructions</a></li>
+    <li><b>12.9</b><a href=v-spec.html#_vector_single_width_integer_multiply_instructions>Vector Single-Width Integer Multiply Instructions</a></li>
+    <li><b>12.10</b><a href=v-spec.html#_vector_integer_divide_instructions>Vector Integer Divide Instructions</a></li>
+    <li><b>12.11</b><a href=v-spec.html#_vector_widening_integer_multiply_instructions>Vector Widening Integer Multiply Instructions</a></li>
+    <li><b>12.12</b><a href=v-spec.html#_vector_single_width_integer_multiply_add_instructions>Vector Single-Width Integer Multiply-Add Instructions</a></li>
+    <li><b>12.13</b><a href=v-spec.html#_vector_widening_integer_multiply_add_instructions>Vector Widening Integer Multiply-Add Instructions</a></li>
+    <li><b>12.14</b><a href=v-spec.html#_vector_integer_merge_and_move_instructions>Vector Integer Merge and Move Instructions</a></li>
+</ul>
+</li>
+  <li><b>13</b><a href=v-spec.html#_vector_fixed_point_arithmetic_instructions>Vector Fixed-Point Arithmetic Instructions</a><ul>
+    <li><b>13.1</b><a href=v-spec.html#_vector_single_width_saturating_add_and_subtract>Vector Single-Width Saturating Add and Subtract</a></li>
+    <li><b>13.2</b><a href=v-spec.html#_vector_single_width_averaging_add_and_subtract>Vector Single-Width Averaging Add and Subtract</a></li>
+    <li><b>13.3</b><a href=v-spec.html#_vector_single_width_fractional_multiply_with_rounding_and_saturation>Vector Single-Width Fractional Multiply with Rounding and Saturation</a></li>
+    <li><b>13.4</b><a href=v-spec.html#_vector_widening_saturating_scaled_multiply_add>Vector Widening Saturating Scaled Multiply-Add</a></li>
+    <li><b>13.5</b><a href=v-spec.html#_vector_single_width_scaling_shift_instructions>Vector Single-Width Scaling Shift Instructions</a></li>
+    <li><b>13.6</b><a href=v-spec.html#_vector_narrowing_fixed_point_clip_instructions>Vector Narrowing Fixed-Point Clip Instructions</a></li>
+</ul>
+</li>
+  <li><b>14</b><a href=v-spec.html#_vector_floating_point_instructions>Vector Floating-Point Instructions</a><ul>
+    <li><b>14.1</b><a href=v-spec.html#_vector_floating_point_exception_flags>Vector Floating-Point Exception Flags</a></li>
+    <li><b>14.2</b><a href=v-spec.html#_vector_single_width_floating_point_addsubtract_instructions>Vector Single-Width Floating-Point Add/Subtract Instructions</a></li>
+    <li><b>14.3</b><a href=v-spec.html#_vector_widening_floating_point_addsubtract_instructions>Vector Widening Floating-Point Add/Subtract Instructions</a></li>
+    <li><b>14.4</b><a href=v-spec.html#_vector_single_width_floating_point_multiplydivide_instructions>Vector Single-Width Floating-Point Multiply/Divide Instructions</a></li>
+    <li><b>14.5</b><a href=v-spec.html#_vector_widening_floating_point_multiply>Vector Widening Floating-Point Multiply</a></li>
+    <li><b>14.6</b><a href=v-spec.html#_vector_single_width_floating_point_fused_multiply_add_instructions>Vector Single-Width Floating-Point Fused Multiply-Add Instructions</a></li>
+    <li><b>14.7</b><a href=v-spec.html#_vector_widening_floating_point_fused_multiply_add_instructions>Vector Widening Floating-Point Fused Multiply-Add Instructions</a></li>
+    <li><b>14.8</b><a href=v-spec.html#_vector_floating_point_square_root_instruction>Vector Floating-Point Square-Root Instruction</a></li>
+    <li><b>14.9</b><a href=v-spec.html#_vector_floating_point_minmax_instructions>Vector Floating-Point MIN/MAX Instructions</a></li>
+    <li><b>14.10</b><a href=v-spec.html#_vector_floating_point_sign_injection_instructions>Vector Floating-Point Sign-Injection Instructions</a></li>
+    <li><b>14.11</b><a href=v-spec.html#_vector_floating_point_compare_instructions>Vector Floating-Point Compare Instructions</a></li>
+    <li><b>14.12</b><a href=v-spec.html#_vector_floating_point_classify_instruction>Vector Floating-Point Classify Instruction</a></li>
+    <li><b>14.13</b><a href=v-spec.html#_vector_floating_point_merge_instruction>Vector Floating-Point Merge Instruction</a></li>
+    <li><b>14.14</b><a href=v-spec.html#_single_width_floating_pointinteger_type_convert_instructions>Single-Width Floating-Point/Integer Type-Convert Instructions</a></li>
+    <li><b>14.15</b><a href=v-spec.html#_widening_floating_pointinteger_type_convert_instructions>Widening Floating-Point/Integer Type-Convert Instructions</a></li>
+    <li><b>14.16</b><a href=v-spec.html#_narrowing_floating_pointinteger_type_convert_instructions>Narrowing Floating-Point/Integer Type-Convert Instructions</a></li>
+</ul>
+</li>
+  <li><b>15</b><a href=v-spec.html#_vector_reduction_operations>Vector Reduction Operations</a><ul>
+    <li><b>15.1</b><a href=v-spec.html#_vector_single_width_integer_reduction_instructions>Vector Single-Width Integer Reduction Instructions</a></li>
+    <li><b>15.2</b><a href=v-spec.html#_vector_widening_integer_reduction_instructions>Vector Widening Integer Reduction Instructions</a></li>
+    <li><b>15.3</b><a href=v-spec.html#_vector_single_width_floating_point_reduction_instructions>Vector Single-Width Floating-Point Reduction Instructions</a></li>
+    <li><b>15.4</b><a href=v-spec.html#_vector_widening_floating_point_reduction_instructions>Vector Widening Floating-Point Reduction Instructions</a></li>
+</ul>
+</li>
+  <li><b>16</b><a href=v-spec.html#_vector_mask_instructions>Vector Mask Instructions</a><ul>
+    <li><b>16.1</b><a href=v-spec.html#sec-mask-register-logical>Vector Mask-Register Logical Instructions</a></li>
+    <li><b>16.2</b><a href=v-spec.html#_vector_mask_population_count_vmpopc>Vector mask population count <code>vmpopc</code></a></li>
+    <li><b>16.7</b><a href=v-spec.html#_example_using_vector_mask_instructions>Example using vector mask instructions</a></li>
+    <li><b>16.8</b><a href=v-spec.html#_vector_iota_instruction>Vector Iota Instruction</a></li>
+    <li><b>16.9</b><a href=v-spec.html#_vector_element_index_instruction>Vector Element Index Instruction</a></li>
+</ul>
+</li>
+  <li><b>17</b><a href=v-spec.html#_vector_permutation_instructions>Vector Permutation Instructions</a><ul>
+    <li><b>17.1</b><a href=v-spec.html#_integer_extract_instruction>Integer Extract Instruction</a></li>
+    <li><b>17.2</b><a href=v-spec.html#_integer_scalar_move_instruction>Integer Scalar Move Instruction</a></li>
+    <li><b>17.3</b><a href=v-spec.html#_floating_point_scalar_move_instructions>Floating-Point Scalar Move Instructions</a></li>
+    <li><b>17.4</b><a href=v-spec.html#_vector_slide_instructions>Vector Slide Instructions</a></li>
+    <li><b>17.5</b><a href=v-spec.html#_vector_register_gather_instruction>Vector Register Gather Instruction</a></li>
+    <li><b>17.6</b><a href=v-spec.html#_vector_compress_instruction>Vector Compress Instruction</a></li>
+</ul>
+</li>
+  <li><b>18</b><a href=v-spec.html#_exception_handling>Exception Handling</a><ul>
+    <li><b>18.1</b><a href=v-spec.html#_precise_vector_traps>Precise vector traps</a></li>
+    <li><b>18.2</b><a href=v-spec.html#_imprecise_vector_traps>Imprecise vector traps</a></li>
+    <li><b>18.3</b><a href=v-spec.html#_selectable_preciseimprecise_traps>Selectable precise/imprecise traps</a></li>
+    <li><b>18.4</b><a href=v-spec.html#_swappable_traps>Swappable traps</a></li>
+</ul>
+</li>
+  <li><b>19</b><a href=v-spec.html#_divided_element_extension_zvediv>Divided Element Extension (Zvediv)</a><ul>
+    <li><b>19.1</b><a href=v-spec.html#_instructions_not_affected_by_ediv>Instructions not affected by EDIV</a></li>
+    <li><b>19.2</b><a href=v-spec.html#_instructions_affected_by_ediv>Instructions Affected by EDIV</a></li>
+    <li><b>19.3</b><a href=v-spec.html#_vector_integer_dot_product_instruction>Vector Integer Dot-Product Instruction</a></li>
+    <li><b>19.4</b><a href=v-spec.html#_vector_floating_point_dot_product_instruction>Vector Floating-Point Dot Product Instruction</a></li>
+</ul>
+</li>
+  <li><b>20</b><a href=v-spec.html#_vector_instruction_listing>Vector Instruction Listing</a></li>
+  <li><b></b><a href=v-spec.html#_vector_assembly_code_examples>Appendix A: Vector Assembly Code Examples</a><ul>
+    <li><b></b><a href=v-spec.html#_vector_vector_add_example>A.1. Vector-vector add example</a></li>
+    <li><b></b><a href=v-spec.html#_example_with_mixed_width_mask_and_compute>A.2. Example with mixed-width mask and compute.</a></li>
+    <li><b></b><a href=v-spec.html#_memcpy_example>A.3. Memcpy example</a></li>
+    <li><b></b><a href=v-spec.html#_conditional_example>A.4. Conditional example</a></li>
+    <li><b></b><a href=v-spec.html#_saxpy_example>A.5. SAXPY example</a></li>
+    <li><b></b><a href=v-spec.html#_sgemm_example>A.6. SGEMM example</a></li>
+</ul>
+</li>
+</ul>
+</body></html>

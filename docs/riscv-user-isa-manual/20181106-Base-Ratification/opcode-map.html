@@ -1,0 +1,92 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20181106-Base-Ratification</td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/opcode-map.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<table>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">inst[4:2]</td>
+<td style="text-align: center;">000</td>
+<td style="text-align: center;">001</td>
+<td style="text-align: center;">010</td>
+<td style="text-align: center;">011</td>
+<td style="text-align: center;">100</td>
+<td style="text-align: center;">101</td>
+<td style="text-align: center;">110</td>
+<td style="text-align: center;">111</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">inst[6:5]</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">(<span class="math inline"> &gt; 32<em>b</em></span>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">00</td>
+<td style="text-align: center;">LOAD</td>
+<td style="text-align: center;">LOAD-FP</td>
+<td style="text-align: center;"><span><em>custom-0</em></span></td>
+<td style="text-align: center;">MISC-MEM</td>
+<td style="text-align: center;">OP-IMM</td>
+<td style="text-align: center;">AUIPC</td>
+<td style="text-align: center;">OP-IMM-32</td>
+<td style="text-align: center;"><span class="math inline">48<em>b</em></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">01</td>
+<td style="text-align: center;">STORE</td>
+<td style="text-align: center;">STORE-FP</td>
+<td style="text-align: center;"><span><em>custom-1</em></span></td>
+<td style="text-align: center;">AMO</td>
+<td style="text-align: center;">OP</td>
+<td style="text-align: center;">LUI</td>
+<td style="text-align: center;">OP-32</td>
+<td style="text-align: center;"><span class="math inline">64<em>b</em></span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">10</td>
+<td style="text-align: center;">MADD</td>
+<td style="text-align: center;">MSUB</td>
+<td style="text-align: center;">NMSUB</td>
+<td style="text-align: center;">NMADD</td>
+<td style="text-align: center;">OP-FP</td>
+<td style="text-align: center;"><span><em>reserved</em></span></td>
+<td style="text-align: center;"><span><em>custom-2/rv128</em></span></td>
+<td style="text-align: center;"><span class="math inline">48<em>b</em></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">11</td>
+<td style="text-align: center;">BRANCH</td>
+<td style="text-align: center;">JALR</td>
+<td style="text-align: center;"><span><em>reserved</em></span></td>
+<td style="text-align: center;">JAL</td>
+<td style="text-align: center;">SYSTEM</td>
+<td style="text-align: center;"><span><em>reserved</em></span></td>
+<td style="text-align: center;"><span><em>custom-3/rv128</em></span></td>
+<td style="text-align: center;"><span class="math inline"> ≥ 80<em>b</em></span></td>
+</tr>
+</tbody>
+</table>
+
+</body>
+</html>

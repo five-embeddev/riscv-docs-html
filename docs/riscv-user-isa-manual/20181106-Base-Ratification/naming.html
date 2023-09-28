@@ -1,0 +1,104 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20181106-Base-Ratification</td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/naming.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="naming"><span class="header-section-number">27</span> ISA Subset Naming Conventions</h1>
+<p>This chapter describes the RISC-V ISA subset naming scheme that is
+used to concisely describe the set of instructions present in a
+hardware implementation, or the set of instructions used by an
+application binary interface (ABI).</p>
+<div class=commentary>
+<p>The RISC-V ISA is designed to support a wide variety of
+implementations with various experimental instruction-set extensions.
+We have found that an organized naming scheme simplifies software
+tools and documentation.</p>
+</div>
+<h2 id="case-sensitivity"><span class="header-section-number">27.1</span> Case Sensitivity</h2>
+<p>The ISA naming strings are case insensitive.</p>
+<h2 id="base-integer-isa"><span class="header-section-number">27.2</span> Base Integer ISA</h2>
+<p>RISC-V ISA strings begin with either RV32I, RV32E, RV64I, or RV128I
+indicating the supported address space size in bits for the base
+integer ISA.</p>
+<h2 id="instruction-extensions-names"><span class="header-section-number">27.3</span> Instruction Extensions Names</h2>
+<p>Standard ISA extensions are given a name consisting of a single
+letter. For example, the first four standard
+extensions to the integer bases are:
+“M” for integer multiplication and division,
+“A” for atomic memory instructions,
+“F” for single-precision floating-point instructions, and
+“D” for double-precision floating-point instructions.
+Any RISC-V instruction-set variant can be succinctly described by
+concatenating the base integer prefix with the names of the included
+extensions. For example, “RV64IMAFD”.</p>
+<p>We have also defined an abbreviation “G” to represent the “IMAFD”
+base and extensions, as this is intended to represent our standard
+general-purpose ISA.</p>
+<p>Standard extensions to the RISC-V ISA are given other reserved
+letters, e.g., “Q” for quad-precision floating-point, or
+“C” for the 16-bit compressed instruction format.</p>
+<h2 id="version-numbers"><span class="header-section-number">27.4</span> Version Numbers</h2>
+<p>Recognizing that instruction sets may expand or alter over time, we
+encode subset version numbers following the subset name. Version
+numbers are divided into major and minor version numbers, separated by
+a “p”. If the minor version is “0”, then “p0” can be omitted
+from the version string. Changes in major version numbers imply a
+loss of backwards compatibility, whereas changes in only the minor
+version number must be backwards-compatible. For example, the
+original 64-bit standard ISA defined in release 1.0 of this manual can
+be written in full as “RV64I1p0M1p0A1p0F1p0D1p0”, more concisely as
+“RV64I1M1A1F1D1”, or even more concisely as “RV64G1”. The G ISA
+subset can be written as “RV64I2p0M2p0A2p0F2p0D2p0”, or more
+concisely “RV64G2”.</p>
+<p>We introduced the version numbering scheme with the second release,
+which we also intend to become a permanent standard. Hence, we define
+the default version of a standard subset to be that present at the
+time of this document, e.g., “RV32G” is equivalent to
+“RV32I2M2A2F2D2”.</p>
+<h2 id="underscores"><span class="header-section-number">27.5</span> Underscores</h2>
+<p>Underscores “_” may be used to separate ISA subset components to
+improve readability and to provide disambiguation. For example, “RV32I2_M2_A2_F2_D2”.</p>
+<h2 id="non-standard-extension-names"><span class="header-section-number">27.6</span> Non-Standard Extension Names</h2>
+<p>Non-standard subsets are named using a single “X” followed by a name
+beginning with a letter and an optional version number.
+For example, “Xhwacha” names the Hwacha vector-fetch ISA extension;
+“Xhwacha2” and “Xhwacha2p0” name version 2.0 of same.</p>
+<p>Non-standard extensions must be separated from other multi-letter extensions
+by an underscore. For example, an ISA with non-standard extensions
+Argle and Bargle may be named “RV64GXargle_Xbargle”.</p>
+<h2 id="supervisor-level-instruction-subsets"><span class="header-section-number">27.7</span> Supervisor-level Instruction Subsets</h2>
+<p>Standard supervisor instruction subsets are defined in Volume II, but
+are named using “S” as a prefix, followed by a supervisor subset name
+beginning with a letter and an optional version number.</p>
+<p>Supervisor extensions must be separated from other multi-letter extensions
+by an underscore.</p>
+<h2 id="supervisor-level-extensions"><span class="header-section-number">27.8</span> Supervisor-level Extensions</h2>
+<p>Non-standard extensions to the supervisor-level ISA are defined using
+the “SX” prefix.</p>
+<h2 id="subset-naming-convention"><span class="header-section-number">27.9</span> Subset Naming Convention</h2>
+<p>Table <a href="naming.html#isanametable" data-reference-type="ref" data-reference="isanametable">1.1</a> summarizes the standardized subset names.
+ <br />
+</p>
+<figure>
+<img src="tmp.20181106-Base-Ratification//naming_00.svg" alt="Standard ISA subset names. The table also defines the canonical order in which subset names must appear in the name string, with top-to-bottom in table indicating first-to-last in the name string, e.g., RV32IMAFDQC is legal, whereas RV32IMAFDCQ is not." id="isanametable" /><figcaption>Standard ISA subset names. The table also defines the
+canonical order in which subset names must appear in the name
+string, with top-to-bottom in table indicating first-to-last in the
+name string, e.g., RV32IMAFDQC is legal, whereas RV32IMAFDCQ is not.<span label="isanametable"></span></figcaption>
+</figure>
+
+</body>
+</html>

@@ -1,0 +1,43 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20190305-Base-Ratification</td></tr>
+<tr><th>Spec Release Date</th><td> March 2019</td></tr>
+<tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/ztso.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="sec:ztso"><span class="header-section-number">24</span> “Ztso” Standard Extension for Total Store Ordering, v0.1</h1>
+<p>This chapter defines the “Ztso” extension for the RISC-V Total Store Ordering (RVTSO) memory consistency model.
+RVTSO is defined as a delta from RVWMO, which is defined in Chapter <a href="rvwmo.html#sec:rvwmo" data-reference-type="ref" data-reference="sec:rvwmo">[sec:rvwmo]</a>.</p>
+<div class=commentary>
+<p>The Ztso extension is meant to facilitate the porting of code originally written for the x86 or SPARC architectures, both of which use TSO by default.
+It also supports implementations which inherently provide RVTSO behavior and want to expose that fact to software.</p>
+</div>
+<p>RVTSO makes the following adjustments to RVWMO:</p>
+<ul>
+<li><p>All load operations behave as if they have an acquire-RCpc annotation</p></li>
+<li><p>All store operations behave as if they have a release-RCpc annotation.</p></li>
+<li><p>All AMOs behave as if they have both acquire-RCsc and release-RCsc annotations.</p></li>
+</ul>
+<div class=commentary>
+<p>These rules render all PPO rules except <a href="rvwmo.html#ppo:fence" data-reference-type="ref" data-reference="ppo:fence">[ppo:fence]</a>–<a href="rvwmo.html#ppo:rcsc" data-reference-type="ref" data-reference="ppo:rcsc">[ppo:rcsc]</a> redundant.
+They also make redundant any non-I/O fences that do not have both PW and SR set.
+Finally, they also imply that no memory operation will be reordered past an AMO in either direction.</p>
+<p>In the context of RVTSO, as is the case for RVWMO, the storage ordering annotations are concisely and completely defined by PPO rules <a href="rvwmo.html#ppo:acquire" data-reference-type="ref" data-reference="ppo:acquire">[ppo:acquire]</a>–<a href="rvwmo.html#ppo:rcsc" data-reference-type="ref" data-reference="ppo:rcsc">[ppo:rcsc]</a>. In both of these memory models, it is the that allows a hart to forward a value from its store buffer to a subsequent (in program order) load—that is to say that stores can be forwarded locally before they are visible to other harts.</p>
+</div>
+<p>In spite of the fact that Ztso adds no new instructions to the ISA, code written assuming RVTSO will not run correctly on implementations not supporting Ztso.
+Binaries compiled to run only under Ztso should indicate as such via a flag in the binary, so that platforms which do not implement Ztso can simply refuse to run them.</p>
+
+</body>
+</html>

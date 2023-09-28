@@ -1,0 +1,951 @@
+<html>
+<head>
+<title>The RISC-V Instruction Set Manual, Volume II: Privileged Architecture</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> priv</td></tr>
+<tr><th>Spec Revision</th><td> 1.10</td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/supervisor.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="supervisor"><span class="header-section-number">4</span> Supervisor-Level ISA, Version 1.10</h1>
+<p>This chapter describes the RISC-V supervisor-level architecture, which
+contains a common core that is used with various supervisor-level
+address translation and protection schemes.
+Supervisor-level code relies on a supervisor execution environment to
+initialize the environment and enter the supervisor code at an entry
+point defined by the system binary interface (SBI). The SBI also
+defines function entry points that provide supervisor environment
+services for supervisor-level code.</p>
+<div class=commentary>
+<p>Supervisor mode is deliberately restricted in terms of interactions
+with underlying physical hardware, such as physical memory and device
+interrupts, to support clean virtualization.</p>
+</div>
+<h2 id="supervisor-csrs"><span class="header-section-number">4.1</span> Supervisor CSRs</h2>
+<p>A number of CSRs are provided for the supervisor.</p>
+<div class=commentary>
+<p>The supervisor should only view CSR state that should be visible to a
+supervisor-level operating system. In particular, there is no
+information about the existence (or non-existence) of higher privilege
+levels (hypervisor or machine) visible in the CSRs accessible by the
+supervisor.</p>
+<p>Many supervisor CSRs are a subset of the equivalent machine-mode CSR,
+and the machine-mode chapter should be read first to help understand
+the supervisor-level CSR descriptions.</p>
+</div>
+<h3 id="sstatus"><span class="header-section-number">4.1.1</span> Supervisor Status Register (sstatus)</h3>
+<p>The <span>sstatus</span> register is an XLEN-bit read/write register
+formatted as shown in Figure <a href="supervisor.html#sstatusreg-rv32" data-reference-type="ref" data-reference="sstatusreg-rv32">1.1</a> for RV32 and
+Figure <a href="supervisor.html#sstatusreg" data-reference-type="ref" data-reference="sstatusreg">1.2</a> for RV64 and RV128. The <span>sstatus</span>
+register keeps track of the processor’s current operating state.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_00.svg" alt="Supervisor-mode status register (sstatus) for RV32." id="sstatusreg-rv32" /><figcaption>Supervisor-mode status register (<span>sstatus</span>) for RV32.<span label="sstatusreg-rv32"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_01.svg" alt="Supervisor-mode status register (sstatus) for RV64 and RV128." id="sstatusreg" /><figcaption>Supervisor-mode status register (<span>sstatus</span>) for RV64 and RV128.<span label="sstatusreg"></span></figcaption>
+</figure>
+<p>The SPP bit indicates the privilege level at which a hart was executing before
+entering supervisor mode. When a trap is taken, SPP is set to 0 if the trap
+originated from user mode, or 1 otherwise. When an SRET instruction
+(see Section <a href="machine.html#otherpriv" data-reference-type="ref" data-reference="otherpriv">[otherpriv]</a>) is executed to return from the trap handler, the
+privilege level is set to user mode if the SPP bit is 0, or supervisor mode if
+the SPP bit is 1; SPP is then set to 0.</p>
+<p>The SIE bit enables or disables all interrupts in supervisor mode.
+When SIE is clear, interrupts are not taken while in supervisor mode.
+When the hart is running in user-mode, the value in SIE is ignored, and
+supervisor-level interrupts are enabled. The supervisor can disable
+indivdual interrupt sources using the <span>sie</span> register.</p>
+<p>The SPIE bit indicates whether supervisor interrupts were enabled prior to
+trapping into supervisor mode. When a trap is taken into supervisor
+mode, SPIE is set to SIE, and SIE is set to 0. When an SRET instruction is
+executed, SIE is set to SPIE, then SPIE is set to 1.</p>
+<p>The UIE bit enables or disables user-mode interrupts. User-level interrupts
+are enabled only if UIE is set and the hart is running in user-mode. The UPIE
+bit indicates whether user-level interrupts were enabled prior to taking
+a user-level trap. When a URET instruction is executed, UIE is
+set to UPIE, and UPIE is set to 1. User-level interrupts are optional. If
+omitted, the UIE and UPIE bits are hardwired to zero.</p>
+<div class=commentary>
+<p>The <span>sstatus</span> register is a subset of the <span>mstatus</span> register. In
+a straightforward implementation, reading or writing any field in <span>
+sstatus</span> is equivalent to reading or writing the homonymous field in
+<span>mstatus</span>.</p>
+</div>
+<h3 id="base-isa-control-in-sstatus-register"><span class="header-section-number">4.1.2</span> Base ISA Control in <span>sstatus</span> Register</h3>
+<p>The UXL field controls the value of XLEN for U-mode, termed <span><em>U-XLEN</em></span>,
+which may differ from the value of XLEN for S-mode, termed <span><em>S-XLEN</em></span>. The
+encoding of UXL is the same as that of the MXL field of <span>misa</span>, shown in
+Table <a href="machine.html#misabase" data-reference-type="ref" data-reference="misabase">[misabase]</a>.</p>
+<p>For RV32 systems, the UXL field does not exist, and U-XLEN = 32. For RV64 and
+RV128 systems, it is a <strong>WARL</strong> field that encodes the current value of U-XLEN.
+In particular, the implementation may hardwire UXL so that U-XLEN = S-XLEN.</p>
+<p>If U-XLEN <span class="math inline">≠</span> S-XLEN, instructions executed in the narrower mode must ignore
+source register operand bits above the configured XLEN, and must sign-extend
+results to fill the widest supported XLEN in the destination register.</p>
+<h3 id="sec:sum"><span class="header-section-number">4.1.3</span> Memory Privilege in <span>sstatus</span> Register</h3>
+<p>The MXR (Make eXecutable Readable) bit modifies the privilege with which loads
+access virtual memory. When MXR=0, only loads from pages marked readable (R=1
+in Figure <a href="supervisor.html#sv32pte" data-reference-type="ref" data-reference="sv32pte">1.16</a>) will succeed. When MXR=1, loads from pages marked
+either readable or executable (R=1 or X=1) will succeed. MXR has no effect
+when page-based virtual memory is not in effect.</p>
+<p>The SUM (permit Supervisor User Memory access) bit modifies the privilege with
+which S-mode loads, stores, and instruction fetches access virtual memory.
+When SUM=0, S-mode memory accesses to pages that are accessible by U-mode (U=1
+in Figure <a href="supervisor.html#sv32pte" data-reference-type="ref" data-reference="sv32pte">1.16</a>) will fault. When SUM=1, these accesses are
+permitted. SUM has no effect when page-based virtual memory is not in effect,
+nor when executing in U-mode.</p>
+<div class=commentary>
+<p>The SUM mechanism prevents supervisor software from inadvertently accessing
+user memory. Operating systems can execute the majority of code with SUM clear;
+the few code segments that should access user memory can temporarily set
+SUM.</p>
+</div>
+<h3 id="supervisor-trap-vector-base-address-register-stvec"><span class="header-section-number">4.1.4</span> Supervisor Trap Vector Base Address Register (<span>stvec</span>)</h3>
+<p>The <span>stvec</span> register is an XLEN-bit read/write register that holds
+trap vector configuration, consisting of a vector base address (BASE) and a
+vector mode (MODE).</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_02.svg" alt="Supervisor trap vector base address register (stvec)." id="stvecreg" /><figcaption>Supervisor trap vector base address register (<span>stvec</span>).<span label="stvecreg"></span></figcaption>
+</figure>
+<p>The BASE field in <span>stvec</span> is a <strong>WARL</strong> field that can hold any valid virtual
+or physical address, subject to the following alignment constraints: the
+address must always be at least 4-byte aligned, and the MODE
+setting may impose additional alignment constraints on the value in the BASE
+field.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Value</th>
+<th style="text-align: center;">Name</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: center;">Direct</td>
+<td style="text-align: left;">All exceptions set <span>pc</span> to BASE.</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: center;">Vectored</td>
+<td style="text-align: left;">Asynchronous interrupts set <span>pc</span> to BASE+4<span class="math inline">×</span>cause.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;"><span class="math inline">≥</span>2</td>
+<td style="text-align: center;">—</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+</tr>
+</tbody>
+</table>
+<p>The encoding of the MODE field is shown in Table <a href="supervisor.html#stvec-mode" data-reference-type="ref" data-reference="stvec-mode">[stvec-mode]</a>. When
+MODE=Direct, all traps into supervisor mode cause the <span>pc</span> to be set to the
+address in the BASE field. When MODE=Vectored, all synchronous exceptions
+into supervisor mode cause the <span>pc</span> to be set to the address in the BASE
+field, whereas interrupts cause the <span>pc</span> to be set to the address in
+the BASE field plus four times the interrupt cause number. For example,
+a supervisor-mode timer interrupt (see Table <a href="supervisor.html#scauses" data-reference-type="ref" data-reference="scauses">[scauses]</a>) causes the <span>pc</span>
+to be set to BASE+<span>0x14</span>.
+Setting MODE=Vectored may impose an additional alignment constraint on BASE,
+requiring up to <span class="math inline">4×</span>XLEN-byte alignment.</p>
+<div class=commentary>
+<p>When vectored interrupts are enabled, interrupt cause 0, which corresponds to
+user-mode software interrupts, are vectored to the same location as
+synchronous exceptions. This ambiguity does not arise in practice, since
+user-mode software interrupts are either disabled or delegated to user mode.</p>
+</div>
+<h3 id="supervisor-interrupt-registers-sip-and-sie"><span class="header-section-number">4.1.5</span> Supervisor Interrupt Registers (<span>sip</span> and <span>sie</span>)</h3>
+<p>The <span>sip</span> register is an XLEN-bit read/write register containing
+information on pending interrupts, while <span>sie</span> is the corresponding
+XLEN-bit read/write register containing interrupt enable bits.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_03.svg" alt="Supervisor interrupt-pending register (sip)." id="sipreg" /><figcaption>Supervisor interrupt-pending register (<span>sip</span>).<span label="sipreg"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_04.svg" alt="Supervisor interrupt-enable register (sie)." id="siereg" /><figcaption>Supervisor interrupt-enable register (<span>sie</span>).<span label="siereg"></span></figcaption>
+</figure>
+<p>Three types of interrupts are defined: software interrupts, timer interrupts,
+and external interrupts. A supervisor-level software interrupt is triggered
+on the current hart by writing 1 to its supervisor software interrupt-pending
+(SSIP) bit in the <span>sip</span> register. A pending supervisor-level software
+interrupt can be cleared by writing 0 to the SSIP bit in <span>sip</span>.
+Supervisor-level software interrupts are disabled when the SSIE bit in the
+<span>sie</span> register is clear.</p>
+<p>Interprocessor interrupts are sent to other harts by means of SBI
+calls, which will ultimately cause the SSIP bit to be set in the
+recipient hart’s <span>sip</span> register.</p>
+<p>A user-level software interrupt is triggered on the current hart by writing
+1 to its user software interrupt-pending (USIP) bit in the <span>sip</span> register.
+A pending user-level software interrupt can be cleared by writing 0 to the
+USIP bit in <span>sip</span>. User-level software interrupts are disabled when the
+USIE bit in the <span>sie</span> register is clear. If user-level interrupts are not
+supported, USIP and USIE are hardwired to zero.</p>
+<p>All bits besides SSIP, USIP, and UEIP in the <span>sip</span> register are read-only.</p>
+<p>A supervisor-level timer interrupt is pending if the STIP bit in the <span>sip</span>
+register is set. Supervisor-level timer interrupts are disabled when the STIE
+bit in the <span>sie</span> register is clear. An SBI call to the SEE may be used to
+clear the pending timer interrupt.</p>
+<p>A user-level timer interrupt is pending if the UTIP bit in the <span>sip</span>
+register is set. User-level timer interrupts are disabled when the UTIE bit
+in the <span>sie</span> register is clear. If user-level interrupts are supported,
+the ABI should provide a facility for scheduling timer interrupts in terms of
+real-time counter values. If user-level interrupts are not supported, UTIP
+and UTIE are hardwired to zero.</p>
+<p>A supervisor-level external interrupt is pending if the SEIP bit in the
+<span>sip</span> register is set. Supervisor-level external interrupts are disabled
+when the SEIE bit in the <span>sie</span> register is clear. The SBI should provide
+facilities to mask, unmask, and query the cause of external interrupts.</p>
+<p>The UEIP field in <span>sip</span> contains a single read-write bit. UEIP
+may be written by S-mode software to indicate to U-mode that an
+external interrupt is pending. Additionally, the platform-level
+interrupt controller may generate user-level external interrupts. The
+logical-OR of the software-writeable bit and the signal from the
+external interrupt controller are used to generate external interrupts
+for user mode. When the UEIP bit is read with a CSRRW, CSRRS, or
+CSRRC instruction, the value returned in the <span>rd</span> destination
+register contains the logical-OR of the software-writable bit and the
+interrupt signal from the interrupt controller. However, the value
+used in the read-modify-write sequence of a CSRRS or CSRRC instruction
+is only the software-writable UEIP bit, ignoring the interrupt value
+from the external interrupt controller.</p>
+<div class=commentary>
+<p>Analogous to SEIP, the UIEP field behavior is designed to allow a
+higher privilege layer to mimic external interrupts without losing
+any real external interrupts.</p>
+</div>
+<p>User-level external interrupts are disabled when the UEIE bit in the <span>sie</span>
+register is clear. If the N extension for user-level interrupts is not
+implemented, UEIP and UEIE are hardwired to zero.</p>
+<div class=commentary>
+<p>The <span>sip</span> and <span>sie</span> registers are subsets of the <span>mip</span> and <span>
+mie</span> registers. Reading any field, or writing any writable field, of <span>
+sip</span>/<span>sie</span> effects a read or write of the homonymous field of <span>
+mip</span>/<span>mie</span>.</p>
+</div>
+<h3 id="supervisor-timers-and-performance-counters"><span class="header-section-number">4.1.6</span> Supervisor Timers and Performance Counters</h3>
+<p>Supervisor software uses the same hardware performance monitoring facility
+as user-mode software, including the <span>time</span>, <span>cycle</span>, and <span>instret</span>
+CSRs. The SBI should provide a mechanism to modify the
+counter values.</p>
+<p>The SBI must provide a facility for scheduling timer interrupts in terms
+of the real-time counter, <span>time</span>.</p>
+<h3 id="counter-enable-register-scounteren"><span class="header-section-number">4.1.7</span> Counter-Enable Register (<span>scounteren</span>)</h3>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_05.svg" alt="Counter-enable register (scounteren)." id="scounteren" /><figcaption>Counter-enable register (<span>scounteren</span>).<span label="scounteren"></span></figcaption>
+</figure>
+<p>The counter-enable register <span>scounteren</span> controls
+the availability of the
+hardware performance monitoring counters to U-mode.</p>
+<p>When the CY, TM, IR, or HPM<span><em>n</em></span> bit in the <span>scounteren</span> register is
+clear, attempts to read the <span>cycle</span>, <span>time</span>, <span>instret</span>, or
+<span>hpmcounter<span><em>n</em></span></span> register while executing in U-mode
+will cause an illegal instruction exception. When one of these bits is set,
+access to the corresponding register is permitted.</p>
+<p><span>scounteren</span> must be implemented. However, any of the bits may contain
+a hardwired value of zero, indicating reads to the corresponding counter will
+cause an exception when executing in U-mode.
+Hence, they are effectively <strong>WARL</strong> fields.</p>
+<h3 id="supervisor-scratch-register-sscratch"><span class="header-section-number">4.1.8</span> Supervisor Scratch Register (<span>sscratch</span>)</h3>
+<p>The <span>sscratch</span> register is an XLEN-bit read/write register,
+dedicated for use by the supervisor. Typically, <span>sscratch</span> is
+used to hold a pointer to the hart-local supervisor context while the
+hart is executing user code. At the beginning of a trap handler, <span>
+sscratch</span> is swapped with a user register to provide an initial
+working register.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_06.svg" alt="Supervisor Scratch Register." id="kregs" /><figcaption>Supervisor Scratch Register.<span label="kregs"></span></figcaption>
+</figure>
+<h3 id="supervisor-exception-program-counter-sepc"><span class="header-section-number">4.1.9</span> Supervisor Exception Program Counter (<span>sepc</span>)</h3>
+<p><span>sepc</span> is an XLEN-bit read/write register formatted as shown in
+Figure <a href="supervisor.html#epcreg" data-reference-type="ref" data-reference="epcreg">1.8</a>. The low bit of <span>sepc</span> (<span>sepc[0]</span>) is
+always zero. On implementations that do not support instruction-set
+extensions with 16-bit instruction alignment, the two low bits (<span>
+sepc[1:0]</span>) are always zero.</p>
+<p><span>sepc</span> is a <strong>WARL</strong> register that must be able to hold all valid physical
+and virtual addresses. It need not be capable of holding all possible invalid
+addresses. Implementations may convert some invalid address patterns into
+other invalid addresses prior to writing them to <span>sepc</span>.</p>
+<p>When a trap is taken into S-mode, <span>sepc</span> is written with the virtual
+address of the instruction that encountered the exception. Otherwise,
+<span>sepc</span> is never written by the implementation, though it may be
+explicitly written by software.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_07.svg" alt="Supervisor exception program counter register." id="epcreg" /><figcaption>Supervisor exception program counter register.<span label="epcreg"></span></figcaption>
+</figure>
+<h3 id="supervisor-cause-register-scause"><span class="header-section-number">4.1.10</span> Supervisor Cause Register (<span>scause</span>)</h3>
+<p>The <span>scause</span> register is an XLEN-bit read-write register formatted as
+shown in Figure <a href="supervisor.html#scausereg" data-reference-type="ref" data-reference="scausereg">1.9</a>. When a trap is taken into S-mode, <span>
+scause</span> is written with a code indicating the event that caused the trap.
+Otherwise, <span>scause</span> is never written by the implementation, though it may be
+explicitly written by software.</p>
+<p>The Interrupt bit in the <span>scause</span> register is set if the
+contains a code identifying the last exception. Table <a href="supervisor.html#scauses" data-reference-type="ref" data-reference="scauses">[scauses]</a>
+lists the possible exception codes for the current supervisor ISAs, in
+descending order of priority. The Exception Code is an <strong>WLRL</strong> field,
+so is only guaranteed to hold supported exception codes.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_08.svg" alt="Supervisor Cause register scause." id="scausereg" /><figcaption>Supervisor Cause register <span>scause</span>.<span label="scausereg"></span></figcaption>
+</figure>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Interrupt</th>
+<th style="text-align: right;">Exception Code</th>
+<th style="text-align: left;">Description</th>
+<th style="text-align: left;"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">User software interrupt</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Supervisor software interrupt</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">2–3</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">User timer interrupt</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Supervisor timer interrupt</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">6–7</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">User external interrupt</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">Supervisor external interrupt</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;"><span class="math inline">≥</span>10</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">Instruction address misaligned</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">Instruction access fault</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">Illegal instruction</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">Breakpoint</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">Load access fault</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">AMO address misaligned</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">Store/AMO access fault</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">Environment call</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">9–11</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: left;">Instruction page fault</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">13</td>
+<td style="text-align: left;">Load page fault</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: left;">Store/AMO page fault</td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">0</td>
+<td style="text-align: right;"><span class="math inline">≥</span>16</td>
+<td style="text-align: left;"><span><em>Reserved</em></span></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<h3 id="supervisor-trap-value-stval-register"><span class="header-section-number">4.1.11</span> Supervisor Trap Value (<span>stval</span>) Register</h3>
+<p>The <span>stval</span> register is an XLEN-bit read-write register formatted as shown
+in Figure <a href="supervisor.html#stvalreg" data-reference-type="ref" data-reference="stvalreg">1.10</a>. When a trap is taken into S-mode, <span>stval</span> is
+written with exception-specific information to assist software in handling the
+trap. Otherwise, <span>stval</span> is never written by the implementation, though
+it may be explicitly written by software.</p>
+<p>When a hardware breakpoint is triggered, or
+an instruction-fetch, load, or store access or page-fault exception occurs,
+or an instruction-fetch or AMO address-misaligned exception occurs,
+<span>stval</span> is written with the faulting address.
+For other exceptions, <span>stval</span> is
+set to zero, but a future standard may redefine <span>stval</span>’s setting for
+other exceptions.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_09.svg" alt="Supervisor Trap Value register." id="stvalreg" /><figcaption>Supervisor Trap Value register.<span label="stvalreg"></span></figcaption>
+</figure>
+<p>For instruction-fetch access faults and page faults on RISC-V systems with
+variable-length instructions, <span>stval</span> will point to the portion
+of the instruction that caused the fault while <span>sepc</span> will point
+to the beginning of the instruction.</p>
+<p>The <span>stval</span> register can optionally also be used to return the
+faulting instruction bits on an illegal instruction exception (<span>
+sepc</span> points to the faulting instruction in memory).</p>
+<p>If this feature is not provided, then <span>stval</span> is set to zero on
+an illegal instruction fault.</p>
+<p>If the feature is provided, after an illegal instruction trap, <span>
+stval</span> will contain the entire faulting instruction provided the
+instruction is no longer than XLEN bits. If the instruction is less
+than XLEN bits long, the upper bits of <span>stval</span> are cleared to
+zero. If the instruction is more than XLEN bits long, <span>stval</span>
+will contain the first XLEN bits of the instruction.</p>
+<p><span>stval</span> is a <strong>WARL</strong> register that must be able to hold all valid physical
+and virtual addresses and the value 0. It need not be capable of holding all
+possible invalid addresses. Implementations may convert some invalid address
+patterns into other invalid addresses prior to writing them to <span>stval</span>.
+If the feature to return the faulting instruction bits is implemented, <span>
+stval</span> must also be able to hold all values less than <span class="math inline">2<sup><em>N</em></sup></span>, where <span class="math inline"><em>N</em></span> is the
+smaller of XLEN and the width of the longest supported instruction.</p>
+<h3 id="sec:satp"><span class="header-section-number">4.1.12</span> Supervisor Address Translation and Protection (<span>satp</span>) Register</h3>
+<p>The <span>satp</span> register is an XLEN-bit read/write register, formatted as shown
+in Figure <a href="supervisor.html#rv32satp" data-reference-type="ref" data-reference="rv32satp">1.11</a> for RV32 and Figure <a href="supervisor.html#rv64satp" data-reference-type="ref" data-reference="rv64satp">1.12</a>, which
+controls supervisor-mode address translation and protection.
+This register holds the physical page number (PPN) of the root page
+table, i.e., its supervisor physical address divided by <span>4</span><span>KiB</span>;
+an address space identifier (ASID), which facilitates address-translation
+fences on a per-address-space basis; and the MODE field, which selects the
+current address-translation scheme.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_10.svg" alt="RV32 Supervisor address translation and protection register satp." id="rv32satp" /><figcaption>RV32 Supervisor address translation and protection register <span>satp</span>.<span label="rv32satp"></span></figcaption>
+</figure>
+<div class=commentary>
+<p>Storing a PPN in <span>satp</span>, rather than a physical address, supports
+a physical address space larger than <span>4</span><span>GiB</span> for RV32.</p>
+</div>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_11.svg" alt="RV64 Supervisor address translation and protection register satp, for MODE values Sv39 and Sv48." id="rv64satp" /><figcaption>RV64 Supervisor address translation and protection register <span>satp</span>, for MODE
+values Sv39 and Sv48.<span label="rv64satp"></span></figcaption>
+</figure>
+<div class=commentary>
+<p>We store the ASID and the page table base address in the same CSR to allow the
+pair to be changed atomically on a context switch. Swapping them
+non-atomically could pollute the old virtual address space with new
+translations, or vice-versa. This approach also slightly reduces the cost of
+a context switch.</p>
+</div>
+<p>Table <a href="supervisor.html#tab:satp-mode" data-reference-type="ref" data-reference="tab:satp-mode">1.13</a> shows the encodings of the MODE field for RV32 and
+RV64. When MODE=Bare, supervisor virtual addresses are equal to
+supervisor physical addresses, and there is no additional memory protection
+beyond the physical memory protection scheme described in
+Section <a href="machine.html#sec:pmp" data-reference-type="ref" data-reference="sec:pmp">[sec:pmp]</a>. In this case, the remaining fields in <span>satp</span>
+have no effect.</p>
+<p>For RV32, the only other valid setting for MODE is Sv32, a paged
+virtual-memory scheme described in Section <a href="supervisor.html#sec:sv32" data-reference-type="ref" data-reference="sec:sv32">1.3</a>.</p>
+<p>For RV64, two paged virtual-memory schemes are defined: Sv39 and Sv48,
+described in Sections <a href="supervisor.html#sec:sv39" data-reference-type="ref" data-reference="sec:sv39">1.4</a> and <a href="supervisor.html#sec:sv48" data-reference-type="ref" data-reference="sec:sv48">1.5</a>, respectively.
+Two additional schemes, Sv57 and Sv64, will be defined in a later version
+of this specification. The remaining MODE settings are reserved
+for future use and may define different interpretations of the other fields in
+<span>satp</span>.</p>
+<p>Implementations are not required to support all MODE settings,
+and if <span>satp</span> is written with an unsupported MODE, the entire write has
+no effect; no fields in <span>satp</span> are modified.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_12.svg" alt="Encoding of satp MODE field." id="tab:satp-mode" /><figcaption>Encoding of <span>satp</span> MODE field.<span label="tab:satp-mode"></span></figcaption>
+</figure>
+<p>The number of supervisor physical address bits is implementation-defined; any
+unimplemented address bits are hardwired to zero in the <span>satp</span> register.
+The number of ASID bits is also implementation-defined and may be zero. The
+number of implemented ASID bits, termed <span><span><em>ASIDLEN</em></span> </span>, may be
+determined by writing one to every bit position in the ASID field, then
+reading back the value in <span>satp</span> to see which bit positions in the ASID
+field hold a one. The least-significant bits of ASID are implemented first:
+that is, if ASIDLEN <span class="math inline">&gt;</span> 0, ASID[ASIDLEN-1:0] is writable. The maximal value
+of ASIDLEN, termed ASIDMAX, is 9 for Sv32 or 16 for Sv39 and Sv48</p>
+<div class=commentary>
+<p>For many applications, the choice of page size has a substantial
+performance impact. A large page size increases TLB reach and loosens
+the associativity constraints on virtually-indexed, physically-tagged
+caches. At the same time, large pages exacerbate internal
+fragmentation, wasting physical memory and possibly cache capacity.</p>
+<p>After much deliberation, we have settled on a conventional page size
+of 4 KiB for both RV32 and RV64. We expect this decision to ease the
+porting of low-level runtime software and device drivers. The TLB
+reach problem is ameliorated by transparent superpage support in
+modern operating systems <span class="citation" data-cites="transparent-superpages"><a href="#ref-transparent-superpages">[transparent-superpages]</a></span>. Additionally,
+multi-level TLB hierarchies are quite inexpensive relative to the
+multi-level cache hierarchies whose address space they map.</p>
+</div>
+<p>Note that writing <span>satp</span> does not imply any ordering constraints
+between page-table updates and subsequent address translations.
+If the new address space’s page tables have been modified, it may be
+necessary to execute an SFENCE.VMA instruction
+(see Section <a href="supervisor.html#sec:sfence.vma" data-reference-type="ref" data-reference="sec:sfence.vma">1.2.1</a>) prior to writing <span>satp</span>.</p>
+<div class=commentary>
+<p>Not imposing upon implementations to flush address-translation caches
+upon <span>satp</span> writes reduces the cost of context switches, provided
+a sufficiently large ASID space.</p>
+</div>
+<h2 id="supervisor-instructions"><span class="header-section-number">4.2</span> Supervisor Instructions</h2>
+<p>In addition to the SRET instruction defined in
+Section <a href="machine.html#otherpriv" data-reference-type="ref" data-reference="otherpriv">[otherpriv]</a>, one new supervisor-level instruction is
+provided.</p>
+<h3 id="sec:sfence.vma"><span class="header-section-number">4.2.1</span> Supervisor Memory-Management Fence Instruction</h3>
+<p><img src="tmp.riscv-priv-1.10//supervisor_13.svg" alt="image" /></p>
+<p>The supervisor memory-management fence instruction SFENCE.VMA is used to
+synchronize updates to in-memory memory-management data structures with
+current execution. Instruction execution causes implicit reads and writes to
+these data structures; however, these implicit references are ordinarily not
+ordered with respect to loads and stores in the instruction stream. Executing
+an SFENCE.VMA instruction guarantees that any stores in the instruction stream
+prior to the SFENCE.VMA are ordered before all implicit references subsequent
+to the SFENCE.VMA.</p>
+<div class=commentary>
+<p>The SFENCE.VMA is used to flush any local hardware caches related to
+address translation. It is specified as a fence rather than a TLB
+flush to provide cleaner semantics with respect to which instructions
+are affected by the flush operation and to support a wider variety of
+dynamic caching structures and memory-management schemes. SFENCE.VMA
+is also used by higher privilege levels to synchronize page table
+writes and the address translation hardware.</p>
+</div>
+<div class=commentary>
+<p>Note the instruction has no effect on the translations of other RISC-V
+threads, which must be notified separately. One approach is to use 1)
+a local data fence to ensure local writes are visible globally, then
+2) an interprocessor interrupt to the other thread, then 3) a local
+SFENCE.VMA in the interrupt handler of the remote thread, and finally
+4) signal back to originating thread that operation is complete. This
+is, of course, the RISC-V analog to a TLB shootdown. Alternatively,
+implementations might provide direct hardware support for remote TLB
+invalidation. TLB shootdowns are handled by an SBI call to hide
+implementation details.</p>
+</div>
+<p>For the common case that the translation data structures have only been
+modified for a single address mapping (i.e., one page or superpage), <span><em>rs1</em></span>
+can specify a virtual address within that mapping to effect a translation
+fence for that mapping only. Furthermore, for the common case that the
+translation data structures have only been modified for a single address-space
+identifier, <span><em>rs2</em></span> can specify the address space. The behavior of
+SFENCE.VMA depends on <span><em>rs1</em></span> and <span><em>rs2</em></span> as follows:</p>
+<ul>
+<li><p>If <span><em>rs1</em></span>=<span>x0</span> and <span><em>rs2</em></span>=<span>x0</span>, the fence orders all
+reads and writes made to any level of the page tables, for all
+address spaces.</p></li>
+<li><p>If <span><em>rs1</em></span>=<span>x0</span> and <span><em>rs2</em></span><span class="math inline">≠</span><span>x0</span>, the fence orders
+all reads and writes made to any level of the page tables, but only
+for the address space identified by integer register <span><em>rs2</em></span>.
+Accesses to <span><em>global</em></span> mappings (see Section <a href="supervisor.html#sec:translation" data-reference-type="ref" data-reference="sec:translation">1.3.1</a>)
+are not ordered.</p></li>
+<li><p>If <span><em>rs1</em></span><span class="math inline">≠</span><span>x0</span> and <span><em>rs2</em></span>=<span>x0</span>, the fence orders
+only reads and writes made to the leaf page table entry corresponding
+to the virtual address in <span><em>rs1</em></span>, for all address spaces.</p></li>
+<li><p>If <span><em>rs1</em></span><span class="math inline">≠</span><span>x0</span> and <span><em>rs2</em></span><span class="math inline">≠</span><span>x0</span>, the fence
+orders only reads and writes made to the leaf page table entry
+corresponding to the virtual address in <span><em>rs1</em></span>, for the address
+space identified by integer register <span><em>rs2</em></span>.
+Accesses to global mappings are not ordered.</p></li>
+</ul>
+<p>When <span><em>rs2</em></span><span class="math inline">≠</span><span>x0</span>, bits XLEN-1:ASIDMAX of the value held in <span>
+<em>rs2</em></span> are reserved for future use and should be zeroed by software and ignored
+by current implementations. Furthermore, if ASIDLEN <span class="math inline">&lt;</span> ASIDMAX, the
+implementation shall ignore bits ASIDMAX-1:ASIDLEN of the value held in <span>
+<em>rs2</em></span>.</p>
+<div class=commentary>
+<p>Simpler implementations can ignore the virtual address in <span><em>rs1</em></span> and
+the ASID value in <span><em>rs2</em></span> and always perform a global fence.</p>
+</div>
+<h2 id="sec:sv32"><span class="header-section-number">4.3</span> Sv32: Page-Based 32-bit Virtual-Memory Systems</h2>
+<p>When Sv32 is written to the MODE field in the <span>satp</span> register
+(see Section <a href="supervisor.html#sec:satp" data-reference-type="ref" data-reference="sec:satp">1.1.12</a>),
+the supervisor operates in a 32-bit paged virtual-memory system. Sv32
+is supported on RV32 systems and is designed to include mechanisms
+sufficient for supporting modern Unix-based operating systems.</p>
+<div class=commentary>
+<p>The initial RISC-V paged virtual-memory architectures have been
+designed as straightforward implementations to support existing
+operating systems. We have architected page table layouts to support
+a hardware page-table walker. Software TLB refills are a performance
+bottleneck on high-performance systems, and are especially troublesome
+with decoupled specialized coprocessors. An implementation can choose
+to implement software TLB refills using a machine-mode trap handler as
+an extension to M-mode.</p>
+</div>
+<h3 id="sec:translation"><span class="header-section-number">4.3.1</span> Addressing and Memory Protection</h3>
+<p>Sv32 implementations support a 32-bit virtual address space, divided
+into <span>4</span><span>KiB</span> pages. An Sv32 virtual address is partitioned
+into a virtual page number (VPN) and page offset, as shown in
+Figure <a href="supervisor.html#sv32va" data-reference-type="ref" data-reference="sv32va">1.14</a>. When Sv32 virtual memory mode is selected in the
+MODE field of the <span>satp</span> register, supervisor virtual addresses
+are translated into supervisor physical addresses via a two-level page
+table. The 20-bit VPN is translated into a 22-bit physical page
+number (PPN), while the 12-bit page offset is untranslated. The
+resulting supervisor-level physical addresses are then checked using
+any physical memory protection structures (Sections <a href="machine.html#sec:pmp" data-reference-type="ref" data-reference="sec:pmp">[sec:pmp]</a>),
+before being directly converted to machine-level physical addresses.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_14.svg" alt="Sv32 virtual address." id="sv32va" /><figcaption>Sv32 virtual address.<span label="sv32va"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_15.svg" alt="Sv32 physical address." id="rv32va" /><figcaption>Sv32 physical address.<span label="rv32va"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_16.svg" alt="Sv32 page table entry." id="sv32pte" /><figcaption>Sv32 page table entry.<span label="sv32pte"></span></figcaption>
+</figure>
+<p>Sv32 page tables consist of <span class="math inline">2<sup>10</sup></span> page-table entries (PTEs), each
+of four bytes. A page table is exactly the size of a page and must
+always be aligned to a page boundary. The physical page number of the
+root page table is stored in the <span>satp</span> register.</p>
+<p>The PTE format for Sv32 is shown in Figures <a href="supervisor.html#sv32pte" data-reference-type="ref" data-reference="sv32pte">1.16</a>. The V bit
+indicates whether the PTE is valid; if it is 0, bits 31–1 of the PTE are
+don’t-cares and may be used freely by software. The permission bits, R, W,
+and X, indicate whether the page is readable, writable, and executable,
+respectively. When all three are zero, the PTE is a pointer to the next level
+of the page table; otherwise, it is a leaf PTE. Writable pages must also be
+marked readable; the contrary combinations are reserved for future use.
+Table <a href="supervisor.html#pteperm" data-reference-type="ref" data-reference="pteperm">[pteperm]</a> summarizes the encoding of the permission bits.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;">X</th>
+<th style="text-align: center;">W</th>
+<th style="text-align: center;">R</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">Pointer to next level of page table.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Read-only page.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;"><span><em>Reserved for future use.</em></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Read-write page.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;">Execute-only page.</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Read-execute page.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">0</td>
+<td style="text-align: left;"><span><em>Reserved for future use.</em></span></td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: center;">1</td>
+<td style="text-align: left;">Read-write-execute page.</td>
+</tr>
+</tbody>
+</table>
+<p>The U bit indicates whether the page is accessible to user mode.
+U-mode software may only access the page when U=1. If the SUM bit
+in the <span>sstatus</span> register is
+set, supervisor mode software may also access pages with U=1.
+However, supervisor code normally operates with the SUM bit clear, in
+which case, supervisor code will fault on accesses to user-mode pages.</p>
+<div class=commentary>
+<p>An alternative PTE format would support different permissions for supervisor
+and user. We omitted this feature because it would be largely redundant with
+the SUM mechanism (see Section <a href="supervisor.html#sec:sum" data-reference-type="ref" data-reference="sec:sum">1.1.3</a>) and would require more encoding
+space in the PTE.</p>
+</div>
+<p>The G bit designates a <span><em>global</em></span> mapping. Global mappings are those that
+exist in all address spaces. For non-leaf PTEs, the global setting implies
+that all mappings in the subsequent levels of the page table are global. Note
+that failing to mark a global mapping as global merely reduces performance,
+whereas marking a non-global mapping as global is an error.</p>
+<div class=commentary>
+<p>Global mappings need not be stored redundantly in address-translation caches
+for multiple ASIDs. Additionally, they need not be flushed from local
+address-translation caches when an SFENCE.VMA instruction is executed with
+<span><em>rs2</em></span><span class="math inline">≠</span><span>x0</span>.</p>
+</div>
+<p>The RSW field is reserved for use by supervisor software; the implementation
+shall ignore this field.</p>
+<p>Each leaf PTE contains an accessed (A) and dirty (D) bit. The A bit indicates
+the virtual page has been read, written, or fetched from since the last time
+the A bit was cleared. The D bit indicates the virtual page has been written
+since the last time the D bit was cleared.</p>
+<p>Two schemes to manage the A and D bits are permitted:</p>
+<ul>
+<li><p>When a virtual page is accessed and the A bit is clear, or is
+written and the D bit is clear, the implementation sets the
+corresponding bit in the PTE. The PTE update must be atomic with
+respect to other accesses to the PTE, and must atomically check
+that the PTE is valid and grants sufficient permissions. The
+PTE update must be exact (i.e., not speculative), and observed
+in program order by the local hart. The ordering on loads and stores
+provided by FENCE instructions and the acquire/release bits on atomic
+instructions also orders the PTE updates associated with those loads
+and stores as observed by remote harts.</p></li>
+<li><p>When a virtual page is accessed and the A bit is clear, or is
+written and the D bit is clear, a page-fault exception is raised.</p></li>
+</ul>
+<p>Standard supervisor software should be written to assume either or both
+PTE update schemes may be in effect.</p>
+<div class=commentary>
+<p>Mandating that the PTE updates to be exact, atomic, and in program order
+simplifies the specification, and makes the feature more useful for system
+software. Simple implementations may instead generate page-fault exceptions.</p>
+<p>The A and D bits are never cleared by the implementation. If the
+supervisor software does not rely on accessed and/or dirty bits,
+e.g. if it does not swap memory pages to secondary storage or if the
+pages are being used to map I/O space, it should always set them to 1
+in the PTE to improve performance.</p>
+</div>
+<p>Any level of PTE may be a leaf PTE, so in addition to 4 KiB pages, Sv32
+supports 4 MiB <span><em>megapages</em></span>. A megapage must be virtually and
+physically aligned to a 4 MiB boundary; a page-fault exception is raised
+if the physical address is insufficiently aligned.</p>
+<p>For non-leaf PTEs, the D, A, and U bits are reserved for future use and
+must be cleared by software for forward compatibility.</p>
+<h3 id="sv32algorithm"><span class="header-section-number">4.3.2</span> Virtual Address Translation Process</h3>
+<p>A virtual address <span class="math inline"><em>v</em><em>a</em></span> is translated into a physical address <span class="math inline"><em>p</em><em>a</em></span> as
+follows:</p>
+<ol>
+<li><p>Let <span class="math inline"><em>a</em></span> be <span class="math inline">${\tt satp}.ppn \times \textrm{PAGESIZE}$</span>, and let <span class="math inline"><em>i</em> = LEVELS − 1</span>. (For Sv32, PAGESIZE=<span class="math inline">2<sup>12</sup></span> and LEVELS=2.)</p></li>
+<li><p>Let <span class="math inline"><em>p</em><em>t</em><em>e</em></span> be the value of the PTE at address
+<span class="math inline"><em>a</em> + <em>v</em><em>a</em>.<em>v</em><em>p</em><em>n</em>[<em>i</em>] × PTESIZE</span>. (For Sv32, PTESIZE=4.)
+If accessing <span class="math inline"><em>p</em><em>t</em><em>e</em></span> violates a PMA or PMP check, raise an
+access exception.</p></li>
+<li><p>If <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>v</em> = 0</span>, or if <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>r</em> = 0</span> and <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>w</em> = 1</span>, stop and raise a page-fault exception.</p></li>
+<li><p>Otherwise, the PTE is valid.
+If <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>r</em> = 1</span> or <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>x</em> = 1</span>, go to step 5.
+Otherwise, this PTE is a pointer to the next level of the page table. Let
+<span class="math inline"><em>i</em> = <em>i</em> − 1</span>. If <span class="math inline"><em>i</em> &lt; 0</span>, stop and raise a page-fault exception. Otherwise, let
+<span class="math inline"><em>a</em> = <em>p</em><em>t</em><em>e</em>.<em>p</em><em>p</em><em>n</em> × PAGESIZE</span> and go to step 2.</p></li>
+<li><p>A leaf PTE has been found. Determine if the requested memory access is
+allowed by the <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>r</em></span>, <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>w</em></span>, <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>x</em></span>, and <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>u</em></span> bits, given the
+current privilege mode and the value of the SUM and MXR fields of
+the <span>mstatus</span> register. If not, stop and raise a page-fault exception.</p></li>
+<li><p>If <span class="math inline"><em>i</em> &gt; 0</span> and <span class="math inline"><em>p</em><em>a</em>.<em>p</em><em>p</em><em>n</em>[<em>i</em> − 1 : 0] ≠ 0</span>, this is a misaligned superpage;
+stop and raise a page-fault exception.</p></li>
+<li><p>If <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>a</em> = 0</span>, or if the memory access is a store and <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>d</em> = 0</span>, either
+raise a page-fault exception or:</p>
+<ul>
+<li><p>Set <span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>a</em></span> to 1 and, if the memory access is a store, also set
+<span class="math inline"><em>p</em><em>t</em><em>e</em>.<em>d</em></span> to 1.</p></li>
+<li><p>If this access violates a PMA or PMP check, raise an access exception.</p></li>
+<li><p>This update and the loading of <span class="math inline"><em>p</em><em>t</em><em>e</em></span> in step 2 must be atomic; in
+particular, no intervening store to the PTE may be perceived to have
+occurred in-between.</p></li>
+</ul></li>
+<li><p>The translation is successful. The translated physical address is
+given as follows:</p>
+<ul>
+<li><p><span class="math inline"><em>pa.pgoff</em> = <em>va.pgoff</em></span>.</p></li>
+<li><p>If <span class="math inline"><em>i</em> &gt; 0</span>, then this is a superpage translation and <span class="math inline"><em>p</em><em>a</em>.<em>p</em><em>p</em><em>n</em>[<em>i</em> − 1 : 0] = <em>v</em><em>a</em>.<em>v</em><em>p</em><em>n</em>[<em>i</em> − 1 : 0]</span>.</p></li>
+<li><p><span class="math inline"><em>p</em><em>a</em>.<em>p</em><em>p</em><em>n</em>[LEVELS − 1 : <em>i</em>] = <em>p</em><em>t</em><em>e</em>.<em>p</em><em>p</em><em>n</em>[LEVELS − 1 : <em>i</em>]</span>.</p></li>
+</ul></li>
+</ol>
+<h2 id="sec:sv39"><span class="header-section-number">4.4</span> Sv39: Page-Based 39-bit Virtual-Memory System</h2>
+<p>This section describes a simple paged virtual-memory system designed
+for RV64 systems, which supports 39-bit virtual address spaces. The
+design of Sv39 follows the overall scheme of Sv32, and this section
+details only the differences between the schemes.</p>
+<div class=commentary>
+<p>We specified multiple virtual memory systems for RV64 to relieve the tension
+between providing a large address space and minimizing address-translation
+cost. For many systems, <span>512</span><span>GiB</span> of virtual-address space is ample,
+and so Sv39 suffices. Sv48 increases the virtual address space to
+<span>256</span><span>TiB</span>, but increases the physical memory
+capacity dedicated to page tables, the latency of page-table traversals, and
+the size of hardware structures that store virtual addresses.</p>
+</div>
+<h3 id="addressing-and-memory-protection"><span class="header-section-number">4.4.1</span> Addressing and Memory Protection</h3>
+<p>Sv39 implementations support a 39-bit virtual address space, divided
+into <span>4</span><span>KiB</span> pages. An Sv39 address is partitioned as
+shown in Figure <a href="supervisor.html#sv39va" data-reference-type="ref" data-reference="sv39va">1.17</a>. Load and store effective addresses,
+which are 64 bits, must have bits 63–39 all equal to bit 38, or else
+a page-fault exception will occur. The 27-bit VPN is translated into a
+44-bit PPN via a three-level page table, while the 12-bit page offset
+is untranslated.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_17.svg" alt="Sv39 virtual address." id="sv39va" /><figcaption>Sv39 virtual address.<span label="sv39va"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_18.svg" alt="Sv39 physical address." id="sv39pa" /><figcaption>Sv39 physical address.<span label="sv39pa"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_19.svg" alt="Sv39 page table entry." id="sv39pte" /><figcaption>Sv39 page table entry.<span label="sv39pte"></span></figcaption>
+</figure>
+<p>Sv39 page tables contain <span class="math inline">2<sup>9</sup></span> page table entries (PTEs), eight
+bytes each. A page table is exactly the size of a page and must
+always be aligned to a page boundary. The physical page number of the
+root page table is stored in the <span>satp</span> register’s PPN field.</p>
+<p>The PTE format for Sv39 is shown in Figure <a href="supervisor.html#sv39pte" data-reference-type="ref" data-reference="sv39pte">1.19</a>. Bits 9–0
+have the same meaning as for Sv32. Bits 63–54 are reserved
+for future use and must be zeroed by software for forward compatibility.</p>
+<div class=commentary>
+<p>We reserved several PTE bits for a possible extension that improves
+support for sparse address spaces by allowing page-table levels to be
+skipped, reducing memory usage and TLB refill latency. These reserved
+bits may also be used to facilitate research experimentation. The
+cost is reducing the physical address space, but <span>64</span><span>PiB</span> is
+presently ample. When it no longer suffices, the reserved
+bits that remain unallocated could be used to expand the physical
+address space.</p>
+</div>
+<p>Any level of PTE may be a leaf PTE, so in addition to <span>4</span><span>KiB</span>
+pages, Sv39 supports <span>2</span><span>MiB</span> <span><em>megapages</em></span> and
+<span>1</span><span>GiB</span> <span><em>gigapages</em></span>, each of which must be virtually and
+physically aligned to a boundary equal to its size.
+A page-fault exception is raised if the physical address is insufficiently
+aligned.</p>
+<p>The algorithm for virtual-to-physical address translation is the same as in
+Section <a href="supervisor.html#sv32algorithm" data-reference-type="ref" data-reference="sv32algorithm">1.3.2</a>, except LEVELS equals 3 and PTESIZE equals 8.</p>
+<h2 id="sec:sv48"><span class="header-section-number">4.5</span> Sv48: Page-Based 48-bit Virtual-Memory System</h2>
+<p>This section describes a simple paged virtual-memory system designed
+for RV64 systems, which supports 48-bit virtual address spaces. Sv48
+is intended for systems for which a 39-bit virtual address space is
+insufficient. It closely follows the design of Sv39, simply adding an
+additional level of page table, and so this chapter only details the
+differences between the two schemes.</p>
+<p>Implementations that support Sv48 should also support Sv39.</p>
+<div class=commentary>
+<p>Systems that support Sv48 can also support Sv39 at essentially no cost, and so
+should do so to maintain compatibility with supervisor software that assumes
+Sv39.</p>
+</div>
+<h3 id="addressing-and-memory-protection-1"><span class="header-section-number">4.5.1</span> Addressing and Memory Protection</h3>
+<p>Sv48 implementations support a 48-bit virtual address space, divided
+into <span>4</span><span>KiB</span> pages. An Sv48 address is partitioned as
+shown in Figure <a href="supervisor.html#sv48va" data-reference-type="ref" data-reference="sv48va">1.20</a>. Load and store effective addresses,
+which are 64 bits, must have bits 63–48 all equal to bit 47, or else
+a page-fault exception will occur. The 36-bit VPN is translated into a
+44-bit PPN via a four-level page table, while the 12-bit page offset
+is untranslated.</p>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_20.svg" alt="Sv48 virtual address." id="sv48va" /><figcaption>Sv48 virtual address.<span label="sv48va"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_21.svg" alt="Sv48 physical address." id="sv48pa" /><figcaption>Sv48 physical address.<span label="sv48pa"></span></figcaption>
+</figure>
+<figure>
+<img src="tmp.riscv-priv-1.10//supervisor_22.svg" alt="Sv48 page table entry." id="sv48pte" /><figcaption>Sv48 page table entry.<span label="sv48pte"></span></figcaption>
+</figure>
+<p>The PTE format for Sv48 is shown in Figure <a href="supervisor.html#sv48pte" data-reference-type="ref" data-reference="sv48pte">1.22</a>. Bits 9–0
+have the same meaning as for Sv32. Any level of PTE may be a leaf
+PTE, so in addition to <span>4</span><span>KiB</span> pages, Sv48 supports
+<span>2</span><span>MiB</span> <span><em>megapages</em></span>, <span>1</span><span>GiB</span> <span><em>gigapages</em></span>, and
+<span>512</span><span>GiB</span> <span><em>terapages</em></span>, each of which must be virtually and
+physically aligned to a boundary equal to its size.
+A page-fault exception is raised if the physical address is insufficiently
+aligned.</p>
+<p>The algorithm for virtual-to-physical address translation is the same
+as in Section <a href="supervisor.html#sv32algorithm" data-reference-type="ref" data-reference="sv32algorithm">1.3.2</a>, except LEVELS equals 4 and PTESIZE
+equals 8.</p>
+
+</body>
+</html>

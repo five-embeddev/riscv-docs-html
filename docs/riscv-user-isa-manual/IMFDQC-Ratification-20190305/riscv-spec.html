@@ -1,0 +1,89 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20190305-Base-Ratification</td></tr>
+<tr><th>Spec Release Date</th><td> March 2019</td></tr>
+<tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/riscv-spec.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<p><div class=title> <h1> <strong>The RISC-V Instruction Set Manual </h1><br />
+<span><strong>Volume I: Unprivileged ISA</strong></span><br />
+Document Version<span>20190305-Base-Ratification</span> </div></strong></p>
+<p><h3> Editors: Andrew Waterman<span class="math inline"><em></em><sup>1</sup></span>, Krste Asanović<span class="math inline"><em></em><sup>1, 2</sup></span><br />
+<span class="math inline"><em></em><sup>1</sup></span>SiFive Inc.,<br />
+<span class="math inline"><em></em><sup>2</sup></span>CS Division, EECS Department, University of California, Berkeley<br />
+<span>andrew@sifive.com, krste@berkeley.edu</span><br />
+</h3></p>
+<p>Contributors to all versions of the spec in
+alphabetical order (please contact editors to suggest
+corrections):
+Arvind, Krste Asanović, Rimas Avižienis, Jacob Bachmeyer, Christopher
+F. Batten, Allen J. Baum, Alex Bradbury, Scott Beamer, Preston Briggs,
+Christopher Celio, Chuanhua Chang, David Chisnall, Paul Clayton, Palmer
+Dabbelt, Roger Espasa, Shaked Flur, Stefan Freudenberger, Jan Gray, Michael
+Hamburg, John Hauser, David Horner, Bruce Hoult, Alexandre Joannou,
+Olof Johansson, Ben Keller, Yunsup Lee,
+Paul Loewenstein, Daniel Lustig, Yatin Manerkar, Luc Maranget, Margaret
+Martonosi, Joseph Myers, Vijayanand Nagarajan, Rishiyur Nikhil, Jonas
+Oberhauser, Stefan O’Rear, Albert Ou, John Ousterhout, David Patterson,
+Christopher Pulte, Jose Renau, Colin Schmidt, Peter Sewell, Susmit Sarkar,
+Michael Taylor, Wesley Terpstra, Matt Thomas, Tommy Thorn, Caroline Trippel,
+Ray VanDeWalker, Muralidaran Vijayaraghavan, Megan Wachs, Andrew Waterman,
+Robert Watson, Derek Williams, Andrew Wright, Reinoud Zandijk, and Sizhuo
+Zhang.</p>
+<p>This document is released under a Creative Commons Attribution 4.0
+International License.</p>
+<p>This document is a derivative of “The RISC-V Instruction Set
+Manual, Volume I: User-Level ISA Version 2.1” released under the following license:
+© 2010–2017 Andrew Waterman, Yunsup Lee, David Patterson, Krste Asanović.
+Creative Commons Attribution 4.0 International License.</p>
+<p>Please cite as: “The RISC-V Instruction Set
+Manual, Volume I: User-Level ISA, Document Version <span>20190305-Base-Ratification</span> ”, Editors
+Andrew Waterman and Krste Asanović, RISC-V Foundation, <span>March 2019</span> .</p>
+<p><a href="preface.html" data-reference-type="ref" data-reference="preface">[preface]</a></p>
+<p><span>
+</span></p>
+<p><a href="intro.html" data-reference-type="ref" data-reference="intro">[intro]</a>
+<a href="rv32.html#rv32" data-reference-type="ref" data-reference="rv32">[rv32]</a>
+<a href="zifencei.html" data-reference-type="ref" data-reference="zifencei">[zifencei]</a>
+<a href="rv32e.html#rv32e" data-reference-type="ref" data-reference="rv32e">[rv32e]</a>
+<a href="rv64.html#rv64" data-reference-type="ref" data-reference="rv64">[rv64]</a>
+<a href="rv128.html#rv128" data-reference-type="ref" data-reference="rv128">[rv128]</a>
+<a href="m.html" data-reference-type="ref" data-reference="m">[m]</a>
+<a href="a.html" data-reference-type="ref" data-reference="a">[a]</a>
+<a href="csr.html" data-reference-type="ref" data-reference="csr">[csr]</a>
+<a href="counters.html#counters" data-reference-type="ref" data-reference="counters">[counters]</a>
+<a href="f.html" data-reference-type="ref" data-reference="f">[f]</a>
+<a href="d.html" data-reference-type="ref" data-reference="d">[d]</a>
+<a href="q.html" data-reference-type="ref" data-reference="q">[q]</a>
+<a href="rvwmo.html" data-reference-type="ref" data-reference="rvwmo">[rvwmo]</a>
+<a href="#l" data-reference-type="ref" data-reference="l">[l]</a>
+<a href="c.html" data-reference-type="ref" data-reference="c">[c]</a>
+<a href="b.html" data-reference-type="ref" data-reference="b">[b]</a>
+<a href="j.html" data-reference-type="ref" data-reference="j">[j]</a>
+<a href="#t" data-reference-type="ref" data-reference="t">[t]</a>
+<a href="p.html" data-reference-type="ref" data-reference="p">[p]</a>
+<a href="v.html" data-reference-type="ref" data-reference="v">[v]</a>
+<a href="#n" data-reference-type="ref" data-reference="n">[n]</a>
+<a href="zam.html" data-reference-type="ref" data-reference="zam">[zam]</a>
+<a href="ztso.html" data-reference-type="ref" data-reference="ztso">[ztso]</a>
+<a href="gmaps.html" data-reference-type="ref" data-reference="gmaps">[gmaps]</a>
+<a href="assembly.html#assembly" data-reference-type="ref" data-reference="assembly">[assembly]</a>
+<a href="extensions.html#extensions" data-reference-type="ref" data-reference="extensions">[extensions]</a>
+<a href="naming.html#naming" data-reference-type="ref" data-reference="naming">[naming]</a>
+<a href="history.html#history" data-reference-type="ref" data-reference="history">[history]</a></p>
+<p><a href="memory.html" data-reference-type="ref" data-reference="memory">[memory]</a></p>
+
+</body>
+</html>

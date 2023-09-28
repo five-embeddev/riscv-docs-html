@@ -1,0 +1,141 @@
+<html>
+<head>
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/p.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="sec:packedsimd"><span class="header-section-number">20</span> “P” Standard Extension for Packed-SIMD Instructions,
+Version 0.1</h1>
+<div class=commentary>
+<p>Discussions at the 5th RISC-V workshop indicated a desire to drop
+this packed-SIMD proposal for floating-point registers in favor of
+standardizing on the V extension for large floating-point SIMD
+operations. However, there was interest in packed-SIMD fixed-point
+operations for use in the integer registers of small RISC-V
+implementations.</p>
+</div>
+<p>In this chapter, we outline a standard packed-SIMD extension for
+RISC-V. We’ve reserved the instruction subset name “P” for a future
+standard set of packed-SIMD extensions. Many other extensions can
+build upon a packed-SIMD extension, taking advantage of the wide data
+registers and datapaths separate from the integer unit.</p>
+<div class=commentary>
+<p>Packed-SIMD extensions, first introduced with the Lincoln Labs TX-2 <span class="citation" data-cites="tx2"><a href="#ref-tx2">[tx2]</a></span>,
+have become a popular way to provide higher throughput on data-parallel
+codes. Earlier commercial microprocessor implementations include the
+Intel i860, HP PA-RISC MAX <span class="citation" data-cites="lee-max-ieeemicro1996"><a href="#ref-lee-max-ieeemicro1996">[lee-max-ieeemicro1996]</a></span>, SPARC
+VIS <span class="citation" data-cites="tremblay-vis-ieeemicro1996"><a href="#ref-tremblay-vis-ieeemicro1996">[tremblay-vis-ieeemicro1996]</a></span>, MIPS
+MDMX <span class="citation" data-cites="gwennap-mdmx-mpr1996"><a href="#ref-gwennap-mdmx-mpr1996">[gwennap-mdmx-mpr1996]</a></span>, PowerPC
+AltiVec <span class="citation" data-cites="diefendorff-altivec-ieeemicro2000"><a href="#ref-diefendorff-altivec-ieeemicro2000">[diefendorff-altivec-ieeemicro2000]</a></span>, Intel x86
+MMX/SSE <span class="citation" data-cites="peleg-mmx-ieeemicro1996 raman-sse-ieeemicro2000"><a href="#ref-peleg-mmx-ieeemicro1996">[peleg-mmx-ieeemicro1996 raman-sse-ieeemicro2000]</a></span>, while
+recent designs include Intel x86 AVX <span class="citation" data-cites="lomont-avx-irm2011"><a href="#ref-lomont-avx-irm2011">[lomont-avx-irm2011]</a></span> and ARM
+Neon <span class="citation" data-cites="goodacre-armisa-computer2005"><a href="#ref-goodacre-armisa-computer2005">[goodacre-armisa-computer2005]</a></span>. We describe a standard
+framework for adding packed-SIMD in this chapter, but are not actively
+working on such a design. In our opinion, packed-SIMD designs represent
+a reasonable design point when reusing existing wide datapath resources,
+but if significant additional resources are to be devoted to
+data-parallel execution then designs based on traditional vector
+architectures are a better choice and should use the V extension.</p>
+</div>
+<p>A RISC-V packed-SIMD extension reuses the floating-point registers
+(<span>f0</span>-<span>f31</span>). These registers can be defined to have widths
+of FLEN=32 to FLEN=1024. The standard floating-point instruction
+subsets require registers of width 32 bits (“F”), 64 bits (“D”),
+or 128 bits (“Q”).</p>
+<div class=commentary>
+<p>It is natural to use the floating-point registers for packed-SIMD
+values rather than the integer registers (PA-RISC and Alpha
+packed-SIMD extensions) as this frees the integer registers for
+control and address values, simplifies reuse of scalar floating-point
+units for SIMD floating-point execution, and leads naturally to a
+decoupled integer/floating-point hardware design. The floating-point
+load and store instruction encodings also have space to handle wider
+packed-SIMD registers. However, reusing the floating-point registers
+for packed-SIMD values does make it more difficult to use a recoded
+internal format for floating-point values.</p>
+</div>
+<p>The existing floating-point load and store instructions are used to
+load and store various-sized words from memory to the <span>f</span>
+registers. The base ISA supports 32-bit and 64-bit loads and stores,
+but the LOAD-FP and STORE-FP instruction encodings allows 8 different
+widths to be encoded as shown in Table <a href="p.html#psimdwidth" data-reference-type="ref" data-reference="psimdwidth">[psimdwidth]</a>. When used
+with packed-SIMD operations, it is desirable to support non-naturally
+aligned loads and stores in hardware.</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: center;"><span><em>width</em></span> field</th>
+<th style="text-align: left;">Code</th>
+<th style="text-align: right;">Size in bits</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;">000</td>
+<td style="text-align: left;">B</td>
+<td style="text-align: right;">8</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">001</td>
+<td style="text-align: left;">H</td>
+<td style="text-align: right;">16</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">010</td>
+<td style="text-align: left;">W</td>
+<td style="text-align: right;">32</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">011</td>
+<td style="text-align: left;">D</td>
+<td style="text-align: right;">64</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">100</td>
+<td style="text-align: left;">Q</td>
+<td style="text-align: right;">128</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">101</td>
+<td style="text-align: left;">Q2</td>
+<td style="text-align: right;">256</td>
+</tr>
+<tr class="odd">
+<td style="text-align: center;">110</td>
+<td style="text-align: left;">Q4</td>
+<td style="text-align: right;">512</td>
+</tr>
+<tr class="even">
+<td style="text-align: center;">111</td>
+<td style="text-align: left;">Q8</td>
+<td style="text-align: right;">1024</td>
+</tr>
+</tbody>
+</table>
+<p>Packed-SIMD computational instructions operate on packed values in
+<span>f</span> registers. Each value can be 8-bit, 16-bit, 32-bit, 64-bit,
+or 128-bit, and both integer and floating-point representations can be
+supported. For example, a 64-bit packed-SIMD extension can treat each
+register as 1<span class="math inline">×</span>64-bit, 2<span class="math inline">×</span>32-bit, 4<span class="math inline">×</span>16-bit, or
+8<span class="math inline">×</span>8-bit packed values.</p>
+<div class=commentary>
+<p>Simple packed-SIMD extensions might fit in unused 32-bit instruction
+opcodes, but more extensive packed-SIMD extensions will likely require
+a dedicated 30-bit instruction space.</p>
+</div>
+
+</body>
+</html>
