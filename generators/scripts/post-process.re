@@ -15,6 +15,11 @@ s@data-cites="([\w\-\:]+)(.*?)">.*?</span>@data-cites="$1$2"><a href="#ref-$1">[
 s@\$\\mbox\{\\em (\w+)}@<em>$1</em>@g;
 s@\\mbox\{\\em\s+(\w+)\}\$@<em>$1</em>@g;
 s@\\mbox\{\\em\s*$\s*(\w+)\}\$@<em>$1</em>@g;
+s@\$?\{\\em\s+(\w+)\}\$?@<em>$1</em>@gm;
+# Line break on em
+if ($ml_em == 1) {s@^\s*(\w+)\}\$@$1</em>@g;$ml_em=0;}
+if (s@\{\\em\s*$@<em>@g) {$ml_em=1;}
+
 s@HYPERREF\[.*?\]@@g;
 if ($tmp == 1) {s@^\s*(\w+)\}\$@$1</em>@}
 if (s@\\mbox\{\\em$@<em>@) {$tmp = 1;} else {$tmp = 0}

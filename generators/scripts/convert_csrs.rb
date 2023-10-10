@@ -8,7 +8,7 @@ options = {
   :csr_yaml_out=>"../../data/riscv-isa-data/csr.yaml",
   :keywords_yaml=>"../../data/keywords.yaml",
   :csr_spec=>"../../external/riscv-isa-manual/latest/src/priv-csrs.tex",
-  :parse_opcodes=>"../../external/riscv-opcodes/parse-opcodes",
+  :parse_opcodes=>"../../external/riscv-opcodes/constants.py",
   :convert_py=>"./convert.py"
 }
 OptionParser.new do |opt|

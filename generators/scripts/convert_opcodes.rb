@@ -1,4 +1,4 @@
-# coding: utf-8
+#coding: utf-8
 require 'yaml'
 #require 'file'
 require '../scripts/html_extract'
@@ -9,6 +9,8 @@ options = {
   :user_manual_path=>"/riscv-user-isa-manual/latest/",
   :priv_manual_path=>"/riscv-priv-isa-manual/latest/",
   :vector_manual_path=>"/riscv-v-spec/v1.0/",
+  :isa_sim_path=>"../../external/riscv-isa-sim/riscv/insns/",
+  :asm_man_path=>"../../external/riscv-asm-manual/riscv-asm.md",
   :html_path=>"../../references/",
   :output_file=>"../../data/riscv-isa-data/opcodes.yaml",
 }
@@ -18,12 +20,32 @@ OptionParser.new do |opt|
   opt.on('--priv-manual-path MANUAL_PATH') { |o| options[:priv_manual_path] = o }
   opt.on('--vector-manual-path MANUAL_PATH') { |o| options[:vector_manual_path] = o }
   opt.on('--html-path HTML_PATH') { |o| options[:html_path] = o }
+  opt.on('--isa-sim-path SIM_PATH') { |o| options[:isa_sim_path] = o }
+  opt.on('--asm-manual-path MANUAL_PATH') { |o| options[:asm_man_path] = o }
   opt.on('--output-file OUTPUT_YAML') { |o| options[:output_file] = o }
 end.parse!
 
-
 # These are the files that will be read from  https://github.com/riscv/riscv-opcodes.git
-OPCODE_FILES=%w{opcodes opcodes-custom opcodes-pseudo opcodes-rvc opcodes-rvc-pseudo opcodes-rvv}
+
+# Opcode files are named rv_*
+OPCODE_FILES=Dir["../../external/riscv-opcodes/rv_*"].map {|p|File.basename(p)} +
+             Dir["../../external/riscv-opcodes/rv32_*"].map {|p|File.basename(p)} +
+             Dir["../../external/riscv-opcodes/rv64_*"].map {|p|File.basename(p)}
+
+# We are scraping the html docs to find references to instructions.
+# Which section has priority? - this is a quick and dirty override.
+SECTION_PRIORITY_OVERRIDE=%w{
+    #integer-register-register-operations
+    #integer-register-immediate-instructions
+    #nop-instruction
+}
+SECTION_LOWEST_PRI=SECTION_PRIORITY_OVERRIDE.length + 1
+
+CORE_ISA=%w{
+   rv32 
+   rv64 
+   rv128 
+}
 
 # These are the html files that will be read after conversion from tex/adoc
 USER_ISA_LIST=%w{
@@ -59,21 +81,17 @@ PRIV_ISA_LIST=%w{
 ISA_LIST=USER_ISA_LIST+PRIV_ISA_LIST
 
 OPCODE_GROUP_MAP= {
-  "opcodes-rvv" => "v",
-  "opcodes-rvc" => "c",
-  "opcodes-rvc-pseudo" => "c",
+  "c" => "c",
+  "v" => "v",
 }
 
 first_section = {}
 section_labels = {}
 
 OPCODE_GROUP_DEFAULT_DESC= {
-  "opcodes-custom" => {"custom" => {"#" => {"url"=> options[:user_manual_path], "headers"=>[],}}},
-  "opcodes-psuedo" => {"psuedo" => {"#" => {"url"=>options[:user_manual_path], "headers"=>[]}}},
-  "opcodes-rvv" => {"v" => {"#_introduction" => {"url"=> options[:vector_manual_path] + "/v-spec.html#_introduction", "headers"=>[]}}},
-  "opcodes-rvc" => {"c" => {"#compressed" => {"url"=> options[:user_manual_path] + "/c.html#compressed", "headers"=>[]}}},
+  "v" => {"v" => {"#_introduction" => {"url"=> options[:vector_manual_path] + "/v-spec.html#_introduction", "headers"=>[]}}},
+  "c" => {"c" => {"#compressed" => {"url"=> options[:user_manual_path] + "/c.html#compressed", "headers"=>[]}}},
 }
-OPCODE_GROUP_DEFAULT_DESC["opcodes-rvc-pseudo"]  =OPCODE_GROUP_DEFAULT_DESC["opcodes-rvc"]
 
 def opcode_alias(opcode_aliases,opcode)
   if opcode =~ /^amo/
@@ -119,13 +137,61 @@ OPCODE_TYPES={
   ["vs2", "simm5", "vd"]=>["vs2", "simm5", "vd"],
   ["simm5", "vd"]=>["simm5", "vd"],
   ["vs2", "vs1", "rd"]=>["vs2", "vs1", "rd"],
-  ["vs2", "vd"]=>["vs2", "vd"]
+  ["vs2", "vd"]=>["vs2", "vd"],
+  ["rd_p","rs1_p", "c_uimm7lo", "c_uimm7hi"] =>  ["rd_p","rs1_p", "c_uimm7"],
+  ["rs1_p","rs2_p", "c_uimm7lo", "c_uimm7hi"] =>  ["rs1_p","rs2_p", "c_uimm7"],
+  ["rd_n0", "c_uimm8sphi", "c_uimm8splo"] => ["rd_n0", "c_uimm8sp"],
+  ["rd_rs1_n0","c_nzimm6lo","c_nzimm6hi"] => ["rd_rs1_n0","c_nzimm6","c_nzimm6"],
+  ["rd","c_imm6lo", "c_imm6hi"] => ["rd","c_imm6"],
+  ["c_nzimm10hi", "c_nzimm10lo"] => ["c_nzimm10"],
+  ["rd", "c_uimm9sphi", "c_uimm9splo"] => ["rd", "c_uimm9sp"],
+  ["rd_p", "rs1_p", "c_uimm8lo", "c_uimm8hi"] =>  ["rd_p", "rs1_p", "c_uimm8"],
+
+  ["rd_p", "rs1_p", "c_uimm2"]=>["rd_p", "rs1_p", "c_uimm2"],
+  ["rd_p", "rs1_p", "c_uimm1"]=>["rd_p", "rs1_p", "c_uimm1"],
+  ["rs2_p", "rs1_p", "c_uimm2"]=>["rs2_p", "rs1_p", "c_uimm2"],
+  ["rs2_p", "rs1_p", "c_uimm1"]=>["rs2_p", "rs1_p", "c_uimm1"],
+  ["rd_rs1_p"]=>["rd_rs1_p"],
+  ["rd_rs1_p", "rs2_p"]=>["rd_rs1_p", "rs2_p"],
+  ["zimm10", "zimm", "rd"]=>["zimm10", "zimm", "rd"],
+  ["vs1", "vd"]=>["vs1", "vd"],
+  ["vd"]=>["vd"],
+  ["c_spimm"]=>["c_spimm"],
+  ["rd_p", "c_nzuimm10"]=>["rd_p", "c_nzuimm10"],
+  ["c_nzimm6hi", "c_nzimm6lo"]=>["c_nzimm6"],
+  ["rd_n2", "c_nzimm18hi", "c_nzimm18lo"]=>["rd_n2", "c_nzimm18"],
+  ["rd_rs1_p", "c_imm6hi", "c_imm6lo"]=>["rd_rs1_p", "c_imm6"],
+  ["c_imm12"]=>["c_imm12"],
+  ["rs1_p", "c_bimm9lo", "c_bimm9hi"]=>["rs1_p", "c_bimm9"],
+  ["rs1_n0"]=>["rs1_n0"],
+  ["rd", "c_rs2_n0"]=>["rd", "c_rs2_n0"],
+  ["c_rs1_n0"]=>["c_rs1_n0"],
+  ["rd_rs1", "c_rs2_n0"]=>["rd_rs1", "c_rs2_n0"],
+  ["c_rs2", "c_uimm8sp_s"]=>["c_rs2", "c_uimm8sp_s"],
+  ["rs1_p", "rs2_p", "c_uimm8lo", "c_uimm8hi"]=>["rs1_p", "rs2_p", "c_uimm8"],
+  ["c_rs2", "c_uimm9sp_s"]=>["c_rs2", "c_uimm9sp_s"], 
+  ["rs1"]=>["rs1"], 
+  ["rs1", "imm12hi"]=>["rs1", "imm12hi"],
+
+  ["rd_rs1_p", "c_nzuimm5"]=>["rd_rs1_p", "c_nzuimm5"],
+  ["rd_rs1_n0", "c_nzuimm6lo"]=>["rd_rs1_n0", "c_nzuimm6lo"], 
+  ["rd", "c_uimm8sphi", "c_uimm8splo"]=>["rd", "c_uimm8sp"], 
+  ["rs1_p", "rs2_p", "c_uimm8hi", "c_uimm8lo"]=>["rs1_p", "rs2_p", "c_uimm8"],
+  ["rd_rs1_n0", "c_imm6lo", "c_imm6hi"]=>["rd_rs1_n0", "c_imm6"], 
+  ["rd_rs1_p", "c_nzuimm6lo", "c_nzuimm6hi"]=>["rd_rs1_p", "c_nzuimm6"], 
+  ["rd_rs1_n0", "c_nzuimm6hi", "c_nzuimm6lo"]=>["rd_rs1_n0", "c_nzuimm6"], 
+  ["rd_n0", "c_uimm9sphi", "c_uimm9splo"]=>["rd_n0", "c_uimm9sp"],
+
 }
 
 
-def opcode_args(data)
+
+NEW_OPCODE_TYPES={}
+
+def opcode_args(data, all_opcode_args_trace)
   filtered_list = []
   opcode = data[0]
+  return if opcode.nil?
   data[1..-1].each do | param |
     if param =~ /((v|r)(d|s)|imm|bimm)/        
       filtered_list.push(param)
@@ -133,9 +199,16 @@ def opcode_args(data)
   end
   if !OPCODE_TYPES.include?(filtered_list)
     OPCODE_TYPES[filtered_list]= filtered_list
+    NEW_OPCODE_TYPES[filtered_list]= filtered_list
   else
     filtered_list = OPCODE_TYPES[filtered_list]
   end
+  filtered_list.each do |arg|
+    all_opcode_args_trace[arg] ||= []
+    all_opcode_args_trace[arg].append(opcode)
+  end
+
+
   return filtered_list
 end
 
@@ -171,7 +244,7 @@ def get_op_desc_fname(options, opcode_data, opcode_aliases, section_labels, isa_
   if isa_name == "v"
     opcode_stem_parts = []
     opcode_data.keys().each do |opcode| 
-      next unless opcode_data[opcode]["opcode_group"] == "opcodes-rvv"
+      next unless opcode_data[opcode]["opcode_group"] == "v"
       parts = opcode.split(".",2)
       if opcode_stem_aliases.include?(parts[0])
         opcode_stem_aliases[parts[0]].push(opcode)
@@ -179,6 +252,9 @@ def get_op_desc_fname(options, opcode_data, opcode_aliases, section_labels, isa_
         opcode_stem_aliases[parts[0]] = [opcode]
         opcode_stem_parts.push(parts[0])
       end
+    end
+    if opcode_stem_parts.empty?
+      raise "NO PARTS!"
     end
     opcode_stem_str = "\\b(" + opcode_stem_parts.join('|') + ")\\b"
     opcode_stem_re = Regexp.new(opcode_stem_str)
@@ -243,6 +319,18 @@ def get_op_desc_fname(options, opcode_data, opcode_aliases, section_labels, isa_
               opcode_data[opcode]["main_id"] = id
               opcode_data[opcode]["desc"] = {}
               saved_opcodes.push(opcode)
+            else
+              old_desc = opcode_data[opcode]["main_desc"]
+              old_id = opcode_data[opcode]["main_id"]
+              if (old_desc == isa_name) or CORE_ISA.include?(isa_name)
+                # Lowest index has higher priority
+                pri_old = SECTION_PRIORITY_OVERRIDE.index(old_id) || SECTION_LOWEST_PRI
+                pri_new = SECTION_PRIORITY_OVERRIDE.index(id) || SECTION_LOWEST_PRI
+                if pri_new < pri_old
+                  opcode_data[opcode]["main_desc"] = isa_name
+                  opcode_data[opcode]["main_id"] = id                  
+                end
+              end
             end
             new_desc = desc.strip
             opcode_data[opcode]["desc"][isa_name] ||= {}
@@ -258,21 +346,84 @@ def get_op_desc_fname(options, opcode_data, opcode_aliases, section_labels, isa_
   end
 end
 
+def get_psuedo(opcode_data, fname)
+  File.open(fname,"r", :encoding => 'UTF-8') do | fin |    
+      mode = :start
+      fin.each_line do | line |
+        if mode == :start 
+          if line =~ /name\=pseudoinstructions/
+            mode = :ptable
+          end
+        end
+        if mode == :ptable
+          # Expand lines for each variant
+          elines = [line]
+          if line =~ /\{b\|h\|w\|d\}/
+            elines = [
+              line.gsub(/\{b\|h\|w\|d\}/,'b'),
+              line.gsub('\{b\|h\|w\|d\}','h'),
+              line.gsub('\{b\|h\|w\|d\}','w'),
+              line.gsub('\{b\|h\|w\|d\}','d'),
+            ]
+          elsif line =~ /\{w\|d\}/
+            elines = [
+              line.gsub('\{w\|d\}','w'),
+              line.gsub('\{w\|d\}','d'),
+            ]
+          elsif line =~ /\[h\]/
+            elines = [
+              line.gsub('\[h\]',''),
+              line.gsub('\[h\]','h'),
+            ]
+          end
+          elines.each do | eline |
+            parts = eline.split("|").map {|x| x}
+            if parts[0] =~ /^([\w\.]+)\s([\w\s\,]+)/
+              opcode=$1
+              next if opcode == "Pseudoinstruction"
+              args=$2.split(",").map {|x| x.strip}.delete_if {|x| x==""}
+              opcode_data[opcode]={"opcode" => [opcode] + args,
+                                   "opcode_group" => "psuedo",
+                                   "opcode_args" => args,
+                                   "psuedo_to_base" => parts[1].split(";").map {|x| x.strip},
+                                  }
+            end # Opcode
+          end # EAch eline
+        end # in the psuedo op table
+      end # each line
+     end
+end
 
-
-def get_opcodes(opcode_data, fname)
-  opcode_group=File.basename(fname)
+def get_opcodes(opcode_data, fname, all_opcode_args_trace)
+  # Get the group such as "i" or "c", will generally corrospond to extension
+  opcode_group=File.basename(fname).sub("rv_","").sub("rv32_","").sub("rv64_","")
   opcodes=[]
   File.open(fname,"r") do | fin |    
     fin.each_line do | line |
+      pseudo_src = nil
+      pseudo_op = nil
       next if line =~ /^\s*$/
       next if line =~ /^\#/
+      next if line =~ /^\$import\b/
+      if line =~ /^\$pseudo_op\s+(\w+)\:\:([\w\.]+)\s/
+        line=$'.strip
+        pseudo_src = $1
+        pseudo_op = $2
+      elsif line =~ /^\$/
+        print "Unknown command?" + line
+        next
+      end
+
       parts = line.split(/\s+/)      
       opcode=parts[0]
       opcode_data[opcode]={"opcode" => parts,
                            "opcode_group" => opcode_group,
-                           "opcode_args" => opcode_args(parts),
+                           "opcode_args" => opcode_args(parts, all_opcode_args_trace),
                           }      
+      if !pseudo_op.nil?
+        opcode_data[opcode]["pseudo_src"] = pseudo_src
+        opcode_data[opcode]["pseudo_op"] = pseudo_op
+      end
       opcodes += [opcode]
     end
   end
@@ -398,9 +549,11 @@ top_data = {}
 opcode_data = {}
 groups = {}
 desc = {}
+all_opcode_args_trace = {}
 
+get_psuedo(opcode_data,options[:asm_man_path])
 OPCODE_FILES.each do |opcode_file|
-  groups.merge!(get_opcodes(opcode_data,options[:opcode_path] + "/" + opcode_file))
+  groups.merge!(get_opcodes(opcode_data,options[:opcode_path] + "/" + opcode_file, all_opcode_args_trace))
 end
 
 opcode_aliases = {}
@@ -451,6 +604,32 @@ def sort_hash_hash(data)
   return data
 end
 
+def get_isa_sim(sim_path, opcode_info)
+  file_name = opcode_info["opcode"][0].downcase().sub(/^c\./,"c_").sub(/\.([a-z])$/,'_\1') + ".h"
+  try_file=sim_path + "/"+ file_name
+  if File.exist?(try_file)
+    File.open(try_file,"r") do | fin|
+      sim_text = fin.readlines().map {|x| x.strip}
+      opcode_info["iss_code"] = sim_text
+    end
+  end
+end
+
+# REad in the simulator code for each opcode
+opcode_data.each_pair do  | opcode, info |
+  get_isa_sim(options[:isa_sim_path], info)
+end
+
+
+# Check for unique removal of c. from compressed instructions
+opcode_data.each_pair do  | opcode, info |
+  if info["opcode"][0][0..1] == "c."
+    try_alias = info["opcode"][0][2..-1]
+    if !opcode_data.include?(try_alias)
+      info["opcode_alias"] = try_alias
+    end
+  end
+end
 
 top_data["opcodes"] = sort_hash(opcode_data)
 top_data["groups"] = sort_hash_list(groups)
@@ -458,8 +637,11 @@ top_data["sections"] = sort_hash_hash_list(collect_sections(opcode_data))
 top_data["sections_labels"] = sort_hash_hash(section_labels)
 top_data["isa"] = sort_hash_list(desc)
 top_data["opcode_args_to_asm_args"] = OPCODE_TYPES.values
+top_data["opcode_args_to_opcodes"] = all_opcode_args_trace
+
 
 File.open(options[:output_file],"w") do | fout |
   fout.write(top_data.to_yaml)
 end
 
+p NEW_OPCODE_TYPES

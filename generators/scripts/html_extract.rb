@@ -1,21 +1,34 @@
+# coding: utf-8
 require 'rubygems'
 require 'nokogiri'
 require 'cgi'
+require 'pp'
+require 'iconv'
 
 MAX_HDR=5
-STYLE=%w{code em }
+STYLE=%w{code em span a}
 
+def clean_elem(elem)
+  return clean_text(elem.text)
+end
+
+def clean_text(text)
+  #text = text.encode("ASCII", :invalid => :replace, :undef => :replace, :replace => "?")
+  text = text.force_encoding('utf-8').gsub("â\u0080\u009C",'"').gsub("â\u0080\u009D",'"').gsub("â\u0080\u0086","'").gsub("â\u0080²","")
+  text = Iconv.iconv('ISO-8859-1//TRANSLIT//IGNORE','UTF-8', text).join("")
+  return text.strip.squeeze(" \n").gsub(/\s+/," ")
+end
 
 
 def unquote(text)
-  p text
+  # CGI.unescapeHTML()...
   return text.gsub(/\&acirc;\u0080\u009D/,'"').gsub(/\&acirc;\u0080\u009C/,'"')
 end
 
 def finalize_lines(text)
   lines = []
   text[:para_lines].each {|x| 
-    lines += x.gsub(/\s+/," ").split(/(?<=[^\d])\.\s/).compact.map {|y|CGI.unescapeHTML(y)}
+    lines += [clean_text(x.gsub("\n"," "))] #.split(/(?<=[^\d])\.\s/).compact.map {|y|clean_text(y)}
   }
   lines += text[:pre_lines]
   text[:pre_lines].clear
@@ -32,7 +45,7 @@ def visit(depth, output, headers, text, parent, elem)
       text[:depth] = depth
       idx = $1.to_i
       if idx < MAX_HDR
-        headers[idx] = unquote(CGI.unescapeHTML(elem.to_s.tr("\n"," ")).strip)
+        headers[idx] = clean_elem(elem).tr("\n"," ")
         if idx+1 < MAX_HDR
           headers[idx+1..MAX_HDR] = [nil] * (MAX_HDR-idx-1)
         end
@@ -40,9 +53,10 @@ def visit(depth, output, headers, text, parent, elem)
 
     else
       if parent == "pre"
-        text[:pre_lines] += elem.to_s.split("\n").compact
-      elsif not elem.to_s =~ /^\s*$/
-        string = elem.to_s.gsub(/\s+/," ")
+        text[:pre_lines] += clean_elem(elem).split("\n").compact
+      elsif not elem.text =~ /^\s*$/
+        string = clean_elem(elem)
+        
         if STYLE.include?(parent)
           text[:join] = true
           if text[:para_lines].empty?
@@ -51,7 +65,7 @@ def visit(depth, output, headers, text, parent, elem)
             text[:para_lines][-1] += " " + string
           end
         else
-          if text[:join]
+          if text[:join] || string =~ /^\s*\./ 
             text[:para_lines][-1] += " " + string
             text[:join] = false
           else
@@ -100,10 +114,22 @@ def html_extract(fin)
     end
   end
   page = Nokogiri::HTML(fin)   
+  # Remove span/em/code etc
+  page.xpath(".//span").each do |node|
+    node.replace Nokogiri::XML::Text.new(node.text, node.document)
+  end                          
+  page.xpath(".//code").each do |node|
+    node.replace Nokogiri::XML::Text.new(node.text, node.document)
+  end                          
+  page.xpath(".//em").each do |node|
+    node.replace Nokogiri::XML::Text.new(node.text, node.document)
+  end                          
+
   visit(0, output, headers,  text, "top", page.children)
+
   output.push([headers.compact,text[:id],finalize_lines(text)])
   return output
 end
 
 
-#html_extract(open(ARGV[0]))
+#pp html_extract(open(ARGV[0]))

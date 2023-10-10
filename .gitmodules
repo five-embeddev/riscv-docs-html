@@ -1,6 +1,9 @@
-[submodule "_references/riscv-opcodes"]
-	path = external/riscv-opcodes
-	url = https://github.com/riscv/riscv-opcodes.git
+[submodule "external/riscv-isa-manual/latest"]
+	path = external/riscv-isa-manual/latest
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-debug-spec/latest"]
+	path = external/riscv-debug-spec/latest
+	url = https://github.com/riscv/riscv-debug-spec.git
 [submodule "external/riscv-bitmanip/latest"]
 	path = external/riscv-bitmanip/latest
 	url = https://github.com/riscv/riscv-bitmanip.git
@@ -49,3 +52,12 @@
 [submodule "external/riscv-v-spec/latest"]
 	path = external/riscv-v-spec/latest
 	url = https://github.com/riscv/riscv-v-spec
+[submodule "external/riscv-isa-sim"]
+	path = external/riscv-isa-sim
+	url = git@github.com:riscv-software-src/riscv-isa-sim.git
+[submodule "external/riscv-asm-manual"]
+	path = external/riscv-asm-manual
+	url = https://github.com/riscv-non-isa/riscv-asm-manual.git
+[submodule "external/riscv-opcodes"]
+	path = external/riscv-opcodes
+	url = https://github.com/riscv/riscv-opcodes.git

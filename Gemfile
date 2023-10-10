@@ -8,3 +8,5 @@ gem 'concurrent-ruby'
 
 gem 'nokogiri'
 gem 'cgi'
+gem 'iconv'
+
