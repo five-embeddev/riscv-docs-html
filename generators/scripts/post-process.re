@@ -8,7 +8,7 @@ s@CUSTOMTAGENDLARGE@</h1>@;
 s@CUSTOMTAGBEGINAUTHOR@<h3>@;
 s@CUSTOMTAGENDAUTHOR@</h3>@;
 s@src=\"tmp.latest[/]+@src=\"@;
-s@src=\"tmp.draft[/]+@src=\"@;
+s@src=\"tmp.([\w\-\.]+)[/]+@src=\"@;
 s@<div id="refs"@<h2>Bibliography</h2><div id="refs"@;
 s@<div id="ref-(.*?)">@<div id="ref-$1">[$1]@;
 s@data-cites="([\w\-\:]+)(.*?)">.*?</span>@data-cites="$1$2"><a href="#ref-$1">[$1$2]</a></span>@g;

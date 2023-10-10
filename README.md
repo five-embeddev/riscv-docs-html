@@ -32,21 +32,21 @@ Folders
 
      external/     - Submodules linking to official documentation repos.
      generators/   - Generate HTML and YAML from source in external/
+     tex/          - Quick and dirty patch for some tex files.
 
 Generator Scripts
 ----------------
 
     Makefile - Top level build script
     generators/
-       var.mak          - Common build vars/paths etc.
-       targets.mak      - Common build targets.
-       targets-tex.mak  - Recipes to convert tex to html.
+       var.mak - Common build vars/paths etc.
+       targets.mak - Common build targets.
+       targets-tex.mak - Recipes to convert tex to html.
        targets-adoc.mak - Recipes to convert asciidoc to html.
-       tex/             - Quick and dirty patch for some tex files.
        scripts/
            convert_csrs.py - Import CSRs from riscv-opcodes repo
            convert_csrs.rb - Generate CSR definition YAML file from 
-                             riscv-opcodes and riscv-isa-manual
+                              riscv-opcodes and riscv-isa-manual
            convert_opcodes.rb - Generate Opcodes YAML 
            html_extract.rb - Helper module to extract opcode info from HTML.
            collect-headings.rb - Create YAML file to be used as menu data
@@ -57,4 +57,3 @@ Generator Scripts
            img-modules.tex - Tex dependencies for images extracted 
                              by pre-process.rb.
            new-commands.tex - Tex commands for pandoc generation.
-
