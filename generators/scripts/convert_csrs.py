@@ -27,7 +27,7 @@ def main(csr_info_in):
 
     print("{")
     for index, csr in csrs+csrs32:
-        print(f'{csr} => {index},')
+        print(f'"{csr}" => {index},')
     print("}")
 
 
