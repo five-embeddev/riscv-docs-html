@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(
     description='Extract the CSR info from the riscv-opcodes support script.')
 parser.add_argument('csr_info', 
                     type=str, 
-                    default="../../external/riscv-opcodes/parse-opcodes",
+                    default="../../external/riscv-opcodes/constants.py",
                     help='riscv-opcodes support script')
 
 sys.path.append(os.curdir)
@@ -27,7 +27,7 @@ def main(csr_info_in):
 
     print("{")
     for index, csr in csrs+csrs32:
-        print(f'"{csr}" => {index},')
+        print(f'{csr} => {index},')
     print("}")
 
 

@@ -1,346 +1,159 @@
-#!/usr/bin/env python
-
-from __future__ import print_function
-from builtins import hex
-from builtins import range
-import math
-import sys
-import tokenize
-
-namelist = []
-match = {}
-mask = {}
-pseudos = {}
-arguments = {}
-
-arglut = {}
-arglut['rd'] = (11,7)
-arglut['rs1'] = (19,15)
-arglut['rs2'] = (24,20)
-arglut['rs3'] = (31,27)
-arglut['aqrl'] = (26,25)
-arglut['fm'] = (31,28)
-arglut['pred'] = (27,24)
-arglut['succ'] = (23,20)
-arglut['rm'] = (14,12)
-arglut['funct3'] = (14,12)
-arglut['imm20'] = (31,12)
-arglut['jimm20'] = (31,12)
-arglut['imm12'] = (31,20)
-arglut['imm12hi'] = (31,25)
-arglut['bimm12hi'] = (31,25)
-arglut['imm12lo'] = (11,7)
-arglut['bimm12lo'] = (11,7)
-arglut['zimm'] = (19,15)
-arglut['shamt'] = (25,20)
-arglut['shamtw'] = (24,20)
-
-# for vectors
-arglut['vd'] = (11,7)
-arglut['vs3'] = (11,7)
-arglut['vs1'] = (19,15)
-arglut['vs2'] = (24,20)
-arglut['vm'] = (25,25)
-arglut['amoop'] = (31,27)
-arglut['nf'] = (31,29)
-arglut['simm5'] = (19,15)
-arglut['zimm11'] = (30,20)
+import re
+import csv
 
 
-causes = [
-  (0x00, 'misaligned fetch'),
-  (0x01, 'fetch access'),
-  (0x02, 'illegal instruction'),
-  (0x03, 'breakpoint'),
-  (0x04, 'misaligned load'),
-  (0x05, 'load access'),
-  (0x06, 'misaligned store'),
-  (0x07, 'store access'),
-  (0x08, 'user_ecall'),
-  (0x09, 'supervisor_ecall'),
-  (0x0A, 'hypervisor_ecall'),
-  (0x0B, 'machine_ecall'),
-  (0x0C, 'fetch page fault'),
-  (0x0D, 'load page fault'),
-  (0x0F, 'store page fault'),
+isa_regex = \
+re.compile("^RV(32|64|128)[IE]+[ABCDEFGHJKLMNPQSTUVX]*(Zicsr|Zifencei|Zihintpause|Zam|Ztso|Zkne|Zknd|Zknh|Zkse|Zksh|Zkg|Zkb|Zkr|Zks|Zkn|Zba|Zbc|Zbb|Zbp|Zbr|Zbm|Zbs|Zbe|Zbf|Zbt|Zmmul|Zbpbo|Zca|Zcf|Zcd|Zcb|Zcmp|Zcmt){,1}(_Zicsr){,1}(_Zifencei){,1}(_Zihintpause){,1}(_Zmmul){,1}(_Zam){,1}(_Zba){,1}(_Zbb){,1}(_Zbc){,1}(_Zbe){,1}(_Zbf){,1}(_Zbm){,1}(_Zbp){,1}(_Zbpbo){,1}(_Zbr){,1}(_Zbs){,1}(_Zbt){,1}(_Zkb){,1}(_Zkg){,1}(_Zkr){,1}(_Zks){,1}(_Zkn){,1}(_Zknd){,1}(_Zkne){,1}(_Zknh){,1}(_Zkse){,1}(_Zksh){,1}(_Ztso){,1}(_Zca){,1}(_Zcf){,1}(_Zcd){,1}(_Zcb){,1}(_Zcmp){,1}(_Zcmt){,1}$")
+
+# regex to find <msb>..<lsb>=<val> patterns in instruction
+fixed_ranges = re.compile(
+    '\s*(?P<msb>\d+.?)\.\.(?P<lsb>\d+.?)\s*=\s*(?P<val>\d[\w]*)[\s$]*', re.M)
+
+# regex to find <lsb>=<val> patterns in instructions
+#single_fixed = re.compile('\s+(?P<lsb>\d+)=(?P<value>[\w\d]*)[\s$]*', re.M)
+single_fixed = re.compile('(?:^|[\s])(?P<lsb>\d+)=(?P<value>[\w]*)((?=\s|$))', re.M)
+
+# regex to find the overloading condition variable
+var_regex = re.compile('(?P<var>[a-zA-Z][\w\d]*)\s*=\s*.*?[\s$]*', re.M)
+
+# regex for pseudo op instructions returns the dependent filename, dependent
+# instruction, the pseudo op name and the encoding string
+pseudo_regex = re.compile(
+    '^\$pseudo_op\s+(?P<filename>rv[\d]*_[\w].*)::\s*(?P<orig_inst>.*?)\s+(?P<pseudo_inst>.*?)\s+(?P<overload>.*)$'
+, re.M)
+
+imported_regex = re.compile('^\s*\$import\s*(?P<extension>.*)\s*::\s*(?P<instruction>.*)', re.M)
+
+causes = []
+with open("causes.csv") as f:
+    csv_reader = csv.reader(f)
+    for row in csv_reader:
+        causes.append((int(row[0], 0), row[1]))
+csrs = []
+with open("csrs.csv") as f:
+    csv_reader = csv.reader(f)
+    for row in csv_reader:
+        csrs.append((int(row[0], 0), row[1]))
+csrs32 = []
+with open("csrs32.csv") as f:
+    csv_reader = csv.reader(f)
+    for row in csv_reader:
+        csrs32.append((int(row[0], 0), row[1]))
+arg_lut = {}
+with open("arg_lut.csv") as f:
+    csv_reader = csv.reader(f)
+    for row in csv_reader:
+        k = row[0]
+        v = (int(row[1]), int(row[2]))
+        arg_lut[k] = v
+
+# dictionary containing the mapping of the argument to the what the fields in
+# the latex table should be
+latex_mapping = {}
+latex_mapping['imm12'] = 'imm[11:0]'
+latex_mapping['rs1'] = 'rs1'
+latex_mapping['rs2'] = 'rs2'
+latex_mapping['rd'] = 'rd'
+latex_mapping['imm20'] = 'imm[31:12]'
+latex_mapping['bimm12hi'] = 'imm[12$\\vert$10:5]'
+latex_mapping['bimm12lo'] = 'imm[4:1$\\vert$11]'
+latex_mapping['imm12hi'] = 'imm[11:5]'
+latex_mapping['imm12lo'] = 'imm[4:0]'
+latex_mapping['jimm20'] = 'imm[20$\\vert$10:1$\\vert$11$\\vert$19:12]'
+latex_mapping['zimm'] = 'uimm'
+latex_mapping['shamtw'] = 'shamt'
+latex_mapping['shamtd'] = 'shamt'
+latex_mapping['shamtq'] = 'shamt'
+latex_mapping['rd_p'] = "rd\\,$'$"
+latex_mapping['rs1_p'] = "rs1\\,$'$"
+latex_mapping['rs2_p'] = "rs2\\,$'$"
+latex_mapping['rd_rs1_n0'] = 'rd/rs$\\neq$0'
+latex_mapping['rd_rs1_p'] = "rs1\\,$'$/rs2\\,$'$"
+latex_mapping['c_rs2'] = 'rs2'
+latex_mapping['c_rs2_n0'] = 'rs2$\\neq$0'
+latex_mapping['rd_n0'] = 'rd$\\neq$0'
+latex_mapping['rs1_n0'] = 'rs1$\\neq$0'
+latex_mapping['c_rs1_n0'] = 'rs1$\\neq$0'
+latex_mapping['rd_rs1'] = 'rd/rs1'
+latex_mapping['zimm6hi'] = 'uimm[5]'
+latex_mapping['zimm6lo'] = 'uimm[4:0]'
+latex_mapping['c_nzuimm10'] = "nzuimm[5:4$\\vert$9:6$\\vert$2$\\vert$3]"
+latex_mapping['c_uimm7lo'] = 'uimm[2$\\vert$6]'
+latex_mapping['c_uimm7hi'] = 'uimm[5:3]'
+latex_mapping['c_uimm8lo'] = 'uimm[7:6]'
+latex_mapping['c_uimm8hi'] = 'uimm[5:3]'
+latex_mapping['c_uimm9lo'] = 'uimm[7:6]'
+latex_mapping['c_uimm9hi'] = 'uimm[5:4$\\vert$8]'
+latex_mapping['c_nzimm6lo'] = 'nzimm[4:0]'
+latex_mapping['c_nzimm6hi'] = 'nzimm[5]'
+latex_mapping['c_imm6lo'] = 'imm[4:0]'
+latex_mapping['c_imm6hi'] = 'imm[5]'
+latex_mapping['c_nzimm10hi'] = 'nzimm[9]'
+latex_mapping['c_nzimm10lo'] = 'nzimm[4$\\vert$6$\\vert$8:7$\\vert$5]'
+latex_mapping['c_nzimm18hi'] = 'nzimm[17]'
+latex_mapping['c_nzimm18lo'] = 'nzimm[16:12]'
+latex_mapping['c_imm12'] = 'imm[11$\\vert$4$\\vert$9:8$\\vert$10$\\vert$6$\\vert$7$\\vert$3:1$\\vert$5]'
+latex_mapping['c_bimm9lo'] = 'imm[7:6$\\vert$2:1$\\vert$5]'
+latex_mapping['c_bimm9hi'] = 'imm[8$\\vert$4:3]'
+latex_mapping['c_nzuimm5'] = 'nzuimm[4:0]'
+latex_mapping['c_nzuimm6lo'] = 'nzuimm[4:0]'
+latex_mapping['c_nzuimm6hi'] = 'nzuimm[5]'
+latex_mapping['c_uimm8splo'] = 'uimm[4:2$\\vert$7:6]'
+latex_mapping['c_uimm8sphi'] = 'uimm[5]'
+latex_mapping['c_uimm8sp_s'] = 'uimm[5:2$\\vert$7:6]'
+latex_mapping['c_uimm10splo'] = 'uimm[4$\\vert$9:6]'
+latex_mapping['c_uimm10sphi'] = 'uimm[5]'
+latex_mapping['c_uimm9splo'] = 'uimm[4:3$\\vert$8:6]'
+latex_mapping['c_uimm9sphi'] = 'uimm[5]'
+latex_mapping['c_uimm10sp_s'] = 'uimm[5:4$\\vert$9:6]'
+latex_mapping['c_uimm9sp_s'] = 'uimm[5:3$\\vert$8:6]'
+
+# created a dummy instruction-dictionary like dictionary for all the instruction
+# types so that the same logic can be used to create their tables
+latex_inst_type = {}
+latex_inst_type['R-type'] = {}
+latex_inst_type['R-type']['variable_fields'] = ['opcode', 'rd', 'funct3', \
+        'rs1', 'rs2', 'funct7']
+latex_inst_type['R4-type'] = {}
+latex_inst_type['R4-type']['variable_fields'] = ['opcode', 'rd', 'funct3', \
+        'rs1', 'rs2', 'funct2', 'rs3']
+latex_inst_type['I-type'] = {}
+latex_inst_type['I-type']['variable_fields'] = ['opcode', 'rd', 'funct3', \
+        'rs1', 'imm12']
+latex_inst_type['S-type'] = {}
+latex_inst_type['S-type']['variable_fields'] = ['opcode', 'imm12lo', 'funct3', \
+        'rs1', 'rs2', 'imm12hi']
+latex_inst_type['B-type'] = {}
+latex_inst_type['B-type']['variable_fields'] = ['opcode', 'bimm12lo', 'funct3', \
+        'rs1', 'rs2', 'bimm12hi']
+latex_inst_type['U-type'] = {}
+latex_inst_type['U-type']['variable_fields'] = ['opcode', 'rd', 'imm20']
+latex_inst_type['J-type'] = {}
+latex_inst_type['J-type']['variable_fields'] = ['opcode', 'rd', 'jimm20']
+latex_fixed_fields = []
+latex_fixed_fields.append((31,25))
+latex_fixed_fields.append((24,20))
+latex_fixed_fields.append((19,15))
+latex_fixed_fields.append((14,12))
+latex_fixed_fields.append((11,7))
+latex_fixed_fields.append((6,0))
+
+# Pseudo-ops present in the generated encodings.
+# By default pseudo-ops are not listed as they are considered aliases
+# of their base instruction.
+emitted_pseudo_ops = [
+    'pause',
+    'prefetch_i',
+    'prefetch_r',
+    'prefetch_w',
+    'rstsa16',
+    'rstsa32',
+    'srli32_u',
+    'slli_rv128',
+    'slli_rv32',
+    'srai_rv128',
+    'srai_rv32',
+    'srli_rv128',
+    'srli_rv32',
+    'umax32',
 ]
-
-csrs = [
-  # Standard User R/W
-  (0x001, 'fflags'),
-  (0x002, 'frm'),
-  (0x003, 'fcsr'),
-  (0x000, 'ustatus'),
-  (0x004, 'uie'),
-  (0x005, 'utvec'),
-  (0x008, 'vstart'),
-  (0x009, 'vxsat'),
-  (0x00A, 'vxrm'),
-  (0x040, 'uscratch'),
-  (0x041, 'uepc'),
-  (0x042, 'ucause'),
-  (0x043, 'utval'),
-  (0x044, 'uip'),
-
-  # Standard User RO
-  (0xC00, 'cycle'),
-  (0xC01, 'time'),
-  (0xC02, 'instret'),
-  (0xC03, 'hpmcounter3'),
-  (0xC04, 'hpmcounter4'),
-  (0xC05, 'hpmcounter5'),
-  (0xC06, 'hpmcounter6'),
-  (0xC07, 'hpmcounter7'),
-  (0xC08, 'hpmcounter8'),
-  (0xC09, 'hpmcounter9'),
-  (0xC0A, 'hpmcounter10'),
-  (0xC0B, 'hpmcounter11'),
-  (0xC0C, 'hpmcounter12'),
-  (0xC0D, 'hpmcounter13'),
-  (0xC0E, 'hpmcounter14'),
-  (0xC0F, 'hpmcounter15'),
-  (0xC10, 'hpmcounter16'),
-  (0xC11, 'hpmcounter17'),
-  (0xC12, 'hpmcounter18'),
-  (0xC13, 'hpmcounter19'),
-  (0xC14, 'hpmcounter20'),
-  (0xC15, 'hpmcounter21'),
-  (0xC16, 'hpmcounter22'),
-  (0xC17, 'hpmcounter23'),
-  (0xC18, 'hpmcounter24'),
-  (0xC19, 'hpmcounter25'),
-  (0xC1A, 'hpmcounter26'),
-  (0xC1B, 'hpmcounter27'),
-  (0xC1C, 'hpmcounter28'),
-  (0xC1D, 'hpmcounter29'),
-  (0xC1E, 'hpmcounter30'),
-  (0xC1F, 'hpmcounter31'),
-  (0xC20, 'vl'),
-  (0xC21, 'vtype'),
-
-  # Standard Supervisor R/W
-  (0x100, 'sstatus'),
-  (0x104, 'sie'),
-  (0x105, 'stvec'),
-  (0x106, 'scounteren'),
-  (0x140, 'sscratch'),
-  (0x141, 'sepc'),
-  (0x142, 'scause'),
-  (0x143, 'stval'),
-  (0x144, 'sip'),
-  (0x180, 'satp'),
-
-  # Standard Hypervisor R/w
-  (0x200, 'bsstatus'),
-  (0x204, 'bsie'),
-  (0x205, 'bstvec'),
-  (0x240, 'bsscratch'),
-  (0x241, 'bsepc'),
-  (0x242, 'bscause'),
-  (0x243, 'bstval'),
-  (0x244, 'bsip'),
-  (0x280, 'bsatp'),
-  (0xA00, 'hstatus'),
-  (0xA02, 'hedeleg'),
-  (0xA03, 'hideleg'),
-  (0xA80, 'hgatp'),
-
-  # Tentative CSR assignment for CLIC
-  (0x007, 'utvt'),
-  (0x045, 'unxti'),
-  (0x046, 'uintstatus'),
-  (0x048, 'uscratchcsw'),
-  (0x049, 'uscratchcswl'),
-  (0x107, 'stvt'),
-  (0x145, 'snxti'),
-  (0x146, 'sintstatus'),
-  (0x148, 'sscratchcsw'),
-  (0x149, 'sscratchcswl'),
-  (0x307, 'mtvt'),
-  (0x345, 'mnxti'),
-  (0x346, 'mintstatus'),
-  (0x348, 'mscratchcsw'),
-  (0x349, 'mscratchcswl'),
-
-  # Standard Machine R/W
-  (0x300, 'mstatus'),
-  (0x301, 'misa'),
-  (0x302, 'medeleg'),
-  (0x303, 'mideleg'),
-  (0x304, 'mie'),
-  (0x305, 'mtvec'),
-  (0x306, 'mcounteren'),
-  (0x340, 'mscratch'),
-  (0x341, 'mepc'),
-  (0x342, 'mcause'),
-  (0x343, 'mtval'),
-  (0x344, 'mip'),
-  (0x3a0, 'pmpcfg0'),
-  (0x3a1, 'pmpcfg1'),
-  (0x3a2, 'pmpcfg2'),
-  (0x3a3, 'pmpcfg3'),
-  (0x3b0, 'pmpaddr0'),
-  (0x3b1, 'pmpaddr1'),
-  (0x3b2, 'pmpaddr2'),
-  (0x3b3, 'pmpaddr3'),
-  (0x3b4, 'pmpaddr4'),
-  (0x3b5, 'pmpaddr5'),
-  (0x3b6, 'pmpaddr6'),
-  (0x3b7, 'pmpaddr7'),
-  (0x3b8, 'pmpaddr8'),
-  (0x3b9, 'pmpaddr9'),
-  (0x3ba, 'pmpaddr10'),
-  (0x3bb, 'pmpaddr11'),
-  (0x3bc, 'pmpaddr12'),
-  (0x3bd, 'pmpaddr13'),
-  (0x3be, 'pmpaddr14'),
-  (0x3bf, 'pmpaddr15'),
-  (0x7a0, 'tselect'),
-  (0x7a1, 'tdata1'),
-  (0x7a2, 'tdata2'),
-  (0x7a3, 'tdata3'),
-  (0x7b0, 'dcsr'),
-  (0x7b1, 'dpc'),
-  (0x7b2, 'dscratch'),
-  (0xB00, 'mcycle'),
-  (0xB02, 'minstret'),
-  (0xB03, 'mhpmcounter3'),
-  (0xB04, 'mhpmcounter4'),
-  (0xB05, 'mhpmcounter5'),
-  (0xB06, 'mhpmcounter6'),
-  (0xB07, 'mhpmcounter7'),
-  (0xB08, 'mhpmcounter8'),
-  (0xB09, 'mhpmcounter9'),
-  (0xB0A, 'mhpmcounter10'),
-  (0xB0B, 'mhpmcounter11'),
-  (0xB0C, 'mhpmcounter12'),
-  (0xB0D, 'mhpmcounter13'),
-  (0xB0E, 'mhpmcounter14'),
-  (0xB0F, 'mhpmcounter15'),
-  (0xB10, 'mhpmcounter16'),
-  (0xB11, 'mhpmcounter17'),
-  (0xB12, 'mhpmcounter18'),
-  (0xB13, 'mhpmcounter19'),
-  (0xB14, 'mhpmcounter20'),
-  (0xB15, 'mhpmcounter21'),
-  (0xB16, 'mhpmcounter22'),
-  (0xB17, 'mhpmcounter23'),
-  (0xB18, 'mhpmcounter24'),
-  (0xB19, 'mhpmcounter25'),
-  (0xB1A, 'mhpmcounter26'),
-  (0xB1B, 'mhpmcounter27'),
-  (0xB1C, 'mhpmcounter28'),
-  (0xB1D, 'mhpmcounter29'),
-  (0xB1E, 'mhpmcounter30'),
-  (0xB1F, 'mhpmcounter31'),
-  (0x323, 'mhpmevent3'),
-  (0x324, 'mhpmevent4'),
-  (0x325, 'mhpmevent5'),
-  (0x326, 'mhpmevent6'),
-  (0x327, 'mhpmevent7'),
-  (0x328, 'mhpmevent8'),
-  (0x329, 'mhpmevent9'),
-  (0x32A, 'mhpmevent10'),
-  (0x32B, 'mhpmevent11'),
-  (0x32C, 'mhpmevent12'),
-  (0x32D, 'mhpmevent13'),
-  (0x32E, 'mhpmevent14'),
-  (0x32F, 'mhpmevent15'),
-  (0x330, 'mhpmevent16'),
-  (0x331, 'mhpmevent17'),
-  (0x332, 'mhpmevent18'),
-  (0x333, 'mhpmevent19'),
-  (0x334, 'mhpmevent20'),
-  (0x335, 'mhpmevent21'),
-  (0x336, 'mhpmevent22'),
-  (0x337, 'mhpmevent23'),
-  (0x338, 'mhpmevent24'),
-  (0x339, 'mhpmevent25'),
-  (0x33A, 'mhpmevent26'),
-  (0x33B, 'mhpmevent27'),
-  (0x33C, 'mhpmevent28'),
-  (0x33D, 'mhpmevent29'),
-  (0x33E, 'mhpmevent30'),
-  (0x33F, 'mhpmevent31'),
-
-  # Standard Machine RO
-  (0xF11, 'mvendorid'),
-  (0xF12, 'marchid'),
-  (0xF13, 'mimpid'),
-  (0xF14, 'mhartid'),
-]
-
-csrs32 = [
-  # Standard User RO
-  (0xC80, 'cycleh'),
-  (0xC81, 'timeh'),
-  (0xC82, 'instreth'),
-  (0xC83, 'hpmcounter3h'),
-  (0xC84, 'hpmcounter4h'),
-  (0xC85, 'hpmcounter5h'),
-  (0xC86, 'hpmcounter6h'),
-  (0xC87, 'hpmcounter7h'),
-  (0xC88, 'hpmcounter8h'),
-  (0xC89, 'hpmcounter9h'),
-  (0xC8A, 'hpmcounter10h'),
-  (0xC8B, 'hpmcounter11h'),
-  (0xC8C, 'hpmcounter12h'),
-  (0xC8D, 'hpmcounter13h'),
-  (0xC8E, 'hpmcounter14h'),
-  (0xC8F, 'hpmcounter15h'),
-  (0xC90, 'hpmcounter16h'),
-  (0xC91, 'hpmcounter17h'),
-  (0xC92, 'hpmcounter18h'),
-  (0xC93, 'hpmcounter19h'),
-  (0xC94, 'hpmcounter20h'),
-  (0xC95, 'hpmcounter21h'),
-  (0xC96, 'hpmcounter22h'),
-  (0xC97, 'hpmcounter23h'),
-  (0xC98, 'hpmcounter24h'),
-  (0xC99, 'hpmcounter25h'),
-  (0xC9A, 'hpmcounter26h'),
-  (0xC9B, 'hpmcounter27h'),
-  (0xC9C, 'hpmcounter28h'),
-  (0xC9D, 'hpmcounter29h'),
-  (0xC9E, 'hpmcounter30h'),
-  (0xC9F, 'hpmcounter31h'),
-
-  # Standard Machine RW
-  (0xB80, 'mcycleh'),
-  (0xB82, 'minstreth'),
-  (0xB83, 'mhpmcounter3h'),
-  (0xB84, 'mhpmcounter4h'),
-  (0xB85, 'mhpmcounter5h'),
-  (0xB86, 'mhpmcounter6h'),
-  (0xB87, 'mhpmcounter7h'),
-  (0xB88, 'mhpmcounter8h'),
-  (0xB89, 'mhpmcounter9h'),
-  (0xB8A, 'mhpmcounter10h'),
-  (0xB8B, 'mhpmcounter11h'),
-  (0xB8C, 'mhpmcounter12h'),
-  (0xB8D, 'mhpmcounter13h'),
-  (0xB8E, 'mhpmcounter14h'),
-  (0xB8F, 'mhpmcounter15h'),
-  (0xB90, 'mhpmcounter16h'),
-  (0xB91, 'mhpmcounter17h'),
-  (0xB92, 'mhpmcounter18h'),
-  (0xB93, 'mhpmcounter19h'),
-  (0xB94, 'mhpmcounter20h'),
-  (0xB95, 'mhpmcounter21h'),
-  (0xB96, 'mhpmcounter22h'),
-  (0xB97, 'mhpmcounter23h'),
-  (0xB98, 'mhpmcounter24h'),
-  (0xB99, 'mhpmcounter25h'),
-  (0xB9A, 'mhpmcounter26h'),
-  (0xB9B, 'mhpmcounter27h'),
-  (0xB9C, 'mhpmcounter28h'),
-  (0xB9D, 'mhpmcounter29h'),
-  (0xB9E, 'mhpmcounter30h'),
-  (0xB9F, 'mhpmcounter31h'),
-]
-
-opcode_base = 0
-opcode_size = 7
-funct_base = 12
-funct_size = 3
-
