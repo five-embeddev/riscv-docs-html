@@ -12,7 +12,7 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/rv32.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/09/28</td></tr>
+<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -290,8 +290,7 @@ write the result into register <span><em>rd</em></span>. The <span><em>funct7</e
 subtraction of <span><em>rs2</em></span> from <span><em>rs1</em></span>. Overflows are ignored and the low XLEN
 bits of results are written to the destination <span><em>rd</em></span>.
 SLT and SLTU perform signed and unsigned compares
-respectively, writing 1 to <span><em>rd</em></span> if <span class="math inline">${\em rs1}  &lt; {\em
-  rs2}$</span>, 0 otherwise. Note, SLTU <span><em>rd</em></span>, <span><em>x0</em></span>, <span><em>rs2</em></span> sets
+respectively, writing 1 to <span><em>rd</em></span> if <span class="math inline"><em>rs1</em>  &lt; <em>rs2</em></span>, 0 otherwise. Note, SLTU <span><em>rd</em></span>, <span><em>x0</em></span>, <span><em>rs2</em></span> sets
 <span><em>rd</em></span> to 1 if <span><em>rs2</em></span> is not equal to zero, otherwise sets <span>
 <em>rd</em></span> to zero (assembler pseudoinstruction SNEZ <span><em>rd, rs</em></span>). AND, OR, and
 XOR perform bitwise logical operations.</p>
