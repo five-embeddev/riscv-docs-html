@@ -31,12 +31,6 @@ info ::
 	@echo KEYWORDS_YAML=${KEYWORDS_YAML}
 	@echo KEYWORDS_DOCS=${KEYWORDS_DOCS}
 
-all :: imgs
-
-imgs : 
-	-cp ${HTML_TMP0_DIR}/*.png ${HTML_DST_DIR}/ 2> /dev/null
-	-cp ${HTML_TMP0_DIR}/*.svg ${HTML_DST_DIR}/ 2> /dev/null
-
 ${MENU_OUTPUT_DIR}/riscv-user-isa-manual/${VERSION_user}/user-keywords.yaml :
 	${MAKE} DOC=user -C ../riscv-isa-manual menu
 
