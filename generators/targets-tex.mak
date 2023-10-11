@@ -63,8 +63,6 @@ ${HTML_TMP0_DIR}/%.tex : ${SRC_DIR}/%.tex  \
 	ruby ${SCRIPTS}/pre-process.rb $< ${IMG_PREAMBLE_FILES} ${HTML_TMP0_DIR}/
 	-rm -f ${HTML_TMP0_DIR}/${*}_*_tmp.png 2> /dev/null
 	-rm -f ${HTML_TMP0_DIR}/${*}_*_tmp.svg 2> /dev/null
-	-cp ${HTML_TMP0_DIR}/${*}_*.png ${HTML_DST_DIR}/ 2> /dev/null
-	-cp ${HTML_TMP0_DIR}/${*}_*.svg ${HTML_DST_DIR}/ 2> /dev/null
 
 
 ${HTML_TMP0_DIR}/%.html : \
@@ -96,12 +94,18 @@ ${HTML_TMP0_DIR}/%.html : \
 		${BIB_FILES:%=--metadata-file=${HTML_TMP0_DIR}/%.yaml} \
 		${shell ruby -e 'v=%w{${CHAPTERS}}; print "--number-sections --number-offset=#{v.index("${*}")}" if v.include?("${*}")'} \
 		${PREAMBLE_FILES} $< 2> ${HTML_TMP0_DIR}/${@F}.log
+
+
 #		 --filter pandoc-citeproc \
+
 
 ${HTML_DST_DIR}/%.html : ${HTML_TMP0_DIR}/%.html ${SCRIPTS}/post-process.re ${HTML_TMP0_DIR}/html-links.re
 	${__MKDIR_DST}
 	perl -p  ${SCRIPTS}/post-process.re ${HTML_TMP0_DIR}/${@F} > ${HTML_TMP0_DIR}/${@F}.1
 	perl -p  ${HTML_TMP0_DIR}/html-links.re ${HTML_TMP0_DIR}/${@F}.1 > $@
+	-cp ${HTML_TMP0_DIR}/${*}_*.png ${@D}/ 2> /dev/null
+	-cp ${HTML_TMP0_DIR}/${*}_*.svg ${@D}/ 2> /dev/null
+
 
 ${ALL} :
 	${MAKE} ${HTML_DST_DIR}/$@.html
