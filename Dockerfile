@@ -1,7 +1,7 @@
-FROM ubuntu:focal AS riscv_docs_generate
+FROM ubuntu:22.04 AS riscv_docs_generate
 
 ARG TZ=UTC
-ARG DOCKER_USER_UID=1000
+ARG DOCKER_USER_UID=1001
 ARG NODE_VERSION=14.18.0
 ARG NVM_VERSION=v0.38.0
 
@@ -22,30 +22,60 @@ RUN apt-get ${APT_OPTS} update -qq && \
             wget \
             sudo 
 
+# Basic buikd tools
+RUN apt-get ${APT_OPTS} update -qq && \
+    apt-get ${APT_OPTS} install -y \
+    bison \
+    build-essential \
+    cmake \
+    flex \
+    pkg-config 
+
+# Development
+RUN apt-get ${APT_OPTS} update -qq && \
+    apt-get ${APT_OPTS} install -y \
+    libcairo2-dev \
+    libffi-dev \
+    libgdk-pixbuf2.0-dev \
+    libpango1.0-dev \
+    libxml2-dev \
+    libglib2.0-dev \
+    libgif-dev \
+    libwebp-dev \
+    libzstd-dev
+
 # Scripting languages
 RUN apt-get ${APT_OPTS} update -qq && \
     apt-get ${APT_OPTS} install -y \
             ruby \
             ruby-dev \
+            ruby-full \
             gem  \
             perl \
             python2 \
             python-is-python3 \
             python3-pip \
-            python3-sympy
+            python3-sympy \
+            default-jre
 
-RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py # Fetch get-pip.py for python 2.7
+
+
+RUN curl --output get-pip.py https://bootstrap.pypa.io/pip/2.7/get-pip.py # Fetch get-pip.py for python 2.7
 RUN python2 get-pip.py
 RUN python2 -m pip install sympy
+
+RUN  pip3 install sympy pyyaml jsonschema 
 
 # Graphics utils
 RUN apt-get ${APT_OPTS} update -qq && \
     apt-get ${APT_OPTS} install -y \
             imagemagick \
             poppler-utils \
-            graphviz 
+            graphviz \
+            ditaa
 
-RUN apt-get update && apt-get install -y software-properties-common
+
+RUN apt-get ${APT_OPTS} update && apt-get ${APT_OPTS} install -y software-properties-common
 RUN add-apt-repository ppa:inkscape.dev/stable
 RUN apt-get ${APT_OPTS} update -qq && \
     apt-get ${APT_OPTS} install -y \
@@ -87,8 +117,10 @@ WORKDIR /project
 
 # Path for gems
 RUN bundle config path /home/docker_user/.local 
-ENV GEM_HOME=/home/docker_user/.local/ruby/2.7.0/
-ENV PATH="/home/docker_user/.local/ruby/2.7.0/bin/:${PATH}"
+ENV RUBY_VERSION=3.0.0
+ENV GEM_HOME=/home/docker_user/.local/ruby/${RUBY_VERSION}/
+ENV PATH="/home/docker_user/.local/ruby/${RUBY_VERSION}/bin/:${PATH}"
+
 
 # Install gems from Gemfile
 COPY Gemfile Gemfile
@@ -108,5 +140,6 @@ ENV PATH="/home/docker_user/.nvm/versions/node/v${NODE_VERSION}/bin/:${PATH}"
 RUN node --version
 RUN npm --version
 
-RUN npm i wavedrom-cli -g
+#RUN npm i wavedrom-cli -g
+RUN npm i wavedrom-cli@2.6.8 bytefield-svg@1.8.0 -g
 

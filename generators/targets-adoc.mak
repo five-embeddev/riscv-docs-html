@@ -7,6 +7,8 @@ ADOC_TEMPLATE_plain=${TEMPLATES}/asciidoctor/static/
 ADOC_TEMPLATE_jekyll=${TEMPLATES}/asciidoctor/jekyll/
 ADOC_TEMPLATE=${ADOC_TEMPLATE_${OUTPUT_FORMAT}}
 
+ADOC_ATTRIBUTES=$(shell egrep '^:' ${TOP_FILE} | perl -pi -e 's@^\:([\w\-]+)\:\s*(.*?)$$@--attribute=$$1=\"$$2\" @'   )
+
 
 include ${THIS_DIR}/targets.mak
 
@@ -21,6 +23,8 @@ info ::
 	@echo DST_DIR=${DST_DIR}/%.html
 	@echo SPEC_REV=${SPEC_REV}
 	@echo "SPEC_DATE=${SPEC_DATE}"
+	@echo TOP_FILE=${TOP_FILE}
+	@echo ADOC_ATTRIBUTES=${ADOC_ATTRIBUTES}
 
 # 		--no-header-footer \
 
@@ -30,6 +34,7 @@ ${HTML_DST_DIR}/%.html : ${SRC_DIR}/%.adoc ${HEADER}
 	perl -pi -e 's/:toc: left//' $<
 	cd ${SRC_DIR}; ${ASCIIDOCTOR} \
 	   	--require=asciidoctor-diagram \
+	   	--require=asciidoctor-bibtex \
 		--backend=html \
 		--verbose \
 		--section-numbers \
@@ -47,6 +52,7 @@ ${HTML_DST_DIR}/%.html : ${SRC_DIR}/%.adoc ${HEADER}
 		--attribute=gitrev="$(GITREV)" \
 		--attribute=giturl="$(GITURL)" \
 		--attribute=convert_date="${CONVERT_DATE}" \
+		${ADOC_ATTRIBUTES} \
 		$*.adoc
 
 npm :

@@ -1,5 +1,5 @@
 [submodule "external/riscv-isa-manual/latest"]
-	path = external/riscv-isa-manual/latest
+	path = external/riscv-isa-manual/latest-adoc
 	url = https://github.com/riscv/riscv-isa-manual.git
 [submodule "external/riscv-debug-spec/latest"]
 	path = external/riscv-debug-spec/latest
@@ -61,3 +61,9 @@
 [submodule "external/riscv-opcodes"]
 	path = external/riscv-opcodes
 	url = https://github.com/riscv/riscv-opcodes.git
+[submodule "external/riscv-isa-manual/latest-latex"]
+	path = external/riscv-isa-manual/latest-latex
+	url = https://github.com/riscv/riscv-isa-manual.git
+[submodule "external/riscv-docs-base-container-image"]
+	path = external/riscv-docs-base-container-image
+	url = https://github.com/riscv/riscv-docs-base-container-image
