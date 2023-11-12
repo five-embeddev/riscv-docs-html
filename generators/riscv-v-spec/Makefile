@@ -20,6 +20,7 @@ SPEC_DATE:=$(shell cd ${dir ${TOP_FILE}} &&  git show --pretty='%as' HEAD | head
 
 TARGETS=${HTML_FILES:%=${HTML_DST_DIR}/%}
 
+
 asciidoctor: ${TARGETS} 
 
 include ../targets-adoc.mak

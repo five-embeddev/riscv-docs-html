@@ -20,7 +20,6 @@ TOP_priv=riscv-privileged
 TITLE=${TITLE_${DOC}}
 CATEGORY=${CATEGORY_${DOC}}
 TOP=${TOP_${DOC}}
-
 include ../vars.mak
 
 SRC_DIR=${TOP_DIR}/external/${SRC_REPO}/${VERSION}/src

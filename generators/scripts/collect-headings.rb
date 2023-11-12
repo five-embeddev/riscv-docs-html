@@ -95,8 +95,12 @@ def collect_headings(fpath, menu_top, keywords_data, options)
       elsif line =~ /\>(.*?)(\<\/h|$)/
         head=$1.strip
       end
-      if head
-        head = head.encode(Encoding.find('ASCII'), ENCODING_OPTIONS)
+      if !head.nil?
+        p head
+        head = head.encode(Encoding.find('ASCII'),
+  :replace           => '',        # Use a blank for those replacements
+  :universal_newline => true       # Always break lines with \n
+)
         head.gsub!("'","")
         if (depth > new_depth)
           menu_node = menu_stack[new_depth] 

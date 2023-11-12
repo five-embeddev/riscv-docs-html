@@ -4,7 +4,9 @@ menu : ${MENU_DST_DIR}/${DOC}.yaml
 
 COLLECT_HEADING=${SCRIPTS}/collect-headings.rb
 
-${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml :  ${COLLECT_HEADING} ${ALL:%=${HTML_DST_DIR}/%.html}
+${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml : \
+			${COLLECT_HEADING} \
+			${ALL:%=${HTML_DST_DIR}/%.html}
 	-mkdir -p ${MENU_DST_DIR} 2> /dev/null
 	rm -rf ${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml
 	ruby ${COLLECT_HEADING} \
@@ -31,10 +33,26 @@ info ::
 	@echo KEYWORDS_YAML=${KEYWORDS_YAML}
 	@echo KEYWORDS_DOCS=${KEYWORDS_DOCS}
 
-${MENU_OUTPUT_DIR}/riscv-user-isa-manual/${VERSION_user}/user-keywords.yaml :
+VERSIONS_TEX=\
+	latest-latex \
+	20181106-Base-Ratification \
+	riscv-user-2.2 \
+	IMFDQC-Ratification-20190305 \
+	Priv-v1.12 
+
+
+VERSIONS_ADOC=latest-adoc
+
+${VERSIONS_TEX:%=${MENU_OUTPUT_DIR}/riscv-user-isa-manual/%/user-keywords.yaml} :
 	${MAKE} DOC=user -C ../riscv-isa-manual menu
 
-${MENU_OUTPUT_DIR}/riscv-priv-isa-manual/${VERSION_priv}/priv-keywords.yaml :
+${VERSIONS_TEX:%=${MENU_OUTPUT_DIR}/riscv-priv-isa-manual/%/priv-keywords.yaml} :
+	${MAKE} DOC=priv -C ../riscv-isa-manual menu
+
+${VERSIONS_ADOC:%=${MENU_OUTPUT_DIR}/riscv-user-isa-manual/$%/user-keywords.yaml} :
+	${MAKE} DOC=user -C ../riscv-isa-manual menu
+
+${VERSIONS_ADOC:%=${MENU_OUTPUT_DIR}/riscv-priv-isa-manual/%/priv-keywords.yaml} :
 	${MAKE} DOC=priv -C ../riscv-isa-manual menu
 
 ${MENU_OUTPUT_DIR}/riscv-debug-spec/${VERSION_debug}/debug-keywords.yaml :
