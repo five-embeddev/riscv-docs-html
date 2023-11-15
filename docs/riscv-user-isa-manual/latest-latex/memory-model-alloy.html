@@ -1,0 +1,42 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20191214-</td></tr>
+<tr><th>Spec Release Date</th><td> December 2019</td></tr>
+<tr><th>Git Revision</th><td> isa-449cd0c</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/memory-model-alloy.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<h1 id="sec:alloy">Formal Axiomatic Specification in Alloy</h1>
+<p>We present a formal specification of the RVWMO memory model in Alloy (<a href="http://alloy.mit.edu">http://alloy.mit.edu</a>).
+This model is available online at <a href="https://github.com/daniellustig/riscv-memory-model">https://github.com/daniellustig/riscv-memory-model</a>.</p>
+<p>The online material also contains some litmus tests and some examples of how Alloy can be used to model check some of the mappings in Section <a href="memory.html#sec:memory:porting" data-reference-type="ref" data-reference="sec:memory:porting">[sec:memory:porting]</a>.</p>
+<figure>
+<img src="memory-model-alloy_00.svg" id="fig:alloy1" alt="" /><figcaption>The RVWMO memory model formalized in Alloy (1/5: PPO)</figcaption>
+</figure>
+<figure>
+<img src="memory-model-alloy_01.svg" id="fig:alloy2" alt="" /><figcaption>The RVWMO memory model formalized in Alloy (2/5: Axioms)</figcaption>
+</figure>
+<figure>
+<img src="memory-model-alloy_02.svg" id="fig:alloy3" alt="" /><figcaption>The RVWMO memory model formalized in Alloy (3/5: model of memory)</figcaption>
+</figure>
+<figure>
+<img src="memory-model-alloy_03.svg" id="fig:alloy4" alt="" /><figcaption>The RVWMO memory model formalized in Alloy (4/5: Basic model rules)</figcaption>
+</figure>
+<figure>
+<img src="memory-model-alloy_04.svg" id="fig:alloy5" alt="" /><figcaption>The RVWMO memory model formalized in Alloy (5/5: Auxiliaries)</figcaption>
+</figure>
+
+</body>
+</html>

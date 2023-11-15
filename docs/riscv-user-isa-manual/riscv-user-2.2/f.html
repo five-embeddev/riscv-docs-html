@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,21 +13,23 @@
 <tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/f.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="sec:single-float"><span class="header-section-number">12</span> “F” Standard Extension for Single-Precision Floating-Point,
+<section id="sec:single-float" data-number="1">
+<h1 data-number="12"><span class="header-section-number">12</span> “F” Standard Extension for Single-Precision Floating-Point,
 Version 2.0</h1>
 <p>This chapter describes the standard instruction-set extension for
 single-precision floating-point, which is named “F” and adds
 single-precision floating-point computational instructions compliant
 with the IEEE 754-2008 arithmetic standard <span class="citation" data-cites="ieee754-2008"><a href="#ref-ieee754-2008">[ieee754-2008]</a></span>.</p>
-<h2 id="f-register-state"><span class="header-section-number">12.1</span> F Register State</h2>
-<p>The F extension adds 32 floating-point registers, <span>f0</span>–<span>f31</span>,
+<section id="f-register-state" data-number="1.1">
+<h2 data-number="12.1"><span class="header-section-number">12.1</span> F Register State</h2>
+<p>The F extension adds 32 floating-point registers, <span><code>f0</code></span>–<span><code>f31</code></span>,
 each 32 bits wide, and a floating-point control and status register
-<span>fcsr</span>, which contains the operating mode and exception status of the
+<span><code>fcsr</code></span>, which contains the operating mode and exception status of the
 floating-point unit. This additional state is shown in
 Figure <a href="f.html#fprs" data-reference-type="ref" data-reference="fprs">1.1</a>. We use the term FLEN to describe the width of the
 floating-point registers in the RISC-V ISA, and FLEN=32 for the F
@@ -36,7 +39,7 @@ Floating-point load and store instructions transfer floating-point
 values between registers and memory. Instructions to transfer values
 to and from the integer register file are also provided.</p>
 <figure>
-<img src="f_00.svg" alt="RISC-V standard F extension single-precision floating-point state." id="fprs" /><figcaption>RISC-V standard F extension single-precision floating-point state.<span label="fprs"></span></figcaption>
+<img src="f_00.svg" id="fprs" alt="" /><figcaption>RISC-V standard F extension single-precision floating-point state.</figcaption>
 </figure>
 <div class=commentary>
 <p>We considered a unified register file for both integer and
@@ -51,42 +54,43 @@ conventions for split register file architectures are well understood,
 and using dirty bits on floating-point register file state can reduce
 context-switch overhead.</p>
 </div>
-<h2 id="floating-point-control-and-status-register"><span class="header-section-number">12.2</span> Floating-Point Control and Status Register</h2>
-<p>The floating-point control and status register, <span>fcsr</span>, is a RISC-V
+</section>
+<section id="floating-point-control-and-status-register" data-number="1.2">
+<h2 data-number="12.2"><span class="header-section-number">12.2</span> Floating-Point Control and Status Register</h2>
+<p>The floating-point control and status register, <span><code>fcsr</code></span>, is a RISC-V
 control and status register (CSR). It is a 32-bit read/write register that
 selects the dynamic rounding mode for floating-point arithmetic operations and
 holds the accrued exception flags, as shown in Figure <a href="f.html#fcsr" data-reference-type="ref" data-reference="fcsr">1.2</a>.</p>
 <figure>
-<img src="f_01.svg" alt="Floating-point control and status register." id="fcsr" /><figcaption>Floating-point control and status register.<span label="fcsr"></span></figcaption>
+<img src="f_01.svg" id="fcsr" alt="" /><figcaption>Floating-point control and status register.</figcaption>
 </figure>
-<p>The <span>fcsr</span> register can be read and written with the FRCSR and
+<p>The <span><code>fcsr</code></span> register can be read and written with the FRCSR and
 FSCSR instructions, which are assembler pseudo-ops built on the
-underlying CSR access instructions. FRCSR reads <span>fcsr</span> by copying
-it into integer register <span><em>rd</em></span>. FSCSR swaps the value in <span>
-fcsr</span> by copying the original value into integer register <span><em>rd</em></span>,
+underlying CSR access instructions. FRCSR reads <span><code>fcsr</code></span> by copying
+it into integer register <span><em>rd</em></span>. FSCSR swaps the value in <span><code> fcsr</code></span> by copying the original value into integer register <span><em>rd</em></span>,
 and then writing a new value obtained from integer register <span><em>rs1</em></span>
-into <span>fcsr</span>.</p>
-<p>The fields within the <span>fcsr</span> can also be accessed individually
+into <span><code>fcsr</code></span>.</p>
+<p>The fields within the <span><code>fcsr</code></span> can also be accessed individually
 through different CSR addresses, and separate assembler pseudo-ops are
 defined for these accesses. The FRRM instruction reads the Rounding
-Mode field <span>frm</span> and copies it into the least-significant three
+Mode field <span><code>frm</code></span> and copies it into the least-significant three
 bits of integer register <span><em>rd</em></span>, with zero in all other bits. FSRM
-swaps the value in <span>frm</span> by copying the original value into
+swaps the value in <span><code>frm</code></span> by copying the original value into
 integer register <span><em>rd</em></span>, and then writing a new value obtained from
 the three least-significant bits of integer register <span><em>rs1</em></span> into
-<span>frm</span>. FRFLAGS and FSFLAGS are defined analogously for the
-Accrued Exception Flags field <span>fflags</span>. Additional
+<span><code>frm</code></span>. FRFLAGS and FSFLAGS are defined analogously for the
+Accrued Exception Flags field <span><code>fflags</code></span>. Additional
 pseudo-instructions FSRMI and FSFLAGSI swap values using an immediate
 value instead of register <span><em>rs1</em></span>.</p>
-<p>Bits 31–8 of the <span>fcsr</span> are reserved for other standard extensions,
+<p>Bits 31–8 of the <span><code>fcsr</code></span> are reserved for other standard extensions,
 including the “L” standard extension for decimal floating-point. If
 these extensions are not present, implementations shall ignore writes to
 these bits and supply a zero value when read. Standard software should
 preserve the contents of these bits.</p>
 <p>Floating-point operations use either a static rounding mode encoded in the
-instruction, or a dynamic rounding mode held in <span>frm</span>. Rounding modes are
+instruction, or a dynamic rounding mode held in <span><code>frm</code></span>. Rounding modes are
 encoded as shown in Table <a href="f.html#rm" data-reference-type="ref" data-reference="rm">1.3</a>. A value of 111 in the instruction’s <span>
-<em>rm</em></span> field selects the dynamic rounding mode held in <span>frm</span>. If <span>frm</span>
+<em>rm</em></span> field selects the dynamic rounding mode held in <span><code>frm</code></span>. If <span><code>frm</code></span>
 is set to an invalid value (101–111), any subsequent attempt to execute
 a floating-point operation with a dynamic rounding mode will cause an illegal
 instruction trap. Some instructions that have the <span><em>rm</em></span> field are
@@ -97,13 +101,13 @@ field set to RNE (000).</p>
 dynamic rounding mode register.</p>
 </div>
 <figure>
-<img src="f_02.svg" alt="Rounding mode encoding." id="rm" /><figcaption>Rounding mode encoding.<span label="rm"></span></figcaption>
+<img src="f_02.svg" id="rm" alt="" /><figcaption>Rounding mode encoding.</figcaption>
 </figure>
 <p>The accrued exception flags indicate the exception conditions that
 have arisen on any floating-point arithmetic instruction since the
 field was last reset by software, as shown in Table <a href="f.html#bitdef" data-reference-type="ref" data-reference="bitdef">1.4</a>.</p>
 <figure>
-<img src="f_03.svg" alt="Accrued exception flag encoding." id="bitdef" /><figcaption>Accrued exception flag encoding.<span label="bitdef"></span></figcaption>
+<img src="f_03.svg" id="bitdef" alt="" /><figcaption>Accrued exception flag encoding.</figcaption>
 </figure>
 <div class=commentary>
 <p>As allowed by the standard, we do not support traps on floating-point
@@ -112,12 +116,13 @@ in software. We considered adding branches controlled directly by the
 contents of the floating-point accrued exception flags, but ultimately chose
 to omit these instructions to keep the ISA simple.</p>
 </div>
-<h2 id="nan-generation-and-propagation"><span class="header-section-number">12.3</span> NaN Generation and Propagation</h2>
+</section>
+<section id="nan-generation-and-propagation" data-number="1.3">
+<h2 data-number="12.3"><span class="header-section-number">12.3</span> NaN Generation and Propagation</h2>
 <p>Except when otherwise stated, if the result of a floating-point operation is
 NaN, it is the canonical NaN. The canonical NaN has a positive sign and all
 significand bits clear except the MSB, a.k.a. the quiet bit. For
-single-precision floating-point, this corresponds to the pattern <span>
-0x7fc00000</span>.</p>
+single-precision floating-point, this corresponds to the pattern <span><code> 0x7fc00000</code></span>.</p>
 <p>For FMIN and FMAX, if at least one input is a signaling NaN, or if both inputs
 are quiet NaNs, the result is the canonical NaN. If one operand is a quiet NaN
 and the other is not a NaN, the result is the non-NaN operand.</p>
@@ -142,14 +147,18 @@ complicating the user-level ISA to optimize other approaches.
 Implementations can always trap to machine-mode software handlers to
 provide exceptional default values.</p>
 </div>
-<h2 id="subnormal-arithmetic"><span class="header-section-number">12.4</span> Subnormal Arithmetic</h2>
+</section>
+<section id="subnormal-arithmetic" data-number="1.4">
+<h2 data-number="12.4"><span class="header-section-number">12.4</span> Subnormal Arithmetic</h2>
 <p>Operations on subnormal numbers are handled in accordance with the IEEE
 754-2008 standard.</p>
 <p>In the parlance of the IEEE standard, tininess is detected after rounding.</p>
 <div class=commentary>
 <p>Detecting tininess after rounding results in fewer spurious underflow signals.</p>
 </div>
-<h2 id="single-precision-load-and-store-instructions"><span class="header-section-number">12.5</span> Single-Precision Load and Store Instructions</h2>
+</section>
+<section id="single-precision-load-and-store-instructions" data-number="1.5">
+<h2 data-number="12.5"><span class="header-section-number">12.5</span> Single-Precision Load and Store Instructions</h2>
 <p>Floating-point loads and stores use the same base+offset addressing
 mode as the integer base ISA, with a base address in register <span>
 <em>rs1</em></span> and a 12-bit signed byte offset. The FLW instruction loads a
@@ -160,7 +169,9 @@ floating-point register <span><em>rs2</em></span> to memory.</p>
 <p><img src="f_05.svg" alt="image" /></p>
 <p>FLW and FSW are only guaranteed to execute atomically if the effective address
 is naturally aligned.</p>
-<h2 id="sec:single-float-compute"><span class="header-section-number">12.6</span> Single-Precision Floating-Point Computational Instructions</h2>
+</section>
+<section id="sec:single-float-compute" data-number="1.6">
+<h2 data-number="12.6"><span class="header-section-number">12.6</span> Single-Precision Floating-Point Computational Instructions</h2>
 <p>Floating-point arithmetic instructions with one or two source operands use the
 R-type format with the OP-FP major opcode. FADD.S, FSUB.S,
 FMUL.S, and FDIV.S perform single-precision floating-point addition,
@@ -227,7 +238,9 @@ NaN.
 invalid exception for the operation <span><span class="math inline">∞ × 0 +</span> qNaN</span> .</p>
 </div>
 <p><img src="f_07.svg" alt="image" /></p>
-<h2 id="single-precision-floating-point-conversion-and-move-instructions"><span class="header-section-number">12.7</span> Single-Precision Floating-Point Conversion and Move <span>Instructions</span> </h2>
+</section>
+<section id="single-precision-floating-point-conversion-and-move-instructions" data-number="1.7">
+<h2 data-number="12.7"><span class="header-section-number">12.7</span> Single-Precision Floating-Point Conversion and Move <span>Instructions</span> </h2>
 <p>Floating-point-to-integer and integer-to-floating-point conversion
 instructions are encoded in the OP-FP major opcode space.
 FCVT.W.S or FCVT.L.S converts a floating-point number
@@ -298,11 +311,10 @@ and the behavior for invalid inputs.</p>
 </tr>
 </tbody>
 </table>
-<p><span id="tab:int_conv" label="tab:int_conv">[tab:int_conv]</span></p>
 <p>All floating-point to integer and integer to floating-point conversion
 instructions round according to the <span><em>rm</em></span> field. A floating-point register
 can be initialized to floating-point positive zero using FCVT.S.W <span><em>rd</em></span>,
-<span>x0</span>, which will never raise any exceptions.</p>
+<span><code>x0</code></span>, which will never raise any exceptions.</p>
 <p><img src="f_08.svg" alt="image" /></p>
 <p>Floating-point to floating-point sign-injection instructions, FSGNJ.S,
 FSGNJN.S, and FSGNJX.S, produce a result that takes all bits except
@@ -361,7 +373,9 @@ cases where explicit moves between integer and floating-point
 registers are required, reducing instruction count and critical paths
 for common mixed-format code sequences.</p>
 </div>
-<h2 id="single-precision-floating-point-compare-instructions"><span class="header-section-number">12.8</span> Single-Precision Floating-Point Compare Instructions</h2>
+</section>
+<section id="single-precision-floating-point-compare-instructions" data-number="1.8">
+<h2 data-number="12.8"><span class="header-section-number">12.8</span> Single-Precision Floating-Point Compare Instructions</h2>
 <p>Floating-point compare instructions perform the specified comparison (equal,
 less than, or less than or equal) between floating-point registers <span><em>rs1</em></span>
 and <span><em>rs2</em></span> and record the Boolean result in integer register <span><em>rd</em></span>.</p>
@@ -371,7 +385,9 @@ either input is NaN. FEQ.S performs a <span><em>quiet</em></span> comparison: on
 NaN inputs cause an Invalid Operation exception. For all three instructions,
 the result is 0 if either operand is NaN.</p>
 <p><img src="f_11.svg" alt="image" /></p>
-<h2 id="single-precision-floating-point-classify-instruction"><span class="header-section-number">12.9</span> Single-Precision Floating-Point Classify Instruction</h2>
+</section>
+<section id="single-precision-floating-point-classify-instruction" data-number="1.9">
+<h2 data-number="12.9"><span class="header-section-number">12.9</span> Single-Precision Floating-Point Classify Instruction</h2>
 <p>The FCLASS.S instruction examines the value in floating-point register <span>
 <em>rs1</em></span> and writes to integer register <span><em>rd</em></span> a 10-bit mask that indicates
 the class of the floating-point number. The format of the mask is
@@ -429,6 +445,8 @@ be set if the property is true and clear otherwise. All other bits in
 </tr>
 </tbody>
 </table>
+</section>
+</section>
 
 </body>
 </html>

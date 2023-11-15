@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,20 +13,24 @@
 <tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/rv64.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="rv64"><span class="header-section-number">6</span> RV64I Base Integer Instruction Set, Version 2.0</h1>
+<section id="rv64" data-number="1">
+<h1 data-number="6"><span class="header-section-number">6</span> RV64I Base Integer Instruction Set, Version 2.0</h1>
 <p>This chapter describes the RV64I base integer instruction set, which
 builds upon the RV32I variant described in Chapter <a href="rv32.html#rv32" data-reference-type="ref" data-reference="rv32">[rv32]</a>. This
 chapter presents only the differences with RV32I, so should be read in
 conjunction with the earlier chapter.</p>
-<h2 id="register-state"><span class="header-section-number">6.1</span> Register State</h2>
+<section id="register-state" data-number="1.1">
+<h2 data-number="6.1"><span class="header-section-number">6.1</span> Register State</h2>
 <p>RV64I widens the integer registers and supported user address space to
 64 bits (XLEN=64 in Figure <a href="rv32.html#gprs" data-reference-type="ref" data-reference="gprs">[gprs]</a>).</p>
-<h2 id="integer-computational-instructions"><span class="header-section-number">6.2</span> Integer Computational Instructions</h2>
+</section>
+<section id="integer-computational-instructions" data-number="1.2">
+<h2 data-number="6.2"><span class="header-section-number">6.2</span> Integer Computational Instructions</h2>
 <p>Additional instruction variants are provided to manipulate 32-bit
 values in RV64I, indicated by a ‘W’ suffix to the opcode. These
 “*W” instructions ignore the upper 32 bits of their inputs and
@@ -44,7 +49,8 @@ preserve the sign-extension property. A few new instructions
 (ADD[I]W/SUBW/SxxW) are required for addition and shifts to ensure reasonable
 performance for 32-bit values.</p>
 </div>
-<h4 id="integer-register-immediate-instructions" class="unnumbered">Integer Register-Immediate Instructions</h4>
+<section id="integer-register-immediate-instructions" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="5">Integer Register-Immediate Instructions</h4>
 <p><img src="rv64_00.svg" alt="image" /></p>
 <p>ADDIW is an RV64I-only instruction that adds the sign-extended 12-bit
 immediate to register <span><em>rs1</em></span> and produces the proper sign-extension
@@ -73,13 +79,14 @@ instruction exception if <span class="math inline"><em>i</em><em>m</em><em>m</em
 the 20-bit U-immediate into bits 31–12 of register <span><em>rd</em></span> and
 places zero in the lowest 12 bits. The 32-bit result is
 sign-extended to 64 bits.</p>
-<p>AUIPC (add upper immediate to <span>pc</span>) uses the same opcode as RV32I.
-AUIPC (add upper immediate to <span>pc</span>) is used to build <span>
-pc</span>-relative addresses and uses the U-type format. AUIPC appends 12
+<p>AUIPC (add upper immediate to <span><code>pc</code></span>) uses the same opcode as RV32I.
+AUIPC (add upper immediate to <span><code>pc</code></span>) is used to build <span><code> pc</code></span>-relative addresses and uses the U-type format. AUIPC appends 12
 low-order zero bits to the 20-bit U-immediate, sign-extends the result
-to 64 bits, then adds it to the <span>pc</span> and places the result in
+to 64 bits, then adds it to the <span><code>pc</code></span> and places the result in
 register <span><em>rd</em></span>.</p>
-<h4 id="integer-register-register-operations" class="unnumbered">Integer Register-Register Operations</h4>
+</section>
+<section id="integer-register-register-operations" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="5">Integer Register-Register Operations</h4>
 <p><img src="rv64_03.svg" alt="image" /></p>
 <p>ADDW and SUBW are RV64I-only instructions that are defined analogously
 to ADD and SUB but operate on 32-bit values and produce signed 32-bit
@@ -92,7 +99,10 @@ held in register <span><em>rs2</em></span>. In RV64I, only the low 6 bits of <sp
 <p>SLLW, SRLW, and SRAW are RV64I-only instructions that are analogously
 defined but operate on 32-bit values and produce signed 32-bit
 results. The shift amount is given by <span><em>rs2[4:0]</em></span>.</p>
-<h2 id="load-and-store-instructions"><span class="header-section-number">6.3</span> Load and Store Instructions</h2>
+</section>
+</section>
+<section id="load-and-store-instructions" data-number="1.3">
+<h2 data-number="6.3"><span class="header-section-number">6.3</span> Load and Store Instructions</h2>
 <p>RV64I extends the address space to 64 bits. The execution environment
 will define what portions of the address space are legal to access.</p>
 <p><img src="rv64_04.svg" alt="image" /></p>
@@ -106,12 +116,16 @@ memory for RV64I. LH and LHU are defined analogously for 16-bit
 values, as are LB and LBU for 8-bit values. The SD, SW, SH, and SB
 instructions store 64-bit, 32-bit, 16-bit, and 8-bit values from the
 low bits of register <span><em>rs2</em></span> to memory respectively.</p>
-<h2 id="system-instructions"><span class="header-section-number">6.4</span> System Instructions</h2>
+</section>
+<section id="system-instructions" data-number="1.4">
+<h2 data-number="6.4"><span class="header-section-number">6.4</span> System Instructions</h2>
 <p>In RV64I, the CSR instructions can manipulate 64-bit CSRs. In particular, the
 RDCYCLE, RDTIME, and RDINSTRET pseudo-instructions read the full 64 bits of
-the <span>cycle</span>, <span>time</span>, and <span>instret</span> counters. Hence, the RDCYCLEH,
+the <span><code>cycle</code></span>, <span><code>time</code></span>, and <span><code>instret</code></span> counters. Hence, the RDCYCLEH,
 RDTIMEH, and RDINSTRETH instructions are not necessary and are illegal in
 RV64I.</p>
+</section>
+</section>
 
 </body>
 </html>

@@ -1,0 +1,1994 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/mm-formal.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="_formal_memory_model_specifications_version_0_1">Appendix A: Formal Memory Model Specifications, Version 0.1</h2>
+<div class="sectionbody">
+<div id="mm-formal" class="paragraph">
+<p>To facilitate formal analysis of RVWMO, this chapter presents a set of
+formalizations using different tools and modeling approaches. Any
+discrepancies are unintended; the expectation is that the models
+describe exactly the same sets of legal behaviors.</p>
+</div>
+<div class="paragraph">
+<p>This appendix should be treated as commentary; all normative material is
+provided in <a href="#memorymodel">Chapter 17</a> and in the rest of
+the main body of the ISA specification. All currently known
+discrepancies are listed in
+<a href="#discrepancies">Section A.7</a>. Any other
+discrepancies are unintentional.</p>
+</div>
+<div class="sect2">
+<h3 id="alloy">A.1. Formal Axiomatic Specification in Alloy</h3>
+<div class="paragraph">
+<p>We present a formal specification of the RVWMO memory model in Alloy
+(<a href="http://alloy.mit.edu" class="bare">alloy.mit.edu</a>). This model is available online at
+<a href="https://github.com/daniellustig/riscv-memory-model" class="bare">github.com/daniellustig/riscv-memory-model</a>.</p>
+</div>
+<div class="paragraph">
+<p>The online material also contains some litmus tests and some examples of
+how Alloy can be used to model check some of the mappings in <a href="#memory_porting">[memory_porting]</a>.</p>
+</div>
+<div class="listingblock">
+<div class="title">Example 1. The RVWMO memory model formalized in Alloy (1/5: PPO)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="c"><span class="c1">// =RVWMO PPO=</span>
+
+<span class="c1">// Preserved Program Order</span>
+<span class="n">fun</span> <span class="n">ppo</span> <span class="o">:</span> <span class="n">Event</span><span class="o">-&gt;</span><span class="n">Event</span> <span class="p">{</span>
+  <span class="c1">// same-address ordering</span>
+  <span class="n">po_loc</span> <span class="o">:&gt;</span> <span class="n">Store</span>
+  <span class="o">+</span> <span class="n">rdw</span>
+  <span class="o">+</span> <span class="p">(</span><span class="n">AMO</span> <span class="o">+</span> <span class="n">StoreConditional</span><span class="p">)</span> <span class="o">&lt;:</span> <span class="n">rfi</span>
+
+  <span class="c1">// explicit synchronization</span>
+  <span class="o">+</span> <span class="n">ppo_fence</span>
+  <span class="o">+</span> <span class="n">Acquire</span> <span class="o">&lt;:</span> <span class="o">^</span><span class="n">po</span> <span class="o">:&gt;</span> <span class="n">MemoryEvent</span>
+  <span class="o">+</span> <span class="n">MemoryEvent</span> <span class="o">&lt;:</span> <span class="o">^</span><span class="n">po</span> <span class="o">:&gt;</span> <span class="n">Release</span>
+  <span class="o">+</span> <span class="n">RCsc</span> <span class="o">&lt;:</span> <span class="o">^</span><span class="n">po</span> <span class="o">:&gt;</span> <span class="n">RCsc</span>
+  <span class="o">+</span> <span class="n">pair</span>
+
+  <span class="c1">// syntactic dependencies</span>
+  <span class="o">+</span> <span class="n">addrdep</span>
+  <span class="o">+</span> <span class="n">datadep</span>
+  <span class="o">+</span> <span class="n">ctrldep</span> <span class="o">:&gt;</span> <span class="n">Store</span>
+
+  <span class="c1">// pipeline dependencies</span>
+  <span class="o">+</span> <span class="p">(</span><span class="n">addrdep</span><span class="o">+</span><span class="n">datadep</span><span class="p">).</span><span class="n">rfi</span>
+  <span class="o">+</span> <span class="n">addrdep</span><span class="p">.</span><span class="o">^</span><span class="n">po</span> <span class="o">:&gt;</span> <span class="n">Store</span>
+<span class="p">}</span>
+
+<span class="c1">// the global memory order respects preserved program order</span>
+<span class="n">fact</span> <span class="p">{</span> <span class="n">ppo</span> <span class="n">in</span> <span class="o">^</span><span class="n">gmo</span> <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="literalblock">
+<div class="title">The RVWMO memory model formalized in Alloy (2/5: Axioms)</div>
+<div class="content">
+<pre>// =RVWMO axioms=
+
+// Load Value Axiom
+fun candidates[r: MemoryEvent] : set MemoryEvent {
+  (r.~^gmo &amp; Store &amp; same_addr[r]) // writes preceding r in gmo
+  + (r.^~po &amp; Store &amp; same_addr[r]) // writes preceding r in po
+}
+
+fun latest_among[s: set Event] : Event { s - s.~^gmo }
+
+pred LoadValue {
+  all w: Store | all r: Load |
+    w-&gt;r in rf &lt;=&gt; w = latest_among[candidates[r]]
+}
+
+// Atomicity Axiom
+pred Atomicity {
+  all r: Store.~pair |            // starting from the lr,
+    no x: Store &amp; same_addr[r] |  // there is no store x to the same addr
+      x not in same_hart[r]       // such that x is from a different hart,
+      and x in r.~rf.^gmo         // x follows (the store r reads from) in gmo,
+      and r.pair in x.^gmo        // and r follows x in gmo
+}
+
+// Progress Axiom implicit: Alloy only considers finite executions
+
+pred RISCV_mm { LoadValue and Atomicity /* and Progress */ }</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example 2. The RVWMO memory model formalized in Alloy (3/5: model of memory)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="sml"><span class="n">//Basic</span> <span class="n">model</span> <span class="kr">of</span> <span class="n">memory</span>
+
+<span class="kr">sig</span> <span class="n">Hart</span> <span class="p">{</span>  <span class="n">//</span> <span class="n">hardware</span> <span class="n">thread</span>
+  <span class="n">start</span> <span class="p">:</span> <span class="n">one</span> <span class="n">Event</span>
+<span class="p">}</span>
+<span class="kr">sig</span> <span class="n">Address</span> <span class="p">{}</span>
+<span class="n">abstract</span> <span class="kr">sig</span> <span class="n">Event</span> <span class="p">{</span>
+  <span class="n">po</span><span class="p">:</span> <span class="n">lone</span> <span class="n">Event</span> <span class="n">//</span> <span class="n">program</span> <span class="n">order</span>
+<span class="p">}</span>
+
+<span class="n">abstract</span> <span class="kr">sig</span> <span class="n">MemoryEvent</span> <span class="n">extends</span> <span class="n">Event</span> <span class="p">{</span>
+  <span class="n">address</span><span class="p">:</span> <span class="n">one</span> <span class="n">Address</span><span class="p">,</span>
+  <span class="n">acquireRCpc</span><span class="p">:</span> <span class="n">lone</span> <span class="n">MemoryEvent</span><span class="p">,</span>
+  <span class="n">acquireRCsc</span><span class="p">:</span> <span class="n">lone</span> <span class="n">MemoryEvent</span><span class="p">,</span>
+  <span class="n">releaseRCpc</span><span class="p">:</span> <span class="n">lone</span> <span class="n">MemoryEvent</span><span class="p">,</span>
+  <span class="n">releaseRCsc</span><span class="p">:</span> <span class="n">lone</span> <span class="n">MemoryEvent</span><span class="p">,</span>
+  <span class="n">addrdep</span><span class="p">:</span> <span class="n">set</span> <span class="n">MemoryEvent</span><span class="p">,</span>
+  <span class="n">ctrldep</span><span class="p">:</span> <span class="n">set</span> <span class="n">Event</span><span class="p">,</span>
+  <span class="n">datadep</span><span class="p">:</span> <span class="n">set</span> <span class="n">MemoryEvent</span><span class="p">,</span>
+  <span class="n">gmo</span><span class="p">:</span> <span class="n">set</span> <span class="n">MemoryEvent</span><span class="p">,</span>  <span class="n">//</span> <span class="n">global</span> <span class="n">memory</span> <span class="n">order</span>
+  <span class="n">rf</span><span class="p">:</span> <span class="n">set</span> <span class="n">MemoryEvent</span>
+<span class="p">}</span>
+<span class="kr">sig</span> <span class="n">LoadNormal</span> <span class="n">extends</span> <span class="n">MemoryEvent</span> <span class="p">{}</span> <span class="n">//</span> <span class="n">l</span><span class="p">{</span><span class="n">b</span><span class="p">|</span><span class="n">h</span><span class="p">|</span><span class="n">w</span><span class="p">|</span><span class="n">d</span><span class="p">}</span>
+<span class="kr">sig</span> <span class="n">LoadReserve</span> <span class="n">extends</span> <span class="n">MemoryEvent</span> <span class="p">{</span> <span class="n">//</span> <span class="n">lr</span>
+  <span class="n">pair</span><span class="p">:</span> <span class="n">lone</span> <span class="n">StoreConditional</span>
+<span class="p">}</span>
+<span class="kr">sig</span> <span class="n">StoreNormal</span> <span class="n">extends</span> <span class="n">MemoryEvent</span> <span class="p">{}</span>       <span class="n">//</span> <span class="n">s</span><span class="p">{</span><span class="n">b</span><span class="p">|</span><span class="n">h</span><span class="p">|</span><span class="n">w</span><span class="p">|</span><span class="n">d</span><span class="p">}</span>
+<span class="n">//</span> <span class="n">all</span> <span class="n">StoreConditionals</span> <span class="kr">in</span> <span class="n">the</span> <span class="n">model</span> <span class="n">are</span> <span class="n">assumed</span> <span class="n">to</span> <span class="n">be</span> <span class="n">successful</span>
+<span class="kr">sig</span> <span class="n">StoreConditional</span> <span class="n">extends</span> <span class="n">MemoryEvent</span> <span class="p">{}</span>  <span class="n">//</span> <span class="n">sc</span>
+<span class="kr">sig</span> <span class="n">AMO</span> <span class="n">extends</span> <span class="n">MemoryEvent</span> <span class="p">{}</span>               <span class="n">//</span> <span class="n">amo</span>
+<span class="kr">sig</span> <span class="n">NOP</span> <span class="n">extends</span> <span class="n">Event</span> <span class="p">{}</span>
+
+<span class="kr">fun</span> <span class="nf">Load</span> <span class="p">:</span> <span class="n">Event</span> <span class="p">{</span> <span class="n">LoadNormal</span> <span class="n">+</span> <span class="n">LoadReserve</span> <span class="n">+</span> <span class="n">AMO</span> <span class="p">}</span>
+<span class="kr">fun</span> <span class="nf">Store</span> <span class="p">:</span> <span class="n">Event</span> <span class="p">{</span> <span class="n">StoreNormal</span> <span class="n">+</span> <span class="n">StoreConditional</span> <span class="n">+</span> <span class="n">AMO</span> <span class="p">}</span>
+
+<span class="kr">sig</span> <span class="n">Fence</span> <span class="n">extends</span> <span class="n">Event</span> <span class="p">{</span>
+  <span class="n">pr</span><span class="p">:</span> <span class="n">lone</span> <span class="n">Fence</span><span class="p">,</span> <span class="n">//</span> <span class="n">opcode</span> <span class="n">bit</span>
+  <span class="n">pw</span><span class="p">:</span> <span class="n">lone</span> <span class="n">Fence</span><span class="p">,</span> <span class="n">//</span> <span class="n">opcode</span> <span class="n">bit</span>
+  <span class="n">sr</span><span class="p">:</span> <span class="n">lone</span> <span class="n">Fence</span><span class="p">,</span> <span class="n">//</span> <span class="n">opcode</span> <span class="n">bit</span>
+  <span class="n">sw</span><span class="p">:</span> <span class="n">lone</span> <span class="n">Fence</span>  <span class="n">//</span> <span class="n">opcode</span> <span class="n">bit</span>
+<span class="p">}</span>
+<span class="kr">sig</span> <span class="n">FenceTSO</span> <span class="n">extends</span> <span class="n">Fence</span> <span class="p">{}</span>
+
+<span class="n">/*</span> <span class="n">Alloy</span> <span class="n">encoding</span> <span class="n">detail</span><span class="p">:</span> <span class="n">opcode</span> <span class="n">bits</span> <span class="n">are</span> <span class="n">either</span> <span class="n">set</span> <span class="p">(</span><span class="n">encoded</span><span class="p">,</span> <span class="nn">e</span><span class="p">.</span><span class="nn">g</span><span class="p">.</span><span class="err">,
+ </span><span class="n">*</span> <span class="kr">as</span> <span class="nn">f</span><span class="p">.</span><span class="n">pr</span> <span class="kr">in</span> <span class="n">iden</span><span class="p">)</span> <span class="n">or</span> <span class="n">unset</span> <span class="p">(</span><span class="nn">f</span><span class="p">.</span><span class="n">pr</span> <span class="n">not</span> <span class="kr">in</span> <span class="n">iden</span><span class="p">)</span><span class="err">.</span>  <span class="n">The</span> <span class="n">bits</span> <span class="n">cannot</span> <span class="n">be</span> <span class="n">used</span> <span class="n">for</span>
+ <span class="n">*</span> <span class="n">anything</span> <span class="kr">else</span> <span class="n">*/</span>
+<span class="n">fact</span> <span class="p">{</span> <span class="n">pr</span> <span class="n">+</span> <span class="n">pw</span> <span class="n">+</span> <span class="n">sr</span> <span class="n">+</span> <span class="n">sw</span> <span class="kr">in</span> <span class="n">iden</span> <span class="p">}</span>
+<span class="n">//</span> <span class="n">likewise</span> <span class="n">for</span> <span class="n">ordering</span> <span class="n">annotations</span>
+<span class="n">fact</span> <span class="p">{</span> <span class="n">acquireRCpc</span> <span class="n">+</span> <span class="n">acquireRCsc</span> <span class="n">+</span> <span class="n">releaseRCpc</span> <span class="n">+</span> <span class="n">releaseRCsc</span> <span class="kr">in</span> <span class="n">iden</span> <span class="p">}</span>
+<span class="n">//</span> <span class="n">don't</span> <span class="n">try</span> <span class="n">to</span> <span class="n">encode</span> <span class="n">FenceTSO</span> <span class="n">via</span> <span class="n">pr/pw/sr/sw</span><span class="p">;</span> <span class="n">just</span> <span class="n">use</span> <span class="n">it</span> <span class="kr">as</span><span class="n">-is</span>
+<span class="n">fact</span> <span class="p">{</span> <span class="n">no</span> <span class="nn">FenceTSO</span><span class="p">.</span><span class="err">(</span><span class="n">pr</span> <span class="n">+</span> <span class="n">pw</span> <span class="n">+</span> <span class="n">sr</span> <span class="n">+</span> <span class="n">sw</span><span class="p">)</span> <span class="p">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example 3. The RVWMO memory model formalized in Alloy (4/5: Basic model rules)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="scala"><span class="c1">// =Basic model rules=</span>
+
+<span class="c1">// Ordering annotation groups</span>
+<span class="n">fun</span> <span class="nc">Acquire</span> <span class="k">:</span> <span class="kt">MemoryEvent</span> <span class="o">{</span> <span class="kt">MemoryEvent.acquireRCpc</span> <span class="kt">+</span> <span class="kt">MemoryEvent.acquireRCsc</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">Release</span> <span class="kt">:</span> <span class="kt">MemoryEvent</span> <span class="o">{</span> <span class="kt">MemoryEvent.releaseRCpc</span> <span class="kt">+</span> <span class="kt">MemoryEvent.releaseRCsc</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">RCpc</span> <span class="kt">:</span> <span class="kt">MemoryEvent</span> <span class="o">{</span> <span class="kt">MemoryEvent.acquireRCpc</span> <span class="kt">+</span> <span class="kt">MemoryEvent.releaseRCpc</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">RCsc</span> <span class="kt">:</span> <span class="kt">MemoryEvent</span> <span class="o">{</span> <span class="kt">MemoryEvent.acquireRCsc</span> <span class="kt">+</span> <span class="kt">MemoryEvent.releaseRCsc</span> <span class="o">}</span>
+
+<span class="c1">// There is no such thing as store-acquire or load-release, unless it's both</span>
+<span class="n">fact</span> <span class="o">{</span> <span class="nc">Load</span> <span class="o">&amp;</span> <span class="nc">Release</span> <span class="n">in</span> <span class="nc">Acquire</span> <span class="o">}</span>
+<span class="n">fact</span> <span class="o">{</span> <span class="nc">Store</span> <span class="o">&amp;</span> <span class="nc">Acquire</span> <span class="n">in</span> <span class="nc">Release</span> <span class="o">}</span>
+
+<span class="c1">// FENCE PPO</span>
+<span class="n">fun</span> <span class="nc">FencePRSR</span> <span class="k">:</span> <span class="kt">Fence</span> <span class="o">{</span> <span class="kt">Fence.</span><span class="o">(</span><span class="kt">pr</span> <span class="kt">&amp;</span> <span class="kt">sr</span><span class="o">)</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">FencePRSW</span> <span class="kt">:</span> <span class="kt">Fence</span> <span class="o">{</span> <span class="kt">Fence.</span><span class="o">(</span><span class="kt">pr</span> <span class="kt">&amp;</span> <span class="kt">sw</span><span class="o">)</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">FencePWSR</span> <span class="kt">:</span> <span class="kt">Fence</span> <span class="o">{</span> <span class="kt">Fence.</span><span class="o">(</span><span class="kt">pw</span> <span class="kt">&amp;</span> <span class="kt">sr</span><span class="o">)</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">FencePWSW</span> <span class="kt">:</span> <span class="kt">Fence</span> <span class="o">{</span> <span class="kt">Fence.</span><span class="o">(</span><span class="kt">pw</span> <span class="kt">&amp;</span> <span class="kt">sw</span><span class="o">)</span> <span class="o">}</span>
+
+<span class="kt">fun</span> <span class="kt">ppo_fence</span> <span class="kt">:</span> <span class="kt">MemoryEvent-&gt;MemoryEvent</span> <span class="o">{</span>
+    <span class="o">(</span><span class="kt">Load</span>  <span class="k">&lt;:</span> <span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">FencePRSR</span><span class="o">)</span><span class="kt">.</span><span class="o">(</span><span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">Load</span><span class="o">)</span>
+  <span class="kt">+</span> <span class="o">(</span><span class="kt">Load</span>  <span class="k">&lt;:</span> <span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">FencePRSW</span><span class="o">)</span><span class="kt">.</span><span class="o">(</span><span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">Store</span><span class="o">)</span>
+  <span class="kt">+</span> <span class="o">(</span><span class="kt">Store</span> <span class="k">&lt;:</span> <span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">FencePWSR</span><span class="o">)</span><span class="kt">.</span><span class="o">(</span><span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">Load</span><span class="o">)</span>
+  <span class="kt">+</span> <span class="o">(</span><span class="kt">Store</span> <span class="k">&lt;:</span> <span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">FencePWSW</span><span class="o">)</span><span class="kt">.</span><span class="o">(</span><span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">Store</span><span class="o">)</span>
+  <span class="kt">+</span> <span class="o">(</span><span class="kt">Load</span>  <span class="k">&lt;:</span> <span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">FenceTSO</span><span class="o">)</span> <span class="kt">.</span><span class="o">(</span><span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">MemoryEvent</span><span class="o">)</span>
+  <span class="kt">+</span> <span class="o">(</span><span class="kt">Store</span> <span class="k">&lt;:</span> <span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">FenceTSO</span><span class="o">)</span> <span class="kt">.</span><span class="o">(</span><span class="kt">^po</span> <span class="kt">:&gt;</span> <span class="kt">Store</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="c1">// auxiliary definitions</span>
+<span class="n">fun</span> <span class="n">po_loc</span> <span class="k">:</span> <span class="kt">Event-&gt;Event</span> <span class="o">{</span> <span class="kt">^po</span> <span class="kt">&amp;</span> <span class="kt">address.~address</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">same_hart</span><span class="o">[</span><span class="kt">e:</span> <span class="kt">Event</span><span class="o">]</span> <span class="k">:</span> <span class="kt">set</span> <span class="kt">Event</span> <span class="o">{</span> <span class="kt">e</span> <span class="kt">+</span> <span class="kt">e.^~po</span> <span class="kt">+</span> <span class="kt">e.^po</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">same_addr</span><span class="o">[</span><span class="kt">e:</span> <span class="kt">Event</span><span class="o">]</span> <span class="k">:</span> <span class="kt">set</span> <span class="kt">Event</span> <span class="o">{</span> <span class="kt">e.address.~address</span> <span class="o">}</span>
+
+<span class="c1">// initial stores</span>
+<span class="n">fun</span> <span class="nc">NonInit</span> <span class="k">:</span> <span class="kt">set</span> <span class="kt">Event</span> <span class="o">{</span> <span class="kt">Hart.start.*po</span> <span class="o">}</span>
+<span class="kt">fun</span> <span class="kt">Init</span> <span class="kt">:</span> <span class="kt">set</span> <span class="kt">Event</span> <span class="o">{</span> <span class="kt">Event</span> <span class="kt">-</span> <span class="kt">NonInit</span> <span class="o">}</span>
+<span class="kt">fact</span> <span class="o">{</span> <span class="kt">Init</span> <span class="kt">in</span> <span class="kt">StoreNormal</span> <span class="o">}</span>
+<span class="kt">fact</span> <span class="o">{</span> <span class="kt">Init-&gt;</span><span class="o">(</span><span class="kt">MemoryEvent</span> <span class="kt">&amp;</span> <span class="kt">NonInit</span><span class="o">)</span> <span class="kt">in</span> <span class="kt">^gmo</span> <span class="o">}</span>
+<span class="kt">fact</span> <span class="o">{</span> <span class="kt">all</span> <span class="kt">e:</span> <span class="kt">NonInit</span> <span class="kt">|</span> <span class="kt">one</span> <span class="kt">e.*~po.~start</span> <span class="o">}</span>  <span class="c1">// each event is in exactly one hart</span>
+<span class="n">fact</span> <span class="o">{</span> <span class="n">all</span> <span class="n">a</span><span class="k">:</span> <span class="kt">Address</span> <span class="kt">|</span> <span class="kt">one</span> <span class="kt">Init</span> <span class="kt">&amp;</span> <span class="kt">a.~address</span> <span class="o">}</span> <span class="c1">// one init store per address</span>
+<span class="n">fact</span> <span class="o">{</span> <span class="n">no</span> <span class="nc">Init</span> <span class="k">&lt;:</span> <span class="n">po</span> <span class="n">and</span> <span class="n">no</span> <span class="n">po</span> <span class="o">:&gt;</span> <span class="nc">Init</span> <span class="o">}</span></code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example 4. The RVWMO memory model formalized in Alloy (5/5: Auxiliaries)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">// po
+fact { acyclic[po] }
+
+// gmo
+fact { total[^gmo, MemoryEvent] } // gmo is a total order over all MemoryEvents
+
+//rf
+fact { rf.~rf in iden } // each read returns the value of only one write
+fact { rf in Store &lt;: address.~address :&gt; Load }
+fun rfi : MemoryEvent-&gt;MemoryEvent { rf &amp; (*po + *~po) }
+
+//dep
+fact { no StoreNormal &lt;: (addrdep + ctrldep + datadep) }
+fact { addrdep + ctrldep + datadep + pair in ^po }
+fact { datadep in datadep :&gt; Store }
+fact { ctrldep.*po in ctrldep }
+fact { no pair &amp; (^po :&gt; (LoadReserve + StoreConditional)).^po }
+fact { StoreConditional in LoadReserve.pair } // assume all SCs succeed
+
+// rdw
+fun rdw : Event-&gt;Event {
+  (Load &lt;: po_loc :&gt; Load)  // start with all same_address load-load pairs,
+  - (~rf.rf)                // subtract pairs that read from the same store,
+  - (po_loc.rfi)            // and subtract out "fri-rfi" patterns
+}
+
+// filter out redundant instances and/or visualizations
+fact { no gmo &amp; gmo.gmo } // keep the visualization uncluttered
+fact { all a: Address | some a.~address }
+
+// =Optional: opcode encoding restrictions=
+
+// the list of blessed fences
+fact { Fence in
+  Fence.pr.sr
+  + Fence.pw.sw
+  + Fence.pr.pw.sw
+  + Fence.pr.sr.sw
+  + FenceTSO
+  + Fence.pr.pw.sr.sw
+}
+
+pred restrict_to_current_encodings {
+  no (LoadNormal + StoreNormal) &amp; (Acquire + Release)
+}
+
+// =Alloy shortcuts=
+pred acyclic[rel: Event-&gt;Event] { no iden &amp; ^rel }
+pred total[rel: Event-&gt;Event, bag: Event] {
+  all disj e, e': bag | e-&gt;e' in rel + ~rel
+  acyclic[rel]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sec:herd">A.2. Formal Axiomatic Specification in Herd</h3>
+<div class="paragraph">
+<p>The tool <span class="sans-serif">herd</span> takes a memory model and a litmus test as
+input and simulates the execution of the test on top of the memory
+model. Memory models are written in the domain specific language Cat.
+This section provides two Cat memory model of RVWMO. The first model,
+<a href="#herd2">Example 6</a>, follows the <em>global memory order</em>,
+Chapter <a href="#memorymodel">[memorymodel]</a>, definition of RVWMO, as much
+as is possible for a Cat model. The second model,
+<a href="#herd3">Example 7</a>, is an equivalent, more efficient,
+partial order based RVWMO model.</p>
+</div>
+<div class="paragraph">
+<p>The simulator <code>herd</code> is part of the <code>diy</code> tool
+suite — see <a href="http://diy.inria.fr" class="bare">diy.inria.fr</a> for software and documentation. The
+models and more are available online at <a href="http://diy.inria.fr/cats7/riscv/" class="bare">diy.inria.fr/cats7/riscv/</a>.</p>
+</div>
+<div id="herd1" class="listingblock">
+<div class="title">Example 5. riscv-defs.cat, a herd definition of preserved program order (1/3)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">(*************)
+(* Utilities *)
+(*************)
+
+(* All fence relations *)
+let fence.r.r = [R];fencerel(Fence.r.r);[R]
+let fence.r.w = [R];fencerel(Fence.r.w);[W]
+let fence.r.rw = [R];fencerel(Fence.r.rw);[M]
+let fence.w.r = [W];fencerel(Fence.w.r);[R]
+let fence.w.w = [W];fencerel(Fence.w.w);[W]
+let fence.w.rw = [W];fencerel(Fence.w.rw);[M]
+let fence.rw.r = [M];fencerel(Fence.rw.r);[R]
+let fence.rw.w = [M];fencerel(Fence.rw.w);[W]
+let fence.rw.rw = [M];fencerel(Fence.rw.rw);[M]
+let fence.tso =
+  let f = fencerel(Fence.tso) in
+  ([W];f;[W]) | ([R];f;[M])
+
+let fence =
+  fence.r.r | fence.r.w | fence.r.rw |
+  fence.w.r | fence.w.w | fence.w.rw |
+  fence.rw.r | fence.rw.w | fence.rw.rw |
+  fence.tso
+
+(* Same address, no W to the same address in-between *)
+let po-loc-no-w = po-loc \ (po-loc?;[W];po-loc)
+(* Read same write *)
+let rsw = rf^-1;rf
+(* Acquire, or stronger  *)
+let AQ = Acq|AcqRel
+(* Release or stronger *)
+and RL = RelAcqRel
+(* All RCsc *)
+let RCsc = Acq|Rel|AcqRel
+(* Amo events are both R and W, relation rmw relates paired lr/sc *)
+let AMO = R &amp; W
+let StCond = range(rmw)
+
+(*************)
+(* ppo rules *)
+(*************)
+
+(* Overlapping-Address Orderings *)
+let r1 = [M];po-loc;[W]
+and r2 = ([R];po-loc-no-w;[R]) \ rsw
+and r3 = [AMO|StCond];rfi;[R]
+(* Explicit Synchronization *)
+and r4 = fence
+and r5 = [AQ];po;[M]
+and r6 = [M];po;[RL]
+and r7 = [RCsc];po;[RCsc]
+and r8 = rmw
+(* Syntactic Dependencies *)
+and r9 = [M];addr;[M]
+and r10 = [M];data;[W]
+and r11 = [M];ctrl;[W]
+(* Pipeline Dependencies *)
+and r12 = [R];(addr|data);[W];rfi;[R]
+and r13 = [R];addr;[M];po;[W]
+
+let ppo = r1 | r2 | r3 | r4 | r5 | r6 | r7 | r8 | r9 | r10 | r11 | r12 | r13</code></pre>
+</div>
+</div>
+<div id="herd2" class="listingblock">
+<div class="title">Example 6. riscv.cat, a herd version of the RVWMO memory model (2/3)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">Total
+
+(* Notice that herd has defined its own rf relation *)
+
+(* Define ppo *)
+include "riscv-defs.cat"
+
+(********************************)
+(* Generate global memory order *)
+(********************************)
+
+let gmo0 = (* precursor: ie build gmo as an total order that include gmo0 *)
+  loc &amp; (W\FW) * FW | # Final write after any write to the same location
+  ppo |               # ppo compatible
+  rfe                 # includes herd external rf (optimization)
+
+(* Walk over all linear extensions of gmo0 *)
+with  gmo from linearizations(M\IW,gmo0)
+
+(* Add initial writes upfront -- convenient for computing rfGMO *)
+let gmo = gmo | loc &amp; IW * (M\IW)
+
+(**********)
+(* Axioms *)
+(**********)
+
+(* Compute rf according to the load value axiom, aka rfGMO *)
+let WR = loc &amp; ([W];(gmo|po);[R])
+let rfGMO = WR \ (loc&amp;([W];gmo);WR)
+
+(* Check equality of herd rf and of rfGMO *)
+empty (rf\rfGMO)|(rfGMO\rf) as RfCons
+
+(* Atomicity axiom *)
+let infloc = (gmo &amp; loc)^-1
+let inflocext = infloc &amp; ext
+let winside  = (infloc;rmw;inflocext) &amp; (infloc;rf;rmw;inflocext) &amp; [W]
+empty winside as Atomic</code></pre>
+</div>
+</div>
+<div id="herd3" class="listingblock">
+<div class="title">Example 7. <code>riscv.cat</code>, an alternative herd presentation of the RVWMO memory model (3/3)</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">Partial
+
+(***************)
+(* Definitions *)
+(***************)
+
+(* Define ppo *)
+include "riscv-defs.cat"
+
+(* Compute coherence relation *)
+include "cos-opt.cat"
+
+(**********)
+(* Axioms *)
+(**********)
+
+(* Sc per location *)
+acyclic co|rf|fr|po-loc as Coherence
+
+(* Main model axiom *)
+acyclic co|rfe|fr|ppo as Model
+
+(* Atomicity axiom *)
+empty rmw &amp; (fre;coe) as Atomic</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="operational">A.3. An Operational Memory Model</h3>
+<div class="paragraph">
+<p>This is an alternative presentation of the RVWMO memory model in
+operational style. It aims to admit exactly the same extensional
+behavior as the axiomatic presentation: for any given program, admitting
+an execution if and only if the axiomatic presentation allows it.</p>
+</div>
+<div class="paragraph">
+<p>The axiomatic presentation is defined as a predicate on complete
+candidate executions. In contrast, this operational presentation has an
+abstract microarchitectural flavor: it is expressed as a state machine,
+with states that are an abstract representation of hardware machine
+states, and with explicit out-of-order and speculative execution (but
+abstracting from more implementation-specific microarchitectural details
+such as register renaming, store buffers, cache hierarchies, cache
+protocols, etc.). As such, it can provide useful intuition. It can also
+construct executions incrementally, making it possible to interactively
+and randomly explore the behavior of larger examples, while the
+axiomatic model requires complete candidate executions over which the
+axioms can be checked.</p>
+</div>
+<div class="paragraph">
+<p>The operational presentation covers mixed-size execution, with
+potentially overlapping memory accesses of different power-of-two byte
+sizes. Misaligned accesses are broken up into single-byte accesses.</p>
+</div>
+<div class="paragraph">
+<p>The operational model, together with a fragment of the RISC-V ISA
+semantics (RV64I and A), are integrated into the <code>rmem</code> exploration tool
+(<a href="https://github.com/rems-project/rmem" class="bare">github.com/rems-project/rmem</a>). <code>rmem</code> can explore litmus tests
+(see <a href="#litmustests">[litmustests]</a>) and small ELF binaries
+exhaustively, pseudo-randomly and interactively. In <code>rmem</code>, the ISA
+semantics is expressed explicitly in Sail (see
+<a href="https://github.com/rems-project/sail" class="bare">github.com/rems-project/sail</a> for the Sail language, and
+<a href="https://github.com/rems-project/sail-riscv" class="bare">github.com/rems-project/sail-riscv</a> for the RISC-V ISA model),
+and the concurrency semantics is expressed in Lem (see
+<a href="https://github.com/rems-project/lem" class="bare">github.com/rems-project/lem</a> for the Lem language).</p>
+</div>
+<div class="paragraph">
+<p><code>rmem</code> has a command-line interface and a web-interface. The
+web-interface runs entirely on the client side, and is provided online
+together with a library of litmus tests:
+<a href="http://www.cl.cam.ac.uk/" class="bare">www.cl.cam.ac.uk/</a>. The command-line interface is
+faster than the web-interface, specially in exhaustive mode.</p>
+</div>
+<div class="paragraph">
+<p>Below is an informal introduction of the model states and transitions.
+The description of the formal model starts in the next subsection.</p>
+</div>
+<div class="paragraph">
+<p>Terminology: In contrast to the axiomatic presentation, here every
+memory operation is either a load or a store. Hence, AMOs give rise to
+two distinct memory operations, a load and a store. When used in
+conjunction with <code>instruction</code>, the terms <code>load</code> and <code>store</code> refer
+to instructions that give rise to such memory operations. As such, both
+include AMO instructions. The term <code>acquire</code> refers to an instruction
+(or its memory operation) with the acquire-RCpc or acquire-RCsc
+annotation. The term <code>release</code> refers to an instruction (or its memory
+operation) with the release-RCpc or release-RCsc annotation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Model states</strong></p>
+</div>
+<div class="paragraph">
+<p>Model states: A model state consists of a shared memory and a tuple of hart states.</p>
+</div>
+<div class="imageblock center">
+<div class="content">
+<img src="data:image/png;base64,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" alt="Diagram" width="320" height="154">
+</div>
+</div>
+<div class="paragraph">
+<p>The shared memory state records all the memory store operations that
+have propagated so far, in the order they propagated (this can be made
+more efficient, but for simplicity of the presentation we keep it this
+way).</p>
+</div>
+<div class="paragraph">
+<p>Each hart state consists principally of a tree of instruction instances,
+some of which have been <em>finished</em>, and some of which have not.
+Non-finished instruction instances can be subject to <em>restart</em>, e.g. if
+they depend on an out-of-order or speculative load that turns out to be
+unsound.</p>
+</div>
+<div class="paragraph">
+<p>Conditional branch and indirect jump instructions may have multiple
+successors in the instruction tree. When such instruction is finished,
+any un-taken alternative paths are discarded.</p>
+</div>
+<div class="paragraph">
+<p>Each instruction instance in the instruction tree has a state that
+includes an execution state of the intra-instruction semantics (the ISA
+pseudocode for this instruction). The model uses a formalization of the
+intra-instruction semantics in Sail. One can think of the execution
+state of an instruction as a representation of the pseudocode control
+state, pseudocode call stack, and local variable values. An instruction
+instance state also includes information about the instance&#8217;s memory and
+register footprints, its register reads and writes, its memory
+operations, whether it is finished, etc.</p>
+</div>
+<div class="paragraph">
+<p><strong>Model transitions</strong></p>
+</div>
+<div class="paragraph">
+<p>The model defines, for any model state, the set of allowed transitions,
+each of which is a single atomic step to a new abstract machine state.
+Execution of a single instruction will typically involve many
+transitions, and they may be interleaved in operational-model execution
+with transitions arising from other instructions. Each transition arises
+from a single instruction instance; it will change the state of that
+instance, and it may depend on or change the rest of its hart state and
+the shared memory state, but it does not depend on other hart states,
+and it will not change them. The transitions are introduced below and
+defined in <a href="#transitions">Section A.3.5</a>, with a precondition and
+a construction of the post-transition model state for each.</p>
+</div>
+<div class="paragraph">
+<p>Transitions for all instructions:</p>
+</div>
+<div class="paragraph">
+<p>\(\bullet\) <a href="#fetch">Fetch instruction</a>: This transition represents a fetch and decode of a new instruction instance, as a program order successor of a previously fetched
+instruction instance (or the initial fetch address).</p>
+</div>
+<div class="paragraph">
+<p>The model assumes the instruction memory is fixed; it does not describe
+the behavior of self-modifying code. In particular, the <a href="#fetch">Fetch instruction</a> transition does
+not generate memory load operations, and the shared memory is not
+involved in the transition. Instead, the model depends on an external
+oracle that provides an opcode when given a memory location.</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#reg_write">Register write</a>: This is a write of a register value.</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#reg_read">Register read</a>: This is a read of a register value from the most recent
+program-order-predecessor instruction instance that writes to that
+register.</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#sail_interp">Pseudocode internal step</a>: This covers pseudocode internal computation: arithmetic, function
+calls, etc.</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#finish">Finish instruction</a>: At this point the instruction pseudocode is done, the instruction cannot be restarted, memory accesses cannot be discarded, and all memory
+effects have taken place. For conditional branch and indirect jump
+instructions, any program order successors that were fetched from an
+address that is not the one that was written to the <em>pc</em> register are
+discarded, together with the sub-tree of instruction instances below
+them.</p>
+</div>
+<div class="paragraph">
+<p>Transitions specific to load instructions:</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#initiate_load">Initiate memory load operations</a>: At this point the memory footprint of the load instruction is
+provisionally known (it could change if earlier instructions are
+restarted) and its individual memory load operations can start being
+satisfied.
+\(\bullet\) <a href="#sat_from_forwarding">Satisfy memory load operation by forwarding from unpropogated stores</a>: This partially or entirely satisfies a single memory load operation
+by forwarding, from program-order-previous memory store operations.
+\(\bullet\) <a href="#sat_from_mem">Satisfy memory load operation from memory</a>: This entirely satisfies the outstanding slices of a single memory
+load operation, from memory.
+\(\circ\) <a href="#complete_loads">Complete load operations</a>: At this point all the memory load operations of the instruction have
+been entirely satisfied and the instruction pseudocode can continue
+executing. A load instruction can be subject to being restarted until
+the transition. But, under some conditions, the model might treat a load
+instruction as non-restartable even before it is finished (e.g. see ).</p>
+</div>
+<div class="paragraph">
+<p>Transitions specific to store instructions:</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#initiate_store_footprint">Initiate memory store operation footprints</a>: At this point the memory footprint of the store is provisionally
+known.
+\(\circ\) <a href="#instantiate_store_value">Instantiate memory store operation values</a>: At this point the memory store operations have their values and
+program-order-successor memory load operations can be satisfied by
+forwarding from them.
+\(\circ\) <a href="#commit_stores">Commit store instruction</a>: At this point the store operations are guaranteed to happen (the
+instruction can no longer be restarted or discarded), and they can start
+being propagated to memory.
+\(\bullet\) <a href="#prop_store">Propagate store operation</a>: This propagates a single memory store operation to memory.
+\(\circ\) <a href="#complete_stores">Complete store operations</a>: At this point all the memory store operations of the instruction
+have been propagated to memory, and the instruction pseudocode can
+continue executing.</p>
+</div>
+<div class="paragraph">
+<p>Transitions specific to <code>sc</code> instructions:</p>
+</div>
+<div class="paragraph">
+<p>\(\bullet\) <a href="#early_sc_fail">Early sc fail</a>: This causes the <code>sc</code> to fail, either a spontaneous fail or because
+it is not paired with a program-order-previous <code>lr</code>.
+\(\bullet\) <a href="#paired_sc">Paired sc</a>: This transition indicates the <code>sc</code> is paired with an <code>lr</code> and might
+succeed.
+\(\bullet\) <a href="#commit_sc">Commit and propagate store operation of an sc</a>: This is an atomic execution of the transitions <a href="#commit_stores">Commit store instruction</a> and <a href="#prop_store">Propagate store operation</a>, it is enabled
+only if the stores from which the <code>lr</code> read from have not been
+overwritten.
+\(\bullet\) <a href="#late_sc_fail">Late sc fail</a>: This causes the <code>sc</code> to fail, either a spontaneous fail or because
+the stores from which the <code>lr</code> read from have been overwritten.</p>
+</div>
+<div class="paragraph">
+<p>Transitions specific to AMO instructions:</p>
+</div>
+<div class="paragraph">
+<p>\(\bullet\) <a href="#do_amo">Satisfy, commit and propagate operations of an AMO</a>: This is an atomic execution of all the transitions needed to satisfy
+the load operation, do the required arithmetic, and propagate the store
+operation.</p>
+</div>
+<div class="paragraph">
+<p>Transitions specific to fence instructions:</p>
+</div>
+<div class="paragraph">
+<p>\(\circ\) <a href="#commit_fence">Commit fence</a></p>
+</div>
+<div class="paragraph">
+<p>The transitions labeled \(\circ\) can always be taken eagerly,
+as soon as their precondition is satisfied, without excluding other
+behavior; the \(\bullet\) cannot. Although is marked with a
+\(\bullet\), it can be taken eagerly as long as it is not
+taken infinitely many times.</p>
+</div>
+<div class="paragraph">
+<p>An instance of a non-AMO load instruction, after being fetched, will
+typically experience the following transitions in this order:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#reg_read">Register read</a></p>
+</li>
+<li>
+<p><a href="#initiate_load">Initiate memory load operations</a></p>
+</li>
+<li>
+<p><a href="#sat_by_forwarding">Satisfy memory load operation by forwarding from unpropagated stores</a> and/or <a href="#sat_from_mem">Satisfy memory load operation from memory</a> (as many as needed to satisfy all the load operations of the
+instance)</p>
+</li>
+<li>
+<p><a href="#complete_loads">Complete load operations</a></p>
+</li>
+<li>
+<p><a href="#reg_write">Register write</a></p>
+</li>
+<li>
+<p><a href="#finish">Finish instruction</a></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Before, between and after the transitions above, any number of
+<a href="#sail_interp">Pseudocode internal step</a> transitions may appear. In addition, a <a href="#fetch">Fetch instruction</a> transition for fetching the
+instruction in the next program location will be available until it is
+taken.</p>
+</div>
+<div class="paragraph">
+<p>This concludes the informal description of the operational model. The
+following sections describe the formal operational model.</p>
+</div>
+<div class="sect3">
+<h4 id="pseudocode_exec">A.3.1. Intra-instruction Pseudocode Execution</h4>
+<div class="paragraph">
+<p>The intra-instruction semantics for each instruction instance is
+expressed as a state machine, essentially running the instruction
+pseudocode. Given a pseudocode execution state, it computes the next
+state. Most states identify a pending memory or register operation,
+requested by the pseudocode, which the memory model has to do. The
+states are (this is a tagged union; tags in small-caps):</p>
+</div>
+<table class="tableblock frame-all grid-none stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Load_mem(<em>kind</em>, <em>address</em>, <em>size</em>, <em>load_continuation</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- memory load
+operation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Early_sc_fail(<em>res_continuation</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- allow <code>sc</code> to fail early</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Store_ea(<em>kind</em>, <em>address</em>, <em>size</em>, <em>next_state</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- memory store
+effective address</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Store_memv(<em>mem_value</em>, <em>store_continuation</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- memory store value</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fence(<em>kind</em>, <em>next_state</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- fence</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Read_reg(<em>reg_name</em>, <em>read_continuation</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- register read</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Write_reg(<em>reg_name</em>, <em>reg_value</em>, <em>next_state</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- register write</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal(<em>next_state</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- pseudocode internal step</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Done</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- end of pseudocode</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Here:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>mem_value</em> and <em>reg_value</em> are lists of bytes;</p>
+</li>
+<li>
+<p><em>address</em> is an integer of XLEN bits;</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>for load/store, <em>kind</em> identifies whether it is <code>lr/sc</code>,
+acquire-RCpc/release-RCpc, acquire-RCsc/release-RCsc,
+acquire-release-RCsc;
+* for fence, <em>kind</em> identifies whether it is a normal or TSO, and (for
+normal fences) the predecessor and successor ordering bits;
+* <em>reg_name</em> identifies a register and a slice thereof (start and end bit
+indices); and the continuations describe how the instruction instance will continue
+for each value that might be provided by the surrounding memory model
+(the <em>load_continuation</em> and <em>read_continuation</em> take the value loaded
+from memory and read from the previous register write, the
+<em>store_continuation</em> takes <em>false</em> for an <code>sc</code> that failed and <em>true</em> in
+all other cases, and <em>res_continuation</em> takes <em>false</em> if the <code>sc</code> fails
+and <em>true</em> otherwise).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For example, given the load instruction <code>lw x1,0(x2)</code>, an execution will
+typically go as follows. The initial execution state will be computed
+from the pseudocode for the given opcode. This can be expected to be
+Read_reg(<code>x2</code>, <em>read_continuation</em>). Feeding the most recently written
+value of register <code>x2</code> (the instruction semantics will be blocked if
+necessary until the register value is available), say <code>0x4000</code>, to
+<em>read_continuation</em> returns Load_mem(<code>plain_load</code>, <code>0x4000</code>, <code>4</code>,
+<em>load_continuation</em>). Feeding the 4-byte value loaded from memory
+location <code>0x4000</code>, say <code>0x42</code>, to <em>load_continuation</em> returns
+Write_reg(<code>x1</code>, <code>0x42</code>, Done). Many Internal(<em>next_state</em>) states may
+appear before and between the states above.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Notice that writing to memory is split into two steps, Store_ea and
+Store_memv: the first one makes the memory footprint of the store
+provisionally known, and the second one adds the value to be stored. We
+ensure these are paired in the pseudocode (Store_ea followed by
+Store_memv), but there may be other steps between them.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is observable that the Store_ea can occur before the value to be
+stored is determined. For example, for the litmus test
+LB+fence.r.rw+data-po to be allowed by the operational model (as it is
+by RVWMO), the first store in Hart 1 has to take the Store_ea step
+before its value is determined, so that the second store can see it is
+to a non-overlapping memory footprint, allowing the second store to be
+committed out of order without violating coherence.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The pseudocode of each instruction performs at most one store or one
+load, except for AMOs that perform exactly one load and one store. Those
+memory accesses are then split apart into the architecturally atomic
+units by the hart semantics (see <a href="#initiate_load">Initiate memory load operations</a> and <a href="#initiate_store_footprint">Initiate memory store operation footprints</a> below).</p>
+</div>
+<div class="paragraph">
+<p>Informally, each bit of a register read should be satisfied from a
+register write by the most recent (in program order) instruction
+instance that can write that bit (or from the hart’s initial register
+state if there is no such write). Hence, it is essential to know the
+register write footprint of each instruction instance, which we
+calculate when the instruction instance is created (see the <a href="#fetch">Festch instruction</a> action of
+below). We ensure in the pseudocode that each instruction does at most
+one register write to each register bit, and also that it does not try
+to read a register value it just wrote.</p>
+</div>
+<div class="paragraph">
+<p>Data-flow dependencies (address and data) in the model emerge from the
+fact that each register read has to wait for the appropriate register
+write to be executed (as described above).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="inst_state">A.3.2. Instruction Instance State</h4>
+<div class="paragraph">
+<p>Each instruction instance <em>_i</em> has a state comprising:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>program_loc</em>, the memory address from which the instruction was
+fetched;</p>
+</li>
+<li>
+<p><em>instruction_kind</em>, identifying whether this is a load, store, AMO,
+fence, branch/jump or a <code>simple</code> instruction (this also includes a
+<em>kind</em> similar to the one described for the pseudocode execution
+states);</p>
+</li>
+<li>
+<p><em>src_regs</em>, the set of source _reg_name_s (including system
+registers), as statically determined from the pseudocode of the
+instruction;</p>
+</li>
+<li>
+<p><em>dst_regs</em>, the destination _reg_name_s (including system registers),
+as statically determined from the pseudocode of the instruction;</p>
+</li>
+<li>
+<p><em>pseudocode_state</em> (or sometimes just <code>state</code> for short), one of (this
+is a tagged union; tags in small-caps):<br></p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-none stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Plain(<em>isa_state</em>)</th>
+<th class="tableblock halign-left valign-top">- ready to make a pseudocode transition</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pending_mem_loads(<em>load_continuation</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- requesting memory load
+operation(s)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pending_mem_stores(<em>store_continuation</em>)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">- requesting memory store
+operation(s)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist">
+<ul>
+<li>
+<p><em>reg_reads</em>, the register reads the instance has performed, including,
+for each one, the register write slices it read from;</p>
+</li>
+<li>
+<p><em>reg_writes</em>, the register writes the instance has performed;</p>
+</li>
+<li>
+<p><em>mem_loads</em>, a set of memory load operations, and for each one the
+as-yet-unsatisfied slices (the byte indices that have not been satisfied
+yet), and, for the satisfied slices, the store slices (each consisting
+of a memory store operation and subset of its byte indices) that
+satisfied it.</p>
+</li>
+<li>
+<p><em>mem_stores</em>, a set of memory store operations, and for each one a
+flag that indicates whether it has been propagated (passed to the shared
+memory) or not.</p>
+</li>
+<li>
+<p>information recording whether the instance is committed, finished,
+etc.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each memory load operation includes a memory footprint (address and
+size). Each memory store operations includes a memory footprint, and,
+when available, a value.</p>
+</div>
+<div class="paragraph">
+<p>A load instruction instance with a non-empty <em>mem_loads</em>, for which all
+the load operations are satisfied (i.e. there are no unsatisfied load
+slices) is said to be <em>entirely satisfied</em>.</p>
+</div>
+<div class="paragraph">
+<p>Informally, an instruction instance is said to have <em>fully determined
+data</em> if the load (and <code>sc</code>) instructions feeding its source registers
+are finished. Similarly, it is said to have a <em>fully determined memory
+footprint</em> if the load (and <code>sc</code>) instructions feeding its memory
+operation address register are finished. Formally, we first define the
+notion of <em>fully determined register write</em>: a register write
+\(w\) from <em>reg_writes</em> of instruction instance
+\(i\) is said to be <em>fully determined</em> if one of the following
+conditions hold:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>\(i\) is finished; or</p>
+</li>
+<li>
+<p>the value written by \(w\) is not affected by a memory
+operation that \(i\) has made (i.e. a value loaded from memory
+or the result of <code>sc</code>), and, for every register read that
+\(i\) has made, that affects \(w\), the register
+write from which \(i\) read is fully determined (or
+\(i\) read from the initial register state).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now, an instruction instance \(i\) is said to have <em>fully
+determined data</em> if for every register read \(r\) from
+<em>reg_reads</em>, the register writes that \(r\) reads from are
+fully determined. An instruction instance \(i\) is said to
+have a <em>fully determined memory footprint</em> if for every register read
+\(r\) from <em>reg_reads</em> that feeds into \(i\)’s
+memory operation address, the register writes that \(r\) reads
+from are fully determined.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>rmem</code> tool records, for every register write, the set of register
+writes from other instructions that have been read by this instruction
+at the point of performing the write. By carefully arranging the
+pseudocode of the instructions covered by the tool we were able to make
+it so that this is exactly the set of register writes on which the write
+depends on.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_hart_state">A.3.3. Hart State</h4>
+<div class="paragraph">
+<p>The model state of a single hart comprises:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>hart_id</em>, a unique identifier of the hart;</p>
+</li>
+<li>
+<p><em>initial_register_state</em>, the initial register value for each
+register;</p>
+</li>
+<li>
+<p><em>initial_fetch_address</em>, the initial instruction fetch address;</p>
+</li>
+<li>
+<p><em>instruction_tree</em>, a tree of the instruction instances that have been
+fetched (and not discarded), in program order.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_shared_memory_state">A.3.4. Shared Memory State</h4>
+<div class="paragraph">
+<p>The model state of the shared memory comprises a list of memory store
+operations, in the order they propagated to the shared memory.</p>
+</div>
+<div class="paragraph">
+<p>When a store operation is propagated to the shared memory it is simply
+added to the end of the list. When a load operation is satisfied from
+memory, for each byte of the load operation, the most recent
+corresponding store slice is returned.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For most purposes, it is simpler to think of the shared memory as an
+array, i.e., a map from memory locations to memory store operation
+slices, where each memory location is mapped to a one-byte slice of the
+most recent memory store operation to that location. However, this
+abstraction is not detailed enough to properly handle the <code>sc</code>
+instruction. The RVWMO allows store operations from the same hart as the
+<code>sc</code> to intervene between the store operation of the <code>sc</code> and the store
+operations the paired <code>lr</code> read from. To allow such store operations to
+intervene, and forbid others, the array abstraction must be extended to
+record more information. Here, we use a list as it is very simple, but a
+more efficient and scalable implementations should probably use
+something better.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="transitions">A.3.5. Transitions</h4>
+<div class="paragraph">
+<p>Each of the paragraphs below describes a single kind of system
+transition. The description starts with a condition over the current
+system state. The transition can be taken in the current state only if
+the condition is satisfied. The condition is followed by an action that
+is applied to that state when the transition is taken, in order to
+generate the new system state.</p>
+</div>
+<div class="sect4">
+<h5 id="fetch">Fetch instruction</h5>
+<div class="paragraph">
+<p>A possible program-order-successor of instruction instance
+\(i\) can be fetched from address <em>loc</em> if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>it has not already been fetched, i.e., none of the immediate
+successors of \(i\) in the hart’s <em>instruction_tree</em> are from
+<em>loc</em>; and</p>
+</li>
+<li>
+<p>if \(i\)’s pseudocode has already written an address to
+<em>pc</em>, then <em>loc</em> must be that address, otherwise <em>loc</em> is:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>for a conditional branch, the successor address or the branch target
+address;</p>
+</li>
+<li>
+<p>for a (direct) jump and link instruction (<code>jal</code>), the target address;</p>
+</li>
+<li>
+<p>for an indirect jump instruction (<code>jalr</code>), any address; and</p>
+</li>
+<li>
+<p>for any other instruction, \(i.\textit{program\_loc}+4\).</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Action: construct a freshly initialized instruction instance
+\(i'\) for the instruction in the program memory at <em>loc</em>,
+with state Plain(<em>isa_state</em>), computed from the instruction pseudocode,
+including the static information available from the pseudocode such as
+its <em>instruction_kind</em>, <em>src_regs</em>, and <em>dst_regs</em>, and add
+\(i'\) to the hart’s <em>instruction_tree</em> as a successor of
+\(i\).</p>
+</div>
+<div class="paragraph">
+<p>The possible next fetch addresses (<em>loc</em>) are available immediately
+after fetching \(i\) and the model does not need to wait for
+the pseudocode to write to <em>pc</em>; this allows out-of-order execution, and
+speculation past conditional branches and jumps. For most instructions
+these addresses are easily obtained from the instruction pseudocode. The
+only exception to that is the indirect jump instruction (<code>jalr</code>), where
+the address depends on the value held in a register. In principle the
+mathematical model should allow speculation to arbitrary addresses here.
+The exhaustive search in the <code>rmem</code> tool handles this by running the
+exhaustive search multiple times with a growing set of possible next
+fetch addresses for each indirect jump. The initial search uses empty
+sets, hence there is no fetch after indirect jump instruction until the
+pseudocode of the instruction writes to <em>pc</em>, and then we use that value
+for fetching the next instruction. Before starting the next iteration of
+exhaustive search, we collect for each indirect jump (grouped by code
+location) the set of values it wrote to <em>pc</em> in all the executions in
+the previous search iteration, and use that as possible next fetch
+addresses of the instruction. This process terminates when no new fetch
+addresses are detected.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="initiate_load">Initiate memory load operations</h5>
+<div class="paragraph">
+<p>An instruction instance \(i\) in state Plain(Load_mem(<em>kind</em>,
+<em>address</em>, <em>size</em>, <em>load_continuation</em>)) can always initiate the
+corresponding memory load operations. Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Construct the appropriate memory load operations \(mlos\):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if <em>address</em> is aligned to <em>size</em> then \(mlos\) is a single
+memory load operation of <em>size</em> bytes from <em>address</em>;</p>
+</li>
+<li>
+<p>otherwise, \(mlos\) is a set of <em>size</em> memory load
+operations, each of one byte, from the addresses
+\(\textit{address}\ldots\textit{address}+\textit{size}-1\).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>set <em>mem_loads</em> of \(i\) to \(mlos\); and</p>
+</li>
+<li>
+<p>update the state of \(i\) to
+Pending_mem_loads(<em>load_continuation</em>).</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>In <a href="#rvwmo-primitives">[rvwmo-primitives]</a> it is said that
+misaligned memory accesses may be decomposed at any granularity. Here we
+decompose them to one-byte accesses as this granularity subsumes all
+others.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="sat_by_forwarding">Satisfy memory load operation by forwarding from unpropagated stores</h5>
+<div class="paragraph">
+<p>For a non-AMO load instruction instance \(i\) in state
+Pending_mem_loads(<em>load_continuation</em>), and a memory load operation
+\(mlo\) in \(i.\textit{mem\_loads}\) that has
+unsatisfied slices, the memory load operation can be partially or
+entirely satisfied by forwarding from unpropagated memory store
+operations by store instruction instances that are program-order-before
+\(i\) if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>all program-order-previous <code>fence</code> instructions with <code>.sr</code> and <code>.pw</code>
+set are finished;</p>
+</li>
+<li>
+<p>for every program-order-previous <code>fence</code> instruction, \(f\),
+with <code>.sr</code> and <code>.pr</code> set, and <code>.pw</code> not set, if \(f\) is not
+finished then all load instructions that are program-order-before
+\(f\) are entirely satisfied;</p>
+</li>
+<li>
+<p>for every program-order-previous <code>fence.tso</code> instruction,
+\(f\), that is not finished, all load instructions that are
+program-order-before \(f\) are entirely satisfied;</p>
+</li>
+<li>
+<p>if \(i\) is a load-acquire-RCsc, all program-order-previous
+store-releases-RCsc are finished;</p>
+</li>
+<li>
+<p>if \(i\) is a load-acquire-release, all
+program-order-previous instructions are finished;</p>
+</li>
+<li>
+<p>all non-finished program-order-previous load-acquire instructions are
+entirely satisfied; and</p>
+</li>
+<li>
+<p>all program-order-previous store-acquire-release instructions are
+finished;</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Let \(msoss\) be the set of all unpropagated memory store
+operation slices from non-<code>sc</code> store instruction instances that are
+program-order-before \(i\) and have already calculated the
+value to be stored, that overlap with the unsatisfied slices of
+\(mlo\), and which are not superseded by intervening store
+operations or store operations that are read from by an intervening
+load. The last condition requires, for each memory store operation slice
+\(msos\) in \(msoss\) from instruction
+\(i'\):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>that there is no store instruction program-order-between \(i\)
+and \(i'\) with a memory store operation overlapping
+\(msos\); and</p>
+</li>
+<li>
+<p>that there is no load instruction program-order-between \(i\)
+and \(i'\) that was satisfied from an overlapping memory store
+operation slice from a different hart.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>update \(i.\textit{mem\_loads}\) to indicate that
+\(mlo\) was satisfied by \(msoss\); and</p>
+</li>
+<li>
+<p>restart any speculative instructions which have violated coherence as
+a result of this, i.e., for every non-finished instruction
+\(i'\) that is a program-order-successor of \(i\),
+and every memory load operation \(mlo'\) of \(i'\)
+that was satisfied from \(msoss'\), if there exists a memory
+store operation slice \(msos'\) in \(msoss'\), and
+an overlapping memory store operation slice from a different memory
+store operation in \(msoss\), and \(msos'\) is not
+from an instruction that is a program-order-successor of
+\(i\), restart \(i'\) and its <em>restart-dependents</em>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Where, the <em>restart-dependents</em> of instruction \(j\) are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>program-order-successors of \(j\) that have data-flow
+dependency on a register write of \(j\);</p>
+</li>
+<li>
+<p>program-order-successors of \(j\) that have a memory load
+operation that reads from a memory store operation of \(j\)
+(by forwarding);</p>
+</li>
+<li>
+<p>if \(j\) is a load-acquire, all the program-order-successors
+of \(j\);</p>
+</li>
+<li>
+<p>if \(j\) is a load, for every <code>fence</code>, \(f\), with
+<code>.sr</code> and <code>.pr</code> set, and <code>.pw</code> not set, that is a
+program-order-successor of \(j\), all the load instructions
+that are program-order-successors of \(f\);</p>
+</li>
+<li>
+<p>if \(j\) is a load, for every <code>fence.tso</code>, \(f\),
+that is a program-order-successor of \(j\), all the load
+instructions that are program-order-successors of \(f\); and</p>
+</li>
+<li>
+<p>(recursively) all the restart-dependents of all the instruction
+instances above.</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>Forwarding memory store operations to a memory load might satisfy only
+some slices of the load, leaving other slices unsatisfied.</p>
+</div>
+<div class="paragraph">
+<p>A program-order-previous store operation that was not available when
+taking the transition above might make \(msoss\) provisionally
+unsound (violating coherence) when it becomes available. That store will
+prevent the load from being finished (see <a href="#finish">Finish instruction</a>), and will cause it to
+restart when that store operation is propagated (see <a href="#prop_store">Propagate store operation</a>).</p>
+</div>
+<div class="paragraph">
+<p>A consequence of the transition condition above is that
+store-release-RCsc memory store operations cannot be forwarded to
+load-acquire-RCsc instructions: \(msoss\) does not include
+memory store operations from finished stores (as those must be
+propagated memory store operations), and the condition above requires
+all program-order-previous store-releases-RCsc to be finished when the
+load is acquire-RCsc.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="sat_from_mem">Satisfy memory load operation from memory</h5>
+<div class="paragraph">
+<p>For an instruction instance \(i\) of a non-AMO load
+instruction or an AMO instruction in the context of the <a href="#do_amo">Saitsfy, commit and propagate operations of an AMO</a> transition,
+any memory load operation \(mlo\) in
+\(i.\textit{mem\_loads}\) that has unsatisfied slices, can be
+satisfied from memory if all the conditions of &lt;sat_by_forwarding, Saitsfy memory load operation by forwarding from unpropagated stores&gt;&gt; are satisfied. Action:
+let \(msoss\) be the memory store operation slices from memory
+covering the unsatisfied slices of \(mlo\), and apply the
+action of <a href="#do_amo">Satisfy memory operation by forwarding from unpropagates stores</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that <a href="#do_amo">Satisfy memory operation by forwarding from unpropagates stores</a> might leave some slices of the memory load operation
+unsatisfied, those will have to be satisfied by taking the transition
+again, or taking <a href="#sat_from_mem">Satisfy memory load operation from memory</a>. <a href="#sat_from_mem">Satisfy memory load operation from memory</a>, on the other hand, will always satisfy all the
+unsatisfied slices of the memory load operation.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="complete_loads">Complete load operations</h5>
+<div class="paragraph">
+<p>A load instruction instance \(i\) in state
+Pending_mem_loads(<em>load_continuation</em>) can be completed (not to be
+confused with finished) if all the memory load operations
+\(i.\textit{mem\_loads}\) are entirely satisfied (i.e. there
+are no unsatisfied slices). Action: update the state of \(i\)
+to Plain(<em>load_continuation(mem_value)</em>), where <em>mem_value</em> is assembled
+from all the memory store operation slices that satisfied
+\(i.\textit{mem\_loads}\).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="early_sc_fail">Early <code>sc</code> fail</h5>
+<div class="paragraph">
+<p>An <code>sc</code> instruction instance \(i\) in state
+Plain(Early_sc_fail(<em>res_continuation</em>)) can always be made to fail.
+Action: update the state of \(i\) to
+Plain(<em>res_continuation(false)</em>).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="paired_sc">Paired <code>sc</code></h5>
+<div class="paragraph">
+<p>An <code>sc</code> instruction instance \(i\) in state
+Plain(Early_sc_fail(<em>res_continuation</em>)) can continue its (potentially
+successful) execution if \(i\) is paired with an <code>lr</code>. Action:
+update the state of \(i\) to Plain(<em>res_continuation(true)</em>).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="initiate_store_footprint">Initiate memory store operation footprints</h5>
+<div class="paragraph">
+<p>An instruction instance \(i\) in state Plain(Store_ea(<em>kind</em>,
+<em>address</em>, <em>size</em>, <em>next_state</em>)) can always announce its pending memory
+store operation footprint. Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>construct the appropriate memory store operations \(msos\)
+(without the store value):</p>
+<div class="ulist">
+<ul>
+<li>
+<p>if <em>address</em> is aligned to <em>size</em> then \(msos\) is a single
+memory store operation of <em>size</em> bytes to <em>address</em>;</p>
+</li>
+<li>
+<p>otherwise, \(msos\) is a set of <em>size</em> memory store
+operations, each of one-byte size, to the addresses
+\(\textit{address}\ldots\textit{address}+\textit{size}-1\).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>set \(i.\textit{mem\_stores}\) to \(msos\); and</p>
+</li>
+<li>
+<p>update the state of \(i\) to Plain(<em>next_state</em>).</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>Note that after taking the transition above the memory store operations
+do not yet have their values. The importance of splitting this
+transition from the transition below is that it allows other
+program-order-successor store instructions to observe the memory
+footprint of this instruction, and if they don’t overlap, propagate out
+of order as early as possible (i.e. before the data register value
+becomes available).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="instantiate_store_value">Instantiate memory store operation values</h5>
+<div class="paragraph">
+<p>An instruction instance \(i\) in state
+Plain(Store_memv(<em>mem_value</em>, <em>store_continuation</em>)) can always
+instantiate the values of the memory store operations
+\(i.\textit{mem\_stores}\). Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>split <em>mem_value</em> between the memory store operations
+\(i.\textit{mem\_stores}\); and</p>
+</li>
+<li>
+<p>update the state of \(i\) to
+Pending_mem_stores(<em>store_continuation</em>).</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="commit_stores">Commit store instruction</h5>
+<div class="paragraph">
+<p>An uncommitted instruction instance \(i\) of a non-<code>sc</code> store
+instruction or an <code>sc</code> instruction in the context of the <a href="#commit_sc">Commit and propagate store operation of an <code>sc</code></a>
+transition, in state Pending_mem_stores(<em>store_continuation</em>), can be
+committed (not to be confused with propagated) if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>\(i\) has fully determined data;</p>
+</li>
+<li>
+<p>all program-order-previous conditional branch and indirect jump
+instructions are finished;</p>
+</li>
+<li>
+<p>all program-order-previous <code>fence</code> instructions with <code>.sw</code> set are
+finished;</p>
+</li>
+<li>
+<p>all program-order-previous <code>fence.tso</code> instructions are finished;</p>
+</li>
+<li>
+<p>all program-order-previous load-acquire instructions are finished;</p>
+</li>
+<li>
+<p>all program-order-previous store-acquire-release instructions are
+finished;</p>
+</li>
+<li>
+<p>if \(i\) is a store-release, all program-order-previous
+instructions are finished;</p>
+</li>
+<li>
+<p>all program-order-previous memory access instructions have a fully
+determined memory footprint;</p>
+</li>
+<li>
+<p>all program-order-previous store instructions, except for <code>sc</code> that failed,
+have initiated and so have non-empty <em>mem_stores</em>; and</p>
+</li>
+<li>
+<p>all program-order-previous load instructions have initiated and so have
+non-empty <em>mem_loads</em>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Action: record that <em>i</em> is committed.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Notice that if condition
+<a href="#commit_stores">8</a> is satisfied
+the conditions
+<a href="#commit_stores">9</a> and
+<a href="#commit_stores">10</a> are also
+satisfied, or will be satisfied after taking some eager transitions.
+Hence, requiring them does not strengthen the model. By requiring them,
+we guarantee that previous memory access instructions have taken enough
+transitions to make their memory operations visible for the condition
+check of , which is the next transition the instruction will take,
+making that condition simpler.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="prop_store">Propagate store operation</h5>
+<div class="paragraph">
+<p>For a committed instruction instance \(i\) in state
+Pending_mem_stores(<em>store_continuation</em>), and an unpropagated memory
+store operation \(mso\) in
+\(i.\textit{mem\_stores}\), \(mso\) can be
+propagated if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>all memory store operations of program-order-previous store
+instructions that overlap with \(mso\) have already
+propagated;</p>
+</li>
+<li>
+<p>all memory load operations of program-order-previous load instructions
+that overlap with \(mso\) have already been satisfied, and
+(the load instructions) are <em>non-restartable</em> (see definition below);
+and</p>
+</li>
+<li>
+<p>all memory load operations that were satisfied by forwarding
+\(mso\) are entirely satisfied.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Where a non-finished instruction instance \(j\) is
+<em>non-restartable</em> if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>there does not exist a store instruction \(s\) and an
+unpropagated memory store operation \(mso\) of \(s\)
+such that applying the action of the <a href="#prop_store">Propagate store operation</a> transition to
+\(mso\) will result in the restart of \(j\); and</p>
+</li>
+<li>
+<p>there does not exist a non-finished load instruction \(l\)
+and a memory load operation \(mlo\) of \(l\) such
+that applying the action of the <a href="#sat_by_forwarding">Satisfy memory load operation by forwarding from unpropagated stores</a>/<a href="#sat_from_mem">Satisfy memory load operation from memory</a> transition (even if
+\(mlo\) is already satisfied) to \(mlo\) will result
+in the restart of \(j\).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>update the shared memory state with \(mso\);</p>
+</li>
+<li>
+<p>update \(i.\textit{mem\_stores}\) to indicate that
+\(mso\) was propagated; and</p>
+</li>
+<li>
+<p>restart any speculative instructions which have violated coherence as
+a result of this, i.e., for every non-finished instruction
+\(i'\) program-order-after \(i\) and every memory
+load operation \(mlo'\) of \(i'\) that was satisfied
+from \(msoss'\), if there exists a memory store operation
+slice \(msos'\) in \(msoss'\) that overlaps with
+\(mso\) and is not from \(mso\), and
+\(msos'\) is not from a program-order-successor of
+\(i\), restart \(i'\) and its <em>restart-dependents</em>
+(see <a href="#sat_by_forwarding">Satisfy memory load operation by forwarding from unpropagated stores</a>).</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="commit_sc">Commit and propagate store operation of an <code>sc</code></h5>
+<div class="paragraph">
+<p>An uncommitted <code>sc</code> instruction instance \(i\), from hart
+\(h\), in state Pending_mem_stores(<em>store_continuation</em>), with
+a paired <code>lr</code> \(i'\) that has been satisfied by some store
+slices \(msoss\), can be committed and propagated at the same
+time if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>\(i'\) is finished;</p>
+</li>
+<li>
+<p>every memory store operation that has been forwarded to
+\(i'\) is propagated;</p>
+</li>
+<li>
+<p>the conditions of <a href="#commit_stores">Commit store instruction</a> is satisfied;</p>
+</li>
+<li>
+<p>the conditions of <a href="#prop_stores">Commit store instruction</a> is satisfied (notice that an <code>sc</code> instruction can
+only have one memory store operation); and</p>
+</li>
+<li>
+<p>for every store slice \(msos\) from \(msoss\),
+\(msos\) has not been overwritten, in the shared memory, by a
+store that is from a hart that is not \(h\), at any point
+since \(msos\) was propagated to memory.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>apply the actions of <a href="#commit_stores">Commit store instruction</a>; and</p>
+</li>
+<li>
+<p>apply the action of <a href="#prop_stores">Commit store instruction</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="late_sc_fail">Late <code>sc</code> fail</h5>
+<div class="paragraph">
+<p>An <code>sc</code> instruction instance \(i\) in state
+Pending_mem_stores(<em>store_continuation</em>), that has not propagated its
+memory store operation, can always be made to fail. Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>clear \(i.\textit{mem\_stores}\); and</p>
+</li>
+<li>
+<p>update the state of \(i\) to
+Plain(<em>store_continuation(false)</em>).</p>
+</li>
+</ol>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>For efficiency, the <code>rmem</code> tool allows this transition only when it is
+not possible to take the <a href="#commit_sc">Commit and propagate store operation of an sc</a> transition. This does not affect the set of
+allowed final states, but when explored interactively, if the <code>sc</code>
+should fail one should use the <a href="#early_sc_fail">Eaarly sc fail</a> transition instead of waiting for this transition.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="complete_stores">Complete store operations</h5>
+<div class="paragraph">
+<p>A store instruction instance \(i\) in state
+Pending_mem_stores(<em>store_continuation</em>), for which all the memory store
+operations in \(i.\textit{mem\_stores}\) have been propagated,
+can always be completed (not to be confused with finished). Action:
+update the state of \(i\) to
+Plain(<em>store_continuation(true)</em>).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="do_amo">Satisfy, commit and propagate operations of an AMO</h5>
+<div class="paragraph">
+<p>An AMO instruction instance \(i\) in state
+Pending_mem_loads(<em>load_continuation</em>) can perform its memory access if
+it is possible to perform the following sequence of transitions with no
+intervening transitions:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#sat_from_mem">Satisfy memory load operation from memory</a></p>
+</li>
+<li>
+<p><a href="#complete_loads">Complere load operations</a></p>
+</li>
+<li>
+<p><a href="#sail_interp">Pseudocode internal step</a> (zero or more times)</p>
+</li>
+<li>
+<p><a href="#instantiate_store_value">Instantiate memory store operation values</a></p>
+</li>
+<li>
+<p><a href="#commit_stores">Commit store instruction</a></p>
+</li>
+<li>
+<p><a href="#prop_store">Propagate store operation</a></p>
+</li>
+<li>
+<p><a href="#complete_stores">Complete store operations</a></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>and in addition, the condition of <a href="#finish">Finish instruction</a>, with the exception of not requiring
+\(i\) to be in state Plain(Done), holds after those
+transitions. Action: perform the above sequence of transitions (this
+does not include <a href="#finish">Finish instruction</a>), one after the other, with no intervening
+transitions.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Notice that program-order-previous stores cannot be forwarded to the
+load of an AMO. This is simply because the sequence of transitions above
+does not include the forwarding transition. But even if it did include
+it, the sequence will fail when trying to do the <a href="#prop_store">Propagate store operation</a> transition, as this
+transition requires all program-order-previous store operations to
+overlapping memory footprints to be propagated, and forwarding requires
+the store operation to be unpropagated.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the store of an AMO cannot be forwarded to a
+program-order-successor load. Before taking the transition above, the
+store operation of the AMO does not have its value and therefore cannot
+be forwarded; after taking the transition above the store operation is
+propagated and therefore cannot be forwarded.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="commit_fence">Commit fence</h5>
+<div class="paragraph">
+<p>A fence instruction instance \(i\) in state
+Plain(Fence(<em>kind</em>, <em>next_state</em>)) can be committed if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>if \(i\) is a normal fence and it has <code>.pr</code> set, all
+program-order-previous load instructions are finished;</p>
+</li>
+<li>
+<p>if \(i\) is a normal fence and it has <code>.pw</code> set, all
+program-order-previous store instructions are finished; and</p>
+</li>
+<li>
+<p>if \(i\) is a <code>fence.tso</code>, all program-order-previous load
+and store instructions are finished.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>record that \(i\) is committed; and</p>
+</li>
+<li>
+<p>update the state of \(i\) to Plain(<em>next_state</em>).</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="reg_read">Register read</h5>
+<div class="paragraph">
+<p>An instruction instance \(i\) in state
+Plain(Read_reg(<em>reg_name</em>, <em>read_cont</em>)) can do a register read of
+<em>reg_name</em> if every instruction instance that it needs to read from has
+already performed the expected <em>reg_name</em> register write.</p>
+</div>
+<div class="paragraph">
+<p>Let <em>read_sources</em> include, for each bit of <em>reg_name</em>, the write to
+that bit by the most recent (in program order) instruction instance that
+can write to that bit, if any. If there is no such instruction, the
+source is the initial register value from <em>initial_register_state</em>. Let
+<em>reg_value</em> be the value assembled from <em>read_sources</em>. Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>add <em>reg_name</em> to \(i.\textit{reg\_reads}\) with
+<em>read_sources</em> and <em>reg_value</em>; and</p>
+</li>
+<li>
+<p>update the state of \(i\) to Plain(<em>read_cont(reg_value)</em>).</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect4">
+<h5 id="reg_write">Register write</h5>
+<div class="paragraph">
+<p>An instruction instance \(i\) in state
+Plain(Write_reg(<em>reg_name</em>, <em>reg_value</em>, <em>next_state</em>)) can always do a
+<em>reg_name</em> register write. Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>add <em>reg_name</em> to \(i.\textit{reg\_writes}\) with
+\(deps\) and <em>reg_value</em>; and</p>
+</li>
+<li>
+<p>update the state of \(i\) to Plain(<em>next_state</em>).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>where \(deps\) is a pair of the set of all <em>read_sources</em> from
+\(i.\textit{reg\_reads}\), and a flag that is true iff
+\(i\) is a load instruction instance that has already been
+entirely satisfied.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="sail_interp">Pseudocode internal step</h5>
+<div class="paragraph">
+<p>An instruction instance \(i\) in state
+Plain(Internal(<em>next_state</em>)) can always do that pseudocode-internal
+step. Action: update the state of \(i\) to
+Plain(<em>next_state</em>).</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="finish">Finish instruction</h5>
+<div class="paragraph">
+<p>A non-finished instruction instance \(i\) in state Plain(Done)
+can be finished if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>if \(i\) is a load instruction:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>all program-order-previous load-acquire instructions are finished;</p>
+</li>
+<li>
+<p>all program-order-previous <code>fence</code> instructions with <code>.sr</code> set are
+finished;</p>
+</li>
+<li>
+<p>for every program-order-previous <code>fence.tso</code> instruction,
+\(f\), that is not finished, all load instructions that are
+program-order-before \(f\) are finished; and</p>
+</li>
+<li>
+<p>it is guaranteed that the values read by the memory load operations
+of \(i\) will not cause coherence violations, i.e., for any
+program-order-previous instruction instance \(i'\), let
+\(\textit{cfp}\) be the combined footprint of propagated
+memory store operations from store instructions program-order-between
+\(i\) and \(i'\), and <em>fixed memory store
+operations</em> that were forwarded to \(i\) from store
+instructions program-order-between \(i\) and \(i'\)
+including \(i'\), and let
+\(\overline{\textit{cfp}}\) be the complement of
+\(\textit{cfp}\) in the memory footprint of \(i\).
+If \(\overline{\textit{cfp}}\) is not empty:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>\(i'\) has a fully determined memory footprint;</p>
+</li>
+<li>
+<p>\(i'\) has no unpropagated memory store operations that
+overlap with \(\overline{\textit{cfp}}\); and</p>
+</li>
+<li>
+<p>if \(i'\) is a load with a memory footprint that overlaps
+with \(\overline{\textit{cfp}}\), then all the memory load
+operations of \(i'\) that overlap with
+\(\overline{\textit{cfp}}\) are satisfied and \(i'\)
+is <em>non-restartable</em> (see the <a href="#prop_store">Propagate store operation</a> transition for how to determined if an
+instruction is non-restartable).</p>
+<div class="paragraph">
+<p>Here, a memory store operation is called fixed if the store instruction
+has fully determined data.</p>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>\(i\) has a fully determined data; and</p>
+</li>
+<li>
+<p>if \(i\) is not a fence, all program-order-previous
+conditional branch and indirect jump instructions are finished.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Action:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>if \(i\) is a conditional branch or indirect jump
+instruction, discard any untaken paths of execution, i.e., remove all
+instruction instances that are not reachable by the branch/jump taken in
+<em>instruction_tree</em>; and</p>
+</li>
+<li>
+<p>record the instruction as finished, i.e., set <em>finished</em> to <em>true</em>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="limitations">A.3.6. Limitations</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>The model covers user-level RV64I and RV64A. In particular, it does
+not support the misaligned atomics extension "Zam" or the total store
+ordering extension "Ztso". It should be trivial to adapt the model to
+RV32I/A and to the G, Q and C extensions, but we have never tried it.
+This will involve, mostly, writing Sail code for the instructions, with
+minimal, if any, changes to the concurrency model.</p>
+</li>
+<li>
+<p>The model covers only normal memory accesses (it does not handle I/O
+accesses).</p>
+</li>
+<li>
+<p>The model does not cover TLB-related effects.</p>
+</li>
+<li>
+<p>The model assumes the instruction memory is fixed. In particular, the
+<a href="#fetch">Fetch instruction</a> transition does not generate memory load operations, and the shared
+memory is not involved in the transition. Instead, the model depends on
+an external oracle that provides an opcode when given a memory location.</p>
+</li>
+<li>
+<p>The model does not cover exceptions, traps and interrupts.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

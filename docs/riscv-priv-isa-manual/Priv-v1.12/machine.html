@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>The RISC-V Instruction Set Manual, Volume II: Privileged Architecture</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/machine.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="machine"><span class="header-section-number">3</span> Machine-Level ISA, Version 1.12</h1>
+<section id="machine" data-number="1">
+<h1 data-number="3"><span class="header-section-number">3</span> Machine-Level ISA, Version 1.12</h1>
 <p>This chapter describes the machine-level operations available in
 machine-mode (M-mode), which is the highest privilege mode in a RISC-V
 system. M-mode is used for low-level access to a
@@ -27,24 +29,26 @@ to implement in hardware directly. The RISC-V machine-level ISA
 contains a common core that is extended depending on which other
 privilege levels are supported and other details of the hardware
 implementation.</p>
-<h2 id="machine-level-csrs"><span class="header-section-number">3.1</span> Machine-Level CSRs</h2>
+<section id="machine-level-csrs" data-number="1.1">
+<h2 data-number="3.1"><span class="header-section-number">3.1</span> Machine-Level CSRs</h2>
 <p>In addition to the machine-level CSRs described in this section,
 M-mode code can access all CSRs at lower privilege levels.</p>
-<h3 id="sec:misa"><span class="header-section-number">3.1.1</span> Machine ISA Register <span>misa</span></h3>
-<p>The <span>misa</span> CSR is a <strong>WARL</strong> read-write register
+<section id="sec:misa" data-number="1.1.1">
+<h3 data-number="3.1.1"><span class="header-section-number">3.1.1</span> Machine ISA Register <span><code>misa</code></span></h3>
+<p>The <span><code>misa</code></span> CSR is a <strong>WARL</strong> read-write register
 reporting the ISA supported by the hart. This register must be
 readable in any implementation, but a value of zero can be returned to
-indicate the <span>misa</span> register has not been implemented, requiring
+indicate the <span><code>misa</code></span> register has not been implemented, requiring
 that CPU capabilities be determined through a separate non-standard
 mechanism.</p>
 <figure>
-<img src="machine_00.svg" alt="Machine ISA register (misa)." id="misareg" /><figcaption>Machine ISA register (<span>misa</span>).<span label="misareg"></span></figcaption>
+<img src="machine_00.svg" id="misareg" alt="" /><figcaption>Machine ISA register (<span><code>misa</code></span>).</figcaption>
 </figure>
 <p>The MXL (Machine XLEN) field encodes the native base integer ISA width
 as shown in Table <a href="machine.html#misabase" data-reference-type="ref" data-reference="misabase">[misabase]</a>. The MXL field may be writable in
 implementations that support multiple base ISAs. The effective
 XLEN in M-mode, <span><em>MXLEN</em></span>, is given by the setting of MXL, or has a
-fixed value if <span>misa</span> is zero. The MXL field is always set to the
+fixed value if <span><code>misa</code></span> is zero. The MXL field is always set to the
 widest supported ISA variant at reset.</p>
 <table>
 <thead>
@@ -68,17 +72,17 @@ widest supported ISA variant at reset.</p>
 </tr>
 </tbody>
 </table>
-<p>The <span>misa</span> CSR is MXLEN bits wide. If the value read from <span>misa</span> is
+<p>The <span><code>misa</code></span> CSR is MXLEN bits wide. If the value read from <span><code>misa</code></span> is
 nonzero, field MXL of that value always denotes the current MXLEN. If a write
-to <span>misa</span> causes MXLEN to change, the position of MXL moves to the
-most-significant two bits of <span>misa</span> at the new width.</p>
+to <span><code>misa</code></span> causes MXLEN to change, the position of MXL moves to the
+most-significant two bits of <span><code>misa</code></span> at the new width.</p>
 <div class=commentary>
 <p>The base width can be quickly ascertained using branches on the sign
-of the returned <span>misa</span> value, and possibly a shift left by one and
+of the returned <span><code>misa</code></span> value, and possibly a shift left by one and
 a second branch on the sign. These checks can be written in assembly
 code without knowing the register width (XLEN) of the machine. The
 base width is given by <span class="math inline"><em>X</em><em>L</em><em>E</em><em>N</em> = 2<sup><em>M</em><em>X</em><em>L</em> + 4</sup></span>.</p>
-<p>The base width can also be found if <span>misa</span> is zero, by placing the
+<p>The base width can also be found if <span><code>misa</code></span> is zero, by placing the
 immediate 4 in a register then shifting the register left by 31 bits
 at a time. If zero after one shift, then the machine is RV32. If
 zero after two shifts, then the machine is RV64, else RV128.</p>
@@ -92,7 +96,7 @@ RV32E. The Extensions field is a <strong>WARL</strong> field that can contain w
 where the implementation allows the supported ISA to be modified. At
 reset, the Extensions field shall contain the maximal set of supported
 extensions, and I shall be selected over E if both are available.</p>
-<p>When a standard extension is disabled by clearing its bit in <span>misa</span>, the instructions and CSRs defined or modified by the extension revert to their defined or reserved behaviors as if the extension is not implemented.</p>
+<p>When a standard extension is disabled by clearing its bit in <span><code>misa</code></span>, the instructions and CSRs defined or modified by the extension revert to their defined or reserved behaviors as if the extension is not implemented.</p>
 <p>The design of the RV128I base ISA is not yet complete, and while much of the remainder of this
 specification is expected to apply to RV128, this version of the document
 focuses only on RV32 and RV64.</p>
@@ -241,7 +245,7 @@ supervisor modes respectively.</p>
 </tbody>
 </table>
 <div class=commentary>
-<p>The <span>misa</span> CSR exposes a rudimentary catalog of CPU features
+<p>The <span><code>misa</code></span> CSR exposes a rudimentary catalog of CPU features
 to machine-mode code. More extensive information can be obtained in
 machine mode by probing other machine registers, and examining other
 ROM storage in the system as part of the boot process.</p>
@@ -251,7 +255,7 @@ each privilege level. This enables virtualization layers to alter the
 ISA observed at any level, and supports a much richer command
 interface without burdening hardware designs.</p>
 </div>
-<p>The “E” bit is read-only. Unless <span>misa</span> is all read-only zero, the “E”
+<p>The “E” bit is read-only. Unless <span><code>misa</code></span> is all read-only zero, the “E”
 bit always reads as the complement of the “I” bit. An implementation that
 supports both RV32E and RV32I can select RV32E by clearing the “I” bit.</p>
 <p>If an ISA feature <span><em>x</em></span> depends on an ISA feature <span><em>y</em></span>, then attempting
@@ -259,38 +263,40 @@ to enable feature <span><em>x</em></span> but disable feature <span><em>y</em></
 being disabled. For example, setting “F”=0 and “D”=1 results in both
 “F” and “D” being cleared.</p>
 <p>An implementation may impose additional constraints on the collective setting
-of two or more <span>misa</span> fields, in which case they function collectively as
+of two or more <span><code>misa</code></span> fields, in which case they function collectively as
 a single <strong>WARL</strong> field. An attempt to write an unsupported combination causes
 those bits to be set to some supported combination.</p>
-<p>Writing <span>misa</span> may increase IALIGN, e.g., by disabling the “C”
+<p>Writing <span><code>misa</code></span> may increase IALIGN, e.g., by disabling the “C”
 extension.
-If an instruction that would write <span>misa</span> increases IALIGN, and
+If an instruction that would write <span><code>misa</code></span> increases IALIGN, and
 the subsequent instruction’s address is not IALIGN-bit aligned, the
-write to <span>misa</span> is suppressed, leaving <span>misa</span> unchanged.</p>
+write to <span><code>misa</code></span> is suppressed, leaving <span><code>misa</code></span> unchanged.</p>
 <p>When software enables an extension that was previously disabled, then all
 state uniquely associated with that extension is , unless
 otherwise specified by that extension.</p>
-<h3 id="machine-vendor-id-register-mvendorid"><span class="header-section-number">3.1.2</span> Machine Vendor ID Register <span>mvendorid</span></h3>
-<p>The <span>mvendorid</span> CSR is a 32-bit read-only register providing
+</section>
+<section id="machine-vendor-id-register-mvendorid" data-number="1.1.2">
+<h3 data-number="3.1.2"><span class="header-section-number">3.1.2</span> Machine Vendor ID Register <span><code>mvendorid</code></span></h3>
+<p>The <span><code>mvendorid</code></span> CSR is a 32-bit read-only register providing
 the JEDEC manufacturer ID of the provider of the core. This register
 must be readable in any implementation, but a value of 0 can be
 returned to indicate the field is not implemented or that this is a
 non-commercial implementation.</p>
 <figure>
-<img src="machine_01.svg" alt="Vendor ID register (mvendorid)." id="mvendorreg" /><figcaption>Vendor ID register (<span>mvendorid</span>).<span label="mvendorreg"></span></figcaption>
+<img src="machine_01.svg" id="mvendorreg" alt="" /><figcaption>Vendor ID register (<span><code>mvendorid</code></span>).</figcaption>
 </figure>
 <p>JEDEC manufacturer IDs are ordinarily encoded as a sequence of one-byte
-continuation codes <span>0x7f</span>, terminated by a one-byte ID not equal to
-<span>0x7f</span>, with an odd parity bit in the most-significant bit of each byte.
-<span>mvendorid</span> encodes the number of one-byte continuation
+continuation codes <span><code>0x7f</code></span>, terminated by a one-byte ID not equal to
+<span><code>0x7f</code></span>, with an odd parity bit in the most-significant bit of each byte.
+<span><code>mvendorid</code></span> encodes the number of one-byte continuation
 codes in the Bank field, and encodes the final byte in the Offset field,
 discarding the parity bit. For example, the JEDEC manufacturer ID
-<span>0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x8a</span>
-(twelve continuation codes followed by <span>0x8a</span>) would be encoded in the
-<span>mvendorid</span> CSR as <span>0x60a</span>.</p>
+<span><code>0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x7f 0x8a</code></span>
+(twelve continuation codes followed by <span><code>0x8a</code></span>) would be encoded in the
+<span><code>mvendorid</code></span> CSR as <span><code>0x60a</code></span>.</p>
 <div class=commentary>
 <p>In JEDEC’s parlance, the bank number is one greater than the number of
-continuation codes; hence, the <span>mvendorid</span> Bank field encodes a value
+continuation codes; hence, the <span><code>mvendorid</code></span> Bank field encodes a value
 that is one less than the JEDEC bank number.</p>
 </div>
 <div class=commentary>
@@ -299,15 +305,16 @@ International, but this duplicates the work of JEDEC in maintaining a
 manufacturer ID standard. At time of writing, registering a
 manufacturer ID with JEDEC has a one-time cost of $500.</p>
 </div>
-<h3 id="machine-architecture-id-register-marchid"><span class="header-section-number">3.1.3</span> Machine Architecture ID Register <span>marchid</span></h3>
-<p>The <span>marchid</span> CSR is an MXLEN-bit read-only register encoding the
+</section>
+<section id="machine-architecture-id-register-marchid" data-number="1.1.3">
+<h3 data-number="3.1.3"><span class="header-section-number">3.1.3</span> Machine Architecture ID Register <span><code>marchid</code></span></h3>
+<p>The <span><code>marchid</code></span> CSR is an MXLEN-bit read-only register encoding the
 base microarchitecture of the hart. This register must be readable in
 any implementation, but a value of 0 can be returned to indicate the
-field is not implemented. The combination of <span>mvendorid</span> and <span>
-marchid</span> should uniquely identify the type of hart microarchitecture
+field is not implemented. The combination of <span><code>mvendorid</code></span> and <span><code> marchid</code></span> should uniquely identify the type of hart microarchitecture
 that is implemented.</p>
 <figure>
-<img src="machine_02.svg" alt="Machine Architecture ID register (marchid)." id="marchreg" /><figcaption>Machine Architecture ID register (<span>marchid</span>).<span label="marchreg"></span></figcaption>
+<img src="machine_02.svg" id="marchreg" alt="" /><figcaption>Machine Architecture ID register (<span><code>marchid</code></span>).</figcaption>
 </figure>
 <p>Open-source project architecture IDs are allocated globally by
 RISC-V International, and have non-zero architecture IDs with a zero
@@ -330,17 +337,19 @@ vendor wishes to use both closed-source and open-source
 microarchitectures.</p>
 <p>The convention adopted within the following Implementation field can
 be used to segregate branches of the same architecture design,
-including by organization. The <span>misa</span> register also helps
+including by organization. The <span><code>misa</code></span> register also helps
 distinguish different variants of a design.</p>
 </div>
-<h3 id="machine-implementation-id-register-mimpid"><span class="header-section-number">3.1.4</span> Machine Implementation ID Register <span>mimpid</span></h3>
-<p>The <span>mimpid</span> CSR provides a unique encoding of the version of the
+</section>
+<section id="machine-implementation-id-register-mimpid" data-number="1.1.4">
+<h3 data-number="3.1.4"><span class="header-section-number">3.1.4</span> Machine Implementation ID Register <span><code>mimpid</code></span></h3>
+<p>The <span><code>mimpid</code></span> CSR provides a unique encoding of the version of the
 processor implementation. This register must be readable in any
 implementation, but a value of 0 can be returned to indicate that the
 field is not implemented. The Implementation value should reflect the
 design of the RISC-V processor itself and not any surrounding system.</p>
 <figure>
-<img src="machine_03.svg" alt="Machine Implementation ID register (mimpid)." id="mimpidreg" /><figcaption>Machine Implementation ID register (<span>mimpid</span>).<span label="mimpidreg"></span></figcaption>
+<img src="machine_03.svg" id="mimpidreg" alt="" /><figcaption>Machine Implementation ID register (<span><code>mimpid</code></span>).</figcaption>
 </figure>
 <div class=commentary>
 <p>The format of this field is left to the provider of the architecture
@@ -350,15 +359,17 @@ Implementation value can be left-justified (i.e., filled in from
 most-significant nibble down) with subfields aligned on nibble
 boundaries to ease human readability.</p>
 </div>
-<h3 id="hart-id-register-mhartid"><span class="header-section-number">3.1.5</span> Hart ID Register <span>mhartid</span></h3>
-<p>The <span>mhartid</span> CSR is an MXLEN-bit read-only register
+</section>
+<section id="hart-id-register-mhartid" data-number="1.1.5">
+<h3 data-number="3.1.5"><span class="header-section-number">3.1.5</span> Hart ID Register <span><code>mhartid</code></span></h3>
+<p>The <span><code>mhartid</code></span> CSR is an MXLEN-bit read-only register
 containing the integer ID of the hardware thread running the code.
 This register must be readable in any implementation. Hart IDs might
 not necessarily be numbered contiguously in a multiprocessor system,
 but at least one hart must have a hart ID of zero. Hart IDs must be
 unique within the execution environment.</p>
 <figure>
-<img src="machine_04.svg" alt="Hart ID register (mhartid)." id="mhartidreg" /><figcaption>Hart ID register (<span>mhartid</span>).<span label="mhartidreg"></span></figcaption>
+<img src="machine_04.svg" id="mhartidreg" alt="" /><figcaption>Hart ID register (<span><code>mhartid</code></span>).</figcaption>
 </figure>
 <div class=commentary>
 <p>In certain cases, we must ensure exactly one hart runs some code
@@ -367,34 +378,37 @@ zero.</p>
 <p>For efficiency, system implementers should aim to reduce the magnitude
 of the largest hart ID used in a system.</p>
 </div>
-<h3 id="machine-status-registers-mstatus-and-mstatush"><span class="header-section-number">3.1.6</span> Machine Status Registers (<span>mstatus</span> and <span>mstatush</span>)</h3>
-<p>The <span>mstatus</span> register is an MXLEN-bit read/write register
+</section>
+<section id="machine-status-registers-mstatus-and-mstatush" data-number="1.1.6">
+<h3 data-number="3.1.6"><span class="header-section-number">3.1.6</span> Machine Status Registers (<span><code>mstatus</code></span> and <span><code>mstatush</code></span>)</h3>
+<p>The <span><code>mstatus</code></span> register is an MXLEN-bit read/write register
 formatted as shown in Figure <a href="machine.html#mstatusreg-rv32" data-reference-type="ref" data-reference="mstatusreg-rv32">1.6</a> for RV32 and
-Figure <a href="machine.html#mstatusreg" data-reference-type="ref" data-reference="mstatusreg">1.7</a> for RV64. The <span>mstatus</span>
+Figure <a href="machine.html#mstatusreg" data-reference-type="ref" data-reference="mstatusreg">1.7</a> for RV64. The <span><code>mstatus</code></span>
 register keeps track of and controls the hart’s current operating
-state. A restricted view of <span>mstatus</span> appears as the
-<span>sstatus</span> register in the S-level ISA.</p>
+state. A restricted view of <span><code>mstatus</code></span> appears as the
+<span><code>sstatus</code></span> register in the S-level ISA.</p>
 <figure>
-<img src="machine_05.svg" alt="Machine-mode status register (mstatus) for RV32." id="mstatusreg-rv32" /><figcaption>Machine-mode status register (<span>mstatus</span>) for RV32.<span label="mstatusreg-rv32"></span></figcaption>
+<img src="machine_05.svg" id="mstatusreg-rv32" alt="" /><figcaption>Machine-mode status register (<span><code>mstatus</code></span>) for RV32.</figcaption>
 </figure>
 <figure>
-<img src="machine_06.svg" alt="Machine-mode status register (mstatus) for RV64." id="mstatusreg" /><figcaption>Machine-mode status register (<span>mstatus</span>) for RV64.<span label="mstatusreg"></span></figcaption>
+<img src="machine_06.svg" id="mstatusreg" alt="" /><figcaption>Machine-mode status register (<span><code>mstatus</code></span>) for RV64.</figcaption>
 </figure>
-<p>For RV32 only, <span>mstatush</span> is a 32-bit read/write register formatted
+<p>For RV32 only, <span><code>mstatush</code></span> is a 32-bit read/write register formatted
 as shown in Figure <a href="machine.html#mstatushreg" data-reference-type="ref" data-reference="mstatushreg">1.8</a>.
-Bits 30:4 of <span>mstatush</span> generally contain the same fields found in
-bits 62:36 of <span>mstatus</span> for RV64.
-Fields SD, SXL, and UXL do not exist in <span>mstatush</span>.</p>
+Bits 30:4 of <span><code>mstatush</code></span> generally contain the same fields found in
+bits 62:36 of <span><code>mstatus</code></span> for RV64.
+Fields SD, SXL, and UXL do not exist in <span><code>mstatush</code></span>.</p>
 <figure>
-<img src="machine_07.svg" alt="Additional machine-mode status register (mstatush) for RV32." id="mstatushreg" /><figcaption>Additional machine-mode status register (<span>mstatush</span>) for RV32.<span label="mstatushreg"></span></figcaption>
+<img src="machine_07.svg" id="mstatushreg" alt="" /><figcaption>Additional machine-mode status register (<span><code>mstatush</code></span>) for RV32.</figcaption>
 </figure>
-<h4 id="privstack"><span class="header-section-number">3.1.6.1</span> Privilege and Global Interrupt-Enable Stack in <span>mstatus</span> register</h4>
+<section id="privstack" data-number="1.1.6.1">
+<h4 data-number="3.1.6.1"><span class="header-section-number">3.1.6.1</span> Privilege and Global Interrupt-Enable Stack in <span><code>mstatus</code></span> register</h4>
 <p>Global interrupt-enable bits, MIE and SIE, are provided for M-mode and
 S-mode respectively.
 These bits are primarily used to guarantee atomicity
 with respect to interrupt handlers in the current privilege mode.</p>
 <div class=commentary>
-<p>The global <span><em>x</em></span>IE bits are located in the low-order bits of <span>mstatus</span>,
+<p>The global <span><em>x</em></span>IE bits are located in the low-order bits of <span><code>mstatus</code></span>,
 allowing them to be atomically set or cleared with a single CSR
 instruction.</p>
 </div>
@@ -455,11 +469,13 @@ by writing that mode to MPP then reading it back.</p>
 <p>If the machine provides only U and M modes, then only a single
 hardware storage bit is required to represent either 00 or 11 in MPP.</p>
 </div>
-<h4 id="xlen-control"><span class="header-section-number">3.1.6.2</span> Base ISA Control in <span>mstatus</span> Register</h4>
+</section>
+<section id="xlen-control" data-number="1.1.6.2">
+<h4 data-number="3.1.6.2"><span class="header-section-number">3.1.6.2</span> Base ISA Control in <span><code>mstatus</code></span> Register</h4>
 <p>For RV64 systems, the SXL and UXL fields are <strong>WARL</strong> fields
 that control the value of XLEN for S-mode and U-mode,
 respectively. The encoding of these fields is the same as the MXL
-field of <span>misa</span>, shown in Table <a href="machine.html#misabase" data-reference-type="ref" data-reference="misabase">[misabase]</a>. The effective
+field of <span><code>misa</code></span>, shown in Table <a href="machine.html#misabase" data-reference-type="ref" data-reference="misabase">[misabase]</a>. The effective
 XLEN in S-mode and U-mode are termed <span><em>SXLEN</em></span> and <span><em>UXLEN</em></span>,
 respectively.</p>
 <p>For RV32 systems, the SXL and UXL fields do not exist, and
@@ -476,7 +492,7 @@ field whose value always ensures that UXLEN=MXLEN or UXLEN=SXLEN.</p>
 supported XLEN, all operations must ignore source operand register
 bits above the configured XLEN, and must sign-extend results to fill
 the entire widest supported XLEN in the destination register.
-Similarly, <span>pc</span> bits above XLEN are ignored, and when the <span>pc</span>
+Similarly, <span><code>pc</code></span> bits above XLEN are ignored, and when the <span><code>pc</code></span>
 is written, it is sign-extended to fill the widest supported XLEN.
 <div class=commentary>
 <p>We require that operations always fill the entire underlying hardware
@@ -488,10 +504,12 @@ next-higher privilege mode. In practice, such settings would almost
 always be a software bug, but machine operation is well-defined even in this
 case.</p>
 </div>
-<p>If MXLEN is changed from 32 to a wider width, each of <span>mstatus</span> fields SXL and
+<p>If MXLEN is changed from 32 to a wider width, each of <span><code>mstatus</code></span> fields SXL and
 UXL, if not restricted to a single value, gets the value corresponding to the
 widest supported width not wider than the new MXLEN.</p>
-<h4 id="memory-privilege-in-mstatus-register"><span class="header-section-number">3.1.6.3</span> Memory Privilege in <span>mstatus</span> Register</h4>
+</section>
+<section id="memory-privilege-in-mstatus-register" data-number="1.1.6.3">
+<h4 data-number="3.1.6.3"><span class="header-section-number">3.1.6.3</span> Memory Privilege in <span><code>mstatus</code></span> Register</h4>
 <p>The MPRV (Modify PRiVilege) bit modifies the <span><em>effective privilege mode</em></span>,
 i.e., the privilege level at which loads
 and stores execute. When MPRV=0, loads and stores
@@ -526,17 +544,19 @@ in Figure <a href="supervisor.html#sv32pte" data-reference-type="ref" data-refe
 permitted. SUM has no effect when page-based virtual memory is not in effect.
 Note that, while SUM is ordinarily ignored when not executing in S-mode, it
 <span><em>is</em></span> in effect when MPRV=1 and MPP=S. SUM is read-only 0 if S-mode is
-not supported or if <span>satp</span>.MODE is read-only 0.</p>
+not supported or if <span><code>satp</code></span>.MODE is read-only 0.</p>
 <p>The MXR and SUM mechanisms only affect the interpretation of permissions
 encoded in page-table entries. In particular, they have no impact on whether
 access-fault exceptions are raised due to PMAs or PMP.</p>
-<h4 id="endianness-control-in-mstatus-and-mstatush-registers"><span class="header-section-number">3.1.6.4</span> Endianness Control in <span>mstatus</span> and <span>mstatush</span> Registers</h4>
-<p>The MBE, SBE, and UBE bits in <span>mstatus</span> and <span>mstatush</span> are
+</section>
+<section id="endianness-control-in-mstatus-and-mstatush-registers" data-number="1.1.6.4">
+<h4 data-number="3.1.6.4"><span class="header-section-number">3.1.6.4</span> Endianness Control in <span><code>mstatus</code></span> and <span><code>mstatush</code></span> Registers</h4>
+<p>The MBE, SBE, and UBE bits in <span><code>mstatus</code></span> and <span><code>mstatush</code></span> are
 <strong>WARL</strong> fields that control the endianness of memory accesses other than
 instruction fetches.
 Instruction fetches are always little-endian.</p>
 <p>MBE controls whether non-instruction-fetch memory accesses made from
-M-mode (assuming <span>mstatus</span>.MPRV=0) are little-endian (MBE=0) or
+M-mode (assuming <span><code>mstatus</code></span>.MPRV=0) are little-endian (MBE=0) or
 big-endian (MBE=1).</p>
 <p>If S-mode is not supported, SBE is read-only 0.
 Otherwise, SBE controls whether explicit load and store memory accesses made
@@ -549,7 +569,7 @@ structures, such as page tables, endianness is always controlled by SBE.
 Since changing SBE alters the implementation’s interpretation of these data
 structures, if any such data structures remain in use across a change to SBE,
 M-mode software must follow such a change to SBE by executing an
-SFENCE.VMA instruction with <span><em>rs1</em></span>=<span>x0</span> and <span><em>rs2</em></span>=<span>x0</span>.</p>
+SFENCE.VMA instruction with <span><em>rs1</em></span>=<span><code>x0</code></span> and <span><em>rs2</em></span>=<span><code>x0</code></span>.</p>
 <div class=commentary>
 <p>Only in contrived scenarios will a given memory-management data structure be
 interpreted as both little-endian and big-endian.
@@ -605,10 +625,12 @@ In big-endian mode, such software must account for the fact that explicit
 loads and stores have endianness opposite that of instructions, for
 example by swapping byte order after loads and before stores.</p>
 </div>
-<h4 id="virt-control"><span class="header-section-number">3.1.6.5</span> Virtualization Support in <span>mstatus</span> Register</h4>
+</section>
+<section id="virt-control" data-number="1.1.6.5">
+<h4 data-number="3.1.6.5"><span class="header-section-number">3.1.6.5</span> Virtualization Support in <span><code>mstatus</code></span> Register</h4>
 <p>The TVM (Trap Virtual Memory) bit is a <strong>WARL</strong> field that supports intercepting
 supervisor virtual-memory management operations. When TVM=1,
-attempts to read or write the <span>satp</span> CSR or execute an SFENCE.VMA or
+attempts to read or write the <span><code>satp</code></span> CSR or execute an SFENCE.VMA or
 SINVAL.VMA instruction while executing in S-mode will raise an illegal instruction
 exception. When TVM=0, these operations are permitted in S-mode.
 TVM is read-only 0 when S-mode is not supported.</p>
@@ -617,7 +639,7 @@ TVM is read-only 0 when S-mode is not supported.</p>
 operating systems to execute in S-mode, rather than classically virtualizing
 them in U-mode. This approach obviates the need to trap accesses to most
 S-mode CSRs.</p>
-<p>Trapping <span>satp</span> accesses and the SFENCE.VMA and SINVAL.VMA instructions
+<p>Trapping <span><code>satp</code></span> accesses and the SFENCE.VMA and SINVAL.VMA instructions
 provides the hooks necessary to lazily populate shadow page tables.</p>
 </div>
 <p>The TW (Timeout Wait) bit is a <strong>WARL</strong> field that supports intercepting the WFI
@@ -650,7 +672,9 @@ supported.</p>
 <p>Trapping SRET is necessary to emulate the hypervisor extension
 (see Chapter <a href="hypervisor.html#hypervisor" data-reference-type="ref" data-reference="hypervisor">[hypervisor]</a>) on implementations that do not provide it.</p>
 </div>
-<h4 id="extension-context-status-in-mstatus-register"><span class="header-section-number">3.1.6.6</span> Extension Context Status in <span>mstatus</span> Register</h4>
+</section>
+<section id="extension-context-status-in-mstatus-register" data-number="1.1.6.6">
+<h4 data-number="3.1.6.6"><span class="header-section-number">3.1.6.6</span> Extension Context Status in <span><code>mstatus</code></span> Register</h4>
 <p>Supporting substantial extensions is one of the primary goals of
 RISC-V, and hence we define a standard interface to allow unchanged
 privileged-mode code, particularly a supervisor-level OS, to support
@@ -664,12 +688,12 @@ to reduce the cost of context save and restore by setting and tracking
 the current state of the floating-point unit and any other user-mode
 extensions respectively.
 The FS field encodes the status of the floating-point unit state, including
-the floating-point registers <span>f0</span>–<span>f31</span> and the CSRs
-<span>fcsr</span>, <span>frm</span>, and <span>fflags</span>.
+the floating-point registers <span><code>f0</code></span>–<span><code>f31</code></span> and the CSRs
+<span><code>fcsr</code></span>, <span><code>frm</code></span>, and <span><code>fflags</code></span>.
 The VS field encodes the status of the vector extension state, including
-the vector registers <span>v0</span>–<span>v31</span> and the CSRs
-<span>vcsr</span>, <span>vxrm</span>, <span>vxsat</span>, <span>vstart</span>, <span>vl</span>, <span>vtype</span>,
-and <span>vlenb</span>.
+the vector registers <span><code>v0</code></span>–<span><code>v31</code></span> and the CSRs
+<span><code>vcsr</code></span>, <span><code>vxrm</code></span>, <span><code>vxsat</code></span>, <span><code>vstart</code></span>, <span><code>vl</code></span>, <span><code>vtype</code></span>,
+and <span><code>vlenb</code></span>.
 The XS field encodes the
 status of additional user-mode extensions and associated state.
 These fields can be checked by a context switch routine to quickly
@@ -728,11 +752,11 @@ Some such implementations will choose <span><em>not</em></span> to have the FS
 field be read-only zero, so as to enable emulation of the F extension for
 both S-mode and U-mode via invisible traps into M-mode.</p>
 </div>
-<p>If the <span>v</span> registers are implemented, the VS field shall not be
+<p>If the <span><code>v</code></span> registers are implemented, the VS field shall not be
 read-only zero.</p>
-<p>If neither the <span>v</span> registers nor S-mode is implemented, then VS
+<p>If neither the <span><code>v</code></span> registers nor S-mode is implemented, then VS
 is read-only zero.
-If S-mode is implemented but the <span>v</span> registers are not, VS may
+If S-mode is implemented but the <span><code>v</code></span> registers are not, VS may
 optionally be read-only zero.</p>
 <p>In systems without additional user extensions requiring new state, the
 XS field is read-only zero. Every additional extension with state
@@ -812,7 +836,7 @@ errant speculation. Some platforms may choose to disallow speculatively
 writing FS to close a potential side channel.</p>
 </div>
 <p>If an instruction explicitly or implicitly writes a floating-point register or
-the <span>fcsr</span> but does not alter its contents, and FS=Initial or FS=Clean, it
+the <span><code>fcsr</code></span> but does not alter its contents, and FS=Initial or FS=Clean, it
 is implementation-defined whether FS transitions to Dirty.</p>
 <p>Implementations may choose to track the dirtiness of the vector register state in an
 analogous imprecise fashion, including possibly setting VS to Dirty when
@@ -825,7 +849,7 @@ the FS, VS, or XS status bits. Note that the standard floating-point
 and vector extensions do not support user-mode unconfigure or disable/enable
 instructions.</p>
 <figure>
-<img src="machine_08.svg" alt="FS, VS, and XS state transitions." id="fsxsstates" /><figcaption>FS, VS, and XS state transitions.<span label="fsxsstates"></span></figcaption>
+<img src="machine_08.svg" id="fsxsstates" alt="" /><figcaption>FS, VS, and XS state transitions.</figcaption>
 </figure>
 <p>Standard privileged instructions to initialize, save, and restore
 extension state are provided to insulate privileged code from details
@@ -851,7 +875,7 @@ required beyond the integer register set and PC.</p>
 <p>The floating-point unit state is always initialized, saved, and
 restored using standard instructions (F, D, and/or Q), and privileged
 code must be aware of FLEN to determine the appropriate space to
-reserve for each <span>f</span> register.</p>
+reserve for each <span><code>f</code></span> register.</p>
 <p>Machine and Supervisor modes share a single copy of the FS, VS, and XS bits.
 Supervisor-level software
 normally uses the FS, VS, and XS bits directly to record the status with
@@ -865,15 +889,18 @@ switches to other privilege levels. Note that coprocessors should not
 require their context to be saved and restored to service asynchronous
 interrupts, unless the interrupt results in a user-level context swap.</p>
 </div>
-<h3 id="machine-trap-vector-base-address-register-mtvec"><span class="header-section-number">3.1.7</span> Machine Trap-Vector Base-Address Register (<span>mtvec</span>)</h3>
-<p>The <span>mtvec</span> register is an MXLEN-bit <strong>WARL</strong> read/write register that holds
+</section>
+</section>
+<section id="machine-trap-vector-base-address-register-mtvec" data-number="1.1.7">
+<h3 data-number="3.1.7"><span class="header-section-number">3.1.7</span> Machine Trap-Vector Base-Address Register (<span><code>mtvec</code></span>)</h3>
+<p>The <span><code>mtvec</code></span> register is an MXLEN-bit <strong>WARL</strong> read/write register that holds
 trap vector configuration, consisting of a vector base address (BASE) and a
 vector mode (MODE).</p>
 <figure>
-<img src="machine_09.svg" alt="Machine trap-vector base-address register (mtvec)." id="mtvecreg" /><figcaption>Machine trap-vector base-address register (<span>mtvec</span>).<span label="mtvecreg"></span></figcaption>
+<img src="machine_09.svg" id="mtvecreg" alt="" /><figcaption>Machine trap-vector base-address register (<span><code>mtvec</code></span>).</figcaption>
 </figure>
-<p>The <span>mtvec</span> register must always be implemented, but can contain
-a read-only value. If <span>mtvec</span> is writable, the set of values
+<p>The <span><code>mtvec</code></span> register must always be implemented, but can contain
+a read-only value. If <span><code>mtvec</code></span> is writable, the set of values
 the register may hold can vary by implementation. The value in the BASE field
 must always be aligned on a 4-byte boundary, and the MODE setting may impose
 additional alignment constraints on the value in the BASE field.</p>
@@ -895,12 +922,12 @@ hand, we wish to allow flexibility for larger systems.</p>
 <tr class="odd">
 <td style="text-align: right;">0</td>
 <td style="text-align: center;">Direct</td>
-<td style="text-align: left;">All exceptions set <span>pc</span> to BASE.</td>
+<td style="text-align: left;">All exceptions set <span><code>pc</code></span> to BASE.</td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">1</td>
 <td style="text-align: center;">Vectored</td>
-<td style="text-align: left;">Asynchronous interrupts set <span>pc</span> to BASE+4<span class="math inline">×</span>cause.</td>
+<td style="text-align: left;">Asynchronous interrupts set <span><code>pc</code></span> to BASE+4<span class="math inline">×</span>cause.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;"><span class="math inline">≥</span>2</td>
@@ -910,13 +937,13 @@ hand, we wish to allow flexibility for larger systems.</p>
 </tbody>
 </table>
 <p>The encoding of the MODE field is shown in Table <a href="machine.html#mtvec-mode" data-reference-type="ref" data-reference="mtvec-mode">[mtvec-mode]</a>. When
-MODE=Direct, all traps into machine mode cause the <span>pc</span> to be set to the
+MODE=Direct, all traps into machine mode cause the <span><code>pc</code></span> to be set to the
 address in the BASE field. When MODE=Vectored, all synchronous exceptions
-into machine mode cause the <span>pc</span> to be set to the address in the BASE
-field, whereas interrupts cause the <span>pc</span> to be set to the address in
+into machine mode cause the <span><code>pc</code></span> to be set to the address in the BASE
+field, whereas interrupts cause the <span><code>pc</code></span> to be set to the address in
 the BASE field plus four times the interrupt cause number. For example,
-a machine-mode timer interrupt (see Table <a href="machine.html#mcauses" data-reference-type="ref" data-reference="mcauses">[mcauses]</a>) causes the <span>pc</span>
-to be set to BASE+<span>0x1c</span>.</p>
+a machine-mode timer interrupt (see Table <a href="machine.html#mcauses" data-reference-type="ref" data-reference="mcauses">[mcauses]</a>) causes the <span><code>pc</code></span>
+to be set to BASE+<span><code>0x1c</code></span>.</p>
 <div class=commentary>
 <p>When vectored interrupts are enabled, interrupt cause 0, which corresponds to
 user-mode software interrupts, are vectored to the same location as
@@ -933,52 +960,52 @@ implemented without a hardware adder circuit.</p>
 <div class=commentary>
 <p>Reset and NMI vector locations are given in a platform specification.</p>
 </div>
-<h3 id="machine-trap-delegation-registers-medeleg-and-mideleg"><span class="header-section-number">3.1.8</span> Machine Trap Delegation Registers (<span>medeleg</span> and <span>mideleg</span>)</h3>
+</section>
+<section id="machine-trap-delegation-registers-medeleg-and-mideleg" data-number="1.1.8">
+<h3 data-number="3.1.8"><span class="header-section-number">3.1.8</span> Machine Trap Delegation Registers (<span><code>medeleg</code></span> and <span><code>mideleg</code></span>)</h3>
 <p>By default, all traps at any privilege level are handled in machine
 mode, though a machine-mode handler can redirect traps back to the
 appropriate level with the MRET instruction (Section <a href="machine.html#otherpriv" data-reference-type="ref" data-reference="otherpriv">1.3.2</a>).
 To increase performance, implementations can provide individual
-read/write bits within <span>medeleg</span> and <span>mideleg</span> to indicate
+read/write bits within <span><code>medeleg</code></span> and <span><code>mideleg</code></span> to indicate
 that certain exceptions and interrupts should be processed directly by
 a lower privilege level. The machine exception delegation register
-(<span>medeleg</span>) and machine interrupt delegation register (<span>
-mideleg</span>) are MXLEN-bit read/write registers.</p>
-<p>In systems with S-mode, the <span>medeleg</span> and <span>mideleg</span> registers
+(<span><code>medeleg</code></span>) and machine interrupt delegation register (<span><code> mideleg</code></span>) are MXLEN-bit read/write registers.</p>
+<p>In systems with S-mode, the <span><code>medeleg</code></span> and <span><code>mideleg</code></span> registers
 must exist, and setting a bit in
-<span>medeleg</span> or <span>mideleg</span> will delegate the corresponding trap, when
+<span><code>medeleg</code></span> or <span><code>mideleg</code></span> will delegate the corresponding trap, when
 occurring in S-mode or U-mode, to the S-mode trap handler.
-In systems without S-mode, the <span>medeleg</span> and <span>mideleg</span> registers
+In systems without S-mode, the <span><code>medeleg</code></span> and <span><code>mideleg</code></span> registers
 should not exist.</p>
 <div class=commentary>
 <p>In versions 1.9.1 and earlier , these registers existed but were
 hardwired to zero in M-mode only, or M/U without N systems. There
-is no reason to require they return zero in those cases, as the <span>
-misa</span> register indicates whether they exist.</p>
+is no reason to require they return zero in those cases, as the <span><code> misa</code></span> register indicates whether they exist.</p>
 </div>
 <p>When a trap is delegated to S-mode, the
-<span>scause</span> register is written with the trap cause; the
-<span>sepc</span> register is written with the virtual address of
+<span><code>scause</code></span> register is written with the trap cause; the
+<span><code>sepc</code></span> register is written with the virtual address of
 the instruction that took the trap; the
-<span>stval</span> register is written with an
+<span><code>stval</code></span> register is written with an
 exception-specific datum; the SPP field
-of <span>mstatus</span> is written with the active privilege mode at the time of
-the trap; the SPIE field of <span>mstatus</span> is written with the
+of <span><code>mstatus</code></span> is written with the active privilege mode at the time of
+the trap; the SPIE field of <span><code>mstatus</code></span> is written with the
 value of the SIE field at the time of the trap; and
-the SIE field of <span>mstatus</span> is cleared.
-The <span>mcause</span>, <span>mepc</span>, and <span>mtval</span> registers and the MPP and
-MPIE fields of <span>mstatus</span> are not written.</p>
+the SIE field of <span><code>mstatus</code></span> is cleared.
+The <span><code>mcause</code></span>, <span><code>mepc</code></span>, and <span><code>mtval</code></span> registers and the MPP and
+MPIE fields of <span><code>mstatus</code></span> are not written.</p>
 <p>An
 implementation can choose to subset the delegatable traps, with the
 supported delegatable bits found by writing one to every bit location,
-then reading back the value in <span>medeleg</span> or <span>mideleg</span> to see
+then reading back the value in <span><code>medeleg</code></span> or <span><code>mideleg</code></span> to see
 which bit positions hold a one.</p>
-<p>An implementation shall not have any bits of <span>medeleg</span> be read-only one, i.e.,
+<p>An implementation shall not have any bits of <span><code>medeleg</code></span> be read-only one, i.e.,
 any synchronous trap that can be delegated must support not being delegated.
 Similarly, an implementation shall not fix as read-only one any bits of
-<span>mideleg</span> corresponding to machine-level interrupts (but may do so
+<span><code>mideleg</code></span> corresponding to machine-level interrupts (but may do so
 for lower-level interrupts).</p>
 <div class=commentary>
-<p>Version 1.11 and earlier prohibited having any bits of <span>mideleg</span>
+<p>Version 1.11 and earlier prohibited having any bits of <span><code>mideleg</code></span>
 be read-only one.
 Platform standards may always add such restrictions.</p>
 </div>
@@ -991,78 +1018,80 @@ instruction exceptions to S-mode, and S-mode software later executes an illegal
 instruction, the trap is taken in S-mode.</p>
 <p>Delegated interrupts result in the interrupt being masked at the delegator
 privilege level. For example, if the supervisor timer interrupt (STI) is
-delegated to S-mode by setting <span>mideleg</span>[5], STIs will not be taken when
-executing in M-mode. By contrast, if <span>mideleg</span>[5] is clear, STIs can
+delegated to S-mode by setting <span><code>mideleg</code></span>[5], STIs will not be taken when
+executing in M-mode. By contrast, if <span><code>mideleg</code></span>[5] is clear, STIs can
 be taken in any mode and regardless of current mode will transfer control to
 M-mode.</p>
 <figure>
-<img src="machine_10.svg" alt="Machine Exception Delegation Register medeleg." id="medelegreg" /><figcaption>Machine Exception Delegation Register <span>medeleg</span>.<span label="medelegreg"></span></figcaption>
+<img src="machine_10.svg" id="medelegreg" alt="" /><figcaption>Machine Exception Delegation Register <span><code>medeleg</code></span>.</figcaption>
 </figure>
-<p><span>medeleg</span> has a bit position allocated for every synchronous exception
+<p><span><code>medeleg</code></span> has a bit position allocated for every synchronous exception
 shown in Table <a href="machine.html#mcauses" data-reference-type="ref" data-reference="mcauses">[mcauses]</a>, with the index of the bit position equal to the
-value returned in the <span>mcause</span> register (i.e., setting bit 8 allows
+value returned in the <span><code>mcause</code></span> register (i.e., setting bit 8 allows
 user-mode environment calls to be delegated to a lower-privilege trap
 handler).</p>
 <figure>
-<img src="machine_11.svg" alt="Machine Interrupt Delegation Register mideleg." id="midelegreg" /><figcaption>Machine Interrupt Delegation Register <span>mideleg</span>.<span label="midelegreg"></span></figcaption>
+<img src="machine_11.svg" id="midelegreg" alt="" /><figcaption>Machine Interrupt Delegation Register <span><code>mideleg</code></span>.</figcaption>
 </figure>
-<p><span>mideleg</span> holds trap delegation bits for individual interrupts, with the
-layout of bits matching those in the <span>mip</span> register (i.e., STIP interrupt
+<p><span><code>mideleg</code></span> holds trap delegation bits for individual interrupts, with the
+layout of bits matching those in the <span><code>mip</code></span> register (i.e., STIP interrupt
 delegation control is located in bit 5).</p>
 <p>For exceptions that cannot occur in less privileged modes, the corresponding
-<span>medeleg</span> bits should be read-only zero. In particular,
-<span>medeleg</span>[11] is read-only zero.</p>
-<h3 id="machine-interrupt-registers-mip-and-mie"><span class="header-section-number">3.1.9</span> Machine Interrupt Registers (<span>mip</span> and <span>mie</span>)</h3>
-<p>The <span>mip</span> register is an MXLEN-bit read/write register containing
-information on pending interrupts, while <span>mie</span> is the
+<span><code>medeleg</code></span> bits should be read-only zero. In particular,
+<span><code>medeleg</code></span>[11] is read-only zero.</p>
+</section>
+<section id="machine-interrupt-registers-mip-and-mie" data-number="1.1.9">
+<h3 data-number="3.1.9"><span class="header-section-number">3.1.9</span> Machine Interrupt Registers (<span><code>mip</code></span> and <span><code>mie</code></span>)</h3>
+<p>The <span><code>mip</code></span> register is an MXLEN-bit read/write register containing
+information on pending interrupts, while <span><code>mie</code></span> is the
 corresponding MXLEN-bit read/write register containing interrupt enable
 bits.
-Interrupt cause number <em>i</em> (as reported in CSR <span>mcause</span>,
+Interrupt cause number <em>i</em> (as reported in CSR <span><code>mcause</code></span>,
 Section <a href="machine.html#sec:mcause" data-reference-type="ref" data-reference="sec:mcause">1.1.15</a>) corresponds with bit <em>i</em> in both
-<span>mip</span> and <span>mie</span>.
+<span><code>mip</code></span> and <span><code>mie</code></span>.
 Bits 15:0 are allocated to standard interrupt causes only, while bits 16
 and above are designated for platform or custom use.</p>
 <figure>
-<img src="machine_12.svg" alt="Machine Interrupt-Pending Register (mip)." id="mipreg" /><figcaption>Machine Interrupt-Pending Register (<span>mip</span>).<span label="mipreg"></span></figcaption>
+<img src="machine_12.svg" id="mipreg" alt="" /><figcaption>Machine Interrupt-Pending Register (<span><code>mip</code></span>).</figcaption>
 </figure>
 <figure>
-<img src="machine_13.svg" alt="Machine Interrupt-Enable Register (mie)." id="miereg" /><figcaption>Machine Interrupt-Enable Register (<span>mie</span>).<span label="miereg"></span></figcaption>
+<img src="machine_13.svg" id="miereg" alt="" /><figcaption>Machine Interrupt-Enable Register (<span><code>mie</code></span>).</figcaption>
 </figure>
 <p>An interrupt <em>i</em> will trap to M-mode (causing the privilege mode
 to change to M-mode) if all of the following are true:
 (a) either the current privilege mode is M and the MIE bit in the
-<span>mstatus</span> register is set, or the current privilege mode has less
+<span><code>mstatus</code></span> register is set, or the current privilege mode has less
 privilege than M-mode;
-(b) bit <em>i</em> is set in both <span>mip</span> and <span>mie</span>; and
-(c) if register <span>mideleg</span> exists, bit <em>i</em> is not set in
-<span>mideleg</span>.</p>
+(b) bit <em>i</em> is set in both <span><code>mip</code></span> and <span><code>mie</code></span>; and
+(c) if register <span><code>mideleg</code></span> exists, bit <em>i</em> is not set in
+<span><code>mideleg</code></span>.</p>
 <p>These conditions for an interrupt trap to occur must be evaluated in a bounded
 amount of time from when an interrupt becomes, or ceases to be,
-pending in <span>mip</span>, and must
+pending in <span><code>mip</code></span>, and must
 also be evaluated immediately following the execution of an <span><em>x</em></span>RET
 instruction or an explicit write to a CSR on which these interrupt trap
-conditions expressly depend (including <span>mip</span>, <span>mie</span>, <span>mstatus</span>,
-and <span>mideleg</span>).</p>
+conditions expressly depend (including <span><code>mip</code></span>, <span><code>mie</code></span>, <span><code>mstatus</code></span>,
+and <span><code>mideleg</code></span>).</p>
 <p>Interrupts to M-mode take priority over any interrupts to lower privilege
 modes.</p>
-<p>Each individual bit in register <span>mip</span> may be writable or may be
+<p>Each individual bit in register <span><code>mip</code></span> may be writable or may be
 read-only.
-When bit <em>i</em> in <span>mip</span> is writable, a pending interrupt
+When bit <em>i</em> in <span><code>mip</code></span> is writable, a pending interrupt
 <em>i</em> can be cleared by writing 0 to this bit.
 If interrupt <em>i</em> can become pending but bit <em>i</em> in
-<span>mip</span> is read-only, the implementation must provide some other
+<span><code>mip</code></span> is read-only, the implementation must provide some other
 mechanism for clearing the pending interrupt.</p>
-<p>A bit in <span>mie</span> must be writable if the corresponding interrupt can
+<p>A bit in <span><code>mie</code></span> must be writable if the corresponding interrupt can
 ever become pending.
-Bits of <span>mie</span> that are not writable must be read-only zero.</p>
-<p>The standard portions (bits 15:0) of registers <span>mip</span> and <span>mie</span>
+Bits of <span><code>mie</code></span> that are not writable must be read-only zero.</p>
+<p>The standard portions (bits 15:0) of registers <span><code>mip</code></span> and <span><code>mie</code></span>
 are formatted as shown in Figures <a href="machine.html#mipreg-standard" data-reference-type="ref" data-reference="mipreg-standard">1.15</a> and
 <a href="machine.html#miereg-standard" data-reference-type="ref" data-reference="miereg-standard">1.16</a> respectively.</p>
 <figure>
-<img src="machine_14.svg" alt="Standard portion (bits 15:0) of mip." id="mipreg-standard" /><figcaption>Standard portion (bits 15:0) of <span>mip</span>.<span label="mipreg-standard"></span></figcaption>
+<img src="machine_14.svg" id="mipreg-standard" alt="" /><figcaption>Standard portion (bits 15:0) of <span><code>mip</code></span>.</figcaption>
 </figure>
 <figure>
-<img src="machine_15.svg" alt="Standard portion (bits 15:0) of mie." id="miereg-standard" /><figcaption>Standard portion (bits 15:0) of <span>mie</span>.<span label="miereg-standard"></span></figcaption>
+<img src="machine_15.svg" id="miereg-standard" alt="" /><figcaption>Standard portion (bits 15:0) of <span><code>mie</code></span>.</figcaption>
 </figure>
 <div class=commentary>
 <p>The machine-level interrupt registers handle a few root interrupt
@@ -1072,70 +1101,69 @@ complex prioritization scheme over a much larger set of interrupts
 that are then muxed into the machine-level interrupt sources.</p>
 </div>
 <div class=commentary>
-<p>The non-maskable interrupt is not made visible via the <span>mip</span>
+<p>The non-maskable interrupt is not made visible via the <span><code>mip</code></span>
 register as its presence is implicitly known when executing the NMI
 trap handler.</p>
 </div>
-<p>Bits <span>mip</span>.MEIP and <span>mie</span>.MEIE are the interrupt-pending and
+<p>Bits <span><code>mip</code></span>.MEIP and <span><code>mie</code></span>.MEIE are the interrupt-pending and
 interrupt-enable bits for machine-level external interrupts.
-MEIP is read-only in <span>mip</span>, and is set and cleared by a
+MEIP is read-only in <span><code>mip</code></span>, and is set and cleared by a
 platform-specific interrupt controller.</p>
-<p>Bits <span>mip</span>.MTIP and <span>mie</span>.MTIE are the interrupt-pending and
+<p>Bits <span><code>mip</code></span>.MTIP and <span><code>mie</code></span>.MTIE are the interrupt-pending and
 interrupt-enable bits for machine timer interrupts.
-MTIP is read-only in <span>mip</span>, and is cleared by writing to the memory-mapped
+MTIP is read-only in <span><code>mip</code></span>, and is cleared by writing to the memory-mapped
 machine-mode timer compare register.</p>
-<p>Bits <span>mip</span>.MSIP and <span>mie</span>.MSIE are the interrupt-pending and
+<p>Bits <span><code>mip</code></span>.MSIP and <span><code>mie</code></span>.MSIE are the interrupt-pending and
 interrupt-enable bits for machine-level software interrupts.
-MSIP is read-only in <span>mip</span>, and is written by accesses
+MSIP is read-only in <span><code>mip</code></span>, and is written by accesses
 to memory-mapped control registers, which are used by remote harts to
 provide machine-level interprocessor interrupts.
 A hart can write its
 own MSIP bit using the same memory-mapped control register.
 If a system has only one hart, or if a platform standard supports the
 delivery of machine-level interprocessor interrupts through external
-interrupts (MEI) instead, then <span>mip</span>.MSIP and <span>mie</span>.MSIE may
+interrupts (MEI) instead, then <span><code>mip</code></span>.MSIP and <span><code>mie</code></span>.MSIE may
 both be read-only zeros.</p>
 <p>If supervisor mode is not implemented, bits SEIP, STIP, and SSIP of
-<span>mip</span> and SEIE, STIE, and SSIE of <span>mie</span> are read-only zeros.</p>
-<p>If supervisor mode is implemented, bits <span>mip</span>.SEIP and <span>mie</span>.SEIE
+<span><code>mip</code></span> and SEIE, STIE, and SSIE of <span><code>mie</code></span> are read-only zeros.</p>
+<p>If supervisor mode is implemented, bits <span><code>mip</code></span>.SEIP and <span><code>mie</code></span>.SEIE
 are the interrupt-pending and interrupt-enable bits for supervisor-level
 external interrupts.
-SEIP is writable in <span>mip</span>, and
+SEIP is writable in <span><code>mip</code></span>, and
 may be written by M-mode software to indicate to S-mode that an
 external interrupt is pending. Additionally, the platform-level
 interrupt controller may generate supervisor-level external interrupts.
 Supervisor-level external interrupts are made pending based on the
 logical-OR of the software-writable SEIP bit and the signal from the
 external interrupt controller.
-When <span>mip</span> is read with a CSR instruction,
-the value of the SEIP bit returned in the <span>rd</span> destination
+When <span><code>mip</code></span> is read with a CSR instruction,
+the value of the SEIP bit returned in the <span><code>rd</code></span> destination
 register is the logical-OR of the software-writable bit and the
 interrupt signal from the interrupt controller, but the signal from the
 interrupt controller is not used to calculate the value written to SEIP.
 Only the software-writable SEIP bit participates in the
 read-modify-write sequence of a CSRRS or CSRRC instruction.</p>
 <div class=commentary>
-<p>For example, if we name the software-writable SEIP bit <span>B</span> and the
-signal from the external interrupt controller <span>E</span>, then if <span>csrrs
-t0, mip, t1</span> is executed, <span>t0[9]</span> is written with <span>B || E</span> , then
-<span>B</span> is written with <span>B || t1[9]</span> .
-If <span>csrrw t0, mip, t1</span> is executed, then <span>t0[9]</span> is written with
-<span>B || E</span> , and <span>B</span> is simply written with <span>t1[9]</span>.
-In neither case does <span>B</span> depend upon <span>E</span>.</p>
+<p>For example, if we name the software-writable SEIP bit <span><code>B</code></span> and the
+signal from the external interrupt controller <span><code>E</code></span>, then if <span><code>csrrs t0, mip, t1</code></span> is executed, <span><code>t0[9]</code></span> is written with <span><code>B || E</code></span> , then
+<span><code>B</code></span> is written with <span><code>B || t1[9]</code></span> .
+If <span><code>csrrw t0, mip, t1</code></span> is executed, then <span><code>t0[9]</code></span> is written with
+<span><code>B || E</code></span> , and <span><code>B</code></span> is simply written with <span><code>t1[9]</code></span>.
+In neither case does <span><code>B</code></span> depend upon <span><code>E</code></span>.</p>
 <p>The SEIP field behavior is designed to allow a higher privilege
 layer to mimic external interrupts cleanly, without losing any real
 external interrupts. The behavior of the CSR instructions is
 slightly modified from regular CSR accesses as a result.</p>
 </div>
-<p>If supervisor mode is implemented, bits <span>mip</span>.STIP and <span>mie</span>.STIE
+<p>If supervisor mode is implemented, bits <span><code>mip</code></span>.STIP and <span><code>mie</code></span>.STIE
 are the interrupt-pending and interrupt-enable bits for supervisor-level
 timer interrupts.
-STIP is writable in <span>mip</span>, and may be
+STIP is writable in <span><code>mip</code></span>, and may be
 written by M-mode software to deliver timer interrupts to S-mode.</p>
-<p>If supervisor mode is implemented, bits <span>mip</span>.SSIP and <span>mie</span>.SSIE
+<p>If supervisor mode is implemented, bits <span><code>mip</code></span>.SSIP and <span><code>mie</code></span>.SSIE
 are the interrupt-pending and interrupt-enable bits for supervisor-level
 software interrupts.
-SSIP is writable in <span>mip</span> and may also be set to 1 by a platform-specific
+SSIP is writable in <span><code>mip</code></span> and may also be set to 1 by a platform-specific
 interrupt controller.</p>
 <p>Multiple simultaneous
 interrupts destined for M-mode are handled in the following
@@ -1158,69 +1186,68 @@ interrupts are used for inter-processor messaging. Software
 interrupts can be avoided when high-precision timing is required, or
 high-precision timer interrupts can be routed via a different
 interrupt path.
-Software interrupts are located in the lowest four bits of <span>mip</span>
+Software interrupts are located in the lowest four bits of <span><code>mip</code></span>
 as these are often written by software, and this position allows the
 use of a single CSR instruction with a five-bit immediate.</p>
 </div>
-<p>Restricted views of the <span>mip</span> and <span>mie</span> registers appear as
-the <span>sip</span> and <span>sie</span> registers for supervisor level.
+<p>Restricted views of the <span><code>mip</code></span> and <span><code>mie</code></span> registers appear as
+the <span><code>sip</code></span> and <span><code>sie</code></span> registers for supervisor level.
 If an interrupt is delegated to
-S-mode by setting a bit in the <span>mideleg</span> register,
-it becomes visible in the <span>sip</span> register and is maskable
-using the <span>sie</span> register. Otherwise, the corresponding
-bits in <span>sip</span> and <span>sie</span> are read-only
+S-mode by setting a bit in the <span><code>mideleg</code></span> register,
+it becomes visible in the <span><code>sip</code></span> register and is maskable
+using the <span><code>sie</code></span> register. Otherwise, the corresponding
+bits in <span><code>sip</code></span> and <span><code>sie</code></span> are read-only
 zero.</p>
-<h3 id="hardware-performance-monitor"><span class="header-section-number">3.1.10</span> Hardware Performance Monitor</h3>
+</section>
+<section id="hardware-performance-monitor" data-number="1.1.10">
+<h3 data-number="3.1.10"><span class="header-section-number">3.1.10</span> Hardware Performance Monitor</h3>
 <p>M-mode includes a basic hardware performance-monitoring facility. The
-<span>mcycle</span> CSR counts the number of clock cycles executed by the
+<span><code>mcycle</code></span> CSR counts the number of clock cycles executed by the
 processor core on which the hart is running.
-The <span>minstret</span> CSR counts the number of instructions the hart has
-retired. The <span>mcycle</span> and <span>minstret</span> registers have 64-bit
+The <span><code>minstret</code></span> CSR counts the number of instructions the hart has
+retired. The <span><code>mcycle</code></span> and <span><code>minstret</code></span> registers have 64-bit
 precision on all RV32 and RV64 systems.</p>
 <p>The counter registers have an arbitrary value after the hart is reset, and
 can be written with a given value. Any CSR write takes effect after
 the writing instruction has otherwise completed.
-The <span>mcycle</span> CSR may be shared between harts on the same core, in which
-case writes to <span>mcycle</span> will be visible to those harts.
-The platform should provide a mechanism to indicate which harts share an <span>
-mcycle</span> CSR.</p>
-<p>The hardware performance monitor includes 29 additional 64-bit event counters, <span>
-mhpmcounter3</span>–<span>mhpmcounter31</span>. The event selector CSRs, <span>
-mhpmevent3</span>–<span>mhpmevent31</span>, are MXLEN-bit <strong>WARL</strong> registers that control which event
+The <span><code>mcycle</code></span> CSR may be shared between harts on the same core, in which
+case writes to <span><code>mcycle</code></span> will be visible to those harts.
+The platform should provide a mechanism to indicate which harts share an <span><code> mcycle</code></span> CSR.</p>
+<p>The hardware performance monitor includes 29 additional 64-bit event counters, <span><code> mhpmcounter3</code></span>–<span><code>mhpmcounter31</code></span>. The event selector CSRs, <span><code> mhpmevent3</code></span>–<span><code>mhpmevent31</code></span>, are MXLEN-bit <strong>WARL</strong> registers that control which event
 causes the corresponding counter to increment. The meaning of these events is
 defined by the platform, but event 0 is defined to mean “no event.”
 All counters should be implemented, but a legal implementation is to make
 both the counter and its corresponding event selector be read-only 0.</p>
 <figure>
-<img src="machine_16.svg" alt="Hardware performance monitor counters." /><figcaption>Hardware performance monitor counters.</figcaption>
+<img src="machine_16.svg" alt="" /><figcaption>Hardware performance monitor counters.</figcaption>
 </figure>
-<p>The <span>mhpmcounter</span>s are <strong>WARL</strong> registers that support up to 64 bits of
+<p>The <span><code>mhpmcounter</code></span>s are <strong>WARL</strong> registers that support up to 64 bits of
 precision on RV32 and RV64.</p>
 <div class=commentary>
 <p>A future revision of this specification will define a mechanism to generate an
 interrupt when a hardware performance monitor counter overflows.</p>
 </div>
-<p>When MXLEN=32, reads of the <span>mcycle</span>, <span>minstret</span>, and <span>
-mhpmcounter<span><em>n</em></span></span> CSRs return bits 31–0 of the corresponding counter, and
-writes change only bits 31–0; reads of the <span>mcycleh</span>, <span>minstreth</span>,
-and <span>mhpmcounter<span><em>n</em></span>h</span> CSRs return bits 63–32 of the corresponding
+<p>When MXLEN=32, reads of the <span><code>mcycle</code></span>, <span><code>minstret</code></span>, and <span><code> mhpmcountern</code></span> CSRs return bits 31–0 of the corresponding counter, and
+writes change only bits 31–0; reads of the <span><code>mcycleh</code></span>, <span><code>minstreth</code></span>,
+and <span><code>mhpmcounternh</code></span> CSRs return bits 63–32 of the corresponding
 counter, and writes change only bits 63–32.</p>
 <figure>
-<img src="machine_17.svg" alt="Upper 32 bits of hardware performance monitor counters, RV32 only." /><figcaption>Upper 32 bits of hardware performance monitor counters, RV32 only.</figcaption>
+<img src="machine_17.svg" alt="" /><figcaption>Upper 32 bits of hardware performance monitor counters, RV32 only.</figcaption>
 </figure>
-<h3 id="sec:mcounteren"><span class="header-section-number">3.1.11</span> Machine Counter-Enable Register (<span>mcounteren</span>)</h3>
-<p>The counter-enable register <span>mcounteren</span> is a 32-bit register that
+</section>
+<section id="sec:mcounteren" data-number="1.1.11">
+<h3 data-number="3.1.11"><span class="header-section-number">3.1.11</span> Machine Counter-Enable Register (<span><code>mcounteren</code></span>)</h3>
+<p>The counter-enable register <span><code>mcounteren</code></span> is a 32-bit register that
 controls the availability of the hardware performance-monitoring counters to
 the next-lowest privileged mode.</p>
 <figure>
-<img src="machine_18.svg" alt="Counter-enable register (mcounteren)." id="mcounteren" /><figcaption>Counter-enable register (<span>mcounteren</span>).<span label="mcounteren"></span></figcaption>
+<img src="machine_18.svg" id="mcounteren" alt="" /><figcaption>Counter-enable register (<span><code>mcounteren</code></span>).</figcaption>
 </figure>
 <p>The settings in this register only control accessibility. The act
 of reading or writing this register does not affect the underlying
 counters, which continue to increment even when not accessible.</p>
-<p>When the CY, TM, IR, or HPM<span><em>n</em></span> bit in the <span>mcounteren</span>
-register is clear, attempts to read the <span>cycle</span>, <span>time</span>, <span>
-instret</span>, or <span>hpmcounter<span><em>n</em></span></span> register while executing in
+<p>When the CY, TM, IR, or HPM<span><em>n</em></span> bit in the <span><code>mcounteren</code></span>
+register is clear, attempts to read the <span><code>cycle</code></span>, <span><code>time</code></span>, <span><code> instret</code></span>, or <span><code>hpmcountern</code></span> register while executing in
 S-mode or U-mode will cause an illegal instruction exception. When
 one of these bits is set, access to the corresponding register is
 permitted in the next implemented privilege mode (S-mode if
@@ -1233,60 +1260,63 @@ software. For systems that need high-performance timers and counters
 but are not concerned with obfuscating the underlying hardware
 counters, the counters can be directly exposed to lower privilege modes.</p>
 </div>
-<p>The <span>cycle</span>, <span>instret</span>, and <span>hpmcounter<span><em>n</em></span></span> CSRs are
-read-only shadows of <span>mcycle</span>, <span>minstret</span>, and <span>mhpmcounter<span>
-<em>n</em></span></span>, respectively. The <span>time</span> CSR is a read-only shadow of the
-memory-mapped <span>mtime</span> register. Analogously, on RV32I the <span>cycleh</span>,
-<span>instreth</span> and <span>hpmcounter<span><em>n</em></span>h</span> CSRs are read-only shadows of
-<span>mcycleh</span>, <span>minstreth</span> and <span>mhpmcounter<span><em>n</em></span>h</span>, respectively.
-On RV32I the <span>timeh</span> CSR is a read-only shadow of the upper 32 bits of
-the memory-mapped <span>mtime</span> register, while <span>time</span> shadows only the
-lower 32 bits of <span>mtime</span>.
+<p>The <span><code>cycle</code></span>, <span><code>instret</code></span>, and <span><code>hpmcountern</code></span> CSRs are
+read-only shadows of <span><code>mcycle</code></span>, <span><code>minstret</code></span>, and <span><code>mhpmcounter n</code></span>, respectively. The <span><code>time</code></span> CSR is a read-only shadow of the
+memory-mapped <span><code>mtime</code></span> register. Analogously, on RV32I the <span><code>cycleh</code></span>,
+<span><code>instreth</code></span> and <span><code>hpmcounternh</code></span> CSRs are read-only shadows of
+<span><code>mcycleh</code></span>, <span><code>minstreth</code></span> and <span><code>mhpmcounternh</code></span>, respectively.
+On RV32I the <span><code>timeh</code></span> CSR is a read-only shadow of the upper 32 bits of
+the memory-mapped <span><code>mtime</code></span> register, while <span><code>time</code></span> shadows only the
+lower 32 bits of <span><code>mtime</code></span>.
 <div class=commentary>
-<p>Implementations can convert reads of the <span>time</span> and <span>timeh</span> CSRs
-into loads to the memory-mapped <span>mtime</span> register, or emulate this
+<p>Implementations can convert reads of the <span><code>time</code></span> and <span><code>timeh</code></span> CSRs
+into loads to the memory-mapped <span><code>mtime</code></span> register, or emulate this
 functionality in M-mode software.</p>
 </div>
-<p>In systems with U-mode, the <span>mcounteren</span> must be implemented, but all
+<p>In systems with U-mode, the <span><code>mcounteren</code></span> must be implemented, but all
 fields are <strong>WARL</strong> and may be read-only zero,
 indicating reads to the corresponding counter will
 cause an illegal instruction exception when executing in a less-privileged mode.
-In systems without U-mode, the <span>mcounteren</span> register should not exist.</p>
-<h3 id="machine-counter-inhibit-csr-mcountinhibit"><span class="header-section-number">3.1.12</span> Machine Counter-Inhibit CSR (<span>mcountinhibit</span>)</h3>
+In systems without U-mode, the <span><code>mcounteren</code></span> register should not exist.</p>
+</section>
+<section id="machine-counter-inhibit-csr-mcountinhibit" data-number="1.1.12">
+<h3 data-number="3.1.12"><span class="header-section-number">3.1.12</span> Machine Counter-Inhibit CSR (<span><code>mcountinhibit</code></span>)</h3>
 <figure>
-<img src="machine_19.svg" alt="Counter-inhibit register mcountinhibit." id="mcountinhibit" /><figcaption>Counter-inhibit register <span>mcountinhibit</span>.<span label="mcountinhibit"></span></figcaption>
+<img src="machine_19.svg" id="mcountinhibit" alt="" /><figcaption>Counter-inhibit register <span><code>mcountinhibit</code></span>.</figcaption>
 </figure>
-<p>The counter-inhibit register <span>mcountinhibit</span> is a 32-bit <strong>WARL</strong> register
+<p>The counter-inhibit register <span><code>mcountinhibit</code></span> is a 32-bit <strong>WARL</strong> register
 that controls which of the hardware performance-monitoring counters increment.
 The settings in this register only control whether the counters increment;
 their accessibility is not affected by the setting of this register.</p>
-<p>When the CY, IR, or HPM<span><em>n</em></span> bit in the <span>mcountinhibit</span> register is
-clear, the <span>cycle</span>, <span>instret</span>, or <span>hpmcounter<span><em>n</em></span></span> register
+<p>When the CY, IR, or HPM<span><em>n</em></span> bit in the <span><code>mcountinhibit</code></span> register is
+clear, the <span><code>cycle</code></span>, <span><code>instret</code></span>, or <span><code>hpmcountern</code></span> register
 increments as usual. When the CY, IR, or HPM<span><em>n</em></span> bit is set, the
 corresponding counter does not increment.</p>
-<p>The <span>mcycle</span> CSR may be shared between harts on the same core, in which
-case the <span>mcountinhibit</span>.CY field is also shared between those harts,
-and so writes to <span>mcountinhibit</span>.CY will be visible to those harts.</p>
-<p>If the <span>mcountinhibit</span> register is not implemented, the implementation
+<p>The <span><code>mcycle</code></span> CSR may be shared between harts on the same core, in which
+case the <span><code>mcountinhibit</code></span>.CY field is also shared between those harts,
+and so writes to <span><code>mcountinhibit</code></span>.CY will be visible to those harts.</p>
+<p>If the <span><code>mcountinhibit</code></span> register is not implemented, the implementation
 behaves as though the register were set to zero.</p>
 <div class=commentary>
-<p>When the <span>cycle</span> and <span>instret</span> counters are not needed, it is
+<p>When the <span><code>cycle</code></span> and <span><code>instret</code></span> counters are not needed, it is
 desirable to conditionally inhibit them to reduce energy consumption.
 Providing a single CSR to inhibit all counters also allows the counters to be
 atomically sampled.</p>
-<p>Because the <span>time</span> counter can be shared between multiple cores, it
-cannot be inhibited with the <span>mcountinhibit</span> mechanism.</p>
+<p>Because the <span><code>time</code></span> counter can be shared between multiple cores, it
+cannot be inhibited with the <span><code>mcountinhibit</code></span> mechanism.</p>
 </div>
-<h3 id="machine-scratch-register-mscratch"><span class="header-section-number">3.1.13</span> Machine Scratch Register (<span>mscratch</span>)</h3>
-<p>The <span>mscratch</span> register is an MXLEN-bit read/write register
+</section>
+<section id="machine-scratch-register-mscratch" data-number="1.1.13">
+<h3 data-number="3.1.13"><span class="header-section-number">3.1.13</span> Machine Scratch Register (<span><code>mscratch</code></span>)</h3>
+<p>The <span><code>mscratch</code></span> register is an MXLEN-bit read/write register
 dedicated for use by machine mode. Typically, it is used to hold a
 pointer to a machine-mode hart-local context space and swapped with a
 user register upon entry to an M-mode trap handler.</p>
 <figure>
-<img src="machine_20.svg" alt="Machine-mode scratch register." id="mscratchreg" /><figcaption>Machine-mode scratch register.<span label="mscratchreg"></span></figcaption>
+<img src="machine_20.svg" id="mscratchreg" alt="" /><figcaption>Machine-mode scratch register.</figcaption>
 </figure>
 <div class=commentary>
-<p>The MIPS ISA allocated two user registers (<span>k0</span>/<span>k1</span>) for use
+<p>The MIPS ISA allocated two user registers (<span><code>k0</code></span>/<span><code>k1</code></span>) for use
 by the operating system. Although the MIPS scheme provides a fast and
 simple implementation, it also reduces available user registers, and
 does not scale to further privilege levels, or nested traps. It can
@@ -1296,53 +1326,55 @@ debugging behavior.</p>
 <p>The RISC-V user ISA was designed to support many possible privileged
 system environments and so we did not want to infect the user-level
 ISA with any OS-dependent features. The RISC-V CSR swap instructions
-can quickly save/restore values to the <span>mscratch</span> register.
-Unlike the MIPS design, the OS can rely on holding a value in the <span>
-mscratch</span> register while the user context is running.</p>
+can quickly save/restore values to the <span><code>mscratch</code></span> register.
+Unlike the MIPS design, the OS can rely on holding a value in the <span><code> mscratch</code></span> register while the user context is running.</p>
 </div>
-<h3 id="machine-exception-program-counter-mepc"><span class="header-section-number">3.1.14</span> Machine Exception Program Counter (<span>mepc</span>)</h3>
-<p><span>mepc</span> is an MXLEN-bit read/write register formatted as shown in
-Figure <a href="machine.html#mepcreg" data-reference-type="ref" data-reference="mepcreg">1.20</a>. The low bit of <span>mepc</span> (<span>mepc[0]</span>) is
+</section>
+<section id="machine-exception-program-counter-mepc" data-number="1.1.14">
+<h3 data-number="3.1.14"><span class="header-section-number">3.1.14</span> Machine Exception Program Counter (<span><code>mepc</code></span>)</h3>
+<p><span><code>mepc</code></span> is an MXLEN-bit read/write register formatted as shown in
+Figure <a href="machine.html#mepcreg" data-reference-type="ref" data-reference="mepcreg">1.20</a>. The low bit of <span><code>mepc</code></span> (<span><code>mepc[0]</code></span>) is
 always zero. On implementations that support only IALIGN=32, the two low bits
-(<span>mepc[1:0]</span>) are always zero.</p>
+(<span><code>mepc[1:0]</code></span>) are always zero.</p>
 <p>If an implementation allows IALIGN to be either 16 or 32 (by
-changing CSR <span>misa</span>, for example), then, whenever IALIGN=32, bit
-<span>mepc[1]</span> is masked on reads so that it appears to be 0. This
+changing CSR <span><code>misa</code></span>, for example), then, whenever IALIGN=32, bit
+<span><code>mepc[1]</code></span> is masked on reads so that it appears to be 0. This
 masking occurs also for the implicit read by the MRET instruction.
-Though masked, <span>mepc[1]</span> remains writable when IALIGN=32.</p>
-<p><span>mepc</span> is a <strong>WARL</strong> register that must be able to hold all valid
+Though masked, <span><code>mepc[1]</code></span> remains writable when IALIGN=32.</p>
+<p><span><code>mepc</code></span> is a <strong>WARL</strong> register that must be able to hold all valid
 virtual addresses. It need not be capable of holding all possible invalid
 addresses.
-Prior to writing <span>mepc</span>, implementations may convert an invalid address
-into some other invalid address that <span>mepc</span> is capable of holding.</p>
+Prior to writing <span><code>mepc</code></span>, implementations may convert an invalid address
+into some other invalid address that <span><code>mepc</code></span> is capable of holding.</p>
 <div class=commentary>
 <p>When address translation is not in effect, virtual addresses and physical
 addresses are equal.
-Hence, the set of addresses <span>mepc</span> must be able to represent includes the
-set of physical addresses that can be used as a valid <span>pc</span> or effective
+Hence, the set of addresses <span><code>mepc</code></span> must be able to represent includes the
+set of physical addresses that can be used as a valid <span><code>pc</code></span> or effective
 address.</p>
 </div>
-<p>When a trap is taken into M-mode, <span>mepc</span> is written with the
+<p>When a trap is taken into M-mode, <span><code>mepc</code></span> is written with the
 virtual address of the instruction that was interrupted or that
-encountered the exception. Otherwise, <span>mepc</span> is never written by
+encountered the exception. Otherwise, <span><code>mepc</code></span> is never written by
 the implementation, though it may be explicitly written by software.</p>
 <figure>
-<img src="machine_21.svg" alt="Machine exception program counter register." id="mepcreg" /><figcaption>Machine exception program counter register.<span label="mepcreg"></span></figcaption>
+<img src="machine_21.svg" id="mepcreg" alt="" /><figcaption>Machine exception program counter register.</figcaption>
 </figure>
-<h3 id="sec:mcause"><span class="header-section-number">3.1.15</span> Machine Cause Register (<span>mcause</span>)</h3>
-<p>The <span>mcause</span> register is an MXLEN-bit read-write register formatted as
-shown in Figure <a href="machine.html#mcausereg" data-reference-type="ref" data-reference="mcausereg">1.21</a>. When a trap is taken into M-mode, <span>
-mcause</span> is written with a code indicating the event that caused the trap.
-Otherwise, <span>mcause</span> is never written by the implementation, though it may be
+</section>
+<section id="sec:mcause" data-number="1.1.15">
+<h3 data-number="3.1.15"><span class="header-section-number">3.1.15</span> Machine Cause Register (<span><code>mcause</code></span>)</h3>
+<p>The <span><code>mcause</code></span> register is an MXLEN-bit read-write register formatted as
+shown in Figure <a href="machine.html#mcausereg" data-reference-type="ref" data-reference="mcausereg">1.21</a>. When a trap is taken into M-mode, <span><code> mcause</code></span> is written with a code indicating the event that caused the trap.
+Otherwise, <span><code>mcause</code></span> is never written by the implementation, though it may be
 explicitly written by software.</p>
-<p>The Interrupt bit in the <span>mcause</span> register is set if the
+<p>The Interrupt bit in the <span><code>mcause</code></span> register is set if the
 trap was caused by an interrupt. The Exception Code field
 contains a code identifying the last exception or interrupt. Table <a href="machine.html#mcauses" data-reference-type="ref" data-reference="mcauses">[mcauses]</a>
 lists the possible machine-level exception codes. The Exception Code
 is a <strong>WLRL</strong> field, so is only guaranteed to hold supported exception
 codes.</p>
 <figure>
-<img src="machine_22.svg" alt="Machine Cause register mcause." id="mcausereg" /><figcaption>Machine Cause register <span>mcause</span>.<span label="mcausereg"></span></figcaption>
+<img src="machine_22.svg" id="mcausereg" alt="" /><figcaption>Machine Cause register <span><code>mcause</code></span>.</figcaption>
 </figure>
 <table>
 <thead>
@@ -1571,7 +1603,7 @@ whereas store, store-conditional, and AMO instructions generate store/AMO
 exceptions.</p>
 <div class=commentary>
 <p>Interrupts can be separated from other traps with a single branch on the sign of
-the <span>mcause</span> register value. A shift left can remove the
+the <span><code>mcause</code></span> register value. A shift left can remove the
 interrupt bit and scale the exception codes to index into a trap
 vector table.</p>
 </div>
@@ -1585,7 +1617,7 @@ a given opcode should be treated as illegal or privileged.</p>
 </div>
 <p>If an instruction may raise multiple synchronous exceptions, the
 decreasing priority order of Table <a href="machine.html#exception-priority" data-reference-type="ref" data-reference="exception-priority">[exception-priority]</a>
-indicates which exception is taken and reported in <span>mcause</span>.
+indicates which exception is taken and reported in <span><code>mcause</code></span>.
 The priority of any custom synchronous exceptions is implementation-defined.</p>
 <table>
 <thead>
@@ -1720,49 +1752,51 @@ instructions with misaligned targets, rather than by the act of fetching an
 instruction. Therefore, these exceptions have lower priority than other
 instruction address exceptions.</p>
 </div>
-<h3 id="machine-trap-value-register-mtval"><span class="header-section-number">3.1.16</span> Machine Trap Value Register (<span>mtval</span>)</h3>
-<p>The <span>mtval</span> register is an MXLEN-bit read-write register formatted as shown
-in Figure <a href="machine.html#mtvalreg" data-reference-type="ref" data-reference="mtvalreg">1.22</a>. When a trap is taken into M-mode, <span>mtval</span> is
+</section>
+<section id="machine-trap-value-register-mtval" data-number="1.1.16">
+<h3 data-number="3.1.16"><span class="header-section-number">3.1.16</span> Machine Trap Value Register (<span><code>mtval</code></span>)</h3>
+<p>The <span><code>mtval</code></span> register is an MXLEN-bit read-write register formatted as shown
+in Figure <a href="machine.html#mtvalreg" data-reference-type="ref" data-reference="mtvalreg">1.22</a>. When a trap is taken into M-mode, <span><code>mtval</code></span> is
 either set to zero or written with exception-specific information to assist
-software in handling the trap. Otherwise, <span>mtval</span> is never written by the
+software in handling the trap. Otherwise, <span><code>mtval</code></span> is never written by the
 implementation, though it may be explicitly written by software. The hardware
-platform will specify which exceptions must set <span>mtval</span> informatively and
+platform will specify which exceptions must set <span><code>mtval</code></span> informatively and
 which may unconditionally set it to zero.
-If the hardware platform specifies that no exceptions set <span>mtval</span> to a
-nonzero value, then <span>mtval</span> is read-only zero.</p>
-<p>If <span>mtval</span> is written with a nonzero value when a breakpoint,
+If the hardware platform specifies that no exceptions set <span><code>mtval</code></span> to a
+nonzero value, then <span><code>mtval</code></span> is read-only zero.</p>
+<p>If <span><code>mtval</code></span> is written with a nonzero value when a breakpoint,
 address-misaligned, access-fault, or page-fault exception occurs on an
-instruction fetch, load, or store, then <span>mtval</span> will contain the faulting
+instruction fetch, load, or store, then <span><code>mtval</code></span> will contain the faulting
 virtual address.</p>
 <div class=commentary>
-<p>When page-based virtual memory is enabled, <span>mtval</span> is written with
+<p>When page-based virtual memory is enabled, <span><code>mtval</code></span> is written with
 the faulting virtual address, even for physical-memory access-fault exceptions.
 This design reduces datapath cost for most implementations, particularly
 those with hardware page-table walkers.</p>
 </div>
 <figure>
-<img src="machine_23.svg" alt="Machine Trap Value register." id="mtvalreg" /><figcaption>Machine Trap Value register.<span label="mtvalreg"></span></figcaption>
+<img src="machine_23.svg" id="mtvalreg" alt="" /><figcaption>Machine Trap Value register.</figcaption>
 </figure>
-<p>If <span>mtval</span> is written with a nonzero value when a misaligned load or store
-causes an access-fault or page-fault exception, then <span>mtval</span> will contain
+<p>If <span><code>mtval</code></span> is written with a nonzero value when a misaligned load or store
+causes an access-fault or page-fault exception, then <span><code>mtval</code></span> will contain
 the virtual address of the portion of the access that caused the fault.</p>
-<p>If <span>mtval</span> is written with a nonzero value when an instruction
+<p>If <span><code>mtval</code></span> is written with a nonzero value when an instruction
 access-fault or page-fault exception occurs on a system with variable-length
-instructions, then <span>mtval</span> will contain the virtual address of the portion
-of the instruction that caused the fault, while <span>mepc</span> will point to the
+instructions, then <span><code>mtval</code></span> will contain the virtual address of the portion
+of the instruction that caused the fault, while <span><code>mepc</code></span> will point to the
 beginning of the instruction.</p>
-<p>The <span>mtval</span> register can optionally also be used to return the faulting
-instruction bits on an illegal instruction exception (<span>mepc</span> points to the
+<p>The <span><code>mtval</code></span> register can optionally also be used to return the faulting
+instruction bits on an illegal instruction exception (<span><code>mepc</code></span> points to the
 faulting instruction in memory).
-If <span>mtval</span> is written with a nonzero value when an illegal-instruction
-exception occurs, then <span>mtval</span> will contain the shortest of:</p>
+If <span><code>mtval</code></span> is written with a nonzero value when an illegal-instruction
+exception occurs, then <span><code>mtval</code></span> will contain the shortest of:</p>
 <p>the actual faulting instruction</p>
 <p>the first ILEN bits of the faulting instruction</p>
 <p>the first MXLEN bits of the faulting instruction</p>
-<p>The value loaded into <span>mtval</span> on an illegal-instruction exception is
+<p>The value loaded into <span><code>mtval</code></span> on an illegal-instruction exception is
 right-justified and all unused upper bits are cleared to zero.</p>
 <div class=commentary>
-<p>Capturing the faulting instruction in <span>mtval</span> reduces the
+<p>Capturing the faulting instruction in <span><code>mtval</code></span> reduces the
 overhead of instruction emulation, potentially avoiding several
 partial instruction loads if the instruction is misaligned, and
 likely data cache misses or slow uncached accesses when loads are
@@ -1770,66 +1804,69 @@ used to fetch the instruction into a data register. There is also a
 problem of atomicity if another agent is manipulating the
 instruction memory, as might occur in a dynamic translation system.</p>
 <p>A requirement is that the entire instruction (or at least the first
-MXLEN bits) are fetched into <span>mtval</span> before taking the trap.
+MXLEN bits) are fetched into <span><code>mtval</code></span> before taking the trap.
 This should not constrain implementations, which would typically
 fetch the entire instruction before attempting to decode the
 instruction, and avoids complicating software handlers.</p>
-<p>A value of zero in <span>mtval</span> signifies either that the feature is
+<p>A value of zero in <span><code>mtval</code></span> signifies either that the feature is
 not supported, or an illegal zero instruction was fetched. A load
-from the instruction memory pointed to by <span>mepc</span> can be used to
+from the instruction memory pointed to by <span><code>mepc</code></span> can be used to
 distinguish these two cases (or alternatively, the system
 configuration information can be interrogated to install the
 appropriate trap handling before runtime).</p>
 </div>
-<p>For other traps, <span>mtval</span> is set to zero, but a future standard may
-redefine <span>mtval</span>’s setting for other traps.</p>
-<p>If <span>mtval</span> is not read-only zero, it is a <strong>WARL</strong> register that must be
+<p>For other traps, <span><code>mtval</code></span> is set to zero, but a future standard may
+redefine <span><code>mtval</code></span>’s setting for other traps.</p>
+<p>If <span><code>mtval</code></span> is not read-only zero, it is a <strong>WARL</strong> register that must be
 able to hold all valid virtual addresses and the value zero.
 It need not be capable of holding all
 possible invalid addresses.
-Prior to writing <span>mtval</span>, implementations may convert an invalid address
-into some other invalid address that <span>mtval</span> is capable of holding.
-If the feature to return the faulting instruction bits is implemented, <span>
-mtval</span> must also be able to hold all values less than <span class="math inline">2<sup><em>N</em></sup></span>, where <span class="math inline"><em>N</em></span> is the
+Prior to writing <span><code>mtval</code></span>, implementations may convert an invalid address
+into some other invalid address that <span><code>mtval</code></span> is capable of holding.
+If the feature to return the faulting instruction bits is implemented, <span><code> mtval</code></span> must also be able to hold all values less than <span class="math inline">2<sup><em>N</em></sup></span>, where <span class="math inline"><em>N</em></span> is the
 smaller of MXLEN and ILEN.</p>
-<h3 id="machine-configuration-pointer-register-mconfigptr"><span class="header-section-number">3.1.17</span> Machine Configuration Pointer Register (<span>mconfigptr</span>)</h3>
-<p><span>mconfigptr</span> is an MXLEN-bit read-only CSR, formatted as shown in
+</section>
+<section id="machine-configuration-pointer-register-mconfigptr" data-number="1.1.17">
+<h3 data-number="3.1.17"><span class="header-section-number">3.1.17</span> Machine Configuration Pointer Register (<span><code>mconfigptr</code></span>)</h3>
+<p><span><code>mconfigptr</code></span> is an MXLEN-bit read-only CSR, formatted as shown in
 Figure <a href="machine.html#mconfigptrreg" data-reference-type="ref" data-reference="mconfigptrreg">1.23</a>, that holds the physical address of a configuration
 data structure.
 Software can traverse this data structure to discover information about
 the harts, the platform, and their configuration.</p>
 <figure>
-<img src="machine_24.svg" alt="Machine Configuration Pointer register." id="mconfigptrreg" /><figcaption>Machine Configuration Pointer register.<span label="mconfigptrreg"></span></figcaption>
+<img src="machine_24.svg" id="mconfigptrreg" alt="" /><figcaption>Machine Configuration Pointer register.</figcaption>
 </figure>
 <p>The pointer alignment in bits must be no smaller than the greatest supported
 MXLEN: i.e., if the greatest supported MXLEN is <span class="math inline">8 × <em>n</em></span>, then
-<span>mconfigptr</span>[<span class="math inline">log<sub>2</sub><em>n</em></span>-1:0] must be zero.</p>
-<p><span>mconfigptr</span> must be implemented, but it may be zero to
+<span><code>mconfigptr</code></span>[<span class="math inline">log<sub>2</sub><em>n</em></span>-1:0] must be zero.</p>
+<p><span><code>mconfigptr</code></span> must be implemented, but it may be zero to
 indicate the configuration data structure does not exist or that an
 alternative mechanism must be used to locate it.</p>
 <div class=commentary>
 <p>The format and schema of the configuration data structure have yet to be standardized.</p>
 </div>
 <div class=commentary>
-<p>While <span>mconfigptr</span> will simply be hardwired in some implementations, other
+<p>While <span><code>mconfigptr</code></span> will simply be hardwired in some implementations, other
 implementations may provide a means to configure the value returned on CSR
 reads.
-For example, <span>mconfigptr</span> might present the value of a memory-mapped
+For example, <span><code>mconfigptr</code></span> might present the value of a memory-mapped
 register that is programmed by the platform or by M-mode software towards the
 beginning of the boot process.</p>
 </div>
-<h3 id="machine-environment-configuration-registers-menvcfg-and-menvcfgh"><span class="header-section-number">3.1.18</span> 
+</section>
+<section id="machine-environment-configuration-registers-menvcfg-and-menvcfgh" data-number="1.1.18">
+<h3 data-number="3.1.18"><span class="header-section-number">3.1.18</span> 
 Machine Environment Configuration Registers
-(<span>menvcfg</span> and <span>menvcfgh</span>)
+(<span><code>menvcfg</code></span> and <span><code>menvcfgh</code></span>)
 </h3>
-<p>The <span>menvcfg</span> CSR is an MXLEN-bit read/write register,
+<p>The <span><code>menvcfg</code></span> CSR is an MXLEN-bit read/write register,
 formatted for MXLEN=64 as shown in Figure <a href="machine.html#fig:menvcfg" data-reference-type="ref" data-reference="fig:menvcfg">1.24</a>,
 that controls certain characteristics of the execution environment
 for modes less privileged than M.</p>
 <figure>
-<img src="machine_25.svg" alt="Machine environment configuration register (menvcfg) for MXLEN=64." id="fig:menvcfg" /><figcaption>Machine environment configuration register (<span>menvcfg</span>) for MXLEN=64.<span label="fig:menvcfg"></span></figcaption>
+<img src="machine_25.svg" id="fig:menvcfg" alt="" /><figcaption>Machine environment configuration register (<span><code>menvcfg</code></span>) for MXLEN=64.</figcaption>
 </figure>
-<p>If bit FIOM (Fence of I/O implies Memory) is set to one in <span>menvcfg</span>,
+<p>If bit FIOM (Fence of I/O implies Memory) is set to one in <span><code>menvcfg</code></span>,
 FENCE instructions executed in modes less privileged than M are modified so
 the requirement to order accesses to device I/O implies also the requirement
 to order main memory accesses.
@@ -1840,7 +1877,7 @@ when FIOM=1.</p>
 if an atomic instruction that accesses a region ordered as device I/O
 has its <span><em>aq</em></span> and/or <span><em>rl</em></span> bit set, then that instruction is ordered
 as though it accesses both device I/O and memory.</p>
-<p>If S-mode is not supported, or if <span>satp</span>.MODE is read-only zero
+<p>If S-mode is not supported, or if <span><code>satp</code></span>.MODE is read-only zero
 (always Bare), the implementation may make FIOM read-only zero.</p>
 <table>
 <thead>
@@ -1869,76 +1906,81 @@ as though it accesses both device I/O and memory.</p>
 </tbody>
 </table>
 <div class=commentary>
-<p>Bit FIOM is needed in <span>menvcfg</span> so M-mode can emulate the
+<p>Bit FIOM is needed in <span><code>menvcfg</code></span> so M-mode can emulate the
 hypervisor extension of Chapter <a href="hypervisor.html#hypervisor" data-reference-type="ref" data-reference="hypervisor">[hypervisor]</a>, which has an
-equivalent FIOM bit in the hypervisor CSR <span>henvcfg</span>.</p>
+equivalent FIOM bit in the hypervisor CSR <span><code>henvcfg</code></span>.</p>
 </div>
 <p>The PBMTE bit controls whether the Svpbmt extension is available for use in
 S-mode and G-stage address translation (i.e., for page tables pointed to by
-<span>satp</span> or <span>hgatp</span>).
+<span><code>satp</code></span> or <span><code>hgatp</code></span>).
 When PBMTE=1, Svpbmt is available for S-mode and G-stage address translation.
 When PBMTE=0, the implementation behaves as though Svpbmt were not implemented.
 If Svpbmt is not implemented, PBMTE is read-only zero.
 Furthermore, for implementations with the hypervisor extension,
-<span>henvcfg</span>.PBMTE is read-only zero if <span>menvcfg</span>.PBMTE is zero.</p>
+<span><code>henvcfg</code></span>.PBMTE is read-only zero if <span><code>menvcfg</code></span>.PBMTE is zero.</p>
 <p>The definition of the STCE field will be furnished by the
 forthcoming Sstc extension.
-Its allocation within <span>menvcfg</span> may change prior to the ratification
+Its allocation within <span><code>menvcfg</code></span> may change prior to the ratification
 of that extension.</p>
 <p>The definition of the CBZE field will be furnished by the
 forthcoming Zicboz extension.
-Its allocation within <span>menvcfg</span> may change prior to the ratification
+Its allocation within <span><code>menvcfg</code></span> may change prior to the ratification
 of that extension.</p>
 <p>The definitions of the CBCFE and CBIE fields will be furnished by the
 forthcoming Zicbom extension.
-Their allocations within <span>menvcfg</span> may change prior to the ratification
+Their allocations within <span><code>menvcfg</code></span> may change prior to the ratification
 of that extension.</p>
-<p>When MXLEN=32, <span>menvcfg</span> contains the same fields as bits 31:0
-of <span>menvcfg</span> when MXLEN=64.
-Additionally, when MXLEN=32, <span>menvcfgh</span> is a 32-bit read/write register that
-contains the same fields as bits 63:32 of <span>menvcfg</span> when
+<p>When MXLEN=32, <span><code>menvcfg</code></span> contains the same fields as bits 31:0
+of <span><code>menvcfg</code></span> when MXLEN=64.
+Additionally, when MXLEN=32, <span><code>menvcfgh</code></span> is a 32-bit read/write register that
+contains the same fields as bits 63:32 of <span><code>menvcfg</code></span> when
 MXLEN=64.
-Register <span>menvcfgh</span> does not exist when MXLEN=64.</p>
-<p>If U-mode is not supported, then registers <span>menvcfg</span> and <span>menvcfgh</span> do
+Register <span><code>menvcfgh</code></span> does not exist when MXLEN=64.</p>
+<p>If U-mode is not supported, then registers <span><code>menvcfg</code></span> and <span><code>menvcfgh</code></span> do
 not exist.</p>
-<h3 id="sec:mseccfg"><span class="header-section-number">3.1.19</span> Machine Security Configuration Register (<span>mseccfg</span>)</h3>
-<p><span>mseccfg</span> is an optional MXLEN-bit read/write register, formatted as shown
+</section>
+<section id="sec:mseccfg" data-number="1.1.19">
+<h3 data-number="3.1.19"><span class="header-section-number">3.1.19</span> Machine Security Configuration Register (<span><code>mseccfg</code></span>)</h3>
+<p><span><code>mseccfg</code></span> is an optional MXLEN-bit read/write register, formatted as shown
 in Figure <a href="machine.html#fig:mseccfg" data-reference-type="ref" data-reference="fig:mseccfg">1.25</a>, that controls security features.</p>
-<p>When MXLEN=32 only, <span>mseccfgh</span> is a 32-bit read/write register that
-contains the same fields as <span>mseccfg</span> bits 63:32 when MXLEN=64.</p>
+<p>When MXLEN=32 only, <span><code>mseccfgh</code></span> is a 32-bit read/write register that
+contains the same fields as <span><code>mseccfg</code></span> bits 63:32 when MXLEN=64.</p>
 <figure>
-<img src="machine_26.svg" alt="Machine security configuration register (mseccfg)." id="fig:mseccfg" /><figcaption>Machine security configuration register (<span>mseccfg</span>).<span label="fig:mseccfg"></span></figcaption>
+<img src="machine_26.svg" id="fig:mseccfg" alt="" /><figcaption>Machine security configuration register (<span><code>mseccfg</code></span>).</figcaption>
 </figure>
 <p>The definitions of the SSEED and USEED fields will be furnished by the
 forthcoming entropy-source extension, Zkr.
-Their allocations within <span>mseccfg</span> may change prior to the ratification
+Their allocations within <span><code>mseccfg</code></span> may change prior to the ratification
 of that extension.</p>
 <p>The definitions of the RLB, MMWP, and MML fields will be furnished by the
 forthcoming PMP-enhancement extension, Smepmp.
-Their allocations within <span>mseccfg</span> may change prior to the ratification
+Their allocations within <span><code>mseccfg</code></span> may change prior to the ratification
 of that extension.</p>
-<h2 id="machine-level-memory-mapped-registers"><span class="header-section-number">3.2</span> Machine-Level Memory-Mapped Registers</h2>
-<h3 id="machine-timer-registers-mtime-and-mtimecmp"><span class="header-section-number">3.2.1</span> Machine Timer Registers (<span>mtime</span> and <span>mtimecmp</span>)</h3>
+</section>
+</section>
+<section id="machine-level-memory-mapped-registers" data-number="1.2">
+<h2 data-number="3.2"><span class="header-section-number">3.2</span> Machine-Level Memory-Mapped Registers</h2>
+<section id="machine-timer-registers-mtime-and-mtimecmp" data-number="1.2.1">
+<h3 data-number="3.2.1"><span class="header-section-number">3.2.1</span> Machine Timer Registers (<span><code>mtime</code></span> and <span><code>mtimecmp</code></span>)</h3>
 <p>Platforms provide a real-time counter, exposed as a memory-mapped
-machine-mode read-write register, <span>mtime</span>. <span>mtime</span> must
+machine-mode read-write register, <span><code>mtime</code></span>. <span><code>mtime</code></span> must
 increment at constant frequency, and the platform must provide a
-mechanism for determining the period of an <span>mtime</span> tick. The <span>
-mtime</span> register will wrap around if the count overflows.</p>
-<p>The <span>mtime</span> register has a 64-bit precision on all RV32 and RV64
+mechanism for determining the period of an <span><code>mtime</code></span> tick. The <span><code> mtime</code></span> register will wrap around if the count overflows.</p>
+<p>The <span><code>mtime</code></span> register has a 64-bit precision on all RV32 and RV64
 systems. Platforms provide a 64-bit memory-mapped machine-mode
-timer compare register (<span>mtimecmp</span>).
-A machine timer interrupt becomes pending whenever <span>mtime</span> contains
-a value greater than or equal to <span>mtimecmp</span>, treating the values
+timer compare register (<span><code>mtimecmp</code></span>).
+A machine timer interrupt becomes pending whenever <span><code>mtime</code></span> contains
+a value greater than or equal to <span><code>mtimecmp</code></span>, treating the values
 as unsigned integers.
-The interrupt remains posted until <span>mtimecmp</span> becomes greater than
-<span>mtime</span> (typically as a result of writing <span>mtimecmp</span>).
+The interrupt remains posted until <span><code>mtimecmp</code></span> becomes greater than
+<span><code>mtime</code></span> (typically as a result of writing <span><code>mtimecmp</code></span>).
 The interrupt will only be taken if interrupts
-are enabled and the MTIE bit is set in the <span>mie</span> register.</p>
+are enabled and the MTIE bit is set in the <span><code>mie</code></span> register.</p>
 <figure>
-<img src="machine_27.svg" alt="Machine time register (memory-mapped control register)." /><figcaption>Machine time register (memory-mapped control register).</figcaption>
+<img src="machine_27.svg" alt="" /><figcaption>Machine time register (memory-mapped control register).</figcaption>
 </figure>
 <figure>
-<img src="machine_28.svg" alt="Machine time compare register (memory-mapped control register)." /><figcaption>Machine time compare register (memory-mapped control register).</figcaption>
+<img src="machine_28.svg" alt="" /><figcaption>Machine time compare register (memory-mapped control register).</figcaption>
 </figure>
 <div class=commentary>
 <p>The timer facility is defined to use wall-clock time rather than a
@@ -1952,39 +1994,40 @@ system located in a different frequency/voltage domain from the
 processors. Hence, the RTC must be shared by all the harts in a
 system and accesses to the RTC will potentially incur the penalty of a
 voltage-level-shifter and clock-domain crossing. It is thus more
-natural to expose <span>mtime</span> as a memory-mapped register than as a CSR.</p>
-<p>Lower privilege levels do not have their own <span>timecmp</span> registers.
+natural to expose <span><code>mtime</code></span> as a memory-mapped register than as a CSR.</p>
+<p>Lower privilege levels do not have their own <span><code>timecmp</code></span> registers.
 Instead, machine-mode software can implement any number of virtual timers on
-a hart by multiplexing the next timer interrupt into the <span>mtimecmp</span>
+a hart by multiplexing the next timer interrupt into the <span><code>mtimecmp</code></span>
 register.</p>
 <p>Simple fixed-frequency systems can use a single clock for both cycle
 counting and wall-clock time.</p>
 </div>
-<p>Writes to <span>mtime</span> and <span>mtimecmp</span> are guaranteed to be reflected in
+<p>Writes to <span><code>mtime</code></span> and <span><code>mtimecmp</code></span> are guaranteed to be reflected in
 MTIP eventually, but not necessarily immediately.</p>
 <div class=commentary>
-<p>A spurious timer interrupt might occur if an interrupt handler increments <span>
-mtimecmp</span> then immediately returns, because MTIP might not yet have fallen in
+<p>A spurious timer interrupt might occur if an interrupt handler increments <span><code> mtimecmp</code></span> then immediately returns, because MTIP might not yet have fallen in
 the interim. All software should be written to assume this event is possible,
 but most software should assume this event is extremely unlikely. It is
 almost always more performant to incur an occasional spurious timer interrupt
 than to poll MTIP until it falls.</p>
 </div>
-<p>In RV32, memory-mapped writes to <span>mtimecmp</span> modify only one 32-bit
-part of the register. The following code sequence sets a 64-bit <span>
-mtimecmp</span> value without spuriously generating a timer interrupt due
+<p>In RV32, memory-mapped writes to <span><code>mtimecmp</code></span> modify only one 32-bit
+part of the register. The following code sequence sets a 64-bit <span><code> mtimecmp</code></span> value without spuriously generating a timer interrupt due
 to the intermediate value of the comparand:</p>
 <figure>
-<img src="machine_29.svg" alt="Sample code for setting the 64-bit time comparand in RV32, assuming a little-endian memory system and that the registers live in a strongly ordered I/O region. Storing -1 to the low-order bits of mtimecmp prevents mtimecmp from temporarily becoming smaller than the lesser of the old and new values." id="mtimecmph" /><figcaption>Sample code for setting the 64-bit time comparand in RV32, assuming
+<img src="machine_29.svg" id="mtimecmph" alt="" /><figcaption>Sample code for setting the 64-bit time comparand in RV32, assuming
 a little-endian memory system and that the registers live in a strongly
-ordered I/O region. Storing -1 to the low-order bits of <span>mtimecmp</span>
-prevents <span>mtimecmp</span> from temporarily becoming smaller than the lesser
-of the old and new values.<span label="mtimecmph"></span></figcaption>
+ordered I/O region. Storing -1 to the low-order bits of <span><code>mtimecmp</code></span>
+prevents <span><code>mtimecmp</code></span> from temporarily becoming smaller than the lesser
+of the old and new values.</figcaption>
 </figure>
-<p>For RV64, naturally aligned 64-bit memory accesses to the <span>mtime</span> and <span>
-mtimecmp</span> registers are additionally supported and are atomic.</p>
-<h2 id="machine-mode-privileged-instructions"><span class="header-section-number">3.3</span> Machine-Mode Privileged Instructions</h2>
-<h3 id="environment-call-and-breakpoint"><span class="header-section-number">3.3.1</span> Environment Call and Breakpoint</h3>
+<p>For RV64, naturally aligned 64-bit memory accesses to the <span><code>mtime</code></span> and <span><code> mtimecmp</code></span> registers are additionally supported and are atomic.</p>
+</section>
+</section>
+<section id="machine-mode-privileged-instructions" data-number="1.3">
+<h2 data-number="3.3"><span class="header-section-number">3.3</span> Machine-Mode Privileged Instructions</h2>
+<section id="environment-call-and-breakpoint" data-number="1.3.1">
+<h3 data-number="3.3.1"><span class="header-section-number">3.3.1</span> Environment Call and Breakpoint</h3>
 <p><img src="machine_30.svg" alt="image" /></p>
 <p>The ECALL instruction is used to make a request to the supporting execution
 environment. When executed in U-mode, S-mode, or M-mode, it generates an
@@ -2003,12 +2046,14 @@ performs no other operation.
 Volume I of this manual, the C.EBREAK instruction performs the same operation
 as the EBREAK instruction.</p>
 </div>
-<p>ECALL and EBREAK cause the receiving privilege mode’s <span>epc</span> register
+<p>ECALL and EBREAK cause the receiving privilege mode’s <span><code>epc</code></span> register
 to be set to the address of the ECALL or EBREAK instruction itself, <span><em>not</em></span>
 the address of the following instruction.
 As ECALL and EBREAK cause synchronous exceptions, they are not considered to
-retire, and should not increment the <span>minstret</span> CSR.</p>
-<h3 id="otherpriv"><span class="header-section-number">3.3.2</span> Trap-Return Instructions</h3>
+retire, and should not increment the <span><code>minstret</code></span> CSR.</p>
+</section>
+<section id="otherpriv" data-number="1.3.2">
+<h3 data-number="3.3.2"><span class="header-section-number">3.3.2</span> Trap-Return Instructions</h3>
 <p>Instructions to return from trap are encoded under the PRIV
 minor opcode.</p>
 <p><img src="machine_31.svg" alt="image" /></p>
@@ -2016,14 +2061,14 @@ minor opcode.</p>
 instructions per privilege level, MRET and SRET. MRET is
 always provided. SRET must be provided if supervisor mode is
 supported, and should raise an illegal instruction exception otherwise. SRET
-should also raise an illegal instruction exception when TSR=1 in <span>mstatus</span>,
+should also raise an illegal instruction exception when TSR=1 in <span><code>mstatus</code></span>,
 as described in Section <a href="machine.html#virt-control" data-reference-type="ref" data-reference="virt-control">1.1.6.5</a>.
 An <span><em>x</em></span>RET instruction can be executed in privilege mode <span><em>x</em></span>
 or higher, where executing a lower-privilege <span><em>x</em></span>RET instruction
 will pop the relevant lower-privilege interrupt enable and privilege
 mode stack. In addition to manipulating the privilege stack as
-described in Section <a href="machine.html#privstack" data-reference-type="ref" data-reference="privstack">1.1.6.1</a>, <span><em>x</em></span>RET sets the <span>pc</span>
-to the value stored in the <span><em>x</em></span><span>epc</span> register.</p>
+described in Section <a href="machine.html#privstack" data-reference-type="ref" data-reference="privstack">1.1.6.1</a>, <span><em>x</em></span>RET sets the <span><code>pc</code></span>
+to the value stored in the <span><em>x</em></span><span><code>epc</code></span> register.</p>
 <p>If the A extension is supported, the <span><em>x</em></span>RET instruction is
 allowed to clear any outstanding LR address reservation but is not
 required to. Trap handlers should explicitly clear the reservation if
@@ -2033,20 +2078,22 @@ required (e.g., by using a dummy SC) before executing the <span><em>x</em></span
 be impossible to single-step through LR/SC sequences using a
 debugger.</p>
 </div>
-<h3 id="wfi"><span class="header-section-number">3.3.3</span> Wait for Interrupt</h3>
+</section>
+<section id="wfi" data-number="1.3.3">
+<h3 data-number="3.3.3"><span class="header-section-number">3.3.3</span> Wait for Interrupt</h3>
 <p>The Wait for Interrupt instruction (WFI) provides a hint to the
 implementation that the current hart can be stalled until an interrupt
 might need servicing. Execution of the WFI instruction can also be
 used to inform the hardware platform that suitable interrupts should
 preferentially be routed to this hart. WFI is available in all
 privileged modes, and optionally available to U-mode. This instruction may
-raise an illegal instruction exception when TW=1 in <span>mstatus</span>, as described
+raise an illegal instruction exception when TW=1 in <span><code>mstatus</code></span>, as described
 in Section <a href="machine.html#virt-control" data-reference-type="ref" data-reference="virt-control">1.1.6.5</a>.</p>
 <p><img src="machine_32.svg" alt="image" /></p>
 <p>If an enabled interrupt is present or later becomes present while the
 hart is stalled, the interrupt trap will be taken on the
 following instruction, i.e., execution resumes in the trap handler and
-<span>mepc</span> = <span>pc</span> + 4.</p>
+<span><code>mepc</code></span> = <span><code>pc</code></span> + 4.</p>
 <div class=commentary>
 <p>The following instruction takes the interrupt trap so
 that a simple return from the trap handler will execute code after the
@@ -2061,8 +2108,7 @@ the idle loop containing the WFI, and on a simple return from the
 handler, the idle loop will resume execution.</p>
 </div>
 <p>The WFI instruction can also be executed when interrupts are disabled. The
-operation of WFI must be unaffected by the global interrupt bits in <span>
-mstatus</span> (MIE and SIE) and the delegation register <span>mideleg</span>
+operation of WFI must be unaffected by the global interrupt bits in <span><code> mstatus</code></span> (MIE and SIE) and the delegation register <span><code>mideleg</code></span>
 (i.e., the hart must resume if a locally enabled interrupt becomes pending,
 even if it has been delegated to a less-privileged mode), but should honor the
 individual interrupt enables (e.g, MTIE) (i.e., implementations should
@@ -2071,7 +2117,7 @@ individually enabled). WFI is also required to resume execution for
 locally enabled interrupts pending at any privilege level, regardless
 of the global interrupt enable at each privilege level.</p>
 <p>If the event that causes the hart to resume execution does not cause
-an interrupt to be taken, execution will resume at <span>pc</span> + 4, and
+an interrupt to be taken, execution will resume at <span><code>pc</code></span> + 4, and
 software must determine what action to take, including looping back to
 repeat the WFI if there was no actionable event.</p>
 <div class=commentary>
@@ -2082,7 +2128,7 @@ discarded before the WFI is executed.</p>
 <p>As implementations are free to implement WFI as a NOP, software must
 explicitly check for any relevant pending but disabled interrupts in
 the code following an WFI, and should loop back to the WFI if no
-suitable interrupt was detected. The <span>mip</span> or <span>sip</span>
+suitable interrupt was detected. The <span><code>mip</code></span> or <span><code>sip</code></span>
 registers can be interrogated to determine the presence
 of any interrupt in machine or supervisor mode
 respectively.</p>
@@ -2097,33 +2143,38 @@ state, for example.</p>
 extensions that wait on memory locations changing, or message
 arrival.</p>
 </div>
-<h3 id="sec:customsys"><span class="header-section-number">3.3.4</span> Custom SYSTEM Instructions</h3>
+</section>
+<section id="sec:customsys" data-number="1.3.4">
+<h3 data-number="3.3.4"><span class="header-section-number">3.3.4</span> Custom SYSTEM Instructions</h3>
 <p>The subspace of the SYSTEM major opcode shown in Figure <a href="machine.html#fig:customsys" data-reference-type="ref" data-reference="fig:customsys">1.27</a>
 is designated for custom use.
 It is recommended that these instructions use bits 29:28 to designate the
 minimum required privilege mode, as do other SYSTEM instructions.</p>
 <figure>
-<img src="machine_33.svg" alt="SYSTEM instruction encodings designated for custom use." id="fig:customsys" /><figcaption>SYSTEM instruction encodings designated for custom use.<span label="fig:customsys"></span></figcaption>
+<img src="machine_33.svg" id="fig:customsys" alt="" /><figcaption>SYSTEM instruction encodings designated for custom use.</figcaption>
 </figure>
-<h2 id="sec:reset"><span class="header-section-number">3.4</span> Reset</h2>
-<p>Upon reset, a hart’s privilege mode is set to M. The <span>mstatus</span> fields MIE
+</section>
+</section>
+<section id="sec:reset" data-number="1.4">
+<h2 data-number="3.4"><span class="header-section-number">3.4</span> Reset</h2>
+<p>Upon reset, a hart’s privilege mode is set to M. The <span><code>mstatus</code></span> fields MIE
 and MPRV are reset to 0.
-If little-endian memory accesses are supported, the <span>mstatus</span>/<span>mstatush</span>
+If little-endian memory accesses are supported, the <span><code>mstatus</code></span>/<span><code>mstatush</code></span>
 field MBE is reset to 0.
-The <span>misa</span> register is reset to enable the maximal set of supported
+The <span><code>misa</code></span> register is reset to enable the maximal set of supported
 extensions and widest MXLEN, as described in Section <a href="machine.html#sec:misa" data-reference-type="ref" data-reference="sec:misa">1.1.1</a>.
 For implementations with the “A” standard extension, there is no valid load
 reservation.
-The <span>pc</span> is set to an implementation-defined
-reset vector. The <span>mcause</span> register is set to a value indicating the
+The <span><code>pc</code></span> is set to an implementation-defined
+reset vector. The <span><code>mcause</code></span> register is set to a value indicating the
 cause of the reset.
 Writable PMP registers’ A and L fields are set to 0, unless the platform
 mandates a different reset value for some PMP registers’ A and L fields.
-If the hypervisor extension is implemented, the <span>hgatp</span>.MODE and
-<span>vsatp</span>.MODE fields are reset to 0.
+If the hypervisor extension is implemented, the <span><code>hgatp</code></span>.MODE and
+<span><code>vsatp</code></span>.MODE fields are reset to 0.
 No <strong>WARL</strong> field contains an illegal value.
 All other hart state is .</p>
-<p>The <span>mcause</span> values after reset have implementation-specific
+<p>The <span><code>mcause</code></span> values after reset have implementation-specific
 interpretation, but the value 0 should be returned on implementations
 that do not distinguish different reset conditions. Implementations
 that distinguish different reset conditions should only use 0 to
@@ -2133,28 +2184,32 @@ indicate the most complete reset.</p>
 external hard reset, brownout detected, watchdog timer elapse,
 sleep-mode wakeup), which machine-mode software and debuggers may wish
 to distinguish.</p>
-<p><span>mcause</span> reset values may alias <span>mcause</span> values following synchronous
+<p><span><code>mcause</code></span> reset values may alias <span><code>mcause</code></span> values following synchronous
 exceptions. There should be no ambiguity in this overlap, since on reset the
-<span>pc</span> is typically set to a different value than on other traps.</p>
+<span><code>pc</code></span> is typically set to a different value than on other traps.</p>
 </div>
-<h2 id="sec:nmi"><span class="header-section-number">3.5</span> Non-Maskable Interrupts</h2>
+</section>
+<section id="sec:nmi" data-number="1.5">
+<h2 data-number="3.5"><span class="header-section-number">3.5</span> Non-Maskable Interrupts</h2>
 <p>Non-maskable interrupts (NMIs) are only used for hardware error
 conditions, and cause an immediate jump to an implementation-defined
 NMI vector running in M-mode regardless of the state of a hart’s
-interrupt enable bits. The <span>mepc</span> register is written with the
+interrupt enable bits. The <span><code>mepc</code></span> register is written with the
 virtual address of the instruction that was interrupted,
-and <span>mcause</span> is set to a value indicating the source of the
+and <span><code>mcause</code></span> is set to a value indicating the source of the
 NMI. The NMI can thus overwrite state in an active machine-mode
 interrupt handler.</p>
-<p>The values written to <span>mcause</span> on an NMI are
-implementation-defined. The high Interrupt bit of <span>mcause</span> should
+<p>The values written to <span><code>mcause</code></span> on an NMI are
+implementation-defined. The high Interrupt bit of <span><code>mcause</code></span> should
 be set to indicate that this was an interrupt. An Exception Code of 0
 is reserved to mean “unknown cause” and implementations that do not
-distinguish sources of NMIs via the <span>mcause</span> register should
+distinguish sources of NMIs via the <span><code>mcause</code></span> register should
 return 0 in the Exception Code.</p>
 <p>Unlike resets, NMIs do not reset processor state, enabling diagnosis,
 reporting, and possible containment of the hardware error.</p>
-<h2 id="sec:pma"><span class="header-section-number">3.6</span> Physical Memory Attributes</h2>
+</section>
+<section id="sec:pma" data-number="1.6">
+<h2 data-number="3.6"><span class="header-section-number">3.6</span> Physical Memory Attributes</h2>
 <p>The physical memory map for a complete system includes various address
 ranges, some corresponding to memory regions, some to memory-mapped
 control registers, and some to vacant holes in the address space. Some
@@ -2230,7 +2285,8 @@ machine-mode driver that can correctly reconfigure the platform. For
 example, switching cacheability attributes on some memory regions
 might involve platform-specific operations, such as cache flushes,
 that are available only to machine-mode.</p>
-<h3 id="main-memory-versus-io-versus-vacant-regions"><span class="header-section-number">3.6.1</span> Main Memory versus I/O versus Vacant Regions</h3>
+<section id="main-memory-versus-io-versus-vacant-regions" data-number="1.6.1">
+<h3 data-number="3.6.1"><span class="header-section-number">3.6.1</span> Main Memory versus I/O versus Vacant Regions</h3>
 <p>The most important characterization of a given memory address range is
 whether it holds regular main memory, or I/O devices, or is vacant.
 Regular main memory is required to have a number of properties,
@@ -2239,7 +2295,9 @@ attributes. Memory regions that do not fit into regular main
 memory, for example, device scratchpad RAMs, are categorized as I/O
 regions. Vacant regions are also classified as I/O regions but with
 attributes specifying that no accesses are supported.</p>
-<h3 id="supported-access-type-pmas"><span class="header-section-number">3.6.2</span> Supported Access Type PMAs</h3>
+</section>
+<section id="supported-access-type-pmas" data-number="1.6.2">
+<h3 data-number="3.6.2"><span class="header-section-number">3.6.2</span> Supported Access Type PMAs</h3>
 <p>Access types specify which access widths, from 8-bit byte to long
 multi-word burst, are supported, and also whether misaligned accesses
 are supported for each access width.</p>
@@ -2272,7 +2330,9 @@ page-table writes are supported.</p>
 <p>Unix-like operating systems generally require that all of cacheable main
 memory supports page-table walks.</p>
 </div>
-<h3 id="atomicity-pmas"><span class="header-section-number">3.6.3</span> Atomicity PMAs</h3>
+</section>
+<section id="atomicity-pmas" data-number="1.6.3">
+<h3 data-number="3.6.3"><span class="header-section-number">3.6.3</span> Atomicity PMAs</h3>
 <p>Atomicity PMAs describes which atomic instructions are supported in
 this address region.
 Support for atomic instructions is divided into two
@@ -2281,14 +2341,15 @@ categories: <span><em>LR/SC</em></span> and <span><em>AMOs</em></span>.</p>
 <p>Some platforms might mandate that all of cacheable main memory support
 all atomic operations required by the attached processors.</p>
 </div>
-<h4 id="amo-pma"><span class="header-section-number">3.6.3.1</span> AMO PMA</h4>
+<section id="amo-pma" data-number="1.6.3.1">
+<h4 data-number="3.6.3.1"><span class="header-section-number">3.6.3.1</span> AMO PMA</h4>
 <p>Within AMOs, there are four levels of
 support: <span><em>AMONone</em></span>, <span><em>AMOSwap</em></span>, <span><em>AMOLogical</em></span>, and <span>
 <em>AMOArithmetic</em></span>. AMONone indicates that no AMO operations are
-supported. AMOSwap indicates that only <span>amoswap</span> instructions are
+supported. AMOSwap indicates that only <span><code>amoswap</code></span> instructions are
 supported in this address range. AMOLogical indicates that swap
-instructions plus all the logical AMOs (<span>amoand</span>, <span>amoor</span>,
-<span>amoxor</span>) are supported. AMOArithmetic indicates that all RISC-V
+instructions plus all the logical AMOs (<span><code>amoand</code></span>, <span><code>amoor</code></span>,
+<span><code>amoxor</code></span>) are supported. AMOArithmetic indicates that all RISC-V
 AMOs are supported. For each level of support, naturally aligned AMOs
 of a given width are supported if the underlying memory region
 supports reads and writes of that width.
@@ -2308,15 +2369,15 @@ processor-supported atomic operations.</p>
 </tr>
 <tr class="even">
 <td style="text-align: left;">AMOSwap</td>
-<td style="text-align: left;"><span>amoswap</span></td>
+<td style="text-align: left;"><span><code>amoswap</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">AMOLogical</td>
-<td style="text-align: left;">above + <span>amoand</span>, <span>amoor</span>, <span>amoxor</span></td>
+<td style="text-align: left;">above + <span><code>amoand</code></span>, <span><code>amoor</code></span>, <span><code>amoxor</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">AMOArithmetic</td>
-<td style="text-align: left;">above + <span>amoadd</span>, <span>amomin</span>, <span>amomax</span>, <span>amominu</span>, <span>amomaxu</span></td>
+<td style="text-align: left;">above + <span><code>amoadd</code></span>, <span><code>amomin</code></span>, <span><code>amomax</code></span>, <span><code>amominu</code></span>, <span><code>amomaxu</code></span></td>
 </tr>
 </tbody>
 </table>
@@ -2324,7 +2385,9 @@ processor-supported atomic operations.</p>
 <p>We recommend providing at least AMOLogical support for I/O regions
 where possible.</p>
 </div>
-<h4 id="reservability-pma"><span class="header-section-number">3.6.3.2</span> Reservability PMA</h4>
+</section>
+<section id="reservability-pma" data-number="1.6.3.2">
+<h4 data-number="3.6.3.2"><span class="header-section-number">3.6.3.2</span> Reservability PMA</h4>
 <p>For <span><em>LR/SC</em></span>, there are three levels of support indicating combinations of
 the reservability and eventuality properties: <span><em>RsrvNone</em></span>,
 <span><em>RsrvNonEventual</em></span>, and <span><em>RsrvEventual</em></span>.
@@ -2344,7 +2407,9 @@ may support RsrvNonEventual or RsrvEventual.</p>
 provide alternative fall-back mechanisms used when lack of progress is
 detected.</p>
 </div>
-<h4 id="alignment"><span class="header-section-number">3.6.3.3</span> Alignment</h4>
+</section>
+<section id="alignment" data-number="1.6.3.3">
+<h4 data-number="3.6.3.3"><span class="header-section-number">3.6.3.3</span> Alignment</h4>
 <p>Memory regions that support aligned LR/SC or aligned AMOs might also support
 misaligned LR/SC or misaligned AMOs for some addresses and access widths. If,
 for a given address and access width, a misaligned LR/SC or AMO generates
@@ -2370,7 +2435,10 @@ be emulated by a trap handler. If, for a given address and access width, all
 misaligned LRs/SCs and AMOs generate access-fault exceptions, then regular
 misaligned loads and stores using the same address and access width are not
 required to execute atomically.</p>
-<h3 id="memory-ordering-pmas"><span class="header-section-number">3.6.4</span> Memory-Ordering PMAs</h3>
+</section>
+</section>
+<section id="memory-ordering-pmas" data-number="1.6.4">
+<h3 data-number="3.6.4"><span class="header-section-number">3.6.4</span> Memory-Ordering PMAs</h3>
 <p>Regions of the address space are classified as either <span><em>main
 memory</em></span> or <span><em>I/O</em></span> for the purposes of ordering by the FENCE
 instruction and atomic-instruction ordering bits.</p>
@@ -2400,7 +2468,7 @@ channel 1 can only be observed to have occurred in program order by all
 other harts and I/O devices, including relative to accesses made by
 that hart to relaxed I/O regions or strongly ordered I/O regions with
 different channel numbers. In other words, any access to a region in
-channel 1 is equivalent to executing a <span>fence io,io</span>
+channel 1 is equivalent to executing a <span><code>fence io,io</code></span>
 instruction before and after the instruction.</p>
 <p>Other larger channel numbers provide program ordering to accesses by
 that hart across any regions with the same channel number.</p>
@@ -2419,7 +2487,9 @@ device.</p>
 ordering channel without additional ordering hardware if they share
 the same interconnect path and the path does not reorder requests.</p>
 </div>
-<h3 id="coherence-and-cacheability-pmas"><span class="header-section-number">3.6.5</span> Coherence and Cacheability PMAs</h3>
+</section>
+<section id="coherence-and-cacheability-pmas" data-number="1.6.5">
+<h3 data-number="3.6.5"><span class="header-section-number">3.6.5</span> Coherence and Cacheability PMAs</h3>
 <p>Coherence is a property defined for a single physical address, and
 indicates that writes to that address by one agent will eventually be
 made visible to other agents in the system. Coherence is not to be
@@ -2492,7 +2562,9 @@ This constraint is necessary to prevent more-privileged modes’ speculative
 cache refills from affecting the behavior of less-privileged modes’
 uncacheable accesses.</p>
 </div>
-<h3 id="idempotency-pmas"><span class="header-section-number">3.6.6</span> Idempotency PMAs</h3>
+</section>
+<section id="idempotency-pmas" data-number="1.6.6">
+<h3 data-number="3.6.6"><span class="header-section-number">3.6.6</span> Idempotency PMAs</h3>
 <p>Idempotency PMAs describe whether reads and writes to an address
 region are idempotent. Main memory regions are assumed to be
 idempotent. For I/O regions, idempotency on reads and writes can be
@@ -2530,7 +2602,10 @@ or speculative implicit reads.
 The size of these naturally aligned power-of-2 regions is
 implementation-defined, but, for systems with page-based virtual memory, must
 not exceed the smallest supported page size.</p>
-<h2 id="sec:pmp"><span class="header-section-number">3.7</span> Physical Memory Protection</h2>
+</section>
+</section>
+<section id="sec:pmp" data-number="1.7">
+<h2 data-number="3.7"><span class="header-section-number">3.7</span> Physical Memory Protection</h2>
 <p>To support secure processing and contain faults, it is desirable to
 limit the physical addresses accessible by software running on a hart.
 An optional physical memory protection (PMP) unit provides
@@ -2550,9 +2625,9 @@ instead of the scheme described in this section.</p>
 </div>
 <p>PMP checks are applied to all accesses whose effective privilege mode is S or
 U, including instruction fetches in S and U mode, data accesses in S and
-U mode when the MPRV bit in the <span>mstatus</span> register is clear, and data
-accesses in any mode when the MPRV bit in <span>mstatus</span> is set and the MPP
-field in <span>mstatus</span> contains S or U.
+U mode when the MPRV bit in the <span><code>mstatus</code></span> register is clear, and data
+accesses in any mode when the MPRV bit in <span><code>mstatus</code></span> is set and the MPP
+field in <span><code>mstatus</code></span> contains S or U.
 PMP checks are also applied to page-table
 accesses for virtual-address translation, for which the effective
 privilege mode is S. Optionally, PMP checks may additionally apply
@@ -2562,7 +2637,8 @@ reset. In effect, PMP can <span><em>grant</em></span> permissions to S and U
 modes, which by default have none, and can <span><em>revoke</em></span> permissions
 from M-mode, which by default has full permissions.</p>
 <p>PMP violations are always trapped precisely at the processor.</p>
-<h3 id="physical-memory-protection-csrs"><span class="header-section-number">3.7.1</span> Physical Memory Protection CSRs</h3>
+<section id="physical-memory-protection-csrs" data-number="1.7.1">
+<h3 data-number="3.7.1"><span class="header-section-number">3.7.1</span> Physical Memory Protection CSRs</h3>
 <p>PMP entries are described by an 8-bit configuration register and one MXLEN-bit
 address register. Some PMP settings additionally use the address register
 associated with the preceding PMP entry.
@@ -2573,32 +2649,32 @@ All PMP CSR fields are <strong>WARL</strong> and may be read-only zero.
 PMP CSRs are only accessible to M-mode.</p>
 <p>The PMP configuration registers are densely packed into CSRs to minimize
 context-switch time.
-For RV32, sixteen CSRs, <span>pmpcfg0</span>–<span>pmpcfg15</span>, hold the configurations
-<span>pmp0cfg</span>–<span>pmp63cfg</span> for the 64 PMP entries, as shown in
+For RV32, sixteen CSRs, <span><code>pmpcfg0</code></span>–<span><code>pmpcfg15</code></span>, hold the configurations
+<span><code>pmp0cfg</code></span>–<span><code>pmp63cfg</code></span> for the 64 PMP entries, as shown in
 Figure <a href="machine.html#pmpcfg-rv32" data-reference-type="ref" data-reference="pmpcfg-rv32">1.28</a>.
 For RV64, eight even-numbered CSRs,
-<span>pmpcfg0</span>, <span>pmpcfg2</span>, …, <span>pmpcfg14</span>, hold the configurations
+<span><code>pmpcfg0</code></span>, <span><code>pmpcfg2</code></span>, …, <span><code>pmpcfg14</code></span>, hold the configurations
 for the 64 PMP entries, as shown in Figure <a href="machine.html#pmpcfg-rv64" data-reference-type="ref" data-reference="pmpcfg-rv64">1.29</a>.
 For RV64, the odd-numbered configuration registers,
-<span>pmpcfg1</span>, <span>pmpcfg3</span>, …, <span>pmpcfg15</span>, are illegal.</p>
+<span><code>pmpcfg1</code></span>, <span><code>pmpcfg3</code></span>, …, <span><code>pmpcfg15</code></span>, are illegal.</p>
 <div class=commentary>
-<p>RV64 systems use <span>pmpcfg2</span>, rather than <span>pmpcfg1</span>, to hold
+<p>RV64 systems use <span><code>pmpcfg2</code></span>, rather than <span><code>pmpcfg1</code></span>, to hold
 configurations for PMP entries 8–15. This design reduces the cost of
 supporting multiple MXLEN values, since the configurations for PMP
-entries 8–11 appear in <span>pmpcfg2</span>[31:0] for both RV32 and RV64.</p>
+entries 8–11 appear in <span><code>pmpcfg2</code></span>[31:0] for both RV32 and RV64.</p>
 </div>
 <figure>
-<img src="machine_34.svg" alt="RV32 PMP configuration CSR layout." id="pmpcfg-rv32" /><figcaption>RV32 PMP configuration CSR layout.<span label="pmpcfg-rv32"></span></figcaption>
+<img src="machine_34.svg" id="pmpcfg-rv32" alt="" /><figcaption>RV32 PMP configuration CSR layout.</figcaption>
 </figure>
 <figure>
-<img src="machine_35.svg" alt="RV64 PMP configuration CSR layout." id="pmpcfg-rv64" /><figcaption>RV64 PMP configuration CSR layout.<span label="pmpcfg-rv64"></span></figcaption>
+<img src="machine_35.svg" id="pmpcfg-rv64" alt="" /><figcaption>RV64 PMP configuration CSR layout.</figcaption>
 </figure>
-<p>The PMP address registers are CSRs named <span>pmpaddr0</span>–<span>pmpaddr63</span>.
+<p>The PMP address registers are CSRs named <span><code>pmpaddr0</code></span>–<span><code>pmpaddr63</code></span>.
 Each PMP address register encodes bits 33–2 of a 34-bit physical address for
 RV32, as shown in Figure <a href="machine.html#pmpaddr-rv32" data-reference-type="ref" data-reference="pmpaddr-rv32">1.30</a>. For RV64, each PMP address
 register encodes bits 55–2 of a 56-bit physical address, as shown in
 Figure <a href="machine.html#pmpaddr-rv64" data-reference-type="ref" data-reference="pmpaddr-rv64">1.31</a>. Not all physical address bits may be implemented,
-and so the <span>pmpaddr</span> registers are <strong>WARL</strong>.</p>
+and so the <span><code>pmpaddr</code></span> registers are <strong>WARL</strong>.</p>
 <div class=commentary>
 <p>The Sv32 page-based virtual-memory scheme described in Section <a href="supervisor.html#sec:sv32" data-reference-type="ref" data-reference="sec:sv32">[sec:sv32]</a>
 supports 34-bit physical addresses for RV32, so the PMP scheme must support
@@ -2608,10 +2684,10 @@ Sections <a href="supervisor.html#sec:sv39" data-reference-type="ref" data-refe
 space, so the RV64 PMP address registers impose the same limit.</p>
 </div>
 <figure>
-<img src="machine_36.svg" alt="PMP address register format, RV32." id="pmpaddr-rv32" /><figcaption>PMP address register format, RV32.<span label="pmpaddr-rv32"></span></figcaption>
+<img src="machine_36.svg" id="pmpaddr-rv32" alt="" /><figcaption>PMP address register format, RV32.</figcaption>
 </figure>
 <figure>
-<img src="machine_37.svg" alt="PMP address register format, RV64." id="pmpaddr-rv64" /><figcaption>PMP address register format, RV64.<span label="pmpaddr-rv64"></span></figcaption>
+<img src="machine_37.svg" id="pmpaddr-rv64" alt="" /><figcaption>PMP address register format, RV64.</figcaption>
 </figure>
 <p>Figure <a href="machine.html#pmpcfg" data-reference-type="ref" data-reference="pmpcfg">1.32</a> shows the layout of a PMP configuration register. The R,
 W, and X bits, when set, indicate that the PMP entry permits read, write, and
@@ -2621,7 +2697,7 @@ The R, W, and X fields form a collective <strong>WARL</strong> field for which 
 combinations with R=0 and W=1 are reserved.
 The remaining two fields, A and L, are described in the following sections.</p>
 <figure>
-<img src="machine_38.svg" alt="PMP configuration register format." id="pmpcfg" /><figcaption>PMP configuration register format.<span label="pmpcfg"></span></figcaption>
+<img src="machine_38.svg" id="pmpcfg" alt="" /><figcaption>PMP configuration register format.</figcaption>
 </figure>
 <p>Attempting to fetch an instruction from a PMP region that does not have execute
 permissions raises an instruction access-fault exception. Attempting to execute
@@ -2630,13 +2706,12 @@ a PMP region without read permissions raises a load access-fault exception.
 Attempting to execute a store, store-conditional,
 or AMO instruction which accesses a physical address within a PMP region without
 write permissions raises a store access-fault exception.</p>
-<p>If MXLEN is changed, the contents of the <span>pmp<span><em>x</em></span>cfg</span> fields are
-preserved, but appear in the <span>pmpcfg<span><em>y</em></span></span> CSR prescribed by the new
-setting of MXLEN. For example, when MXLEN is changed from 64 to 32, <span>
-pmp4cfg</span> moves from <span>pmpcfg0</span>[39:32] to <span>pmpcfg1</span>[7:0]. The <span>
-pmpaddr</span> CSRs follow the usual CSR width modulation rules described in
+<p>If MXLEN is changed, the contents of the <span><code>pmpxcfg</code></span> fields are
+preserved, but appear in the <span><code>pmpcfgy</code></span> CSR prescribed by the new
+setting of MXLEN. For example, when MXLEN is changed from 64 to 32, <span><code> pmp4cfg</code></span> moves from <span><code>pmpcfg0</code></span>[39:32] to <span><code>pmpcfg1</code></span>[7:0]. The <span><code> pmpaddr</code></span> CSRs follow the usual CSR width modulation rules described in
 Section <a href="priv-csrs.html#sec:csrwidthmodulation" data-reference-type="ref" data-reference="sec:csrwidthmodulation">[sec:csrwidthmodulation]</a>.</p>
-<h4 id="address-matching" class="unnumbered">Address Matching</h4>
+<section id="address-matching" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="2">Address Matching</h4>
 <p>The A field in a PMP entry’s configuration register encodes the
 address-matching mode of the associated PMP address register. The encoding of
 this field is shown in Table <a href="machine.html#pmpcfg-a" data-reference-type="ref" data-reference="pmpcfg-a">[pmpcfg-a]</a>. When A=0, this PMP entry is
@@ -2678,7 +2753,7 @@ arbitrary range (TOR). These modes support four-byte granularity.</p>
 <p>NAPOT ranges make use of the low-order bits of the associated address register
 to encode the size of the range, as shown in Table <a href="machine.html#pmpcfg-napot" data-reference-type="ref" data-reference="pmpcfg-napot">1.33</a>.</p>
 <figure>
-<img src="machine_39.svg" alt="NAPOT range encoding in PMP address and configuration registers." id="pmpcfg-napot" /><figcaption>NAPOT range encoding in PMP address and configuration registers.<span label="pmpcfg-napot"></span></figcaption>
+<img src="machine_39.svg" id="pmpcfg-napot" alt="" /><figcaption>NAPOT range encoding in PMP address and configuration registers.</figcaption>
 </figure>
 <p>If TOR is selected, the associated address register forms the top of the
 address range, and the preceding PMP address register forms the bottom of the
@@ -2705,20 +2780,22 @@ Although changing <span class="math inline">${\tt pmpcfg}_i$</span>.A[1] affects
 register—in particular, <span class="math inline">${\tt pmpaddr}_i$</span>[G-1] retains its original value
 when <span class="math inline">${\tt pmpcfg}_i$</span>.A is changed from NAPOT to TOR/OFF then back to NAPOT.</p>
 <div class=commentary>
-<p>Software may determine the PMP granularity by writing zero to <span>pmp0cfg</span>,
-then writing all ones to <span>pmpaddr0</span>, then reading back <span>pmpaddr0</span>.
+<p>Software may determine the PMP granularity by writing zero to <span><code>pmp0cfg</code></span>,
+then writing all ones to <span><code>pmpaddr0</code></span>, then reading back <span><code>pmpaddr0</code></span>.
 If <span class="math inline"><em>G</em></span> is the index of the least-significant bit set,
 the PMP granularity is <span class="math inline">2<sup><em>G</em> + 2</sup></span> bytes.</p>
 </div>
 <p>If the current XLEN is greater than MXLEN, the PMP address registers are
 zero-extended from MXLEN to XLEN bits for the purposes of address matching.</p>
-<h4 id="locking-and-privilege-mode" class="unnumbered">Locking and Privilege Mode</h4>
+</section>
+<section id="locking-and-privilege-mode" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="2">Locking and Privilege Mode</h4>
 <p>The L bit indicates that the PMP entry is locked, i.e., writes to the
 configuration register and associated address registers are ignored. Locked
 PMP entries remain locked until the hart is reset. If PMP entry <span class="math inline"><em>i</em></span> is
-locked, writes to <span>pmp</span><span class="math inline"><em>i</em></span><span>cfg</span> and <span>pmpaddr</span><span class="math inline"><em>i</em></span> are ignored.
-Additionally, if PMP entry <span class="math inline"><em>i</em></span> is locked and <span>pmp</span><span class="math inline"><em>i</em></span><span>cfg</span>.A is set
-to TOR, writes to <span>pmpaddr</span><span class="math inline"><em>i</em></span>-1 are ignored.</p>
+locked, writes to <span><code>pmp</code></span><span class="math inline"><em>i</em></span><span><code>cfg</code></span> and <span><code>pmpaddr</code></span><span class="math inline"><em>i</em></span> are ignored.
+Additionally, if PMP entry <span class="math inline"><em>i</em></span> is locked and <span><code>pmp</code></span><span class="math inline"><em>i</em></span><span><code>cfg</code></span>.A is set
+to TOR, writes to <span><code>pmpaddr</code></span><span class="math inline"><em>i</em></span>-1 are ignored.</p>
 <div class=commentary>
 <p>Setting the L bit locks the PMP entry even when the A field is set to OFF.</p>
 </div>
@@ -2727,13 +2804,15 @@ permissions are enforced on M-mode accesses. When the L bit is set, these
 permissions are enforced for all privilege modes. When the L bit is clear,
 any M-mode access matching the PMP entry will succeed; the R/W/X
 permissions apply only to S and U modes.</p>
-<h4 id="priority-and-matching-logic" class="unnumbered">Priority and Matching Logic</h4>
+</section>
+<section id="priority-and-matching-logic" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="2">Priority and Matching Logic</h4>
 <p>PMP entries are statically prioritized. The lowest-numbered PMP entry that
 matches any byte of an access determines whether that access succeeds or
 fails. The matching PMP entry must match all bytes of an access, or the
 access fails, irrespective of the L, R, W, and X bits. For example, if a PMP
-entry is configured to match the four-byte range <span>0xC</span>–<span>0xF</span>, then an
-8-byte access to the range <span>0x8</span>–<span>0xF</span> will fail, assuming that
+entry is configured to match the four-byte range <span><code>0xC</code></span>–<span><code>0xF</code></span>, then an
+8-byte access to the range <span><code>0x8</code></span>–<span><code>0xF</code></span> will fail, assuming that
 PMP entry is the highest-priority entry that matches those addresses.</p>
 <p>If a PMP entry matches all bytes of an access, then the L, R, W, and X bits
 determine whether the access succeeds or fails. If the L bit is clear and the
@@ -2760,7 +2839,10 @@ that passes the PMP check may become visible, even if another portion fails
 the PMP check. The same behavior may manifest for floating-point stores wider
 than XLEN bits (e.g., the FSD instruction in RV32D), even when the store
 address is naturally aligned.</p>
-<h3 id="pmp-vmem"><span class="header-section-number">3.7.2</span> Physical Memory Protection and Paging</h3>
+</section>
+</section>
+<section id="pmp-vmem" data-number="1.7.2">
+<h3 data-number="3.7.2"><span class="header-section-number">3.7.2</span> Physical Memory Protection and Paging</h3>
 <p>The Physical Memory Protection mechanism is designed to compose with the
 page-based virtual memory systems described in Chapter <a href="supervisor.html#supervisor" data-reference-type="ref" data-reference="supervisor">[supervisor]</a>. When
 paging is enabled, instructions that access virtual memory may result in
@@ -2779,10 +2861,13 @@ Hence, when the PMP settings are modified, M-mode software must
 synchronize the PMP settings with the virtual memory system and
 any PMP or address-translation caches.
 This is
-accomplished by executing an SFENCE.VMA instruction with <span><em>rs1</em></span>=<span>x0</span>
-and <span><em>rs2</em></span>=<span>x0</span>, after the PMP CSRs are written.</p>
+accomplished by executing an SFENCE.VMA instruction with <span><em>rs1</em></span>=<span><code>x0</code></span>
+and <span><em>rs2</em></span>=<span><code>x0</code></span>, after the PMP CSRs are written.</p>
 <p>If page-based virtual memory is not implemented,
 memory accesses check the PMP settings synchronously, so no SFENCE.VMA is needed.</p>
+</section>
+</section>
+</section>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>The RISC-V Instruction Set Manual, Volume II: Privileged Architecture</title>
 </head>
 <body>
@@ -12,16 +13,18 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/plic.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="plic"><span class="header-section-number">7</span> Platform-Level Interrupt Controller (PLIC)</h1>
+<section id="plic" data-number="1">
+<h1 data-number="7"><span class="header-section-number">7</span> Platform-Level Interrupt Controller (PLIC)</h1>
 <p>This chapter describes the general architecture for the RISC-V
 platform-level interrupt controller (PLIC), which prioritizes and
 distributes global interrupts in a RISC-V system.</p>
-<h2 id="plic-overview"><span class="header-section-number">7.1</span> PLIC Overview</h2>
+<section id="plic-overview" data-number="1.1">
+<h2 data-number="7.1"><span class="header-section-number">7.1</span> PLIC Overview</h2>
 <p>Figure <a href="plic.html#fig:plic" data-reference-type="ref" data-reference="fig:plic">1.1</a> provides a quick overview of PLIC operation.
 The PLIC connects global <span><em>interrupt sources</em></span>, which are usually
 I/O devices, to <span><em>interrupt targets</em></span>, which are usually <span><em>hart
@@ -48,39 +51,42 @@ for the same source to the PLIC. The rest of this chapter describes
 each of these components in detail, though many details are
 necessarily platform specific.</p>
 <figure>
-<img src="plic_00.svg" alt="Platform-Level Interrupt Controller (PLIC) conceptual block diagram. The figure shows the first two of potentially many interrupt sources, and the first two of potentially many interrupt targets. The figure is just intended to show the logic of the PLIC’s operation, not to represent a realistic implementation strategy." id="fig:plic" /><figcaption>Platform-Level Interrupt Controller (PLIC) conceptual block
+<img src="plic_00.svg" id="fig:plic" alt="" /><figcaption>Platform-Level Interrupt Controller (PLIC) conceptual block
 diagram. The figure shows the first two of potentially many
 interrupt sources, and the first two of potentially many interrupt
 targets. The figure is just intended to show the logic of the
 PLIC’s operation, not to represent a realistic implementation
-strategy.<span label="fig:plic"></span></figcaption>
+strategy.</figcaption>
 </figure>
-<h2 id="interrupt-sources"><span class="header-section-number">7.2</span> Interrupt Sources</h2>
+</section>
+<section id="interrupt-sources" data-number="1.2">
+<h2 data-number="7.2"><span class="header-section-number">7.2</span> Interrupt Sources</h2>
 <p>RISC-V harts can have both local and global interrupt sources. Only
 global interrupt sources are handled by the PLIC.</p>
-<h3 id="local-interrupt-sources"><span class="header-section-number">7.2.1</span> Local Interrupt Sources</h3>
+<section id="local-interrupt-sources" data-number="1.2.1">
+<h3 data-number="7.2.1"><span class="header-section-number">7.2.1</span> Local Interrupt Sources</h3>
 <p>Each hart has a number of <span><em>local interrupt sources</em></span> that do not
 pass through the PLIC, including the standard software interrupts and
 timer interrupts for each privilege level. Local interrupts can be
 serviced quickly since there will be minimal latency between the
 source and the servicing hart, no arbitration is required to determine
 which hart will service the request, and the servicing hart can
-quickly determine the interrupt source using the <span>mcause</span>
+quickly determine the interrupt source using the <span><code>mcause</code></span>
 register.</p>
 <p>All local interrupts follow a level-based model, where an interrupt is
-pending if the corresponding bit in <span>mip</span> is set. The interrupt
-handler must clear the hardware condition that is causing the <span>
-mip</span> bit to be set to avoid retaking the interrupt after re-enabling
+pending if the corresponding bit in <span><code>mip</code></span> is set. The interrupt
+handler must clear the hardware condition that is causing the <span><code> mip</code></span> bit to be set to avoid retaking the interrupt after re-enabling
 interrupts on exit from the interrupt handler.</p>
 <p>Additional platform-specific local interrupt sources can be made visible to
-machine-mode by adding them to the high bits of the <span>mip</span>/<span>
-mie</span> registers, with corresponding additional cause values returned
-in the <span>mcause</span> register. These additional platform-specific local
+machine-mode by adding them to the high bits of the <span><code>mip</code></span>/<span><code> mie</code></span> registers, with corresponding additional cause values returned
+in the <span><code>mcause</code></span> register. These additional platform-specific local
 interrupts may also be made visible to lower privilege levels, using
-the corresponding bits in the <span>mideleg</span> register. The priority of
+the corresponding bits in the <span><code>mideleg</code></span> register. The priority of
 these additional interrupt sources relative to external, timer, and
 software interrupts is platform-specific.</p>
-<h3 id="global-interrupt-sources"><span class="header-section-number">7.2.2</span> Global Interrupt Sources</h3>
+</section>
+<section id="global-interrupt-sources" data-number="1.2.2">
+<h3 data-number="7.2.2"><span class="header-section-number">7.2.2</span> Global Interrupt Sources</h3>
 <p><span><em>Global interrupt sources</em></span> are those that are prioritized and
 distributed by the PLIC. Depending on the platform-specific PLIC
 implementation, any global interrupt source could be routed to any
@@ -90,19 +96,20 @@ level-triggered, edge-triggered, and message-signalled. Some sources
 might queue up a number of interrupt requests. All global interrupt
 sources are converted to a common interrupt request format for the
 PLIC.</p>
-<h2 id="interrupt-targets-and-hart-contexts"><span class="header-section-number">7.3</span> Interrupt Targets and Hart Contexts</h2>
+</section>
+</section>
+<section id="interrupt-targets-and-hart-contexts" data-number="1.3">
+<h2 data-number="7.3"><span class="header-section-number">7.3</span> Interrupt Targets and Hart Contexts</h2>
 <p>Interrupt targets are usually hart contexts, where a hart context is a
 given privilege mode on a given hart (though there are other possible
 interrupt targets, such as DMA engines). Not all hart contexts need
 be interrupt targets, in particular, if a processor core does not
 support delegating external interrupts to lower-privilege modes, then
 the lower-privilege hart contexts will not be interrupt targets.
-Interrupt notifications generated by the PLIC appear in the <span>
-meip</span>/<span>seip</span>/<span>ueip</span> bits of the <span>mip</span>/<span>sip</span>/<span>
-uip</span> registers for M/S/U modes, respectively. For the notifications
-to appear in lower-privilege <span><em>x</em></span><span>ip</span> registers, the corresponding
+Interrupt notifications generated by the PLIC appear in the <span><code> meip</code></span>/<span><code>seip</code></span>/<span><code>ueip</code></span> bits of the <span><code>mip</code></span>/<span><code>sip</code></span>/<span><code> uip</code></span> registers for M/S/U modes, respectively. For the notifications
+to appear in lower-privilege <span><em>x</em></span><span><code>ip</code></span> registers, the corresponding
 external interrupts must have been delegated in the higher-privilege
-<span><em>y</em></span><span>ideleg</span> registers.</p>
+<span><em>y</em></span><span><code>ideleg</code></span> registers.</p>
 <p>Each processor core must define a policy on how simultaneous active
 interrupts are taken by multiple hart contexts on the core. For the
 simple case of a single stack of hart contexts, one for each supported
@@ -118,7 +125,9 @@ into account any interrupt prioritization scheme used by a component
 that contains multiple interrupt targets. As a result, the PLIC
 provides no concept of interrupt preemption or nesting so this must be
 handled by the cores hosting multiple interrupt target contexts.</p>
-<h2 id="interrupt-gateways"><span class="header-section-number">7.4</span> Interrupt Gateways</h2>
+</section>
+<section id="interrupt-gateways" data-number="1.4">
+<h2 data-number="7.4"><span class="header-section-number">7.4</span> Interrupt Gateways</h2>
 <p>The interrupt gateways are responsible for converting global interrupt
 signals into a common interrupt request format, and for controlling
 the flow of interrupt requests to the PLIC core. At most one
@@ -156,14 +165,18 @@ decremented when the interrupt request is accepted by the PLIC core.</p>
 describes which interrupt is being asserted. The message is decoded
 to select an interrupt gateway, and the relevant gateway then handles
 the MSI similar to an edge-triggered interrupt.</p>
-<h2 id="interrupt-identifiers-ids"><span class="header-section-number">7.5</span> Interrupt Identifiers (IDs)</h2>
+</section>
+<section id="interrupt-identifiers-ids" data-number="1.5">
+<h2 data-number="7.5"><span class="header-section-number">7.5</span> Interrupt Identifiers (IDs)</h2>
 <p>Global interrupt sources are assigned small unsigned integer
 identifiers, beginning at the value 1. An interrupt ID of 0 is
 reserved to mean “no interrupt”.</p>
 <p>Interrupt identifiers are also used to break ties when two or more
 interrupt sources have the same assigned priority. Smaller values of
 interrupt ID take precedence over larger values of interrupt ID.</p>
-<h2 id="interrupt-priorities"><span class="header-section-number">7.6</span> Interrupt Priorities</h2>
+</section>
+<section id="interrupt-priorities" data-number="1.6">
+<h2 data-number="7.6"><span class="header-section-number">7.6</span> Interrupt Priorities</h2>
 <p>Interrupt priorities are small unsigned integers, with a
 platform-specific maximum number of supported levels. The priority
 value 0 is reserved to mean “never interrupt”, and interrupt
@@ -192,7 +205,9 @@ variable. The supported priority levels are the set of values
 obtained by substituting all combinations of ones and zeros in the
 variable bits within the priority field.</p>
 </div>
-<h2 id="interrupt-enables"><span class="header-section-number">7.7</span> Interrupt Enables</h2>
+</section>
+<section id="interrupt-enables" data-number="1.7">
+<h2 data-number="7.7"><span class="header-section-number">7.7</span> Interrupt Enables</h2>
 <p>Each target has a vector of interrupt enable (IE) bits, one per
 interrupt source. The target will not receive interrupts from sources
 that are disabled. The IE bits for a single target should be packed
@@ -210,7 +225,9 @@ hart-internal interrupt masking provide considerable flexibility in
 ignoring external interrupts even if a global interrupt source is
 always enabled.</p>
 </div>
-<h2 id="interrupt-priority-thresholds"><span class="header-section-number">7.8</span> Interrupt Priority Thresholds</h2>
+</section>
+<section id="interrupt-priority-thresholds" data-number="1.8">
+<h2 data-number="7.8"><span class="header-section-number">7.8</span> Interrupt Priority Thresholds</h2>
 <p>Each interrupt target has an associated priority threshold, held in a
 platform-specific memory-mapped register. Only active interrupts that
 have a priority strictly greater than the threshold will cause a
@@ -233,7 +250,9 @@ interrupt source, and saving and restoring all the interrupt enables.
 Changing the threshold quickly might be especially important for
 systems that move frequently between power states.</p>
 </div>
-<h2 id="interrupt-notifications"><span class="header-section-number">7.9</span> Interrupt Notifications</h2>
+</section>
+<section id="interrupt-notifications" data-number="1.9">
+<h2 data-number="7.9"><span class="header-section-number">7.9</span> Interrupt Notifications</h2>
 <p>Each interrupt target has an <span><em>external interrupt pending</em></span> (EIP)
 bit in the PLIC core that indicates that the corresponding target has
 a pending interrupt waiting for service. The value in EIP can change
@@ -241,8 +260,7 @@ as a result of changes to state in the PLIC core, brought on by
 interrupt sources, interrupt targets, or other agents manipulating
 register values in the PLIC. The value in EIP is communicated to the
 destination target as an interrupt notification. If the target is a
-RISC-V hart context, the interrupt notifications arrive on the <span>
-meip</span>/<span>seip</span>/<span>ueip</span> bits depending on the
+RISC-V hart context, the interrupt notifications arrive on the <span><code> meip</code></span>/<span><code>seip</code></span>/<span><code>ueip</code></span> bits depending on the
 privilege level of the hart context.</p>
 <div class=commentary>
 <p>In simple systems, the interrupt notifications will be simple wires
@@ -274,7 +292,9 @@ to the first target is still in flight, such that when the first
 target tries to claim the interrupt it finds it has no active
 interrupts in the PLIC core.</p>
 </div>
-<h2 id="interrupt-claims"><span class="header-section-number">7.10</span> Interrupt Claims</h2>
+</section>
+<section id="interrupt-claims" data-number="1.10">
+<h2 data-number="7.10"><span class="header-section-number">7.10</span> Interrupt Claims</h2>
 <p>Sometime after a target receives an interrupt notification, it might
 decide to service the interrupt. The target sends an <span><em>interrupt
 claim</em></span> message to the PLIC core, which will usually be implemented
@@ -289,7 +309,7 @@ serviced.</p>
 and the corresponding IP bit is cleared, other lower-priority pending
 interrupts might then become visible to the target, and so the PLIC
 EIP bit might not be cleared after a claim. The interrupt handler
-can check the local <span>meip</span>/<span>seip</span>/<span>ueip</span> bits
+can check the local <span><code>meip</code></span>/<span><code>seip</code></span>/<span><code>ueip</code></span> bits
 before exiting the handler, to allow more efficient service of other
 interrupts without first restoring the interrupted context and taking
 another interrupt trap.</p>
@@ -298,18 +318,22 @@ not set. In particular, a hart could set the threshold value to maximum
 to disable interrupt notifications and instead poll for active
 interrupts using periodic claim requests, though a simpler approach to
 implement polling would be to clear the external interrupt enable in
-the corresponding <span><em>x</em></span><span>ie</span> register for privilege mode <span><em>x</em></span>.</p>
-<h2 id="interrupt-completion"><span class="header-section-number">7.11</span> Interrupt Completion</h2>
+the corresponding <span><em>x</em></span><span><code>ie</code></span> register for privilege mode <span><em>x</em></span>.</p>
+</section>
+<section id="interrupt-completion" data-number="1.11">
+<h2 data-number="7.11"><span class="header-section-number">7.11</span> Interrupt Completion</h2>
 <p>After a handler has completed service of an interrupt, the associated
 gateway must be sent an interrupt completion message, usually as a
 write to a non-idempotent memory-mapped I/O control register. The
 gateway will only forward additional interrupts to the PLIC core after
 receiving the completion message.</p>
-<h2 id="interrupt-flow"><span class="header-section-number">7.12</span> Interrupt Flow</h2>
+</section>
+<section id="interrupt-flow" data-number="1.12">
+<h2 data-number="7.12"><span class="header-section-number">7.12</span> Interrupt Flow</h2>
 <p>Figure <a href="plic.html#fig:intflow" data-reference-type="ref" data-reference="fig:intflow">1.2</a> shows the messages flowing between agents
 when handling interrupts via the PLIC.</p>
 <figure>
-<img src="plic_01.svg" alt=" Flow of interrupt processing via the PLIC." id="fig:intflow" /><figcaption> Flow of interrupt processing via the PLIC.<span label="fig:intflow"></span></figcaption>
+<img src="plic_01.svg" id="fig:intflow" alt="" /><figcaption> Flow of interrupt processing via the PLIC.</figcaption>
 </figure>
 <p>The gateway will only forward a single interrupt request at a time to
 the PLIC, and not forward subsequent interrupts requests until an
@@ -323,7 +347,9 @@ the corresponding IP bit, after which no other target can claim the
 same interrupt request. Once the handler has processed the interrupt,
 it sends an interrupt completion message to the gateway to allow a new
 interrupt request.</p>
-<h2 id="plic-core-specification"><span class="header-section-number">7.13</span> PLIC Core Specification</h2>
+</section>
+<section id="plic-core-specification" data-number="1.13">
+<h2 data-number="7.13"><span class="header-section-number">7.13</span> PLIC Core Specification</h2>
 <p>The operation of the PLIC core can be specified as a non-deterministic
 finite-state machine with input and output message queues, with the
 following atomic actions:</p>
@@ -356,7 +382,9 @@ ordering of these atomic actions. In particular, the PLIC might
 process multiple actions in a single clock cycle, or might process
 each action over many clock cycles.</p>
 </div>
-<h2 id="controlling-access-to-the-plic"><span class="header-section-number">7.14</span> Controlling Access to the PLIC</h2>
+</section>
+<section id="controlling-access-to-the-plic" data-number="1.14">
+<h2 data-number="7.14"><span class="header-section-number">7.14</span> Controlling Access to the PLIC</h2>
 <p>In the expected use case, only machine mode accesses the source
 priority, source pending, and target interrupt enables to configure
 the interrupt subsystem. Lower-privilege modes access these features
@@ -369,6 +397,8 @@ to set their target threshold value. The memory map for these
 registers should allow machine mode to protect different targets from
 each other’s accesses, using either physical memory protection or
 virtual memory page protections.</p>
+</section>
+</section>
 
 </body>
 </html>

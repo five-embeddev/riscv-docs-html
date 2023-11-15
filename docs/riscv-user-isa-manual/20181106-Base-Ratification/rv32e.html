@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/rv32e.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="rv32e"><span class="header-section-number">5</span> RV32E Base Integer Instruction Set, Version 1.9</h1>
+<section id="rv32e" data-number="1">
+<h1 data-number="5"><span class="header-section-number">5</span> RV32E Base Integer Instruction Set, Version 1.9</h1>
 <p>This chapter describes a draft proposal for the RV32E base integer
 instruction set, which is a reduced version of RV32I designed for
 embedded systems. The only change is to reduce the number of integer
@@ -34,9 +36,10 @@ addition to RV32I, RV64I, and RV128I. There is also interest in
 defining an RV64E to reduce context state for highly threaded 64-bit
 processors.</p>
 </div>
-<h2 id="rv32e-programmers-model"><span class="header-section-number">5.1</span> RV32E Programmers’ Model</h2>
+<section id="rv32e-programmers-model" data-number="1.1">
+<h2 data-number="5.1"><span class="header-section-number">5.1</span> RV32E Programmers’ Model</h2>
 <p>RV32E reduces the integer register count to 16 general-purpose
-registers, (<span>x0</span>–<span>x15</span>), where <span>x0</span> is a dedicated zero
+registers, (<span><code>x0</code></span>–<span><code>x15</code></span>), where <span><code>x0</code></span> is a dedicated zero
 register.</p>
 <div class=commentary>
 <p>We have found that in the small RV32I core designs, the upper 16
@@ -50,12 +53,16 @@ particular, RV32E is only used with a soft-float calling convention.
 A new embedded ABI is under consideration that would work across RV32E
 and RV32I.</p>
 </div>
-<h2 id="rv32e-instruction-set"><span class="header-section-number">5.2</span> RV32E Instruction Set</h2>
+</section>
+<section id="rv32e-instruction-set" data-number="1.2">
+<h2 data-number="5.2"><span class="header-section-number">5.2</span> RV32E Instruction Set</h2>
 <p>RV32E uses the same instruction-set encoding as RV32I, except that
-only registers <span>x0</span>–<span>x15</span> are provided. Any future standard
+only registers <span><code>x0</code></span>–<span><code>x15</code></span> are provided. Any future standard
 extensions will not make use of the instruction bits freed up by the
 reduced register-specifier fields and so these are available for
 custom extensions.</p>
+</section>
+</section>
 
 </body>
 </html>

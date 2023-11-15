@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,12 @@
 <tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/intro.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="introduction"><span class="header-section-number">1</span> Introduction</h1>
+<h1 data-number="1" id="introduction"><span class="header-section-number">1</span> Introduction</h1>
 <p>RISC-V (pronounced “risk-five”) is a new instruction-set
 architecture (ISA) that was originally designed to support computer
 architecture research and education, but which we now hope will also
@@ -85,7 +86,7 @@ privileged architecture details, such as page translation. This is
 both for simplicity and to allow maximum flexibility for alternative
 microarchitectures or alternative privileged architectures.</p>
 </div>
-<h2 id="risc-v-hardware-platform-terminology"><span class="header-section-number">1.1</span> RISC-V Hardware Platform Terminology</h2>
+<h2 data-number="1.1" id="risc-v-hardware-platform-terminology"><span class="header-section-number">1.1</span> RISC-V Hardware Platform Terminology</h2>
 <p>A RISC-V hardware platform can contain one or more RISC-V-compatible
 processing cores together with other non-RISC-V-compatible cores,
 fixed-function accelerators, various physical memory structures, I/O
@@ -116,7 +117,7 @@ shared-memory manycore server nodes. Even small systems-on-a-chip
 might be structured as a hierarchy of multicomputers and/or
 multiprocessors to modularize development effort or to provide secure
 isolation between subsystems.</p>
-<h2 id="risc-v-software-execution-environments-and-harts"><span class="header-section-number">1.2</span> RISC-V Software Execution Environments and Harts</h2>
+<h2 data-number="1.2" id="risc-v-software-execution-environments-and-harts"><span class="header-section-number">1.2</span> RISC-V Software Execution Environments and Harts</h2>
 <p>The behavior of a RISC-V program depends on the execution environment
 in which it runs. A RISC-V execution environment interface (EEI)
 defines the initial state of the program, the number and type of harts
@@ -183,7 +184,7 @@ harts than host harts then the execution environment must be able to
 preempt the guest harts and must not wait indefinitely for guest
 software on a guest hart to "yield" control of the guest hart.</p>
 </div>
-<h2 id="risc-v-isa-overview"><span class="header-section-number">1.3</span> RISC-V ISA Overview</h2>
+<h2 data-number="1.3" id="risc-v-isa-overview"><span class="header-section-number">1.3</span> RISC-V ISA Overview</h2>
 <p>A RISC-V ISA is defined as a base integer ISA, which must be present
 in any implementation, plus optional extensions to the base ISA. The
 base integer ISAs are very similar to that of the early RISC processors
@@ -244,8 +245,7 @@ have proposed that the strict superset design would allow legacy
 32-bit libraries to be linked with 64-bit code, this is impractical in
 practice, even with compatible encodings, due to the differences in
 software calling conventions and system-call interfaces.</p>
-<p>The RISC-V privileged architecture provides fields in <span>
-misa</span> to control the unprivileged ISA at each level to support emulating
+<p>The RISC-V privileged architecture provides fields in <span><code> misa</code></span> to control the unprivileged ISA at each level to support emulating
 different base ISAs on the same hardware. We note that newer SPARC
 and MIPS ISA revisions have deprecated support for running 32-bit code
 unchanged on 64-bit systems.</p>
@@ -327,7 +327,7 @@ base and each standard extension constant over time, and instead layer
 new instructions as further optional extensions. For example, the
 base integer ISAs will continue as fully supported standalone ISAs,
 regardless of any subsequent extensions.</p>
-<h2 id="instruction-length-encoding"><span class="header-section-number">1.4</span> Instruction Length Encoding</h2>
+<h2 data-number="1.4" id="instruction-length-encoding"><span class="header-section-number">1.4</span> Instruction Length Encoding</h2>
 <p>The base RISC-V ISA has fixed-length 32-bit instructions that must be
 naturally aligned on 32-bit boundaries. However, the standard RISC-V
 encoding scheme is designed to support ISA extensions with
@@ -350,19 +350,19 @@ instruction set, ILEN is 32 bits. Implementations supporting longer
 instructions have larger values of ILEN.</p>
 <p>Figure <a href="intro.html#instlengthcode" data-reference-type="ref" data-reference="instlengthcode">1.1</a> illustrates the standard RISC-V
 instruction-length encoding convention. All the 32-bit instructions
-in the base ISA have their lowest two bits set to <span>11</span>. The
+in the base ISA have their lowest two bits set to <span><code>11</code></span>. The
 optional compressed 16-bit instruction-set extensions have their
-lowest two bits equal to <span>00</span>, <span>01</span>, or <span>10</span>. Standard
+lowest two bits equal to <span><code>00</code></span>, <span><code>01</code></span>, or <span><code>10</code></span>. Standard
 instruction-set extensions encoded with more than 32 bits have
-additional low-order bits set to <span>1</span>, with the conventions for
+additional low-order bits set to <span><code>1</code></span>, with the conventions for
 48-bit and 64-bit lengths shown in Figure <a href="intro.html#instlengthcode" data-reference-type="ref" data-reference="instlengthcode">1.1</a>.
 Instruction lengths between 80 bits and 176 bits are encoded using a
 3-bit field in bits [14:12] giving the number of 16-bit words in
 addition to the first 5<span class="math inline">×</span>16-bit words. The encoding with bits
-[14:12] set to <span>111</span> is reserved for future longer instruction
+[14:12] set to <span><code>111</code></span> is reserved for future longer instruction
 encodings.</p>
 <figure>
-<img src="intro_00.svg" alt="RISC-V instruction length encoding." id="instlengthcode" /><figcaption>RISC-V instruction length encoding.<span label="instlengthcode"></span></figcaption>
+<img src="intro_00.svg" id="instlengthcode" alt="" /><figcaption>RISC-V instruction length encoding.</figcaption>
 </figure>
 <p>Given the code size and energy savings of a compressed format, we
 wanted to build in support for a compressed format to the ISA encoding
@@ -442,7 +442,7 @@ parcel ordering, this naturally led to placing the length-encoding
 bits in the LSB positions of the instruction format to avoid breaking
 up opcode fields.</p>
 </div>
-<h2 id="exceptions-traps-and-interrupts"><span class="header-section-number">1.5</span> Exceptions, Traps, and Interrupts</h2>
+<h2 data-number="1.5" id="exceptions-traps-and-interrupts"><span class="header-section-number">1.5</span> Exceptions, Traps, and Interrupts</h2>
 <p>We use the term <span><em>exception</em></span> to refer to an unusual condition
 occurring at run time associated with an instruction in the current
 RISC-V hart. We use the term <span><em>interrupt</em></span> to refer to an external
@@ -518,7 +518,7 @@ is terminated and reported to an external environment.</p>
 <tr class="odd">
 <td style="text-align: left;">Execution terminates?</td>
 <td style="text-align: center;">N</td>
-<td style="text-align: center;">N<span class="math inline"><em></em><sup>1</sup></span></td>
+<td style="text-align: center;">N<span class="math inline"><sup>1</sup></span></td>
 <td style="text-align: center;">N</td>
 <td style="text-align: center;">Y</td>
 </tr>
@@ -527,7 +527,7 @@ is terminated and reported to an external environment.</p>
 <td style="text-align: center;">N</td>
 <td style="text-align: center;">N</td>
 <td style="text-align: center;">Y</td>
-<td style="text-align: center;">Y<span class="math inline"><em></em><sup>2</sup></span></td>
+<td style="text-align: center;">Y<span class="math inline"><sup>2</sup></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Handled by environment?</td>

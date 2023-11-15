@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,21 +13,22 @@
 <tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/d.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="d-standard-extension-for-double-precision-floating-point-version-2.2"><span class="header-section-number">13</span> “D” Standard Extension for Double-Precision Floating-Point,
+<section id="d-standard-extension-for-double-precision-floating-point-version-2.2" data-number="1">
+<h1 data-number="13"><span class="header-section-number">13</span> “D” Standard Extension for Double-Precision Floating-Point,
 Version 2.2</h1>
 <p>This chapter describes the standard double-precision floating-point
 instruction-set extension, which is named “D” and adds
 double-precision floating-point computational instructions compliant
 with the IEEE 754-2008 arithmetic standard. The D extension depends on
 the base single-precision instruction subset F.</p>
-<h2 id="d-register-state"><span class="header-section-number">13.1</span> D Register State</h2>
-<p>The D extension widens the 32 floating-point registers, <span>f0</span>–<span>
-f31</span>, to 64 bits (FLEN=64 in Figure <a href="f.html#fprs" data-reference-type="ref" data-reference="fprs">[fprs]</a>). The <span>f</span>
+<section id="d-register-state" data-number="1.1">
+<h2 data-number="13.1"><span class="header-section-number">13.1</span> D Register State</h2>
+<p>The D extension widens the 32 floating-point registers, <span><code>f0</code></span>–<span><code> f31</code></span>, to 64 bits (FLEN=64 in Figure <a href="f.html#fprs" data-reference-type="ref" data-reference="fprs">[fprs]</a>). The <span><code>f</code></span>
 registers can now hold either 32-bit or 64-bit floating-point values
 as described below in Section <a href="d.html#nanboxing" data-reference-type="ref" data-reference="nanboxing">1.2</a>.</p>
 <div class=commentary>
@@ -34,14 +36,16 @@ as described below in Section <a href="d.html#nanboxing" data-reference-type="r
 extensions are supported. There can be up to four different
 floating-point precisions supported, including H, F, D, and Q.</p>
 </div>
-<h2 id="nanboxing"><span class="header-section-number">13.2</span> NaN Boxing of Narrower Values</h2>
+</section>
+<section id="nanboxing" data-number="1.2">
+<h2 data-number="13.2"><span class="header-section-number">13.2</span> NaN Boxing of Narrower Values</h2>
 <p>When multiple floating-point precisions are supported, then valid
 values of narrower <span class="math inline"><em>n</em></span>-bit types, <span><span class="math inline"><em>n</em>&lt;</span> FLEN</span> , are represented in
 the lower <span class="math inline"><em>n</em></span> bits of an FLEN-bit NaN value, in a process termed
 NaN-boxing. The upper bits of a valid NaN-boxed value must be all 1s.
 Valid NaN-boxed <span class="math inline"><em>n</em></span>-bit values therefore appear as negative quiet NaNs
 (qNaNs) when viewed as any wider <span class="math inline"><em>m</em></span>-bit value, <span><span class="math inline"><em>n</em> &lt; <em>m</em>≤</span>
-FLEN</span> . Any operation that writes a narrower result to an <span>f</span>
+FLEN</span> . Any operation that writes a narrower result to an <span><code>f</code></span>
 register must write all 1s to the uppermost FLEN<span class="math inline"> − <em>n</em></span> bits to yield a
 legal NaN-boxed value.</p>
 <p>Software might not know the current type of data stored in a
@@ -52,10 +56,10 @@ callee-saved registers, but a standard convention is also desirable for
 features including varargs, user-level threading libraries, virtual
 machine migration, and debugging.</p>
 <p>Floating-point <span class="math inline"><em>n</em></span>-bit transfer operations move external values held
-in IEEE standard formats into and out of the <span>f</span> registers, and
+in IEEE standard formats into and out of the <span><code>f</code></span> registers, and
 comprise floating-point loads and stores (FL<span class="math inline"><em>n</em></span>/FS<span class="math inline"><em>n</em></span>) and
 floating-point move instructions (FMV.<span class="math inline"><em>n</em></span>.X/FMV.X.<span class="math inline"><em>n</em></span>). A narrower
-<span class="math inline"><em>n</em></span>-bit transfer, <span><span class="math inline"><em>n</em>&lt;</span> FLEN</span> , into the <span>f</span> registers will create a
+<span class="math inline"><em>n</em></span>-bit transfer, <span><span class="math inline"><em>n</em>&lt;</span> FLEN</span> , into the <span><code>f</code></span> registers will create a
 valid NaN-boxed value. A narrower <span class="math inline"><em>n</em></span>-bit transfer out of
 the floating-point registers will transfer the lower <span class="math inline"><em>n</em></span> bits of the
 register ignoring the upper FLEN<span class="math inline"> − <em>n</em></span> bits.</p>
@@ -94,7 +98,9 @@ NaN-boxed value is a similar process to normalization except for
 skipping over leading-1 bits instead of skipping over leading-0 bits,
 allowing the datapath muxing to be shared.</p>
 </div>
-<h2 id="fld_fsd"><span class="header-section-number">13.3</span> Double-Precision Load and Store Instructions</h2>
+</section>
+<section id="fld_fsd" data-number="1.3">
+<h2 data-number="13.3"><span class="header-section-number">13.3</span> Double-Precision Load and Store Instructions</h2>
 <p>The FLD instruction loads a double-precision floating-point value from
 memory into floating-point register <span><em>rd</em></span>. FSD stores a double-precision
 value from the floating-point registers to memory.
@@ -107,13 +113,17 @@ value from the floating-point registers to memory.
 is naturally aligned and XLEN<span class="math inline">≥</span>64.</p>
 <p>FLD and FSD do not modify the bits being transferred; in particular, the
 payloads of non-canonical NaNs are preserved.</p>
-<h2 id="double-precision-floating-point-computational-instructions"><span class="header-section-number">13.4</span> Double-Precision Floating-Point Computational Instructions</h2>
+</section>
+<section id="double-precision-floating-point-computational-instructions" data-number="1.4">
+<h2 data-number="13.4"><span class="header-section-number">13.4</span> Double-Precision Floating-Point Computational Instructions</h2>
 <p>The double-precision floating-point computational instructions are
 defined analogously to their single-precision counterparts, but operate on
 double-precision operands and produce double-precision results.</p>
 <p><img src="d_02.svg" alt="image" /></p>
 <p><img src="d_03.svg" alt="image" /></p>
-<h2 id="double-precision-floating-point-conversion-and-move-instructions"><span class="header-section-number">13.5</span> Double-Precision Floating-Point Conversion and Move Instructions</h2>
+</section>
+<section id="double-precision-floating-point-conversion-and-move-instructions" data-number="1.5">
+<h2 data-number="13.5"><span class="header-section-number">13.5</span> Double-Precision Floating-Point Conversion and Move Instructions</h2>
 <p>Floating-point-to-integer and integer-to-floating-point conversion
 instructions are encoded in the OP-FP major opcode space.
 FCVT.W.D or FCVT.L.D converts a double-precision floating-point number
@@ -173,16 +183,22 @@ a 64-bit integer datapath is low, and a software ABI supporting 32-bit
 wide address-space and pointers can be used to avoid growth of
 static data and dynamic memory traffic.</p>
 </div>
-<h2 id="double-precision-floating-point-compare-instructions"><span class="header-section-number">13.6</span> Double-Precision Floating-Point Compare Instructions</h2>
+</section>
+<section id="double-precision-floating-point-compare-instructions" data-number="1.6">
+<h2 data-number="13.6"><span class="header-section-number">13.6</span> Double-Precision Floating-Point Compare Instructions</h2>
 <p>The double-precision floating-point compare instructions are
 defined analogously to their single-precision counterparts, but operate on
 double-precision operands.</p>
 <p><img src="d_08.svg" alt="image" /></p>
-<h2 id="double-precision-floating-point-classify-instruction"><span class="header-section-number">13.7</span> Double-Precision Floating-Point Classify Instruction</h2>
+</section>
+<section id="double-precision-floating-point-classify-instruction" data-number="1.7">
+<h2 data-number="13.7"><span class="header-section-number">13.7</span> Double-Precision Floating-Point Classify Instruction</h2>
 <p>The double-precision floating-point classify instruction, FCLASS.D, is
 defined analogously to its single-precision counterpart, but operates on
 double-precision operands.</p>
 <p><img src="d_09.svg" alt="image" /></p>
+</section>
+</section>
 
 </body>
 </html>

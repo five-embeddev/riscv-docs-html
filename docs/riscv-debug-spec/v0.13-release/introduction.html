@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,17 +8,17 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>introduction.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="sec:intro"><span class="header-section-number">1</span> Introduction</h1>
+<h1 data-number="1" id="sec:intro"><span class="header-section-number">1</span> Introduction</h1>
 <p>When a design progresses from simulation to hardware implementation, a user’s
 control and understanding of the system’s current state drops dramatically.
 To help bring up and debug low level software and hardware,
@@ -32,32 +33,32 @@ allow debugging tools and components to target a variety of platforms based on t
 <p>System designers may choose to add additional hardware debug support,
 but this specification defines a standard interface for common
 functionality.</p>
-<h2 id="terminology"><span class="header-section-number">1.1</span> Terminology</h2>
+<h2 data-number="1.1" id="terminology"><span class="header-section-number">1.1</span> Terminology</h2>
 <p>A <em>platform</em> is a single integrated circuit consisting of one or more
 <em>components</em>. Some components may be RISC-V cores, while others may have a different
 function. Typically they will all be connected to a single system bus.
 A single RISC-V core contains one or more hardware threads, called
 <em>harts</em>.</p>
 <p><em>DXLEN</em> of a hart is its widest supported XLEN, ignoring the current value
-of in <span>misa</span>.</p>
-<h3 id="context"><span class="header-section-number">1.1.1</span> Context</h3>
+of <span><code>MXL</code></span>in <span><code>misa</code></span>.</p>
+<h3 data-number="1.1.1" id="context"><span class="header-section-number">1.1.1</span> Context</h3>
 <p><span>This document is written to work with:</span></p>
 <p>The RISC-V Instruction Set Manual, Volume I: User-Level ISA, Document
 Version 2.2 (the ISA Spec)</p>
 <p>The RISC-V Instruction Set Manual, Volume II: Privileged Architecture,
 Version 1.10 (the Privileged Spec)</p>
-<h3 id="versions"><span class="header-section-number">1.1.2</span> Versions</h3>
+<h3 data-number="1.1.2" id="versions"><span class="header-section-number">1.1.2</span> Versions</h3>
 <p>Version 0.13 of this document was ratified by the RISC-V Foundation’s board.
 Versions 0.13.<span class="math inline"><em>x</em></span> are bug fix releases to that ratified specification.</p>
 <p>Version 0.14 will be forwards and backwards compatible with Version 0.13.</p>
-<h2 id="about-this-document"><span class="header-section-number">1.2</span> About This Document</h2>
-<h3 id="structure"><span class="header-section-number">1.2.1</span> Structure</h3>
+<h2 data-number="1.2" id="about-this-document"><span class="header-section-number">1.2</span> About This Document</h2>
+<h3 data-number="1.2.1" id="structure"><span class="header-section-number">1.2.1</span> Structure</h3>
 <p>This document contains two parts. The main part of the document is the
 specification, which is given in the numbered sections. The second part
 of the document is a set of appendices. The information
 in the appendices is intended to clarify and provide examples, but is
 not part of the actual specification.</p>
-<h3 id="register-definition-format"><span class="header-section-number">1.2.2</span> Register Definition Format</h3>
+<h3 data-number="1.2.2" id="register-definition-format"><span class="header-section-number">1.2.2</span> Register Definition Format</h3>
 <p>All register definitions in this document follow the format shown below. A
 simple graphic shows which fields are in the register. The upper and lower bit
 indices are shown to the top left and top right of each field. The total number
@@ -70,9 +71,9 @@ The latter means it is an implementation-specific legal value.</p>
 also listed in the index on page .</p>
 <p><a href="sample_registers.html" data-reference-type="ref" data-reference="sample_registers.tex">[sample_registers.tex]</a></p>
 <figure>
-<img src="introduction_00.svg" alt="Register Access Abbreviations" id="tab:access" /><figcaption>Register Access Abbreviations<span label="tab:access"></span></figcaption>
+<img src="introduction_00.svg" id="tab:access" alt="" /><figcaption>Register Access Abbreviations</figcaption>
 </figure>
-<h2 id="background"><span class="header-section-number">1.3</span> Background</h2>
+<h2 data-number="1.3" id="background"><span class="header-section-number">1.3</span> Background</h2>
 <p>There are several use cases for dedicated debugging hardware, both
 internal to a CPU core and with an external connection.
 This specification addresses the use cases listed below. Implementations
@@ -88,7 +89,7 @@ there is any executable code path in the system.</p></li>
 <p>In addition, even without a hardware debugging interface,
 architectural support in a RISC-V CPU can aid software debugging and
 performance analysis by allowing hardware triggers and breakpoints.</p>
-<h2 id="supported-features"><span class="header-section-number">1.4</span> Supported Features</h2>
+<h2 data-number="1.4" id="supported-features"><span class="header-section-number">1.4</span> Supported Features</h2>
 <p>The debug interface described in this specification supports the following features:</p>
 <ol>
 <li><p>All hart registers (including CSRs) can be read/written.</p></li>
@@ -96,7 +97,7 @@ performance analysis by allowing hardware triggers and breakpoints.</p>
 the system bus directly, or both.</p></li>
 <li><p>RV32, RV64, and future RV128 are all supported.</p></li>
 <li><p>Any hart in the platform can be independently debugged.</p></li>
-<li><p>A debugger can discover almost<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a> everything it needs
+<li><p>A debugger can discover almost<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> everything it needs
 to know itself, without user configuration.</p></li>
 <li><p>Each hart can be debugged from the very first instruction executed.</p></li>
 <li><p>A RISC-V hart can be halted when a software breakpoint instruction is
@@ -126,11 +127,11 @@ this specification, but this specification does not intend to limit their use
 in RISC-V systems.</p>
 <p>It is possible to debug code that uses software threads, but there is no
 special debug support for it.</p>
-<section class="footnotes">
+<section class="footnotes" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1"><p>Notable exceptions include
-information about the memory map and peripherals.<a href="#fnref1" class="footnote-back">↩</a></p></li>
+<li id="fn1" role="doc-endnote"><p>Notable exceptions include
+information about the memory map and peripherals.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 

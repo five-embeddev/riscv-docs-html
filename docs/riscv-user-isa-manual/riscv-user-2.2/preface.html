@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,7 +13,7 @@
 <tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/preface.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -138,7 +139,7 @@ be released under the same licence.</p></li>
 macro-op fusion of LUI/JALR and AUIPC/JALR pairs.</p></li>
 <li><p>Clarification of constraints on load-reserved/store-conditional sequences.</p></li>
 <li><p>A new table of control and status register (CSR) mappings.</p></li>
-<li><p>Clarified purpose and behavior of high-order bits of <span>fcsr</span>.</p></li>
+<li><p>Clarified purpose and behavior of high-order bits of <span><code>fcsr</code></span>.</p></li>
 <li><p>Corrected the description of the FNMADD.<span><em>fmt</em></span> and FNMSUB.<span><em>fmt</em></span>
 instructions, which had suggested the incorrect sign of a zero result.</p></li>
 <li><p>Instructions FMV.S.X and FMV.X.S were renamed to FMV.W.X and
@@ -146,7 +147,7 @@ FMV.X.W respectively to be more consistent with their
 semantics, which did not change.
 The old names will continue to be supported in the tools.</p></li>
 <li><p>Specified behavior of narrower (<span class="math inline">&lt;</span>FLEN) floating-point values held in
-wider <span>f</span> registers using NaN-boxing model.</p></li>
+wider <span><code>f</code></span> registers using NaN-boxing model.</p></li>
 <li><p>Defined the exception behavior of FMA(<span class="math inline">∞</span>, 0, qNaN).</p></li>
 <li><p>Added note indicating that the P extension might be reworked
 into an integer packed-SIMD proposal for fixed-point operations
@@ -158,7 +159,7 @@ using the integer registers.</p></li>
 the RISC-V ELF psABI Specification <span class="citation" data-cites="riscv-elf-psabi"><a href="#ref-riscv-elf-psabi">[riscv-elf-psabi]</a></span>.</p></li>
 <li><p>The C extension has been frozen and renumbered version 2.0.</p></li>
 </ul>
-<h2 id="preface-to-document-version-2.1" class="unnumbered">Preface to Document Version 2.1</h2>
+<h2 class="unnumbered" id="preface-to-document-version-2.1">Preface to Document Version 2.1</h2>
 <p>This is version 2.1 of the document describing the RISC-V user-level
 architecture. Note the frozen user-level ISA base and extensions
 IMAFDQ version 2.0 have not changed from the previous version of this
@@ -189,7 +190,7 @@ counts, supports MAC extensions.</p></li>
 description of the RV32E calling convention.</p></li>
 <li><p>A revised proposal for the C compressed extension, version 1.9.</p></li>
 </ul>
-<h2 id="preface-to-version-2.0" class="unnumbered">Preface to Version 2.0</h2>
+<h2 class="unnumbered" id="preface-to-version-2.0">Preface to Version 2.0</h2>
 <p>This is the second release of the user ISA specification, and we
 intend the specification of the base user ISA plus general extensions
 (i.e., IMAFD) to remain fixed for future development. The following
@@ -215,7 +216,7 @@ PC value. This results in significant savings for position-independent
 code.</p></li>
 <li><p>The JAL instruction has now moved to the U-Type format with an
 explicit destination register, and the J instruction has been
-dropped being replaced by JAL with <span><em>rd</em></span>=<span>x0</span>. This removes
+dropped being replaced by JAL with <span><em>rd</em></span>=<span><code>x0</code></span>. This removes
 the only instruction with an implicit destination register and
 removes the J-Type instruction format from the base ISA. There is
 an accompanying reduction in JAL reach, but a significant reduction
@@ -232,7 +233,7 @@ renamed to FMV.S.X and FMV.D.X, respectively.</p></li>
 <li><p>The MFFSR and MTFSR instructions have been renamed to FRCSR and FSCSR,
 respectively. FRRM, FSRM, FRFLAGS, and FSFLAGS instructions have been added
 to individually access the rounding mode and exception flags subfields of
-the <span>fcsr</span>.</p></li>
+the <span><code>fcsr</code></span>.</p></li>
 <li><p>The FMV.X.S and FMV.X.D instructions now source their operands
 from <span><em>rs1</em></span>, instead of <span><em>rs2</em></span>. This change simplifies datapath
 design.</p></li>

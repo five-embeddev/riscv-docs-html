@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/ztso.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="sec:ztso"><span class="header-section-number">24</span> “Ztso” Standard Extension for Total Store Ordering, v0.1</h1>
+<section id="sec:ztso" data-number="1">
+<h1 data-number="24"><span class="header-section-number">24</span> “Ztso” Standard Extension for Total Store Ordering, v0.1</h1>
 <p>This chapter defines the “Ztso” extension for the RISC-V Total Store Ordering (RVTSO) memory consistency model.
 RVTSO is defined as a delta from RVWMO, which is defined in Chapter <a href="rvwmo.html#sec:rvwmo" data-reference-type="ref" data-reference="sec:rvwmo">[sec:rvwmo]</a>.</p>
 <div class=commentary>
@@ -38,6 +40,7 @@ Finally, they also imply that no memory operation will be reordered past an AMO 
 </div>
 <p>In spite of the fact that Ztso adds no new instructions to the ISA, code written assuming RVTSO will not run correctly on implementations not supporting Ztso.
 Binaries compiled to run only under Ztso should indicate as such via a flag in the binary, so that platforms which do not implement Ztso can simply refuse to run them.</p>
+</section>
 
 </body>
 </html>

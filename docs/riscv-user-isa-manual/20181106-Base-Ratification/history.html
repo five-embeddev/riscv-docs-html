@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,13 +13,15 @@
 <tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/history.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="history"><span class="header-section-number">28</span> History and Acknowledgments</h1>
-<h2 id="why-develop-a-new-isa-rationale-from-berkeley-group"><span class="header-section-number">28.1</span> “Why Develop a new ISA?” Rationale from Berkeley Group</h2>
+<section id="history" data-number="1">
+<h1 data-number="28"><span class="header-section-number">28</span> History and Acknowledgments</h1>
+<section id="why-develop-a-new-isa-rationale-from-berkeley-group" data-number="1.1">
+<h2 data-number="28.1"><span class="header-section-number">28.1</span> “Why Develop a new ISA?” Rationale from Berkeley Group</h2>
 <p>We developed RISC-V to support our own needs in research and
 education, where our group is particularly interested in actual
 hardware implementations of research ideas (we have completed eleven
@@ -143,7 +146,9 @@ non-profit RISC-V Foundation to protect and promote the standard. The
 RISC-V Foundation website at <a href="https://riscv.org">https://riscv.org</a> contains the latest
 information on the Foundation membership and various open-source
 projects using RISC-V.</p>
-<h2 id="history-from-revision-1.0-of-isa-manual"><span class="header-section-number">28.2</span> History from Revision 1.0 of ISA manual</h2>
+</section>
+<section id="history-from-revision-1.0-of-isa-manual" data-number="1.2">
+<h2 data-number="28.2"><span class="header-section-number">28.2</span> History from Revision 1.0 of ISA manual</h2>
 <p>The RISC-V ISA and instruction-set manual builds upon several earlier
 projects. Several aspects of the supervisor-level machine and the
 overall format of the manual date back to the T0 (Torrent-0) vector
@@ -201,15 +206,17 @@ break from the earlier MIPS-inspired designs. John Hauser contributed
 to the floating-point ISA definition, including the sign-injection
 instructions and a register encoding scheme that permits
 internal recoding of floating-point values.</p>
-<h2 id="history-from-revision-2.0-of-isa-manual"><span class="header-section-number">28.3</span> History from Revision 2.0 of ISA manual</h2>
+</section>
+<section id="history-from-revision-2.0-of-isa-manual" data-number="1.3">
+<h2 data-number="28.3"><span class="header-section-number">28.3</span> History from Revision 2.0 of ISA manual</h2>
 <p>Multiple implementations of RISC-V processors have been completed,
 including several silicon fabrications, as shown in
 Figure <a href="history.html#silicon" data-reference-type="ref" data-reference="silicon">1.1</a>.</p>
 <figure>
-<img src="history_00.svg" alt="Fabricated RISC-V testchips." id="silicon" /><figcaption>Fabricated RISC-V testchips.<span label="silicon"></span></figcaption>
+<img src="history_00.svg" id="silicon" alt="" /><figcaption>Fabricated RISC-V testchips.</figcaption>
 </figure>
 <p>The first RISC-V processors to be fabricated were written in Verilog and
-manufactured in a pre-production <span>28</span><span>nm</span> FDSOI technology from
+manufactured in a pre-production <span>28</span> <span>nm</span> FDSOI technology from
 ST as the Raven-1 testchip in 2011. Two cores were developed by Yunsup
 Lee and Andrew Waterman, advised by Krste Asanović, and fabricated
 together: 1) an RV64 scalar core with error-detecting flip-flops, and 2)
@@ -226,8 +233,8 @@ design language developed at UC Berkeley. The IEEE floating-point
 units used in Rocket were developed by John Hauser, Andrew
 Waterman, and Brian Richards.
 Rocket has since been refined and developed further, and has been
-fabricated two more times in <span>28</span><span>nm</span> FDSOI (Raven-2, Raven-3),
-and five times in IBM <span>45</span><span>nm</span> SOI technology (EOS14, EOS16,
+fabricated two more times in <span>28</span> <span>nm</span> FDSOI (Raven-2, Raven-3),
+and five times in IBM <span>45</span> <span>nm</span> SOI technology (EOS14, EOS16,
 EOS18, EOS20, EOS22) for a photonics project. Work is ongoing to make
 the Rocket design available as a parameterized RISC-V processor
 generator.</p>
@@ -237,8 +244,8 @@ Huy Vo, Albert Ou, Quan Nguyen, and Stephen Twigg, advised by Krste
 Asanović. EOS16–EOS22 chips include dual cores with a
 cache-coherence protocol developed by Henry Cook and Andrew Waterman,
 advised by Krste Asanović. EOS14 silicon has successfully run at
-<span>1.25</span><span>GHz</span>. EOS16 silicon suffered from a bug in the IBM pad
-libraries. EOS18 and EOS20 have successfully run at <span>1.35</span><span>GHz</span>.</p>
+<span>1.25</span> <span>GHz</span>. EOS16 silicon suffered from a bug in the IBM pad
+libraries. EOS18 and EOS20 have successfully run at <span>1.35</span> <span>GHz</span>.</p>
 <p>Contributors to the Raven testchips include Yunsup Lee, Andrew Waterman,
 Rimas Avižienis, Brian Zimmer, Jaehwa Kwak, Ruzica Jevtić,
 Milovan Blagojević, Alberto Puggelli, Steven Bailey, Ben Keller,
@@ -291,28 +298,40 @@ March 2014.</p>
 instructions.</p>
 <p>We are aware of several other RISC-V core implementations, including
 one in Verilog by Tommy Thorn, and one in Bluespec by Rishiyur Nikhil.</p>
-<h2 id="acknowledgments" class="unnumbered">Acknowledgments</h2>
+</section>
+<section id="acknowledgments" class="unnumbered" data-number="">
+<h2 class="unnumbered" data-number="27">Acknowledgments</h2>
 <p>Thanks to Christopher F. Batten, Preston Briggs, Christopher Celio, David
 Chisnall, Stefan Freudenberger, John Hauser, Ben Keller, Rishiyur
 Nikhil, Michael Taylor, Tommy Thorn, and Robert Watson for comments on
 the draft ISA version 2.0 specification.</p>
-<h2 id="history-from-revision-2.1"><span class="header-section-number">28.4</span> History from Revision 2.1</h2>
+</section>
+<section id="history-from-revision-2.1" data-number="1.4">
+<h2 data-number="28.4"><span class="header-section-number">28.4</span> History from Revision 2.1</h2>
 <p>Uptake of the RISC-V ISA has been very rapid since the introduction of
 the frozen version 2.0 in May 2014, with too much activity to record
 in a short history section such as this. Perhaps the most important
 single event was the formation of the non-profit RISC-V Foundation in
 August 2015. The Foundation will now take over stewardship of the
-official RISC-V ISA standard, and the official website <span>riscv.org</span>
+official RISC-V ISA standard, and the official website <span><code>riscv.org</code></span>
 is the best place to obtain news and updates on the RISC-V standard.</p>
-<h2 id="acknowledgments-1" class="unnumbered">Acknowledgments</h2>
+</section>
+<section id="acknowledgments-1" class="unnumbered" data-number="">
+<h2 class="unnumbered" data-number="27">Acknowledgments</h2>
 <p>Thanks to Scott Beamer, Allen J. Baum, Christopher Celio, David Chisnall,
 Paul Clayton, Palmer Dabbelt, Jan Gray, Michael Hamburg, and John
 Hauser for comments on the version 2.0 specification.</p>
-<h2 id="history-from-revision-2.2"><span class="header-section-number">28.5</span> History from Revision 2.2</h2>
-<h2 id="acknowledgments-2" class="unnumbered">Acknowledgments</h2>
+</section>
+<section id="history-from-revision-2.2" data-number="1.5">
+<h2 data-number="28.5"><span class="header-section-number">28.5</span> History from Revision 2.2</h2>
+</section>
+<section id="acknowledgments-2" class="unnumbered" data-number="">
+<h2 class="unnumbered" data-number="27">Acknowledgments</h2>
 <p>Thanks to Jacob Bachmeyer, Alex Bradbury, David Horner, Stefan O’Rear,
 and Joseph Myers for comments on the version 2.1 specification.</p>
-<h2 id="history-for-revision-2.3"><span class="header-section-number">28.6</span> History for Revision 2.3</h2>
+</section>
+<section id="history-for-revision-2.3" data-number="1.6">
+<h2 data-number="28.6"><span class="header-section-number">28.6</span> History for Revision 2.3</h2>
 <p>Uptake of RISC-V continues at breakneck pace.</p>
 <p>John Hauser and Andrew Waterman contributed a hypervisor ISA extension
 based upon a proposal from Paolo Bonzini.</p>
@@ -322,7 +341,9 @@ Nikhil, Jonas Oberhauser, Christopher Pulte, Jose Renau, Peter Sewell, Susmit
 Sarkar, Caroline Trippel, Muralidaran Vijayaraghavan, Andrew Waterman, Derek
 Williams, Andrew Wright, and Sizhuo Zhang contributed the memory consistency
 model.</p>
-<h2 id="funding"><span class="header-section-number">28.7</span> Funding</h2>
+</section>
+<section id="funding" data-number="1.7">
+<h2 data-number="28.7"><span class="header-section-number">28.7</span> Funding</h2>
 <p>Development of the RISC-V architecture and implementations has been
 partially funded by the following sponsors.</p>
 <ul>
@@ -342,6 +363,8 @@ NVIDIA, Oracle, and Samsung.</p></li>
 <p>The content of this paper does not necessarily reflect the position or the
 policy of the US government and no official endorsement should be
 inferred.</p>
+</section>
+</section>
 
 </body>
 </html>

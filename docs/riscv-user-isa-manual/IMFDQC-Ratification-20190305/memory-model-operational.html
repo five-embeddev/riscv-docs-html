@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,7 +13,7 @@
 <tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/memory-model-operational.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -41,17 +42,17 @@ over which the axioms can be checked.</p>
 potentially overlapping memory accesses of different power-of-two byte
 sizes. Misaligned accesses are broken up into single-byte accesses.</p>
 <p>The operational model, together with a fragment of the RISC-V ISA
-semantics (RV64I and A), are integrated into the <span>rmem</span> exploration
-tool (<a href="https://github.com/rems-project/rmem">https://github.com/rems-project/rmem</a>). <span>rmem</span> can
+semantics (RV64I and A), are integrated into the <span><code>rmem</code></span> exploration
+tool (<a href="https://github.com/rems-project/rmem">https://github.com/rems-project/rmem</a>). <span><code>rmem</code></span> can
 explore litmus tests (see <a href="memory.html#sec:litmustests" data-reference-type="ref" data-reference="sec:litmustests">[sec:litmustests]</a>) and small ELF
 binaries exhaustively,
-pseudo-randomly and interactively. In <span>rmem</span>, the ISA semantics
+pseudo-randomly and interactively. In <span><code>rmem</code></span>, the ISA semantics
 is expressed explicitly in Sail (see
 <a href="https://github.com/rems-project/sail">https://github.com/rems-project/sail</a> for the Sail language, and
 <a href="https://github.com/rems-project/sail-riscv">https://github.com/rems-project/sail-riscv</a> for the RISC-V ISA
 model), and the concurrency semantics is expressed in Lem (see
 <a href="https://github.com/rems-project/lem">https://github.com/rems-project/lem</a> for the Lem language).</p>
-<p><span>rmem</span> has a command-line interface and a web-interface.
+<p><span><code>rmem</code></span> has a command-line interface and a web-interface.
 The web-interface runs entirely on the client side, and is provided
 online together with a library of litmus tests:
 <a href="http://www.cl.cam.ac.uk/~pes20/rmem">http://www.cl.cam.ac.uk/~pes20/rmem</a>. The command-line interface
@@ -126,12 +127,12 @@ But, under some conditions, the model might treat a load instruction as non-rest
 <li><p>: This propagates a single memory store operation to memory.</p></li>
 <li><p>: At this point all the memory store operations of the instruction have been propagated to memory, and the instruction pseudocode can continue executing.</p></li>
 </ul>
-<p>Transitions specific to <span>sc</span> instructions:</p>
+<p>Transitions specific to <span><code>sc</code></span> instructions:</p>
 <ul>
-<li><p>: This causes the <span>sc</span> to fail, either a spontaneous fail or because it is not paired with a program-order-previous <span>lr</span>.</p></li>
-<li><p>: This transition indicates the <span>sc</span> is paired with an <span>lr</span> and might succeed.</p></li>
-<li><p>: This is an atomic execution of the transitions and , it is enabled only if the stores from which the <span>lr</span> read from have not been overwritten.</p></li>
-<li><p>: This causes the <span>sc</span> to fail, either a spontaneous fail or because the stores from which the <span>lr</span> read from have been overwritten.</p></li>
+<li><p>: This causes the <span><code>sc</code></span> to fail, either a spontaneous fail or because it is not paired with a program-order-previous <span><code>lr</code></span>.</p></li>
+<li><p>: This transition indicates the <span><code>sc</code></span> is paired with an <span><code>lr</code></span> and might succeed.</p></li>
+<li><p>: This is an atomic execution of the transitions and , it is enabled only if the stores from which the <span><code>lr</code></span> read from have not been overwritten.</p></li>
+<li><p>: This causes the <span><code>sc</code></span> to fail, either a spontaneous fail or because the stores from which the <span><code>lr</code></span> read from have been overwritten.</p></li>
 </ul>
 <p>Transitions specific to AMO instructions:</p>
 <ul>
@@ -166,19 +167,19 @@ states are (this is a tagged union; tags in small-caps):</p>
 <p>Here:</p>
 <p><span><em>mem_value</em></span> and <span><em>reg_value</em></span> are lists of bytes;</p>
 <p><span><em>address</em></span> is an integer of XLEN bits;</p>
-<p>for load/store, <span><em>kind</em></span> identifies whether it is <span>lr/sc</span>, acquire-RCpc/release-RCpc, acquire-RCsc/release-RCsc, acquire-release-RCsc;</p>
+<p>for load/store, <span><em>kind</em></span> identifies whether it is <span><code>lr/sc</code></span>, acquire-RCpc/release-RCpc, acquire-RCsc/release-RCsc, acquire-release-RCsc;</p>
 <p>for fence, <span><em>kind</em></span> identifies whether it is a normal or TSO, and (for normal fences) the predecessor and successor ordering bits;</p>
 <p><span><em>reg_name</em></span> identifies a register and a slice thereof (start and
 end bit indices); and</p>
-<p>the continuations describe how the instruction instance will continue for each value that might be provided by the surrounding memory model (the <span><em>load_continuation</em></span> and <span><em>read_continuation</em></span> take the value loaded from memory and read from the previous register write, the <span><em>store_continuation</em></span> takes <span><em>false</em></span> for an <span>sc</span> that failed and <span><em>true</em></span> in all other cases, and <span><em>res_continuation</em></span> takes <span><em>false</em></span> if the <span>sc</span> fails and <span><em>true</em></span> otherwise).</p>
+<p>the continuations describe how the instruction instance will continue for each value that might be provided by the surrounding memory model (the <span><em>load_continuation</em></span> and <span><em>read_continuation</em></span> take the value loaded from memory and read from the previous register write, the <span><em>store_continuation</em></span> takes <span><em>false</em></span> for an <span><code>sc</code></span> that failed and <span><em>true</em></span> in all other cases, and <span><em>res_continuation</em></span> takes <span><em>false</em></span> if the <span><code>sc</code></span> fails and <span><em>true</em></span> otherwise).</p>
 <div class=commentary>
 <p>For example, given the load instruction <code>lw x1,0(x2)</code>,
 an execution will typically go as follows.
 The initial execution state will be computed from the pseudocode for the given opcode.
-This can be expected to be <span>Read_reg</span>(<span>x2</span>, <span><em>read_continuation</em></span>).
-Feeding the most recently written value of register <span>x2</span> (the instruction semantics will be blocked if necessary until the register value is available), say <span>0x4000</span>, to <span><em>read_continuation</em></span> returns <span>Load_mem</span>(<span>plain_load</span>, <span>0x4000</span>, <span>4</span>, <span><em>load_continuation</em></span>).
-Feeding the 4-byte value loaded from memory location <span>0x4000</span>, say <span>0x42</span>, to <span><em>load_continuation</em></span> returns
-<span>Write_reg</span>(<span>x1</span>, <span>0x42</span>, <span>Done</span>).
+This can be expected to be <span>Read_reg</span>(<span><code>x2</code></span>, <span><em>read_continuation</em></span>).
+Feeding the most recently written value of register <span><code>x2</code></span> (the instruction semantics will be blocked if necessary until the register value is available), say <span><code>0x4000</code></span>, to <span><em>read_continuation</em></span> returns <span>Load_mem</span>(<span><code>plain_load</code></span>, <span><code>0x4000</code></span>, <span><code>4</code></span>, <span><em>load_continuation</em></span>).
+Feeding the 4-byte value loaded from memory location <span><code>0x4000</code></span>, say <span><code>0x42</code></span>, to <span><em>load_continuation</em></span> returns
+<span>Write_reg</span>(<span><code>x1</code></span>, <span><code>0x42</code></span>, <span>Done</span>).
 Many <span>Internal</span>(<span><em>next_state</em></span>) states may appear before and between the states above.</p>
 </div>
 <p>Notice that writing to memory is split into two steps, <span>Store_ea</span> and <span>Store_memv</span>: the first one makes the memory footprint of the store provisionally known, and the second one adds the value to be stored.
@@ -215,17 +216,17 @@ satisfied yet), and, for the satisfied slices, the store slices
 <p>Each memory load operation includes a memory footprint (address and size).
 Each memory store operations includes a memory footprint, and, when available, a value.</p>
 <p>A load instruction instance with a non-empty <span><em>mem_loads</em></span>, for which all the load operations are satisfied (i.e. there are no unsatisfied load slices) is said to be <span><em>entirely satisfied</em></span>.</p>
-<p>Informally, an instruction instance is said to have <span><em>fully determined data</em></span> if the load (and <span>sc</span>) instructions feeding its source registers are finished.
-Similarly, it is said to have a <span><em>fully determined memory footprint</em></span> if the load (and <span>sc</span>) instructions feeding its memory operation address register are finished.
+<p>Informally, an instruction instance is said to have <span><em>fully determined data</em></span> if the load (and <span><code>sc</code></span>) instructions feeding its source registers are finished.
+Similarly, it is said to have a <span><em>fully determined memory footprint</em></span> if the load (and <span><code>sc</code></span>) instructions feeding its memory operation address register are finished.
 Formally, we first define the notion of <span><em>fully determined register write</em></span>: a register write <span class="math inline"><em>w</em></span> from <span><em>reg_writes</em></span> of instruction instance <span class="math inline"><em>i</em></span> is said to be <span><em>fully determined</em></span> if one of the following conditions hold:</p>
 <ol>
 <li><p><span class="math inline"><em>i</em></span> is finished; or</p></li>
-<li><p>the value written by <span class="math inline"><em>w</em></span> is not affected by a memory operation that <span class="math inline"><em>i</em></span> has made (i.e. a value loaded from memory or the result of <span>sc</span>), and, for every register read that <span class="math inline"><em>i</em></span> has made, that affects <span class="math inline"><em>w</em></span>, the register write from which <span class="math inline"><em>i</em></span> read is fully determined (or <span class="math inline"><em>i</em></span> read from the initial register state).</p></li>
+<li><p>the value written by <span class="math inline"><em>w</em></span> is not affected by a memory operation that <span class="math inline"><em>i</em></span> has made (i.e. a value loaded from memory or the result of <span><code>sc</code></span>), and, for every register read that <span class="math inline"><em>i</em></span> has made, that affects <span class="math inline"><em>w</em></span>, the register write from which <span class="math inline"><em>i</em></span> read is fully determined (or <span class="math inline"><em>i</em></span> read from the initial register state).</p></li>
 </ol>
 <p>Now, an instruction instance <span class="math inline"><em>i</em></span> is said to have <span><em>fully determined data</em></span> if for every register read <span class="math inline"><em>r</em></span> from <span><em>reg_reads</em></span>, the register writes that <span class="math inline"><em>r</em></span> reads from are fully determined.
 An instruction instance <span class="math inline"><em>i</em></span> is said to have a <span><em>fully determined memory footprint</em></span> if for every register read <span class="math inline"><em>r</em></span> from <span><em>reg_reads</em></span> that feeds into <span class="math inline"><em>i</em></span>’s memory operation address, the register writes that <span class="math inline"><em>r</em></span> reads from are fully determined.
 <div class=commentary>
-<p>The <span>rmem</span> tool records, for every register write, the set of register writes from other instructions that have been read by this instruction at the point of performing the write.
+<p>The <span><code>rmem</code></span> tool records, for every register write, the set of register writes from other instructions that have been read by this instruction at the point of performing the write.
 By carefully arranging the pseudocode of the instructions covered by the tool we were able to make it so that this is exactly the set of register writes on which the write depends on.</p>
 </div>
 <h2 id="hart-state">Hart State</h2>
@@ -242,8 +243,8 @@ By carefully arranging the pseudocode of the instructions covered by the tool we
 When a load operation is satisfied from memory, for each byte of the load operation, the most recent corresponding store slice is returned.</p>
 <div class=commentary>
 <p>For most purposes, it is simpler to think of the shared memory as an array, i.e., a map from memory locations to memory store operation slices, where each memory location is mapped to a one-byte slice of the most recent memory store operation to that location.
-However, this abstraction is not detailed enough to properly handle the <span>sc</span> instruction.
-The RVWMO allows store operations from the same hart as the <span>sc</span> to intervene between the store operation of the <span>sc</span> and the store operations the paired <span>lr</span> read from.
+However, this abstraction is not detailed enough to properly handle the <span><code>sc</code></span> instruction.
+The RVWMO allows store operations from the same hart as the <span><code>sc</code></span> to intervene between the store operation of the <span><code>sc</code></span> and the store operations the paired <span><code>lr</code></span> read from.
 To allow such store operations to intervene, and forbid others, the array abstraction must be extended to record more information.
 Here, we use a list as it is very simple, but a more efficient and scalable implementations should probably use something better.</p>
 </div>
@@ -259,8 +260,8 @@ The condition is followed by an action that is applied to that state when the tr
 <li><p>if <span class="math inline"><em>i</em></span>’s pseudocode has already written an address to <span><em>pc</em></span>, then <span><em>loc</em></span> must be that address, otherwise <span><em>loc</em></span> is:</p>
 <ul>
 <li><p>for a conditional branch, the successor address or the branch target address;</p></li>
-<li><p>for a (direct) jump and link instruction (<span>jal</span>), the target address;</p></li>
-<li><p>for an indirect jump instruction (<span>jalr</span>), any address; and</p></li>
+<li><p>for a (direct) jump and link instruction (<span><code>jal</code></span>), the target address;</p></li>
+<li><p>for an indirect jump instruction (<span><code>jalr</code></span>), any address; and</p></li>
 <li><p>for any other instruction, <span class="math inline"><em>i</em>.<em>program_loc</em> + 4</span>.</p></li>
 </ul></li>
 </ol>
@@ -268,10 +269,10 @@ The condition is followed by an action that is applied to that state when the tr
 <div class=commentary>
 <p>The possible next fetch addresses (<span><em>loc</em></span>) are available immediately after fetching <span class="math inline"><em>i</em></span> and the model does not need to wait for the pseudocode to write to <span><em>pc</em></span>; this allows out-of-order execution, and speculation past conditional branches and jumps.
 For most instructions these addresses are easily obtained from the instruction pseudocode.
-The only exception to that is the indirect jump instruction (<span>jalr</span>), where the address depends on the value held in a register.
+The only exception to that is the indirect jump instruction (<span><code>jalr</code></span>), where the address depends on the value held in a register.
 In principle the mathematical model should allow speculation to
 arbitrary addresses here.
-The exhaustive search in the <span>rmem</span> tool handles this by running the exhaustive search multiple times with a growing set of possible next fetch addresses for each indirect jump.
+The exhaustive search in the <span><code>rmem</code></span> tool handles this by running the exhaustive search multiple times with a growing set of possible next fetch addresses for each indirect jump.
 The initial search uses empty sets, hence there is no fetch after indirect jump instruction until the pseudocode of the instruction writes to <span><em>pc</em></span>, and then we use that value for fetching the next instruction.
 Before starting the next iteration of exhaustive search, we collect for each indirect jump (grouped by code location) the set of values it wrote to <span><em>pc</em></span> in all the executions in the previous search iteration, and use that as possible next fetch addresses of the instruction.
 This process terminates when no new fetch addresses are detected.</p>
@@ -295,15 +296,15 @@ Here we decompose them to one-byte accesses as this granularity subsumes all oth
 <h4 id="omm:sat_by_forwarding">Satisfy memory load operation by forwarding from unpropagated stores</h4>
 <p>For a non-AMO load instruction instance <span class="math inline"><em>i</em></span> in state <span>Pending_mem_loads</span>(<span><em>load_continuation</em></span>), and a memory load operation <span class="math inline"><em>m</em><em>l</em><em>o</em></span> in <span class="math inline"><em>i</em>.<em>mem_loads</em></span> that has unsatisfied slices, the memory load operation can be partially or entirely satisfied by forwarding from unpropagated memory store operations by store instruction instances that are program-order-before <span class="math inline"><em>i</em></span> if:</p>
 <ol>
-<li><p>all program-order-previous <span>fence</span> instructions with <span>.sr</span> and <span>.pw</span> set are finished;</p></li>
-<li><p>for every program-order-previous <span>fence</span> instruction, <span class="math inline"><em>f</em></span>, with <span>.sr</span> and <span>.pr</span> set, and <span>.pw</span> not set, if <span class="math inline"><em>f</em></span> is not finished then all load instructions that are program-order-before <span class="math inline"><em>f</em></span> are entirely satisfied;</p></li>
-<li><p>for every program-order-previous <span>fence.tso</span> instruction, <span class="math inline"><em>f</em></span>, that is not finished, all load instructions that are program-order-before <span class="math inline"><em>f</em></span> are entirely satisfied;</p></li>
+<li><p>all program-order-previous <span><code>fence</code></span> instructions with <span><code>.sr</code></span> and <span><code>.pw</code></span> set are finished;</p></li>
+<li><p>for every program-order-previous <span><code>fence</code></span> instruction, <span class="math inline"><em>f</em></span>, with <span><code>.sr</code></span> and <span><code>.pr</code></span> set, and <span><code>.pw</code></span> not set, if <span class="math inline"><em>f</em></span> is not finished then all load instructions that are program-order-before <span class="math inline"><em>f</em></span> are entirely satisfied;</p></li>
+<li><p>for every program-order-previous <span><code>fence.tso</code></span> instruction, <span class="math inline"><em>f</em></span>, that is not finished, all load instructions that are program-order-before <span class="math inline"><em>f</em></span> are entirely satisfied;</p></li>
 <li><p>if <span class="math inline"><em>i</em></span> is a load-acquire-RCsc, all program-order-previous store-releases-RCsc are finished;</p></li>
 <li><p>if <span class="math inline"><em>i</em></span> is a load-acquire-release, all program-order-previous instructions are finished;</p></li>
 <li><p>all non-finished program-order-previous load-acquire instructions are entirely satisfied; and</p></li>
 <li><p>all program-order-previous store-acquire-release instructions are finished;</p></li>
 </ol>
-<p>Let <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em></span> be the set of all unpropagated memory store operation slices from non-<span>sc</span> store instruction instances that are program-order-before <span class="math inline"><em>i</em></span> and have already calculated the value to be stored, that overlap with the unsatisfied slices of <span class="math inline"><em>m</em><em>l</em><em>o</em></span>, and which are not superseded by intervening store operations or store operations that are read from by an intervening load.
+<p>Let <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em></span> be the set of all unpropagated memory store operation slices from non-<span><code>sc</code></span> store instruction instances that are program-order-before <span class="math inline"><em>i</em></span> and have already calculated the value to be stored, that overlap with the unsatisfied slices of <span class="math inline"><em>m</em><em>l</em><em>o</em></span>, and which are not superseded by intervening store operations or store operations that are read from by an intervening load.
 The last condition requires, for each memory store operation slice <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em></span> in <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em></span> from instruction <span class="math inline"><em>i</em>′</span>:</p>
 <p>that there is no store instruction program-order-between <span class="math inline"><em>i</em></span> and <span class="math inline"><em>i</em>′</span> with a memory store operation overlapping <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em></span>; and</p>
 <p>that there is no load instruction program-order-between <span class="math inline"><em>i</em></span> and <span class="math inline"><em>i</em>′</span> that was satisfied from an overlapping memory store operation slice from a different hart.</p>
@@ -316,8 +317,8 @@ The last condition requires, for each memory store operation slice <span class="
 <p>program-order-successors of <span class="math inline"><em>j</em></span> that have data-flow dependency on a register write of <span class="math inline"><em>j</em></span>;</p>
 <p>program-order-successors of <span class="math inline"><em>j</em></span> that have a memory load operation that reads from a memory store operation of <span class="math inline"><em>j</em></span> (by forwarding);</p>
 <p>if <span class="math inline"><em>j</em></span> is a load-acquire, all the program-order-successors of <span class="math inline"><em>j</em></span>;</p>
-<p>if <span class="math inline"><em>j</em></span> is a load, for every <span>fence</span>, <span class="math inline"><em>f</em></span>, with <span>.sr</span> and <span>.pr</span> set, and <span>.pw</span> not set, that is a program-order-successor of <span class="math inline"><em>j</em></span>, all the load instructions that are program-order-successors of <span class="math inline"><em>f</em></span>;</p>
-<p>if <span class="math inline"><em>j</em></span> is a load, for every <span>fence.tso</span>, <span class="math inline"><em>f</em></span>, that is a program-order-successor of <span class="math inline"><em>j</em></span>, all the load instructions that are program-order-successors of <span class="math inline"><em>f</em></span>;
+<p>if <span class="math inline"><em>j</em></span> is a load, for every <span><code>fence</code></span>, <span class="math inline"><em>f</em></span>, with <span><code>.sr</code></span> and <span><code>.pr</code></span> set, and <span><code>.pw</code></span> not set, that is a program-order-successor of <span class="math inline"><em>j</em></span>, all the load instructions that are program-order-successors of <span class="math inline"><em>f</em></span>;</p>
+<p>if <span class="math inline"><em>j</em></span> is a load, for every <span><code>fence.tso</code></span>, <span class="math inline"><em>f</em></span>, that is a program-order-successor of <span class="math inline"><em>j</em></span>, all the load instructions that are program-order-successors of <span class="math inline"><em>f</em></span>;
 and</p>
 <p>(recursively) all the restart-dependents of all the instruction instances above.</p>
 <div class=commentary>
@@ -337,11 +338,11 @@ Action: let <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><e
 <h4 id="omm:complete_loads">Complete load operations</h4>
 <p>A load instruction instance <span class="math inline"><em>i</em></span> in state <span>Pending_mem_loads</span>(<span><em>load_continuation</em></span>) can be completed (not to be confused with finished) if all the memory load operations <span class="math inline"><em>i</em>.<em>mem_loads</em></span> are entirely satisfied (i.e. there are no unsatisfied slices).
 Action: update the state of <span class="math inline"><em>i</em></span> to <span>Plain</span>(<span><em>load_continuation(mem_value)</em></span>), where <span><em>mem_value</em></span> is assembled from all the memory store operation slices that satisfied <span class="math inline"><em>i</em>.<em>mem_loads</em></span>.</p>
-<h4 id="omm:early_sc_fail">Early <span>sc</span> fail</h4>
-<p>An <span>sc</span> instruction instance <span class="math inline"><em>i</em></span> in state <span>Plain</span>(<span>Early_sc_fail</span>(<span><em>res_continuation</em></span>)) can always be made to fail.
+<h4 id="omm:early_sc_fail">Early <span><code>sc</code></span> fail</h4>
+<p>An <span><code>sc</code></span> instruction instance <span class="math inline"><em>i</em></span> in state <span>Plain</span>(<span>Early_sc_fail</span>(<span><em>res_continuation</em></span>)) can always be made to fail.
 Action: update the state of <span class="math inline"><em>i</em></span> to <span>Plain</span>(<span><em>res_continuation(false)</em></span>).</p>
-<h4 id="omm:paired_sc">Paired <span>sc</span></h4>
-<p>An <span>sc</span> instruction instance <span class="math inline"><em>i</em></span> in state <span>Plain</span>(<span>Early_sc_fail</span>(<span><em>res_continuation</em></span>)) can continue its (potentially successful) execution if <span class="math inline"><em>i</em></span> is paired with an <span>lr</span>.
+<h4 id="omm:paired_sc">Paired <span><code>sc</code></span></h4>
+<p>An <span><code>sc</code></span> instruction instance <span class="math inline"><em>i</em></span> in state <span>Plain</span>(<span>Early_sc_fail</span>(<span><em>res_continuation</em></span>)) can continue its (potentially successful) execution if <span class="math inline"><em>i</em></span> is paired with an <span><code>lr</code></span>.
 Action: update the state of <span class="math inline"><em>i</em></span> to <span>Plain</span>(<span><em>res_continuation(true)</em></span>).</p>
 <h4 id="omm:initiate_store_footprint">Initiate memory store operation footprints</h4>
 <p>An instruction instance <span class="math inline"><em>i</em></span> in state <span>Plain</span>(<span>Store_ea</span>(<span><em>kind</em></span>, <span><em>address</em></span>, <span><em>size</em></span>, <span><em>next_state</em></span>)) can always announce its pending memory store operation footprint.
@@ -367,17 +368,17 @@ Action:</p>
 <li><p>update the state of <span class="math inline"><em>i</em></span> to <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>).</p></li>
 </ol>
 <h4 id="omm:commit_stores">Commit store instruction</h4>
-<p>An uncommitted instruction instance <span class="math inline"><em>i</em></span> of a non-<span>sc</span> store instruction or an <span>sc</span> instruction in the context of the “” transition, in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), can be committed (not to be confused with propagated) if:</p>
+<p>An uncommitted instruction instance <span class="math inline"><em>i</em></span> of a non-<span><code>sc</code></span> store instruction or an <span><code>sc</code></span> instruction in the context of the “” transition, in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), can be committed (not to be confused with propagated) if:</p>
 <ol>
 <li><p><span class="math inline"><em>i</em></span> has fully determined data;</p></li>
 <li><p>all program-order-previous conditional branch and indirect jump instructions are finished;</p></li>
-<li><p>all program-order-previous <span>fence</span> instructions with <span>.sw</span> set are finished;</p></li>
-<li><p>all program-order-previous <span>fence.tso</span> instructions are finished;</p></li>
+<li><p>all program-order-previous <span><code>fence</code></span> instructions with <span><code>.sw</code></span> set are finished;</p></li>
+<li><p>all program-order-previous <span><code>fence.tso</code></span> instructions are finished;</p></li>
 <li><p>all program-order-previous load-acquire instructions are finished;</p></li>
 <li><p>all program-order-previous store-acquire-release instructions are finished;</p></li>
 <li><p>if <span class="math inline"><em>i</em></span> is a store-release, all program-order-previous instructions are finished;</p></li>
 <li><p><span id="omm:commit_store:prev_addrs" label="omm:commit_store:prev_addrs">[omm:commit_store:prev_addrs]</span> all program-order-previous memory access instructions have a fully determined memory footprint;</p></li>
-<li><p><span id="omm:commit_store:prev_stores" label="omm:commit_store:prev_stores">[omm:commit_store:prev_stores]</span> all program-order-previous store instructions, except for <span>sc</span> that failed, have initiated and so have non-empty <span><em>mem_stores</em></span>; and</p></li>
+<li><p><span id="omm:commit_store:prev_stores" label="omm:commit_store:prev_stores">[omm:commit_store:prev_stores]</span> all program-order-previous store instructions, except for <span><code>sc</code></span> that failed, have initiated and so have non-empty <span><em>mem_stores</em></span>; and</p></li>
 <li><p><span id="omm:commit_store:prev_loads" label="omm:commit_store:prev_loads">[omm:commit_store:prev_loads]</span> all program-order-previous load instructions have initiated and so have non-empty <span><em>mem_loads</em></span>.</p></li>
 </ol>
 <p>Action: record that <span class="math inline"><em>i</em></span> is committed.</p>
@@ -404,13 +405,13 @@ By requiring them, we guarantee that previous memory access instructions have ta
 <li><p>update <span class="math inline"><em>i</em>.<em>mem_stores</em></span> to indicate that <span class="math inline"><em>m</em><em>s</em><em>o</em></span> was propagated; and</p></li>
 <li><p>restart any speculative instructions which have violated coherence as a result of this, i.e., for every non-finished instruction <span class="math inline"><em>i</em>′</span> program-order-after <span class="math inline"><em>i</em></span> and every memory load operation <span class="math inline"><em>m</em><em>l</em><em>o</em>′</span> of <span class="math inline"><em>i</em>′</span> that was satisfied from <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em>′</span>, if there exists a memory store operation slice <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em>′</span> in <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em>′</span> that overlaps with <span class="math inline"><em>m</em><em>s</em><em>o</em></span> and is not from <span class="math inline"><em>m</em><em>s</em><em>o</em></span>, and <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em>′</span> is not from a program-order-successor of <span class="math inline"><em>i</em></span>, restart <span class="math inline"><em>i</em>′</span> and its <span><em>restart-dependents</em></span> (see ).</p></li>
 </ol>
-<h4 id="omm:commit_sc">Commit and propagate store operation of an <span>sc</span></h4>
-<p>An uncommitted <span>sc</span> instruction instance <span class="math inline"><em>i</em></span>, from hart <span class="math inline"><em>h</em></span>, in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), with a paired <span>lr</span> <span class="math inline"><em>i</em>′</span> that has been satisfied by some store slices <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em></span>, can be committed and propagated at the same time if:</p>
+<h4 id="omm:commit_sc">Commit and propagate store operation of an <span><code>sc</code></span></h4>
+<p>An uncommitted <span><code>sc</code></span> instruction instance <span class="math inline"><em>i</em></span>, from hart <span class="math inline"><em>h</em></span>, in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), with a paired <span><code>lr</code></span> <span class="math inline"><em>i</em>′</span> that has been satisfied by some store slices <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em></span>, can be committed and propagated at the same time if:</p>
 <ol>
 <li><p><span class="math inline"><em>i</em>′</span> is finished;</p></li>
 <li><p>every memory store operation that has been forwarded to <span class="math inline"><em>i</em>′</span> is propagated;</p></li>
 <li><p>the conditions of is satisfied;</p></li>
-<li><p>the conditions of is satisfied (notice that an <span>sc</span> instruction can only have one memory store operation); and</p></li>
+<li><p>the conditions of is satisfied (notice that an <span><code>sc</code></span> instruction can only have one memory store operation); and</p></li>
 <li><p>for every store slice <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em></span> from <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em><em>s</em></span>, <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em></span> has not been overwritten, in the shared memory, by a store that is from a hart that is not <span class="math inline"><em>h</em></span>, at any point since <span class="math inline"><em>m</em><em>s</em><em>o</em><em>s</em></span> was propagated to memory.</p></li>
 </ol>
 <p>Action:</p>
@@ -418,16 +419,16 @@ By requiring them, we guarantee that previous memory access instructions have ta
 <li><p>apply the actions of ; and</p></li>
 <li><p>apply the action of .</p></li>
 </ol>
-<h4 id="omm:late_sc_fail">Late <span>sc</span> fail</h4>
-<p>An <span>sc</span> instruction instance <span class="math inline"><em>i</em></span> in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), that has not propagated its memory store operation, can always be made to fail.
+<h4 id="omm:late_sc_fail">Late <span><code>sc</code></span> fail</h4>
+<p>An <span><code>sc</code></span> instruction instance <span class="math inline"><em>i</em></span> in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), that has not propagated its memory store operation, can always be made to fail.
 Action:</p>
 <ol>
 <li><p>clear <span class="math inline"><em>i</em>.<em>mem_stores</em></span>; and</p></li>
 <li><p>update the state of <span class="math inline"><em>i</em></span> to <span>Plain</span>(<span><em>store_continuation(false)</em></span>).</p></li>
 </ol>
 <div class=commentary>
-<p>For efficiency, the <span>rmem</span> tool allows this transition only when it is not possible to take the transition.
-This does not affect the set of allowed final states, but when explored interactively, if the <span>sc</span> should fail one should use the transition instead of waiting for this transition.</p>
+<p>For efficiency, the <span><code>rmem</code></span> tool allows this transition only when it is not possible to take the transition.
+This does not affect the set of allowed final states, but when explored interactively, if the <span><code>sc</code></span> should fail one should use the transition instead of waiting for this transition.</p>
 </div>
 <h4 id="omm:complete_stores">Complete store operations</h4>
 <p>A store instruction instance <span class="math inline"><em>i</em></span> in state <span>Pending_mem_stores</span>(<span><em>store_continuation</em></span>), for which all the memory store operations in <span class="math inline"><em>i</em>.<em>mem_stores</em></span> have been propagated, can always be completed (not to be confused with finished).
@@ -455,9 +456,9 @@ Before taking the transition above, the store operation of the AMO does not have
 <h4 id="omm:commit_fence">Commit fence</h4>
 <p>A fence instruction instance <span class="math inline"><em>i</em></span> in state <span>Plain</span>(<span>Fence</span>(<span><em>kind</em></span>, <span><em>next_state</em></span>)) can be committed if:</p>
 <ol>
-<li><p>if <span class="math inline"><em>i</em></span> is a normal fence and it has <span>.pr</span> set, all program-order-previous load instructions are finished;</p></li>
-<li><p>if <span class="math inline"><em>i</em></span> is a normal fence and it has <span>.pw</span> set, all program-order-previous store instructions are finished; and</p></li>
-<li><p>if <span class="math inline"><em>i</em></span> is a <span>fence.tso</span>, all program-order-previous load and store instructions are finished.</p></li>
+<li><p>if <span class="math inline"><em>i</em></span> is a normal fence and it has <span><code>.pr</code></span> set, all program-order-previous load instructions are finished;</p></li>
+<li><p>if <span class="math inline"><em>i</em></span> is a normal fence and it has <span><code>.pw</code></span> set, all program-order-previous store instructions are finished; and</p></li>
+<li><p>if <span class="math inline"><em>i</em></span> is a <span><code>fence.tso</code></span>, all program-order-previous load and store instructions are finished.</p></li>
 </ol>
 <p>Action:</p>
 <ol>
@@ -491,8 +492,8 @@ Action: update the state of <span class="math inline"><em>i</em></span> to <span
 <li><p>if <span class="math inline"><em>i</em></span> is a load instruction:</p>
 <ol>
 <li><p>all program-order-previous load-acquire instructions are finished;</p></li>
-<li><p>all program-order-previous <span>fence</span> instructions with <span>.sr</span> set are finished;</p></li>
-<li><p>for every program-order-previous <span>fence.tso</span> instruction, <span class="math inline"><em>f</em></span>, that is not finished, all load instructions that are program-order-before <span class="math inline"><em>f</em></span> are finished; and</p></li>
+<li><p>all program-order-previous <span><code>fence</code></span> instructions with <span><code>.sr</code></span> set are finished;</p></li>
+<li><p>for every program-order-previous <span><code>fence.tso</code></span> instruction, <span class="math inline"><em>f</em></span>, that is not finished, all load instructions that are program-order-before <span class="math inline"><em>f</em></span> are finished; and</p></li>
 <li><p>it is guaranteed that the values read by the memory load operations of <span class="math inline"><em>i</em></span> will not cause coherence violations, i.e., for any program-order-previous instruction instance <span class="math inline"><em>i</em>′</span>, let <span class="math inline"><em>cfp</em></span> be the combined footprint of propagated memory store operations from store instructions program-order-between <span class="math inline"><em>i</em></span> and <span class="math inline"><em>i</em>′</span>, and <span><em>fixed memory store operations</em></span> that were forwarded to <span class="math inline"><em>i</em></span> from store instructions program-order-between <span class="math inline"><em>i</em></span> and <span class="math inline"><em>i</em>′</span> including <span class="math inline"><em>i</em>′</span>, and let <span class="math inline">$\overline{\textit{cfp}}$</span> be the complement of <span class="math inline"><em>cfp</em></span> in the memory footprint of <span class="math inline"><em>i</em></span>.
 If <span class="math inline">$\overline{\textit{cfp}}$</span> is not empty:</p>
 <ol>

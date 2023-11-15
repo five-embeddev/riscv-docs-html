@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,14 +13,15 @@
 <tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/v.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="sec:bits"><span class="header-section-number">21</span> “V” Standard Extension for Vector Operations, Version 0.4-DRAFT</h1>
+<section id="sec:bits" data-number="1">
+<h1 data-number="21"><span class="header-section-number">21</span> “V” Standard Extension for Vector Operations, Version 0.4-DRAFT</h1>
 <p><span><strong>This version is out-of-date with respect to the current working
-group draft, which is now hosted on <span>https://github.com/riscv/riscv-v-spec</span>.</strong></span></p>
+group draft, which is now hosted on <span><code>https://github.com/riscv/riscv-v-spec</code></span>.</strong></span></p>
 <p>This chapter presents a proposal for the RISC-V base vector
 instruction-set extension. The base vector extension is intended to
 provide general support for data-parallel execution within the 32-bit
@@ -33,7 +35,7 @@ TX-2 in 1957 and now adopted by most other commercial instruction
 sets.</p>
 </div>
 <p>The base vector extension defines the components that must be included
-when the “V” bit is set in the <span>misa</span> register, and consequently
+when the “V” bit is set in the <span><code>misa</code></span> register, and consequently
 those that will be assumed to exist by software written for an ABI
 specifying V.</p>
 <div class=commentary>
@@ -54,12 +56,13 @@ research projects, including the Berkeley T0 <span class="citation" data-cites=
 vector microprocessors, the MIT Scale vector-thread processor <span class="citation" data-cites=""></span>,
 and the Berkeley Maven <span class="citation" data-cites=""></span> and Hwacha <span class="citation" data-cites=""></span> projects.</p>
 </div>
-<h2 id="vector-unit-state"><span class="header-section-number">21.1</span> Vector Unit State</h2>
+<section id="vector-unit-state" data-number="1.1">
+<h2 data-number="21.1"><span class="header-section-number">21.1</span> Vector Unit State</h2>
 <p>The additional vector unit architectural state includes 32 vector
-registers (<span>v0</span>–<span>v31</span>), and an XLEN-bit WARL vector length
-CSR, <span>vl</span>. Each vector register <span>v</span><span class="math inline"><em>n</em></span> has an associated
-16-bit configuration field <span>vtype</span><span class="math inline"><em>n</em></span> described below. A 6-bit
-global maximum element width register <span>vmaxew</span> defines the maximum
+registers (<span><code>v0</code></span>–<span><code>v31</code></span>), and an XLEN-bit WARL vector length
+CSR, <span><code>vl</code></span>. Each vector register <span><code>v</code></span><span class="math inline"><em>n</em></span> has an associated
+16-bit configuration field <span><code>vtype</code></span><span class="math inline"><em>n</em></span> described below. A 6-bit
+global maximum element width register <span><code>vmaxew</code></span> defines the maximum
 number of bits of storage in every element of every active vector
 register.</p>
 <div class=commentary>
@@ -69,36 +72,37 @@ architectural vector registers in a 64-bit instruction encoding.</p>
 </div>
 <div class=commentary>
 <p>Future 2D shape extensions add two more vector length registers,
-<span>vm</span> and <span>vn</span>.</p>
+<span><code>vm</code></span> and <span><code>vn</code></span>.</p>
 </div>
-<p>There is also a 3-bit fixed-point rounding mode CSR <span>vxrm</span>, and a
-single-bit fixed-point saturation status CSR <span>vxsat</span>. The <span>
-vcs</span> CSR alias provides combined access to the <span>vl</span>, <span>vxrm</span>,
-<span>vxsat</span> fields to reduce context switch time. The <span>vcs</span>
+<p>There is also a 3-bit fixed-point rounding mode CSR <span><code>vxrm</code></span>, and a
+single-bit fixed-point saturation status CSR <span><code>vxsat</code></span>. The <span><code> vcs</code></span> CSR alias provides combined access to the <span><code>vl</code></span>, <span><code>vxrm</code></span>,
+<span><code>vxsat</code></span> fields to reduce context switch time. The <span><code>vcs</code></span>
 register also includes a configuration mode field to support future
 extended configuration modes.</p>
 <p>CUSTOMTAGBEGINDISCUSSION</p>
 <p>The components of vcs might not need separate CSR addresses,
 depending on how they’re accessed via other non-CSR instructions.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
-<h2 id="vector-unit-type-configuration-register-vtypen"><span class="header-section-number">21.2</span> Vector Unit Type Configuration Register (<span>vtype</span><span class="math inline"><em>n</em></span>)</h2>
+</section>
+<section id="vector-unit-type-configuration-register-vtypen" data-number="1.2">
+<h2 data-number="21.2"><span class="header-section-number">21.2</span> Vector Unit Type Configuration Register (<span><code>vtype</code></span><span class="math inline"><em>n</em></span>)</h2>
 <p>The vector unit must be configured before use. Each architectural
-vector register, <span>v</span><span class="math inline"><em>n</em></span>, is configured via 16 bits of vector type
-configuration state <span>vtype</span><span class="math inline"><em>n</em></span>, which can be accessed via vector
-configuration (<span>vcfg</span>) CSRs and other rapid vector configuration
+vector register, <span><code>v</code></span><span class="math inline"><em>n</em></span>, is configured via 16 bits of vector type
+configuration state <span><code>vtype</code></span><span class="math inline"><em>n</em></span>, which can be accessed via vector
+configuration (<span><code>vcfg</code></span>) CSRs and other rapid vector configuration
 instructions as described below. The vector register type
 configuration encodes the overall organization, or <span><em>shape</em></span>, of the
 elements in each vector register (e.g., scalar versus 1-D vector), as
 well as the bitwidth and numeric representation of each element. As
-shown in Figure <a href="v.html#fig:vtype" data-reference-type="ref" data-reference="fig:vtype">1.1</a>, the 16-bit <span>vtype</span><span class="math inline"><em>n</em></span> encoding is
-divided into a 5-bit current shape field <span>vshape</span><span class="math inline"><em>n</em></span>, a 5-bit
-representation field <span>verep</span><span class="math inline"><em>n</em></span>, and a 6-bit element bit-width
-field <span>vew</span><span class="math inline"><em>n</em></span>  held in the <span>vcfg</span><span class="math inline"><em>x</em></span> CSRs. The combination
+shown in Figure <a href="v.html#fig:vtype" data-reference-type="ref" data-reference="fig:vtype">1.1</a>, the 16-bit <span><code>vtype</code></span><span class="math inline"><em>n</em></span> encoding is
+divided into a 5-bit current shape field <span><code>vshape</code></span><span class="math inline"><em>n</em></span>, a 5-bit
+representation field <span><code>verep</code></span><span class="math inline"><em>n</em></span>, and a 6-bit element bit-width
+field <span><code>vew</code></span><span class="math inline"><em>n</em></span>  held in the <span><code>vcfg</code></span><span class="math inline"><em>x</em></span> CSRs. The combination
 of an element numeric representation and an element bitwidth is called
 an element <span><em>format</em></span>. Each vector register can also be disabled to
 free physical vector storage for other architectural vector registers.</p>
 <figure>
-<img src="v_00.svg" alt="Location of subfields within a single vtypen field." id="fig:vtype" /><figcaption>Location of subfields within a single <span>vtype</span><span class="math inline"><em>n</em></span> field.<span label="fig:vtype"></span></figcaption>
+<img src="v_00.svg" id="fig:vtype" alt="" /><figcaption>Location of subfields within a single <span><code>vtype</code></span><span class="math inline"><em>n</em></span> field.</figcaption>
 </figure>
 <div class=commentary>
 <p>It was also common in earlier vector machines to support multiple
@@ -109,22 +113,23 @@ nibble operations in the vector unit; TI ASC <span class="citation" data-cites=
 supported dividing 64-bit vector lanes into two 32-bit lanes for
 double throughput.</p>
 </div>
-<h2 id="shape-encoding"><span class="header-section-number">21.3</span> Shape Encoding</h2>
+</section>
+<section id="shape-encoding" data-number="1.3">
+<h2 data-number="21.3"><span class="header-section-number">21.3</span> Shape Encoding</h2>
 <p>The 5-bit shape field describes the structure of the elements within
 the vector register. In the base vector extension, the shape can be
 set to either scalar or vector.</p>
 <figure>
-<img src="v_01.svg" alt="Base vector encoding of vshapen field." id="tab:vshape" /><figcaption>Base vector encoding of <span>vshape</span><span class="math inline"><em>n</em></span> field.<span label="tab:vshape"></span></figcaption>
+<img src="v_01.svg" id="tab:vshape" alt="" /><figcaption>Base vector encoding of <span><code>vshape</code></span><span class="math inline"><em>n</em></span> field.</figcaption>
 </figure>
 <div class=commentary>
-<p>For the base vector ISA, only a single bit is required in each <span>
-vshape</span> field to select between scalar and 1-D vector elements
+<p>For the base vector ISA, only a single bit is required in each <span><code> vshape</code></span> field to select between scalar and 1-D vector elements
 with the other bits hardwired to zero.</p>
 </div>
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: center;"><span>vshape</span></th>
+<th style="text-align: center;"><span><code>vshape</code></span></th>
 <th style="text-align: left;">Shape</th>
 </tr>
 </thead>
@@ -143,51 +148,51 @@ with the other bits hardwired to zero.</p>
 </tr>
 <tr class="even">
 <td style="text-align: center;">00100</td>
-<td style="text-align: left;">1-D vector <span>vl</span></td>
+<td style="text-align: left;">1-D vector <span><code>vl</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">01000</td>
-<td style="text-align: left;">1-D vector <span>vm</span></td>
+<td style="text-align: left;">1-D vector <span><code>vm</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">01100</td>
-<td style="text-align: left;">1-D vector <span>vn</span></td>
+<td style="text-align: left;">1-D vector <span><code>vn</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">00101</td>
-<td style="text-align: left;">2-D matrix <span>vl</span> x <span>vl</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vl</code></span> x <span><code>vl</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">00110</td>
-<td style="text-align: left;">2-D matrix <span>vl</span> x <span>vm</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vl</code></span> x <span><code>vm</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">00111</td>
-<td style="text-align: left;">2-D matrix <span>vl</span> x <span>vn</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vl</code></span> x <span><code>vn</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">01001</td>
-<td style="text-align: left;">2-D matrix <span>vm</span> x <span>vl</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vm</code></span> x <span><code>vl</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">01010</td>
-<td style="text-align: left;">2-D matrix <span>vm</span> x <span>vm</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vm</code></span> x <span><code>vm</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">01011</td>
-<td style="text-align: left;">2-D matrix <span>vm</span> x <span>vn</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vm</code></span> x <span><code>vn</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">01101</td>
-<td style="text-align: left;">2-D matrix <span>vn</span> x <span>vl</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vn</code></span> x <span><code>vl</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">01110</td>
-<td style="text-align: left;">2-D matrix <span>vn</span> x <span>vm</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vn</code></span> x <span><code>vm</code></span></td>
 </tr>
 <tr class="odd">
 <td style="text-align: center;">01111</td>
-<td style="text-align: left;">2-D matrix <span>vn</span> x <span>vn</span></td>
+<td style="text-align: left;">2-D matrix <span><code>vn</code></span> x <span><code>vn</code></span></td>
 </tr>
 <tr class="even">
 <td style="text-align: center;">1xxxx</td>
@@ -199,19 +204,21 @@ with the other bits hardwired to zero.</p>
 <p>A sketch of the proposed encodings for the 2D shape extension is
 shown in the Table.</p>
 </div>
-<h2 id="representation-encoding"><span class="header-section-number">21.4</span> Representation Encoding</h2>
-<p>The 5-bit <span>verep</span><span class="math inline"><em>n</em></span> register sets the numeric representation of
+</section>
+<section id="representation-encoding" data-number="1.4">
+<h2 data-number="21.4"><span class="header-section-number">21.4</span> Representation Encoding</h2>
+<p>The 5-bit <span><code>verep</code></span><span class="math inline"><em>n</em></span> register sets the numeric representation of
 each element of the vector register. In the base vector
 extension, the representation can be set to unsigned integer,
 two’s-complement signed integer, or floating-point. The
 floating-point representations follow the IEEE 754 standards.</p>
 <figure>
-<img src="v_02.svg" alt="Base vector representation encoding." id="tab:verep" /><figcaption>Base vector representation encoding.<span label="tab:verep"></span></figcaption>
+<img src="v_02.svg" id="tab:verep" alt="" /><figcaption>Base vector representation encoding.</figcaption>
 </figure>
 <table>
 <thead>
 <tr class="header">
-<th style="text-align: center;"><span>verep</span></th>
+<th style="text-align: center;"><span><code>verep</code></span></th>
 <th style="text-align: left;">Representation</th>
 </tr>
 </thead>
@@ -287,99 +294,100 @@ floating-point representations follow the IEEE 754 standards.</p>
 </tbody>
 </table>
 <div class=commentary>
-<p>The complex representations split the element width given in <span>
-vew</span><span class="math inline"><em>n</em></span> into two equal-sized real and imaginary fields, so an
+<p>The complex representations split the element width given in <span><code> vew</code></span><span class="math inline"><em>n</em></span> into two equal-sized real and imaginary fields, so an
 element width of 64 bits can hold a single complex value with a
 32-bit real and a 32-bit imaginary component.</p>
 </div>
-<h2 id="element-bitwidth"><span class="header-section-number">21.5</span> Element Bitwidth</h2>
-<p>Each vector register, <span>v</span><span class="math inline"><em>n</em></span>, has a 6-bit element width
-register, <span>vew</span><span class="math inline"><em>n</em></span>, to specify the number of bits for each element
+</section>
+<section id="element-bitwidth" data-number="1.5">
+<h2 data-number="21.5"><span class="header-section-number">21.5</span> Element Bitwidth</h2>
+<p>Each vector register, <span><code>v</code></span><span class="math inline"><em>n</em></span>, has a 6-bit element width
+register, <span><code>vew</code></span><span class="math inline"><em>n</em></span>, to specify the number of bits for each element
 of the current type in the vector register.</p>
 <p>The largest element width supported is
 termed ELEN, and is defined to be the larger of the supported integer
 and floating-point type widths:
-<br /><span class="math display">$<em>ELEN</em>  = max(<em>XLEN</em> , <em>FLEN</em> )$$</span><br />
+<br /><span class="math display">$<em>ELEN</em>  = max( <em>XLEN</em> ,  <em>FLEN</em> )$$</span><br />
 For the base vector ISA, the bit width can be set at any power of two
 between 8 and ELEN.</p>
 <figure>
-<img src="v_03.svg" alt="Base vector ISA encoding of vector element width ( vewn) register fields." id="tab:basevew" /><figcaption>Base vector ISA encoding of vector element width (<span>
-vew</span><span class="math inline"><em>n</em></span>) register fields.<span label="tab:basevew"></span></figcaption>
+<img src="v_03.svg" id="tab:basevew" alt="" /><figcaption>Base vector ISA encoding of vector element width (<span><code> vew</code></span><span class="math inline"><em>n</em></span>) register fields.</figcaption>
 </figure>
 <figure>
-<img src="v_04.svg" alt="Proposed extended encoding of vector element width ( vewn) register fields. Every bit width between 1 and 16 can be supported. Bit widths in steps of 2 between 16 to 32 (i.e., 16, 18, 20, ...). Bit widths in steps of 4 between 32 to 64 (i.e., 32, 36, 40, ...). Bit widths in steps of 8 between 64 and 128 (i.e., 64, 72, 80,...). For bit widths greater than 128, all powers-of-two up to 16384 and all widths 1.5\times greater are supported (128, 384, 512, 768,...). " id="tab:extvew" /><figcaption>Proposed extended encoding of vector element width (<span>
-vew</span><span class="math inline"><em>n</em></span>) register fields. Every bit width between 1 and 16 can
+<img src="v_04.svg" id="tab:extvew" alt="" /><figcaption>Proposed extended encoding of vector element width (<span><code> vew</code></span><span class="math inline"><em>n</em></span>) register fields. Every bit width between 1 and 16 can
 be supported. Bit widths in steps of 2 between 16 to 32 (i.e.,
 16, 18, 20, ...). Bit widths in steps of 4 between 32 to 64
 (i.e., 32, 36, 40, ...). Bit widths in steps of 8 between 64 and
 128 (i.e., 64, 72, 80,...). For bit widths greater than 128, all
 powers-of-two up to 16384 and all widths 1.5<span class="math inline">×</span> greater are
-supported (128, 384, 512, 768,...). <span label="tab:extvew"></span></figcaption>
+supported (128, 384, 512, 768,...). </figcaption>
 </figure>
 <div class=commentary>
 <p>The extended bit-width encoding is designed to minimize the number
 of state bits required to support useful subsets of widths. For
-example, an RV32 system only needs two bits of state per <span>
-vew</span><span class="math inline"><em>n</em></span> field to represent <span><em>disabled</em></span>, 8, 16, and 32. An
+example, an RV32 system only needs two bits of state per <span><code> vew</code></span><span class="math inline"><em>n</em></span> field to represent <span><em>disabled</em></span>, 8, 16, and 32. An
 RV32 system with 3 bits of state can represent <span><em>disabled</em></span>, 4,
 8, 12, 16, 24, 32, and 48. An RV64 system with 4 bits of state
 can represent <span><em>disabled</em></span>, 4, 8, 12, 16, 24, 32, 48, 64, 96,
 128, 256, 512, 1024.</p>
 </div>
-<h2 id="base-vector-extension-supported-types"><span class="header-section-number">21.6</span> Base Vector Extension Supported Types</h2>
+</section>
+<section id="base-vector-extension-supported-types" data-number="1.6">
+<h2 data-number="21.6"><span class="header-section-number">21.6</span> Base Vector Extension Supported Types</h2>
 <p>The types supported by the base V extension depend upon the base
 scalar ISA and supported extensions. When the base V extension is
 added to a base scalar ISA, it must support the vector data element
 types implied by the supported scalar types as defined by
 Table <a href="v.html#tab:velemtypes" data-reference-type="ref" data-reference="tab:velemtypes">1.6</a>.</p>
 <figure>
-<img src="v_05.svg" alt="Supported data element formats depending on base integer ISA and supported floating-point extensions. Ix indicates a signed integer of x bits, Ux indicates an unsigned integer of x bits, and Fx indicates an IEEE floating-point number of x bits." id="tab:velemtypes" /><figcaption>Supported data element formats depending on base integer ISA
+<img src="v_05.svg" id="tab:velemtypes" alt="" /><figcaption>Supported data element formats depending on base integer ISA
 and supported floating-point extensions. I<span class="math inline"><em>x</em></span> indicates a signed
 integer of <span class="math inline"><em>x</em></span> bits, U<span class="math inline"><em>x</em></span> indicates an unsigned integer of <span class="math inline"><em>x</em></span> bits,
-and F<span class="math inline"><em>x</em></span> indicates an IEEE floating-point number of <span class="math inline"><em>x</em></span> bits.<span label="tab:velemtypes"></span></figcaption>
+and F<span class="math inline"><em>x</em></span> indicates an IEEE floating-point number of <span class="math inline"><em>x</em></span> bits.</figcaption>
 </figure>
 <div class=commentary>
 <p>Future vector extensions might expand the set of supported
 datatypes, including custom application-specific datatypes.</p>
 </div>
-<h2 id="maximum-vector-element-width-vmaxew"><span class="header-section-number">21.7</span> Maximum Vector Element Width (<span>vmaxew</span>)</h2>
-<p>The global <span>vmaxew</span> field is used to support more complex vector
+</section>
+<section id="maximum-vector-element-width-vmaxew" data-number="1.7">
+<h2 data-number="21.7"><span class="header-section-number">21.7</span> Maximum Vector Element Width (<span><code>vmaxew</code></span>)</h2>
+<p>The global <span><code>vmaxew</code></span> field is used to support more complex vector
 runtime environments where the types to be held in each register of a
 single configuration may vary dynamically, and may not even be known
 at compile time due to separate compilation.</p>
-<p>The global maximum element width register <span>vmaxew</span> defines the
+<p>The global maximum element width register <span><code>vmaxew</code></span> defines the
 maximum number of bits of storage in every element of every active
 architectural register, or if zero, defers to the per-vector-register
 width field.</p>
 <div class=commentary>
 <p>The VIRAM processor had a virtual processor width
-register similar to <span>vmaxew</span> <span class="citation" data-cites="VIRAM"><a href="#ref-VIRAM">[VIRAM]</a></span>.</p>
+register similar to <span><code>vmaxew</code></span> <span class="citation" data-cites="VIRAM"><a href="#ref-VIRAM">[VIRAM]</a></span>.</p>
 </div>
-<p>If <span>vmaxew</span> is zero, then the per-element vector element widths
-<span>vew</span><span class="math inline"><em>n</em></span> determine the minimum storage required for each element
-of the associated vector register <span>v</span><span class="math inline"><em>n</em></span>.</p>
-<p>If <span>vmaxew</span> is non-zero, it sets the largest element width that
+<p>If <span><code>vmaxew</code></span> is zero, then the per-element vector element widths
+<span><code>vew</code></span><span class="math inline"><em>n</em></span> determine the minimum storage required for each element
+of the associated vector register <span><code>v</code></span><span class="math inline"><em>n</em></span>.</p>
+<p>If <span><code>vmaxew</code></span> is non-zero, it sets the largest element width that
 can be supported in any vector register element in the current
 configuration.</p>
-<h2 id="vector-configuration-registers-vcfg0vcfg15"><span class="header-section-number">21.8</span> Vector Configuration Registers (<span>vcfg0</span>–<span>vcfg15</span>)</h2>
+</section>
+<section id="vector-configuration-registers-vcfg0vcfg15" data-number="1.8">
+<h2 data-number="21.8"><span class="header-section-number">21.8</span> Vector Configuration Registers (<span><code>vcfg0</code></span>–<span><code>vcfg15</code></span>)</h2>
 <p>The vector type configuration requires 512 bits of state (32 vector
-registers each with 16-bit <span>vtype</span><span class="math inline"><em>n</em></span> field) that can be accessed
-via the <span>vcfg CSRs</span>.</p>
-<p>RV128 uses four vector configuration CSRs: <span>vcfg0</span> holds
-configuration data for <span>v0</span>–<span>v7</span> with bits <span class="math inline">16<em>n</em></span> to <span class="math inline">16<em>n</em> + 15</span>
-holding <span>vtype</span><span class="math inline"><em>n</em></span>, while <span>vcfg4</span>, <span>vcfg8</span> and <span>
-vcfg12</span> similarly holds configuration data for <span>v8</span>–<span>v15</span>,
-<span>v16</span>–<span>v23</span>, and <span>v24</span>–<span>v31</span> respectively.</p>
-<p>In RV64, the <span>vcfg2</span> CSR provides access to the upper 64 bits of <span>
-vcfg0</span> and <span>vcfg6</span> provides access to the upper 64 bits of
-<span>vcfg4</span>. In RV32, the <span>vcfg1</span>, <span>vcfg3</span>, <span>vcfg5</span>
-and <span>vcfg7</span> CSRs provides access to the upper bits of <span>
-vcfg0</span>, <span>vcfg2</span>, <span>vcfg4</span> and <span>vcfg6</span> respectively.</p>
-<p>Any CSR write to a <span>vcfg</span><span class="math inline"><em>x</em></span> register zeros all <span>vcfg</span><span class="math inline"><em>y</em></span>
+registers each with 16-bit <span><code>vtype</code></span><span class="math inline"><em>n</em></span> field) that can be accessed
+via the <span><code>vcfg CSRs</code></span>.</p>
+<p>RV128 uses four vector configuration CSRs: <span><code>vcfg0</code></span> holds
+configuration data for <span><code>v0</code></span>–<span><code>v7</code></span> with bits <span class="math inline">16<em>n</em></span> to <span class="math inline">16<em>n</em> + 15</span>
+holding <span><code>vtype</code></span><span class="math inline"><em>n</em></span>, while <span><code>vcfg4</code></span>, <span><code>vcfg8</code></span> and <span><code> vcfg12</code></span> similarly holds configuration data for <span><code>v8</code></span>–<span><code>v15</code></span>,
+<span><code>v16</code></span>–<span><code>v23</code></span>, and <span><code>v24</code></span>–<span><code>v31</code></span> respectively.</p>
+<p>In RV64, the <span><code>vcfg2</code></span> CSR provides access to the upper 64 bits of <span><code> vcfg0</code></span> and <span><code>vcfg6</code></span> provides access to the upper 64 bits of
+<span><code>vcfg4</code></span>. In RV32, the <span><code>vcfg1</code></span>, <span><code>vcfg3</code></span>, <span><code>vcfg5</code></span>
+and <span><code>vcfg7</code></span> CSRs provides access to the upper bits of <span><code> vcfg0</code></span>, <span><code>vcfg2</code></span>, <span><code>vcfg4</code></span> and <span><code>vcfg6</code></span> respectively.</p>
+<p>Any CSR write to a <span><code>vcfg</code></span><span class="math inline"><em>x</em></span> register zeros all <span><code>vcfg</code></span><span class="math inline"><em>y</em></span>
 registers, for <span class="math inline"><em>y</em> &gt; <em>x</em></span>. As a result configuration data should be
-written from the <span>vcfg0</span> CSR upwards.</p>
+written from the <span><code>vcfg0</code></span> CSR upwards.</p>
 <div class=commentary>
-<p>Zeroing higher-numbered <span>vcfg</span><span class="math inline"><em>y</em></span> registers allows more rapid
+<p>Zeroing higher-numbered <span><code>vcfg</code></span><span class="math inline"><em>y</em></span> registers allows more rapid
 reconfiguration of the vector register file via CSR writes, and
 provides backward-compatibility for extensions that increase the
 number of possible architectural vector registers. This choice does
@@ -389,12 +397,14 @@ configuration is written in.</p>
 </div>
 <p>Additional instructions are provided to support more rapid changes to
 the vector unit configuration as described below.</p>
-<h2 id="legal-vector-unit-configurations"><span class="header-section-number">21.9</span> Legal Vector Unit Configurations</h2>
+</section>
+<section id="legal-vector-unit-configurations" data-number="1.9">
+<h2 data-number="21.9"><span class="header-section-number">21.9</span> Legal Vector Unit Configurations</h2>
 <p>To simplify hardware configuration calculations and to reduce software
 context-switch complexity, vector unit configurations are constrained
 to have non-disabled architectural vector registers numbered
-contiguously starting at <span>v0</span>. An exception will be raised if an
-instruction tries to change <span>vtype</span><span class="math inline"><em>n</em></span> in a way that violates this
+contiguously starting at <span><code>v0</code></span>. An exception will be raised if an
+instruction tries to change <span><code>vtype</code></span><span class="math inline"><em>n</em></span> in a way that violates this
 constraint.</p>
 <div class=commentary>
 <p>During a software vector-context save, the software handler can stop
@@ -402,14 +412,17 @@ searching for active architectural registers after encountering the
 first disabled vector register. Hardware to calculate physical
 register allocation is also simplified with this constraint.</p>
 </div>
-<h2 id="vector-unit-csrs"><span class="header-section-number">21.10</span> Vector Unit CSRs</h2>
+</section>
+<section id="vector-unit-csrs" data-number="1.10">
+<h2 data-number="21.10"><span class="header-section-number">21.10</span> Vector Unit CSRs</h2>
 <figure>
-<img src="v_06.svg" alt="Vector extension CSRs." id="tab:vcsrs" /><figcaption>Vector extension CSRs.<span label="tab:vcsrs"></span></figcaption>
+<img src="v_06.svg" id="tab:vcsrs" alt="" /><figcaption>Vector extension CSRs.</figcaption>
 </figure>
-<h2 id="maximum-vector-length-mvl"><span class="header-section-number">21.11</span> Maximum Vector Length (MVL)</h2>
+</section>
+<section id="maximum-vector-length-mvl" data-number="1.11">
+<h2 data-number="21.11"><span class="header-section-number">21.11</span> Maximum Vector Length (MVL)</h2>
 <p>The implementation determines an available <span><em>maximum vector length</em></span>
-(MVL) dependent on the current vector type configuration held in <span>
-vcfg</span><span class="math inline"><em>x</em></span> and <span>vmaxew</span>. The available MVL depends on the
+(MVL) dependent on the current vector type configuration held in <span><code> vcfg</code></span><span class="math inline"><em>x</em></span> and <span><code>vmaxew</code></span>. The available MVL depends on the
 configuration setting and on the implementation’s microarchitecture,
 but MVL must always have the same value for the same configuration
 parameters on a given hart.</p>
@@ -433,21 +446,20 @@ this would be too onerous to support, and so the requirement is removed.</p>
 designed, possibly as part of an optional extension.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
 <p>Any change to the vector configuration that might change MVL cause the
-entire vector unit state to be zeroed. Any write to the global <span>
-vmaxew</span> causes the entire vector unit state to be zeroed, even if
-the value in <span>vmaxew</span> is unchanged.</p>
-<p>If <span>vmaxew</span> is non-zero, any write to an individual <span>vew</span><span class="math inline"><em>n</em></span>
-register that would set the width greater than <span>vmaxew</span> raises an
+entire vector unit state to be zeroed. Any write to the global <span><code> vmaxew</code></span> causes the entire vector unit state to be zeroed, even if
+the value in <span><code>vmaxew</code></span> is unchanged.</p>
+<p>If <span><code>vmaxew</code></span> is non-zero, any write to an individual <span><code>vew</code></span><span class="math inline"><em>n</em></span>
+register that would set the width greater than <span><code>vmaxew</code></span> raises an
 illegal instruction exception and leaves the vector unit state
 unchanged.</p>
-<p>If <span>vmaxew</span> is non-zero, any write to an individual <span>vew</span><span class="math inline"><em>n</em></span>
-field with a value less than or equal to the value in <span>vmaxew</span>
-only zeros the associated vector register <span>v</span><span class="math inline"><em>n</em></span> and leaves other
+<p>If <span><code>vmaxew</code></span> is non-zero, any write to an individual <span><code>vew</code></span><span class="math inline"><em>n</em></span>
+field with a value less than or equal to the value in <span><code>vmaxew</code></span>
+only zeros the associated vector register <span><code>v</code></span><span class="math inline"><em>n</em></span> and leaves other
 vector unit state unchanged. The vector register data is zeroed even
-if <span>vew</span><span class="math inline"><em>n</em></span> would be unchanged by the write.</p>
-<p>If <span>vmaxew</span> is zero, then any write to an individual <span>vew</span><span class="math inline"><em>n</em></span>
-register zeros the associated <span>v</span><span class="math inline"><em>n</em></span> vector register. In addition,
-any write that changes the value in <span>vew</span><span class="math inline"><em>n</em></span>, zeros the entire vector
+if <span><code>vew</code></span><span class="math inline"><em>n</em></span> would be unchanged by the write.</p>
+<p>If <span><code>vmaxew</code></span> is zero, then any write to an individual <span><code>vew</code></span><span class="math inline"><em>n</em></span>
+register zeros the associated <span><code>v</code></span><span class="math inline"><em>n</em></span> vector register. In addition,
+any write that changes the value in <span><code>vew</code></span><span class="math inline"><em>n</em></span>, zeros the entire vector
 unit state.</p>
 <div class=commentary>
 <p>The state is zeroed to hide implementation-dependent bit mappings
@@ -463,14 +475,13 @@ entries at a physical zero register.</p>
 </div>
 <p>Each vector register can be reconfigured dynamically to hold different
 formats without zeroing the entire vector unit state provided that: if
-<span>vmaxew</span> is zero, the bit-width of the new format is the same as
-the current <span>vew</span>; or if <span>vmaxew</span> is non-zero, the format does
-not require more than <span>vmaxew</span> bits. Any change to a vector
+<span><code>vmaxew</code></span> is zero, the bit-width of the new format is the same as
+the current <span><code>vew</code></span>; or if <span><code>vmaxew</code></span> is non-zero, the format does
+not require more than <span><code>vmaxew</code></span> bits. Any change to a vector
 register’s format zeros the affected vector register.</p>
 <p>If a vector register is disabled, then any vector instruction
 that attempts to access that vector register will raise an
-illegal instruction exception. Attempting to write any <span>
-vmaxew</span><span class="math inline"><em>n</em></span> with an unsupported value will raise an illegal
+illegal instruction exception. Attempting to write any <span><code> vmaxew</code></span><span class="math inline"><em>n</em></span> with an unsupported value will raise an illegal
 instruction exception.</p>
 <div class=commentary>
 <p>Vector registers have both a maximum element width and a
@@ -489,17 +500,17 @@ type with multiple constituent fields. Auxiliary type
 configuration state might be required in these cases.</p>
 </div>
 <p>Attempting to write an unsupported type or a type that requires more
-than the current <span>vmaxew</span> width to a <span>vetype</span> field will raise
+than the current <span><code>vmaxew</code></span> width to a <span><code>vetype</code></span> field will raise
 an illegal instruction exception.</p>
 <div class=commentary>
-<p>Implementations must still raise an exception for a <span>vetype</span><span class="math inline"><em>n</em></span>
-setting that is greater than the architectural <span>vmaxew</span><span class="math inline"><em>n</em></span> width,
-even if they internally implement a larger physical <span>vmaxew</span><span class="math inline"><em>n</em></span>
-that could accommodate the <span>vetype</span><span class="math inline"><em>n</em></span> request.</p>
+<p>Implementations must still raise an exception for a <span><code>vetype</code></span><span class="math inline"><em>n</em></span>
+setting that is greater than the architectural <span><code>vmaxew</code></span><span class="math inline"><em>n</em></span> width,
+even if they internally implement a larger physical <span><code>vmaxew</code></span><span class="math inline"><em>n</em></span>
+that could accommodate the <span><code>vetype</code></span><span class="math inline"><em>n</em></span> request.</p>
 </div>
 <p>CUSTOMTAGBEGINDISCUSSION</p>
 <p>We can either have 1) implementations raise exceptions whenever
-illegal values are written to <span>vmaxew</span> and <span>vetype</span> fields
+illegal values are written to <span><code>vmaxew</code></span> and <span><code>vetype</code></span> fields
 (current design), 2) raise exceptions at use if config holds illegal
 values, 3) make the fields WARL so silently reduce to supported types
 with no exceptions. Option 2 could complicate vector unit context
@@ -509,18 +520,18 @@ precision or incorrect types.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
 <div class=commentary>
 <p>Three broad classes of implementation can be distinguished by how they
-handle <span>vmaxew</span> settings.</p>
+handle <span><code>vmaxew</code></span> settings.</p>
 <p>The simplest is <span><em>max-width-per-implementation</em></span> (MWPI), where the
 vector unit is organized in fixed ELEN-width physical lanes, and
-changes to <span>vmaxew</span> settings simply cause portions of the
+changes to <span><code>vmaxew</code></span> settings simply cause portions of the
 physical registers and datapath to be disabled for operations narrower
 than ELEN bits.</p>
 <p>The next most complex implementation, <span>
 <em>max-width-per-configuration</em></span> (MWPC), uses the maximum width across
-all <span>vmaxew</span> settings in a dynamic configuration to divide the
+all <span><code>vmaxew</code></span> settings in a dynamic configuration to divide the
 physical register storage and datapaths. For example, a MWPC machine
 with ELEN=64 might subdivide physical lanes into 32-bit datapaths if
-no <span>vmaxew</span> setting is greater than 32. Operations on
+no <span><code>vmaxew</code></span> setting is greater than 32. Operations on
 sub-32-bit quantities would disable appropriate portions of the
 physical registers and functional units in each 32-bit lane. Several
 early vector supercomputers, including the CDC
@@ -529,14 +540,16 @@ Star-100 <span class="citation" data-cites="cdcstart100"><a href="#ref-cdcstart
 <p>The most complex implementations are <span><em>max-width-per-register</em></span>
 (MWPR), which reduce wasted space in the physical register files by
 packing elements in each vector register according to the individual
-<span>vmaxew</span> settings and which within one configuration can
+<span><code>vmaxew</code></span> settings and which within one configuration can
 execute instructions with narrower datatypes at higher rates than for
 wider datatypes. The Berkeley Hwacha vector
 engine <span class="citation" data-cites="hwachatr mixedprecision"><a href="#ref-hwachatr">[hwachatr mixedprecision]</a></span> is an example microarchitecture
 with this property.</p>
 </div>
 <p><span><strong>Following Sections are out-of-date.</strong></span></p>
-<h2 id="vector-instruction-formats"><span class="header-section-number">21.12</span> Vector Instruction Formats</h2>
+</section>
+<section id="vector-instruction-formats" data-number="1.12">
+<h2 data-number="21.12"><span class="header-section-number">21.12</span> Vector Instruction Formats</h2>
 <div class=commentary>
 <p>The instruction encoding is a work in progress.</p>
 <p>An important design goal was that the base vector extension fit
@@ -550,12 +563,12 @@ predicate register in each instruction.</p>
 <p>Vector arithmetic and vector memory instructions are encoded in new
 variants of the R-format, shown in Figure <a href="v.html#fig:vinstformats" data-reference-type="ref" data-reference="fig:vinstformats">1.8</a>.
 Both new formats use one bit to hold a <span><em>vp</em></span> field, which usually
-controls the predicate register in use, either <span>vp0</span> or <span>vp1</span>.
+controls the predicate register in use, either <span><code>vp0</code></span> or <span><code>vp1</code></span>.
 The VR4 form is used for fused multiply-add instructions. The
 existing RISC-V instruction formats are used for other vector-related
 instructions, such as the vector configuration instructions.</p>
 <figure>
-<img src="v_07.svg" alt="New V extension instruction formats. " id="fig:vinstformats" /><figcaption>New V extension instruction formats. <span label="fig:vinstformats"></span></figcaption>
+<img src="v_07.svg" id="fig:vinstformats" alt="" /><figcaption>New V extension instruction formats. </figcaption>
 </figure>
 <p>Most vector instructions are available in both vector-vector and
 vector-scalar variants. Vector-vector instructions take the first
@@ -572,9 +585,11 @@ operand.</p>
 <div class=commentary>
 <p>The <span><em>rs1</em></span> field is used to provide the scalar operand because in
 the base encoding, whenever an instruction has a single scalar
-source operand, it is encoded in the <span>rs1</span> field.</p>
+source operand, it is encoded in the <span><code>rs1</code></span> field.</p>
 </div>
-<h2 id="polymorphic-vector-instructions"><span class="header-section-number">21.13</span> Polymorphic Vector Instructions</h2>
+</section>
+<section id="polymorphic-vector-instructions" data-number="1.13">
+<h2 data-number="21.13"><span class="header-section-number">21.13</span> Polymorphic Vector Instructions</h2>
 <p>The vector extension uses a polymorphic instruction encoding where the
 opcode is combined with the types of the source and destination
 registers to determine the operation to be performed. For example, an
@@ -594,13 +609,13 @@ and outputs. Table <a href="v.html#tab:vtypemix" data-reference-type="ref" data
 integer and floating-point instructions, but the detailed instruction
 listing should be consulted for accurate information.</p>
 <figure>
-<img src="v_08.svg" alt="General rules for supported types per instruction in base vector extension. X represents the number of bits in an integer type and F represents the number of bits in a floating-point type. Individual instruction types will provide more detailed listings. Note that the type of a scalar floating-point operand can never be different from that of the vector in Src2, hence the Src1=2F case is missing from vector-scalar operations." id="tab:vtypemix" /><figcaption>General rules for supported types per instruction in base
+<img src="v_08.svg" id="tab:vtypemix" alt="" /><figcaption>General rules for supported types per instruction in base
 vector extension. X represents the number of bits in an integer
 type and F represents the number of bits in a floating-point type.
 Individual instruction types will provide more detailed listings.
 Note that the type of a scalar floating-point operand can never be
 different from that of the vector in Src2, hence the Src1=2F case
-is missing from vector-scalar operations.<span label="tab:vtypemix"></span></figcaption>
+is missing from vector-scalar operations.</figcaption>
 </figure>
 <p>A general rule in the base vector instruction set is that the
 destination precision is never less than any source operand, except
@@ -617,32 +632,34 @@ possible integer vector value.</p>
 <p>Floating-point computations on mixed-precision values acts as if the
 calculations are performed exactly then rounded once to the
 destination format.</p>
-<h2 id="rapid-configuration-instructions"><span class="header-section-number">21.14</span> Rapid Configuration Instructions</h2>
-<p>It can take several CSR instructions to set up the <span>vcfg</span> and
-<span>vnp</span> CSRs for a given configuration. Specialized configuration
+</section>
+<section id="rapid-configuration-instructions" data-number="1.14">
+<h2 data-number="21.14"><span class="header-section-number">21.14</span> Rapid Configuration Instructions</h2>
+<p>It can take several CSR instructions to set up the <span><code>vcfg</code></span> and
+<span><code>vnp</code></span> CSRs for a given configuration. Specialized configuration
 instructions are provided to quickly set up common configurations in
-the <span>vcfg</span> and <span>vnp</span> CSRs.</p>
-<p>The <span>vsetdcfg</span> instruction takes a scalar register value encoded as
+the <span><code>vcfg</code></span> and <span><code>vnp</code></span> CSRs.</p>
+<p>The <span><code>vsetdcfg</code></span> instruction takes a scalar register value encoded as
 shown in Figure <a href="v.html#fig:vcfg" data-reference-type="ref" data-reference="fig:vcfg">1.10</a>, and returns the corresponding MVL in
-the destination register. The <span>vsetdcfg</span> and <span>vsetdcfgi</span>
-instructions also clear the <span>vnp</span> register, so no predicate
+the destination register. The <span><code>vsetdcfg</code></span> and <span><code>vsetdcfgi</code></span>
+instructions also clear the <span><code>vnp</code></span> register, so no predicate
 registers are allocated.</p>
 <p>CUSTOMTAGBEGINDISCUSSION</p>
 <p>For now, only a 32-bit value supporting up to three different vector
-data types is supported by the <span>vsetdcfg</span> instruction. RV64 and
+data types is supported by the <span><code>vsetdcfg</code></span> instruction. RV64 and
 RV128 could support larger number of types, though it’s not clear if
 the hardware cost (area, latency) to support a larger number of
 different types is justified.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
 <figure>
-<img src="v_09.svg" alt="Format of the vsetdcfg value. The value contains three pairs of a 5-bit type and a 5-bit number of registers to create of that type. A value of 0 for the number of a type indicates that 32 registers should be allocated. A value of 0 for the type indicates this pair should be skipped. The types must be of monotonically increasing size from type0 to type2. " id="fig:vcfg" /><figcaption>Format of the <span>vsetdcfg</span> value. The value contains
+<img src="v_09.svg" id="fig:vcfg" alt="" /><figcaption>Format of the <span><code>vsetdcfg</code></span> value. The value contains
 three pairs of a 5-bit type and a 5-bit number of registers
 to create of that type. A value of 0 for the number of a type
 indicates that 32 registers should be allocated. A value of 0 for
 the type indicates this pair should be skipped. The types must be
-of monotonically increasing size from type0 to type2. <span label="fig:vcfg"></span></figcaption>
+of monotonically increasing size from type0 to type2. </figcaption>
 </figure>
-<p>The <span>vsetdcfg</span> value specifies how many vector registers of each
+<p>The <span><code>vsetdcfg</code></span> value specifies how many vector registers of each
 datatype are allocated, and is divided into a 2-bit mode field and
 pairs of 5-bit fields for each data type in the configuration.</p>
 <p>The 2-bit mode field indicates the configuration mode of the vector
@@ -658,18 +675,16 @@ operations, or other coprocessors that operated on large structures.</p>
 <p>Other modes can be used to reconfigure the vector unit register file
 and functional units for other domain-specific purposes.</p>
 </div>
-<p>Each datatype pair contains a 5-bit <span>type</span><span class="math inline"><em>x</em></span> value encoded as a
-<span>vetype</span><span class="math inline"><em>n</em></span> value, and a 5-bit <span>ntype</span><span class="math inline"><em>x</em></span> for the number of
-registers to allocate for that type. If the <span>type0</span> field is
-non-zero, the <span>vsetdcfg</span> instruction will configure the first <span>
-ntype0</span> vector data registers to have <span>vetype</span><span class="math inline"><em>n</em></span> values of <span>
-type0</span> with <span>vmaxew</span><span class="math inline"><em>n</em></span> values set accordingly as shown in
-Table <a href="#tab:vetype" data-reference-type="ref" data-reference="tab:vetype">[tab:vetype]</a>. If the <span>type0</span> value is 0, the datatype
-pair is skipped. If the <span>type1</span> field is non-zero, then the next
-<span>ntype1</span> vector registers are configured to be of the type given
-in <span>type1</span>. Similarly for the <span>type2</span> pair.</p>
-<p>A value of zero in a <span>type</span><span class="math inline"><em>x</em></span> field indicates this datatype pair
-should be ignored. A value of zero in a <span>ntype</span><span class="math inline"><em>x</em></span> field
+<p>Each datatype pair contains a 5-bit <span><code>type</code></span><span class="math inline"><em>x</em></span> value encoded as a
+<span><code>vetype</code></span><span class="math inline"><em>n</em></span> value, and a 5-bit <span><code>ntype</code></span><span class="math inline"><em>x</em></span> for the number of
+registers to allocate for that type. If the <span><code>type0</code></span> field is
+non-zero, the <span><code>vsetdcfg</code></span> instruction will configure the first <span><code> ntype0</code></span> vector data registers to have <span><code>vetype</code></span><span class="math inline"><em>n</em></span> values of <span><code> type0</code></span> with <span><code>vmaxew</code></span><span class="math inline"><em>n</em></span> values set accordingly as shown in
+Table <a href="#tab:vetype" data-reference-type="ref" data-reference="tab:vetype">[tab:vetype]</a>. If the <span><code>type0</code></span> value is 0, the datatype
+pair is skipped. If the <span><code>type1</code></span> field is non-zero, then the next
+<span><code>ntype1</code></span> vector registers are configured to be of the type given
+in <span><code>type1</code></span>. Similarly for the <span><code>type2</code></span> pair.</p>
+<p>A value of zero in a <span><code>type</code></span><span class="math inline"><em>x</em></span> field indicates this datatype pair
+should be ignored. A value of zero in a <span><code>ntype</code></span><span class="math inline"><em>x</em></span> field
 indicates 32 registers should be allocated for the corresponding type.</p>
 <div class=commentary>
 <p>Zero values are skipped to simplify setting a configuration with two
@@ -681,66 +696,63 @@ datatype.</p>
 <p>A compressed C.LI with a zero-extended 5-bit immediate can create a
 configuration with 32 vector registers of a given datatype.</p>
 </div>
-<p>A corresponding <span>vsetdcfgi</span> instruction takes a 12-bit immediate
+<p>A corresponding <span><code>vsetdcfgi</code></span> instruction takes a 12-bit immediate
 value to set the configuration instead of a scalar value, but
-otherwise is identical to the <span>vsetcfgd</span> instruction.</p>
+otherwise is identical to the <span><code>vsetcfgd</code></span> instruction.</p>
 <p>CUSTOMTAGBEGINDISCUSSION</p>
 <p>It is not clear how many immediate bits will be made available for the
-<span>vsetdcfgi</span> instruction. If encoding space is available for both
-12 immediate bits and a source register specifier, then <span>
-vsetdcgfi</span> can be defined to read the source register, OR in the
+<span><code>vsetdcfgi</code></span> instruction. If encoding space is available for both
+12 immediate bits and a source register specifier, then <span><code> vsetdcgfi</code></span> can be defined to read the source register, OR in the
 bits in the immediate, then create a configuration. In this case,
-there is no need for a separate <span>vsetdcfg</span> instruction.</p>
+there is no need for a separate <span><code>vsetdcfg</code></span> instruction.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
 <p>The configuration value given must result in a legal configuration or
 else an illegal instruction exception will be raised.</p>
-<p>If a zero argument is given to <span>vsetdcfg</span> the vector unit will be
+<p>If a zero argument is given to <span><code>vsetdcfg</code></span> the vector unit will be
 disabled and the value 0 will be returned for MVL. This instruction
-(<span>vsetdcfg x0, x0</span>) is given the assembly pseudo-code <span>
-vdisable</span>.</p>
-<p>Separate <span>vsetpcfg</span> and <span>vsetpcfgi</span> instructions are provided
-that write the source value to the <span>vnp</span> register and return the
+(<span><code>vsetdcfg x0, x0</code></span>) is given the assembly pseudo-code <span><code> vdisable</code></span>.</p>
+<p>Separate <span><code>vsetpcfg</code></span> and <span><code>vsetpcfgi</code></span> instructions are provided
+that write the source value to the <span><code>vnp</code></span> register and return the
 new MVL. These writes also clear the vector data registers, set all
-bits in the allocated predicate registers, and set <span>vl</span>=MVL. A
-<span>vsetpcfg</span> or <span>vsetpcfgi</span> instruction can be used after a <span>
-vsetdcfg</span> to complete a reconfiguration of the vector unit.</p>
+bits in the allocated predicate registers, and set <span><code>vl</code></span>=MVL. A
+<span><code>vsetpcfg</code></span> or <span><code>vsetpcfgi</code></span> instruction can be used after a <span><code> vsetdcfg</code></span> to complete a reconfiguration of the vector unit.</p>
 <p>CUSTOMTAGBEGINDISCUSSION</p>
-<p>If <span>vnp</span> is made accessible as a separate CSR, the <span>setpcfg</span>
-and <span>setpcfgi</span> instructions are less useful. The only advantage
+<p>If <span><code>vnp</code></span> is made accessible as a separate CSR, the <span><code>setpcfg</code></span>
+and <span><code>setpcfgi</code></span> instructions are less useful. The only advantage
 over a CSR instruction is that they return MVL, which is rarely
-needed, and which can be obtained via that <span>setvl</span> instruction.</p>
+needed, and which can be obtained via that <span><code>setvl</code></span> instruction.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
-<h2 id="vector-type-change-instructions"><span class="header-section-number">21.15</span> Vector-Type-Change Instructions</h2>
-<p>To quickly change the individual types of a vector register, <span>
-vetyperw</span> and <span>vetyperwi</span> instructions are provided to change
+</section>
+<section id="vector-type-change-instructions" data-number="1.15">
+<h2 data-number="21.15"><span class="header-section-number">21.15</span> Vector-Type-Change Instructions</h2>
+<p>To quickly change the individual types of a vector register, <span><code> vetyperw</code></span> and <span><code>vetyperwi</code></span> instructions are provided to change
 the type of the specified vector data register to the given scalar
 register value or 5-bit immediate value respectively, while returning
 the previous type in the destination scalar register.</p>
 <p>A vector convert instruction, described below, can simultaneously
 convert a source vector register into a new type, and set that type in
 the destination vector register.</p>
-<h2 id="vector-length"><span class="header-section-number">21.16</span> Vector Length</h2>
+</section>
+<section id="vector-length" data-number="1.16">
+<h2 data-number="21.16"><span class="header-section-number">21.16</span> Vector Length</h2>
 <p>The active vector length is held in the XLEN-bit WARL vector length
-CSR <span>vl</span>, which can only hold values between 0 and MVL inclusive.
-Any writes to the configuration registers (<span>vcfg</span><span class="math inline"><em>x</em></span> or <span>
-vnp</span>) cause <span>vl</span> to be initialized with MVL. Changes to <span>
-vetype</span><span class="math inline"><em>n</em></span> via vector-type-change instructions do not affect <span>
-vl</span>.</p>
-<p>The active vector length is usually set via the <span>setvl</span>
-instruction. The source argument to the <span>setvl</span> is the requested
+CSR <span><code>vl</code></span>, which can only hold values between 0 and MVL inclusive.
+Any writes to the configuration registers (<span><code>vcfg</code></span><span class="math inline"><em>x</em></span> or <span><code> vnp</code></span>) cause <span><code>vl</code></span> to be initialized with MVL. Changes to <span><code> vetype</code></span><span class="math inline"><em>n</em></span> via vector-type-change instructions do not affect <span><code> vl</code></span>.</p>
+<p>The active vector length is usually set via the <span><code>setvl</code></span>
+instruction. The source argument to the <span><code>setvl</code></span> is the requested
 application vector length (AVL) as an unsigned XLEN-bit integer. The
-<span>setvl</span> instruction calculates the value to assign to <span>vl</span>
+<span><code>setvl</code></span> instruction calculates the value to assign to <span><code>vl</code></span>
 according to Table <a href="v.html#tab:vlcalc" data-reference-type="ref" data-reference="tab:vlcalc">[tab:vlcalc]</a>. The result of this calculation
-is also returned as the result of the <span>setvl</span> instruction.</p>
+is also returned as the result of the <span><code>setvl</code></span> instruction.</p>
 <div class=commentary>
-<p>Earlier drafts encoded <span>setvl</span> using a modified CSRRW instruction
+<p>Earlier drafts encoded <span><code>setvl</code></span> using a modified CSRRW instruction
 whereas it is now encoded as a separate new instruction.</p>
 </div>
 <table>
 <thead>
 <tr class="header">
 <th style="text-align: center;">AVL Value</th>
-<th style="text-align: center;"><span>vl</span> setting</th>
+<th style="text-align: center;"><span><code>vl</code></span> setting</th>
 </tr>
 </thead>
 <tbody>
@@ -759,7 +771,7 @@ whereas it is now encoded as a separate new instruction.</p>
 </tbody>
 </table>
 <div class=commentary>
-<p>The rules for setting the <span>vl</span> register help keep vector
+<p>The rules for setting the <span><code>vl</code></span> register help keep vector
 pipelines full over the last two iterations of a stripmined loop.
 This version of the rules guarantees monotonically decreasing vector
 lengths.
@@ -773,18 +785,18 @@ implementations freedom to use different VL setting rules.</p>
 <p>The idea of having implementation-defined vector length dates back
 to at least the IBM 3090 Vector Facility <span class="citation" data-cites="ibm370varch"><a href="#ref-ibm370varch">[ibm370varch]</a></span>, which
 used a special “Load Vector Count and Update” (VLVCU) instruction
-to control stripmine loops. The <span>setvl</span> instruction included
-here is based on the simpler <span>setvlr</span> instruction introduced by
+to control stripmine loops. The <span><code>setvl</code></span> instruction included
+here is based on the simpler <span><code>setvlr</code></span> instruction introduced by
 Asanović <span class="citation" data-cites="krstephd"><a href="#ref-krstephd">[krstephd]</a></span>.</p>
 </div>
-<p>The <span>setvl</span> instruction is typically used at the start of every
+<p>The <span><code>setvl</code></span> instruction is typically used at the start of every
 iteration of a stripmined loop to set the number of vector elements to
 operate on in the following loop iteration. The current MVL can be
 obtained from a vector configuration instruction, or by performing a
-<span>setvl</span> with a source argument that has all bits set (largest
+<span><code>setvl</code></span> with a source argument that has all bits set (largest
 unsigned integer).</p>
-<p>When <span>vl</span> is less than MVL, vector instructions will set all
-elements in the range [<span>vl</span>:MAXVL-1] in the destination vector
+<p>When <span><code>vl</code></span> is less than MVL, vector instructions will set all
+elements in the range [<span><code>vl</code></span>:MAXVL-1] in the destination vector
 data register or destination vector predicate register to zero.</p>
 <div class=commentary>
 <p>Requiring zeroing of elements past the current active vector length
@@ -801,32 +813,34 @@ reconfiguration, for example, by having a zero bit on each element
 or element group.</p>
 </div>
 <p>No element operations are performed for any vector instruction when
-<span>vl</span>=0.</p>
+<span><code>vl</code></span>=0.</p>
 <div class=commentary>
 <p>Two possible choices are to 1) require destination registers to be
-completely zeroed when <span>vl</span>=0, or 2) no changes to the
+completely zeroed when <span><code>vl</code></span>=0, or 2) no changes to the
 destination registers. Option 2 is currently chosen as this will
 prevents unnecessary work in some implementations, and option 1 does
 not provide a clear advantage beyond seeming more consistent with
-<span>vl</span>&gt;0 case.</p>
+<span><code>vl</code></span>&gt;0 case.</p>
 </div>
 <figure>
-<img src="v_10.svg" alt="Example vector-vector add loop." id="fig:vvadd" /><figcaption>Example vector-vector add loop.<span label="fig:vvadd"></span></figcaption>
+<img src="v_10.svg" id="fig:vvadd" alt="" /><figcaption>Example vector-vector add loop.</figcaption>
 </figure>
-<h2 id="predicated-execution"><span class="header-section-number">21.17</span> Predicated Execution</h2>
+</section>
+<section id="predicated-execution" data-number="1.17">
+<h2 data-number="21.17"><span class="header-section-number">21.17</span> Predicated Execution</h2>
 <div class=commentary>
 <p>The 32-bit base encoding does not leave room for a fully orthogonal
 predicate register specifier. A single bit is dedicated to the
 predicate register specification, and is used to select between two
-active predicate registers, <span>vp0</span> or <span>vp1</span>. An alternative
-scheme would have used the bit to select between <span>vp0</span> and
+active predicate registers, <span><code>vp0</code></span> or <span><code>vp1</code></span>. An alternative
+scheme would have used the bit to select between <span><code>vp0</code></span> and
 unpredicated (all elements active). However, given the ease of
 setting all predicate bits in a vector predicate register with a
 single predicate instruction, the current scheme provides more
 flexibility.</p>
-<p>When there are no vector predicate registers enabled, <span>vp0</span>
+<p>When there are no vector predicate registers enabled, <span><code>vp0</code></span>
 returns all set bits when read. So, the assembler convention is to
-assume <span>vp0</span> as the predicate register when no predicate
+assume <span><code>vp0</code></span> as the predicate register when no predicate
 register is explicitly given. The assembler can support a strict
 operands option to require the vector predicate register is
 explicitly specified.</p>
@@ -858,7 +872,7 @@ write the value into the new physical destination register when the
 predicate is false. This additional read port will often be cheaper
 than in a scalar machine as vector machines often time-multiplex
 read ports, and the additional read can be skipped when the
-predicate registers are disabled (<span>vnp</span>=0) or when the source is
+predicate registers are disabled (<span><code>vnp</code></span>=0) or when the source is
 known to be zero after configuration, but still adds complexity to a
 design.</p>
 <p>The advantage of the zero option is that a machine with vector
@@ -879,7 +893,9 @@ block, and also to the frequency of control flow merges.</p>
 renamed machines while reducing efficiency somewhat for the
 non-renamed machines, and is the current plan-of-record.</p>
 <p>CUSTOMTAGENDDISCUSSION</p>
-<h2 id="vector-loadstore-instructions"><span class="header-section-number">21.18</span> Vector Load/Store Instructions</h2>
+</section>
+<section id="vector-loadstore-instructions" data-number="1.18">
+<h2 data-number="21.18"><span class="header-section-number">21.18</span> Vector Load/Store Instructions</h2>
 <p>Three vector load/store addressing modes are supported, unit-stride,
 constant stride, and indexed (scatter/gather). Each addressing mode
 has a 7-bit unsigned immediate offset that is scaled by the element
@@ -927,13 +943,13 @@ load/store is observed to complete sequentially in program order only
 the local hart, i.e., a vector load on a hart will observe all earlier
 vector stores on the same hart, and no later vector stores.</p>
 <p>Vector loads are available in a length-speculative form that writes
-predicate register <span>vp1</span> in addition to the destination vector
+predicate register <span><code>vp1</code></span> in addition to the destination vector
 data register. These instructions raise an illegal instruction
-exception if <span>vp1</span> is not configured. For elements that do not
+exception if <span><code>vp1</code></span> is not configured. For elements that do not
 generate a permissions fault, the length-speculative vector loads
-operate as normally except to also clear the bit in <span>vp1</span>. If an
+operate as normally except to also clear the bit in <span><code>vp1</code></span>. If an
 element encounters a permission fault, a zero is written to the
-destination vector register element and the <span>vp1</span> bit is set to a
+destination vector register element and the <span><code>vp1</code></span> bit is set to a
 1. Implementations may treat elements past the first faulting element
 as also causing a fault even if they might not cause a permissions
 fault when accessed alone.</p>
@@ -951,7 +967,9 @@ invisibly to the user thread by the execution environment.</p>
 <p>A malicious program can use length-speculative vector loads to probe
 accessible address space without fear of a fatal fault.</p>
 </div>
-<h2 id="vector-register-gather"><span class="header-section-number">21.19</span> Vector Register Gather</h2>
+</section>
+<section id="vector-register-gather" data-number="1.19">
+<h2 data-number="21.19"><span class="header-section-number">21.19</span> Vector Register Gather</h2>
 <p>A vector register gather produces a new result data vector by gathering
 elements from one source data vector at the element locations
 specified by a second source index vector. Data source and
@@ -961,7 +979,9 @@ MAXVL. Indices out of this range raise an illegal instruction
 exception.</p>
 <pre><code>  # vindices holds values from 0..MAXVL
   vrgather  vdest, vsrc, vindices</code></pre>
-<h2 id="vector-slide"><span class="header-section-number">21.20</span> Vector Slide</h2>
+</section>
+<section id="vector-slide" data-number="1.20">
+<h2 data-number="21.20"><span class="header-section-number">21.20</span> Vector Slide</h2>
 <p>Reductions (and convolutions) are supported via a vector slide
 instruction that takes elements starting from the middle of one vector
 and places these at the beginning of a second vector register. This
@@ -974,7 +994,9 @@ reductions used in earlier Crays.</p>
 <p>The vector unit microarchitecture can be optimized for the
 power-of-2 sized element offsets used for reductions.</p>
 </div>
-<h2 id="fixed-point-support"><span class="header-section-number">21.21</span> Fixed-Point Support</h2>
+</section>
+<section id="fixed-point-support" data-number="1.21">
+<h2 data-number="21.21"><span class="header-section-number">21.21</span> Fixed-Point Support</h2>
 <p>Clip instruction supports scaling, rounding, and clipping to
 destination type. Rounding set by CSR fixed-point rounding mode
 (truncate, jam, round-up, round-nearest-even). Clipping set by CSR
@@ -985,11 +1007,17 @@ scaling values (+1, 0, -1, -8?) and rounding and clipping according to
 CSR mode.</p>
 <p>Accumulate with carry into predicate register to support larger
 precise dot-products.</p>
-<h2 id="optional-transcendental-support"><span class="header-section-number">21.22</span> Optional Transcendental Support</h2>
-<h2 id="instruction-set-encoding"><span class="header-section-number">21.23</span> Instruction-Set Encoding</h2>
+</section>
+<section id="optional-transcendental-support" data-number="1.22">
+<h2 data-number="21.22"><span class="header-section-number">21.22</span> Optional Transcendental Support</h2>
+</section>
+<section id="instruction-set-encoding" data-number="1.23">
+<h2 data-number="21.23"><span class="header-section-number">21.23</span> Instruction-Set Encoding</h2>
 <p><span><strong>[ NOTE: This section is out of date. ]</strong></span></p>
 <p>On the next two pages is a proposed instruction-set encoding.</p>
 <p><a href="#v-instr-table" data-reference-type="ref" data-reference="v-instr-table">[v-instr-table]</a></p>
+</section>
+</section>
 
 </body>
 </html>

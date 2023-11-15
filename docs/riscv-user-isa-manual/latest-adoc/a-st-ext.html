@@ -1,0 +1,675 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/a-st-ext.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="atomics">1. "A" Standard Extension for Atomic Instructions, Version 2.1</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The standard atomic-instruction extension, named "A", contains
+instructions that atomically read-modify-write memory to support
+synchronization between multiple RISC-V harts running in the same memory
+space. The two forms of atomic instruction provided are
+load-reserved/store-conditional instructions and atomic fetch-and-op
+memory instructions. Both types of atomic instruction support various
+memory consistency orderings including unordered, acquire, release, and
+sequentially consistent semantics. These instructions allow RISC-V to
+support the RCsc memory consistency model. (<a href="#Gharachorloo90memoryconsistency">Gharachorloo et al.&#44; 1990</a>)</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>After much debate, the language community and architecture community
+appear to have finally settled on release consistency as the standard
+memory consistency model and so the RISC-V atomic support is built
+around this model.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_specifying_ordering_of_atomic_instructions">1.1. Specifying Ordering of Atomic Instructions</h3>
+<div class="paragraph">
+<p>The base RISC-V ISA has a relaxed memory model, with the FENCE
+instruction used to impose additional ordering constraints. The address
+space is divided by the execution environment into memory and I/O
+domains, and the FENCE instruction provides options to order accesses to
+one or both of these two address domains.</p>
+</div>
+<div class="paragraph">
+<p>To provide more efficient support for release consistency (<a href="#Gharachorloo90memoryconsistency">Gharachorloo et al.&#44; 1990</a>), each atomic
+instruction has two bits, <em>aq</em> and <em>rl</em>, used to specify additional
+memory ordering constraints as viewed by other RISC-V harts. The bits
+order accesses to one of the two address domains, memory or I/O,
+depending on which address domain the atomic instruction is accessing.
+No ordering constraint is implied to accesses to the other domain, and a
+FENCE instruction should be used to order across both domains.</p>
+</div>
+<div class="paragraph">
+<p>If both bits are clear, no additional ordering constraints are imposed
+on the atomic memory operation. If only the <em>aq</em> bit is set, the atomic
+memory operation is treated as an <em>acquire</em> access, i.e., no following
+memory operations on this RISC-V hart can be observed to take place
+before the acquire memory operation. If only the <em>rl</em> bit is set, the
+atomic memory operation is treated as a <em>release</em> access, i.e., the
+release memory operation cannot be observed to take place before any
+earlier memory operations on this RISC-V hart. If both the <em>aq</em> and <em>rl</em>
+bits are set, the atomic memory operation is <em>sequentially consistent</em>
+and cannot be observed to happen before any earlier memory operations or
+after any later memory operations in the same RISC-V hart and to the
+same address domain.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sec:lrsc">1.2. Load-Reserved/Store-Conditional Instructions</h3>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nOTgnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgOTgnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMxJy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTI9JzMxJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkyPSczJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkyPSczJy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkyPSczJy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkyPSczJy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkxPSczMScgeTI9JzI4Jy8+PC9nPjxnPjxnPjxyZWN0IGZpZWxkPSdvcGNvZGUnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTczJyB4PSc2MTgnLz48cmVjdCBmaWVsZD0ncmQnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PSc0OTQnLz48cmVjdCBmaWVsZD0nZnVuY3QzJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9Jzc0JyB4PSc0MjAnLz48cmVjdCBmaWVsZD0ncnMxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScyOTcnLz48cmVjdCBmaWVsZD0ncnMyJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScxNzMnLz48cmVjdCBmaWVsZD0ncmwnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMjUnIHg9JzE0OCcvPjxyZWN0IGZpZWxkPSdhcScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScyNScgeD0nMTI0Jy8+PHJlY3QgZmllbGQ9J2Z1bmN0NScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxMjQnLz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsLTExKSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzY2KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjE4KSc+PHRleHQgeT0nNic+NjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTkzKSc+PHRleHQgeT0nNic+NzwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDk0KSc+PHRleHQgeT0nNic+MTE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ3MCknPjx0ZXh0IHk9JzYnPjEyPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0MjApJz48dGV4dCB5PSc2Jz4xNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzk2KSc+PHRleHQgeT0nNic+MTU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI5NyknPjx0ZXh0IHk9JzYnPjE5PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNzIpJz48dGV4dCB5PSc2Jz4yMDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTczKSc+PHRleHQgeT0nNic+MjQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0OCknPjx0ZXh0IHk9JzYnPjI1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMjQpJz48dGV4dCB5PSc2Jz4yNjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoOTkpJz48dGV4dCB5PSc2Jz4yNzwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjMxPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMTUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+b3Bjb2RlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZnVuY3QzPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz48dHNwYW4+cmw8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTI0KSc+PHRleHQgeT0nNic+PHRzcGFuPmFxPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPmZ1bmN0NTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMzkpJz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+QU1PPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5BTU88L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+d2lkdGg8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPndpZHRoPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+YWRkcjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+YWRkcjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPjA8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+PHRzcGFuPjE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPnJpbmc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPnJpbmc8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4xPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcmRlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcmRlPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPkxSLlcvRDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TQy5XL0Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="98">
+</div>
+</div>
+<div class="paragraph">
+<p>Complex atomic memory operations on a single memory word or doubleword
+are performed with the load-reserved (LR) and store-conditional (SC)
+instructions. LR.W loads a word from the address in <em>rs1</em>, places the
+sign-extended value in <em>rd</em>, and registers a <em>reservation set</em>—a set of
+bytes that subsumes the bytes in the addressed word. SC.W conditionally
+writes a word in <em>rs2</em> to the address in <em>rs1</em>: the SC.W succeeds only
+if the reservation is still valid and the reservation set contains the
+bytes being written. If the SC.W succeeds, the instruction writes the
+word in <em>rs2</em> to memory, and it writes zero to <em>rd</em>. If the SC.W fails,
+the instruction does not write to memory, and it writes a nonzero value
+to <em>rd</em>. Regardless of success or failure, executing an SC.W instruction
+invalidates any reservation held by this hart. LR.D and SC.D act
+analogously on doublewords and are only available on RV64. For RV64,
+LR.W and SC.W sign-extend the value placed in <em>rd</em>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Both compare-and-swap (CAS) and LR/SC can be used to build lock-free
+data structures. After extensive discussion, we opted for LR/SC for
+several reasons: 1) CAS suffers from the ABA problem, which LR/SC avoids
+because it monitors all writes to the address rather than only checking
+for changes in the data value; 2) CAS would also require a new integer
+instruction format to support three source operands (address, compare
+value, swap value) as well as a different memory system message format,
+which would complicate microarchitectures; 3) Furthermore, to avoid the
+ABA problem, other systems provide a double-wide CAS (DW-CAS) to allow a
+counter to be tested and incremented along with a data word. This
+requires reading five registers and writing two in one instruction, and
+also a new larger memory system message type, further complicating
+implementations; 4) LR/SC provides a more efficient implementation of
+many primitives as it only requires one load as opposed to two with CAS
+(one load before the CAS instruction to obtain a value for speculative
+computation, then a second load as part of the CAS instruction to check
+if value is unchanged before updating).</p>
+</div>
+<div class="paragraph">
+<p>The main disadvantage of LR/SC over CAS is livelock, which we avoid,
+under certain circumstances, with an architected guarantee of eventual
+forward progress as described below. Another concern is whether the
+influence of the current x86 architecture, with its DW-CAS, will
+complicate porting of synchronization libraries and other software that
+assumes DW-CAS is the basic machine primitive. A possible mitigating
+factor is the recent addition of transactional memory instructions to
+x86, which might cause a move away from DW-CAS.</p>
+</div>
+<div class="paragraph">
+<p>More generally, a multi-word atomic primitive is desirable, but there is
+still considerable debate about what form this should take, and
+guaranteeing forward progress adds complexity to a system.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The failure code with value 1 encodes an unspecified failure. Other
+failure codes are reserved at this time. Portable software should only
+assume the failure code will be non-zero.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We reserve a failure code of 1 to mean ''unspecified'' so that simple
+implementations may return this value using the existing mux required
+for the SLT/SLTU instructions. More specific failure codes might be
+defined in future versions or extensions to the ISA.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For LR and SC, the A extension requires that the address held in <em>rs1</em>
+be naturally aligned to the size of the operand (i.e., eight-byte
+aligned for <em>doublewords</em> and four-byte aligned for <em>words</em>). If the
+address is not naturally aligned, an address-misaligned exception or an
+access-fault exception will be generated. The access-fault exception can
+be generated for a memory access that would otherwise be able to
+complete except for the misalignment, if the misaligned access should
+not be emulated.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Emulating misaligned LR/SC sequences is impractical in most systems.</p>
+</div>
+<div class="paragraph">
+<p>Misaligned LR/SC sequences also raise the possibility of accessing
+multiple reservation sets at once, which present definitions do not
+provide for.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>An implementation can register an arbitrarily large reservation set on
+each LR, provided the reservation set includes all bytes of the
+addressed data word or doubleword. An SC can only pair with the most
+recent LR in program order. An SC may succeed only if no store from
+another hart to the reservation set can be observed to have occurred
+between the LR and the SC, and if there is no other SC between the LR
+and itself in program order. An SC may succeed only if no write from a
+device other than a hart to the bytes accessed by the LR instruction can
+be observed to have occurred between the LR and SC. Note this LR might
+have had a different effective address and data size, but reserved the
+SC&#8217;s address as part of the reservation set.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Following this model, in systems with memory translation, an SC is
+allowed to succeed if the earlier LR reserved the same location using an
+alias with a different virtual address, but is also allowed to fail if
+the virtual address is different.</p>
+</div>
+<div class="paragraph">
+<p>To accommodate legacy devices and buses, writes from devices other than
+RISC-V harts are only required to invalidate reservations when they
+overlap the bytes accessed by the LR. These writes are not required to
+invalidate the reservation when they access other bytes in the
+reservation set.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The SC must fail if the address is not within the reservation set of the
+most recent LR in program order. The SC must fail if a store to the
+reservation set from another hart can be observed to occur between the
+LR and SC. The SC must fail if a write from some other device to the
+bytes accessed by the LR can be observed to occur between the LR and SC.
+(If such a device writes the reservation set but does not write the
+bytes accessed by the LR, the SC may or may not fail.) An SC must fail
+if there is another SC (to any address) between the LR and the SC in
+program order. The precise statement of the atomicity requirements for
+successful LR/SC sequences is defined by the Atomicity Axiom in
+<a href="#rvwmo">[rvwmo]</a>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The platform should provide a means to determine the size and shape of
+the reservation set.</p>
+</div>
+<div class="paragraph">
+<p>A platform specification may constrain the size and shape of the
+reservation set.</p>
+</div>
+<div class="paragraph">
+<p>A store-conditional instruction to a scratch word of memory should be
+used to forcibly invalidate any existing load reservation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>during a preemptive context switch, and</p>
+</li>
+<li>
+<p>if necessary when changing virtual to physical address mappings, such
+as when migrating pages that might contain an active reservation.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The invalidation of a hart&#8217;s reservation when it executes an LR or SC
+imply that a hart can only hold one reservation at a time, and that an
+SC can only pair with the most recent LR, and LR with the next following
+SC, in program order. This is a restriction to the Atomicity Axiom in
+<a href="#rvwmo">[rvwmo]</a> that ensures software runs correctly on
+expected common implementations that operate in this manner.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>An SC instruction can never be observed by another RISC-V hart before
+the LR instruction that established the reservation.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The LR/SC sequence
+can be given acquire semantics by setting the <em>aq</em> bit on the LR
+instruction. The LR/SC sequence can be given release semantics by
+by setting the <em>rl</em> bit on the SC instruction.  Assuming
+suitable mappings for other atomic operations, setting the
+<em>aq</em> bit on the LR instruction, and setting the
+<em>rl</em> bit on the SC instruction makes the LR/SC
+sequence sequentially consistent in the C++ <code>memory_order_seq_cst</code>
+sense. Such a sequence does not act as a fence for ordering ordinary
+load and store instructions before and after the sequence. Specific
+instruction mappings for other C++ atomic operations,
+or stronger notions of "sequential consistency", may require both
+bits to be set on either or both of the LR or SC instruction.</p>
+</div>
+<div class="paragraph">
+<p>If neither bit is set on either LR or SC, the LR/SC sequence can be
+observed to occur before or after surrounding memory operations from the
+same RISC-V hart. This can be appropriate when the LR/SC sequence is
+used to implement a parallel reduction operation.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Software should not set the <em>rl</em> bit on an LR instruction unless the
+<em>aq</em> bit is also set, nor should software set the <em>aq</em> bit on an SC
+instruction unless the <em>rl</em> bit is also set. LR.<em>rl</em> and SC.<em>aq</em>
+instructions are not guaranteed to provide any stronger ordering than
+those with both bits clear, but may result in lower performance.</p>
+</div>
+<div style="page-break-after: always;"></div>
+<div id="cas" class="listingblock">
+<div class="title">Example 1. Sample code for compare-and-swap function using LR/SC.</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">        # a0 holds address of memory location
+        # a1 holds expected value
+        # a2 holds desired value
+        # a0 holds return value, 0 if successful, !0 otherwise
+    cas:
+        lr.w t0, (a0)        # Load original value.
+        bne t0, a1, fail     # Doesn't match, so fail.
+        sc.w t0, a2, (a0)    # Try to update.
+        bnez t0, cas         # Retry if store-conditional failed.
+        li a0, 0             # Set return to success.
+        jr ra                # Return.
+    fail:
+        li a0, 1             # Set return to failure.
+        jr ra                # Return.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>LR/SC can be used to construct lock-free data structures. An example
+using LR/SC to implement a compare-and-swap function is shown in
+<a href="#cas">Example 1</a>. If inlined, compare-and-swap functionality need only take four instructions.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sec:lrscseq">1.3. Eventual Success of Store-Conditional Instructions</h3>
+<div class="paragraph">
+<p>The standard A extension defines <em>constrained LR/SC loops</em>, which have
+the following properties:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The loop comprises only an LR/SC sequence and code to retry the
+sequence in the case of failure, and must comprise at most 16
+instructions placed sequentially in memory.</p>
+</li>
+<li>
+<p>An LR/SC sequence begins with an LR instruction and ends with an SC
+instruction. The dynamic code executed between the LR and SC
+instructions can only contain instructions from the base ''I''
+instruction set, excluding loads, stores, backward jumps, taken backward
+branches, JALR, FENCE, and SYSTEM instructions. If the ''C'' extension
+is supported, then compressed forms of the aforementioned ''I''
+instructions are also permitted.</p>
+</li>
+<li>
+<p>The code to retry a failing LR/SC sequence can contain backwards jumps
+and/or branches to repeat the LR/SC sequence, but otherwise has the same
+constraint as the code between the LR and SC.</p>
+</li>
+<li>
+<p>The LR and SC addresses must lie within a memory region with the
+<em>LR/SC eventuality</em> property. The execution environment is responsible
+for communicating which regions have this property.</p>
+</li>
+<li>
+<p>The SC must be to the same effective address and of the same data size
+as the latest LR executed by the same hart.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>LR/SC sequences that do not lie within constrained LR/SC loops are
+<em>unconstrained</em>. Unconstrained LR/SC sequences might succeed on some
+attempts on some implementations, but might never succeed on other
+implementations.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We restricted the length of LR/SC loops to fit within 64 contiguous
+instruction bytes in the base ISA to avoid undue restrictions on
+instruction cache and TLB size and associativity. Similarly, we
+disallowed other loads and stores within the loops to avoid restrictions
+on data-cache associativity in simple implementations that track the
+reservation within a private cache. The restrictions on branches and
+jumps limit the time that can be spent in the sequence. Floating-point
+operations and integer multiply/divide were disallowed to simplify the
+operating system&#8217;s emulation of these instructions on implementations
+lacking appropriate hardware support.</p>
+</div>
+<div class="paragraph">
+<p>Software is not forbidden from using unconstrained LR/SC sequences, but
+portable software must detect the case that the sequence repeatedly
+fails, then fall back to an alternate code sequence that does not rely
+on an unconstrained LR/SC sequence. Implementations are permitted to
+unconditionally fail any unconstrained LR/SC sequence.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If a hart <em>H</em> enters a constrained LR/SC loop, the execution environment
+must guarantee that one of the following events eventually occurs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>H</em> or some other hart executes a successful SC to the reservation set
+of the LR instruction in <em>H</em>'s constrained LR/SC loops.</p>
+</li>
+<li>
+<p>Some other hart executes an unconditional store or AMO instruction to
+the reservation set of the LR instruction in <em>H</em>'s constrained LR/SC
+loop, or some other device in the system writes to that reservation set.</p>
+</li>
+<li>
+<p><em>H</em> executes a branch or jump that exits the constrained LR/SC loop.</p>
+</li>
+<li>
+<p><em>H</em> traps.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that these definitions permit an implementation to fail an SC
+instruction occasionally for any reason, provided the aforementioned
+guarantee is not violated.</p>
+</div>
+<div class="paragraph">
+<p>As a consequence of the eventuality guarantee, if some harts in an
+execution environment are executing constrained LR/SC loops, and no
+other harts or devices in the execution environment execute an
+unconditional store or AMO to that reservation set, then at least one
+hart will eventually exit its constrained LR/SC loop. By contrast, if
+other harts or devices continue to write to that reservation set, it is
+not guaranteed that any hart will exit its LR/SC loop.</p>
+</div>
+<div class="paragraph">
+<p>Loads and load-reserved instructions do not by themselves impede the
+progress of other harts' LR/SC sequences. We note this constraint
+implies, among other things, that loads and load-reserved instructions
+executed by other harts (possibly within the same core) cannot impede
+LR/SC progress indefinitely. For example, cache evictions caused by
+another hart sharing the cache cannot impede LR/SC progress
+indefinitely. Typically, this implies reservations are tracked
+independently of evictions from any shared cache. Similarly, cache
+misses caused by speculative execution within a hart cannot impede LR/SC
+progress indefinitely.</p>
+</div>
+<div class="paragraph">
+<p>These definitions admit the possibility that SC instructions may
+spuriously fail for implementation reasons, provided progress is
+eventually made.</p>
+</div>
+<div class="paragraph">
+<p>One advantage of CAS is that it guarantees that some hart eventually
+makes progress, whereas an LR/SC atomic sequence could livelock
+indefinitely on some systems. To avoid this concern, we added an
+architectural guarantee of livelock freedom for certain LR/SC sequences.</p>
+</div>
+<div class="paragraph">
+<p>Earlier versions of this specification imposed a stronger
+starvation-freedom guarantee. However, the weaker livelock-freedom
+guarantee is sufficient to implement the C11 and C++11 languages, and is
+substantially easier to provide in some microarchitectural styles.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sec:amo">1.4. Atomic Memory Operations</h3>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nMTY4JyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSd4TWlkWU1pZCBtZWV0JyB2aWV3Qm94PScwIDAgODAwIDE2OCcgd2lkdGg9JzgwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxNCcgZm9udC13ZWlnaHQ9J25vcm1hbCcgdGV4dC1hbmNob3I9J21pZGRsZScgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMC41LDAuNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQsMjEpJz48ZyBzdHJva2U9J2JsYWNrJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS13aWR0aD0nMSc+PGxpbmUgeDI9Jzc5MScvPjxsaW5lIHkyPSczMScvPjxsaW5lIHgyPSc3OTEnIHkxPSczMScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc5MScgeDI9Jzc5MScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTI9JzMnLz48bGluZSB4MT0nNzY2JyB4Mj0nNzY2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkyPSczJy8+PGxpbmUgeDE9Jzc0MicgeDI9Jzc0MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5Mj0nMycvPjxsaW5lIHgxPSc3MTcnIHgyPSc3MTcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTI9JzMnLz48bGluZSB4MT0nNjkyJyB4Mj0nNjkyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkyPSczJy8+PGxpbmUgeDE9JzY2NycgeDI9JzY2NycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5Mj0nMycvPjxsaW5lIHgxPSc2NDMnIHgyPSc2NDMnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzYxOCcgeDI9JzYxOCcgeTI9JzMxJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTI9JzMnLz48bGluZSB4MT0nNTkzJyB4Mj0nNTkzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkyPSczJy8+PGxpbmUgeDE9JzU2OScgeDI9JzU2OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5Mj0nMycvPjxsaW5lIHgxPSc1NDQnIHgyPSc1NDQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTI9JzMnLz48bGluZSB4MT0nNTE5JyB4Mj0nNTE5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OTQnIHgyPSc0OTQnIHkyPSczMScvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkyPSczJy8+PGxpbmUgeDE9JzQ3MCcgeDI9JzQ3MCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5Mj0nMycvPjxsaW5lIHgxPSc0NDUnIHgyPSc0NDUnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQyMCcgeDI9JzQyMCcgeTI9JzMxJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTI9JzMnLz48bGluZSB4MT0nMzk2JyB4Mj0nMzk2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkyPSczJy8+PGxpbmUgeDE9JzM3MScgeDI9JzM3MScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5Mj0nMycvPjxsaW5lIHgxPSczNDYnIHgyPSczNDYnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTI9JzMnLz48bGluZSB4MT0nMzIxJyB4Mj0nMzIxJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyOTcnIHgyPScyOTcnIHkyPSczMScvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkyPSczJy8+PGxpbmUgeDE9JzI3MicgeDI9JzI3MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5Mj0nMycvPjxsaW5lIHgxPScyNDcnIHgyPScyNDcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTI9JzMnLz48bGluZSB4MT0nMjIyJyB4Mj0nMjIyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkyPSczJy8+PGxpbmUgeDE9JzE5OCcgeDI9JzE5OCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTczJyB4Mj0nMTczJyB5Mj0nMzEnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5Mj0nMzEnLz48bGluZSB4MT0nMTI0JyB4Mj0nMTI0JyB5Mj0nMzEnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTI9JzMnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzMnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzMnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTI9JzMnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTE9JzMxJyB5Mj0nMjgnLz48L2c+PGc+PGc+PHJlY3QgZmllbGQ9J29wY29kZScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxNzMnIHg9JzYxOCcvPjxyZWN0IGZpZWxkPSdyZCcgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzQ5NCcvPjxyZWN0IGZpZWxkPSdmdW5jdDMnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdyczInIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzE3MycvPjxyZWN0IGZpZWxkPSdybCcgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScyNScgeD0nMTQ4Jy8+PHJlY3QgZmllbGQ9J2FxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzI1JyB4PScxMjQnLz48cmVjdCBmaWVsZD0nZnVuY3Q1JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzEyNCcvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4xMTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MTI8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQyMCknPjx0ZXh0IHk9JzYnPjE0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz4xNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjk3KSc+PHRleHQgeT0nNic+MTk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI3MiknPjx0ZXh0IHk9JzYnPjIwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNzMpJz48dGV4dCB5PSc2Jz4yNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+MjU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCknPjx0ZXh0IHk9JzYnPjI2PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjI3PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwxNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcGNvZGU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPnJkPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mdW5jdDM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0OCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5ybDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMjQpJz48dGV4dCB5PSc2Jz48dHNwYW4+YXE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDkpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZnVuY3Q1PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwzOSknPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj43PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5BTU88L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPkFNTzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsNDIpJz48dGV4dCB5PSc2Jz48dHNwYW4+QU1PPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5Miw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5BTU88L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDcwKSc+PHRleHQgeT0nNic+PHRzcGFuPkFNTzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsODQpJz48dGV4dCB5PSc2Jz48dHNwYW4+QU1PPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5Miw5OCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5BTU88L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw3MCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw4NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw5OCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+d2lkdGg8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPndpZHRoPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj53aWR0aDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+d2lkdGg8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDcwKSc+PHRleHQgeT0nNic+PHRzcGFuPndpZHRoPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSw4NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj53aWR0aDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsOTgpJz48dGV4dCB5PSc2Jz48dHNwYW4+d2lkdGg8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0Niw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0Niw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0Niw3MCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0Niw4NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0Niw5OCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5hZGRyPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiw3MCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDg0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsOTgpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz48dHNwYW4+MTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTI0KSc+PHRleHQgeT0nNic+PHRzcGFuPjE8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+QU1PU1dBUC5XL0Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+QU1PQURELlcvRDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5BTU9BTkQuVy9EPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5LDU2KSc+PHRleHQgeT0nNic+PHRzcGFuPkFNT09SLlcvRDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSw3MCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5BTU9YT1IuVy9EPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5LDg0KSc+PHRleHQgeT0nNic+PHRzcGFuPkFNT01BWFtVXS5XL0Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksOTgpJz48dGV4dCB5PSc2Jz48dHNwYW4+QU1PTUlOW1VdLlcvRDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="Diagram" width="800" height="168">
+</div>
+</div>
+<div class="paragraph">
+<p>The atomic memory operation (AMO) instructions perform read-modify-write
+operations for multiprocessor synchronization and are encoded with an
+R-type instruction format. These AMO instructions atomically load a data
+value from the address in <em>rs1</em>, place the value into register <em>rd</em>,
+apply a binary operator to the loaded value and the original value in
+<em>rs2</em>, then store the result back to the original address in <em>rs1</em>. AMOs
+can either operate on <em>doublewords</em> (RV64 only) or <em>words</em> in memory. For
+RV64, 32-bit AMOs always sign-extend the value placed in <em>rd</em>, and
+ignore the upper 32 bits of the original value of <em>rs2</em>.</p>
+</div>
+<div class="paragraph">
+<p>For AMOs, the A extension requires that the address held in <em>rs1</em> be
+naturally aligned to the size of the operand (i.e., eight-byte aligned
+for <em>doublewords</em> and four-byte aligned for <em>words</em>). If the address
+is not naturally aligned, an address-misaligned exception or an
+access-fault exception will be generated. The access-fault exception can
+be generated for a memory access that would otherwise be able to
+complete except for the misalignment, if the misaligned access should
+not be emulated. The "Zam" extension, described in <a href="#zam">[zam]</a>, relaxes this requirement and specifies the semantics of misaligned AMOs.</p>
+</div>
+<div class="paragraph">
+<p>The operations supported are swap, integer add, bitwise AND, bitwise OR,
+bitwise XOR, and signed and unsigned integer maximum and minimum.
+Without ordering constraints, these AMOs can be used to implement
+parallel reduction operations, where typically the return value would be
+discarded by writing to <code>x0</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We provided fetch-and-op style atomic primitives as they scale to highly
+parallel systems better than LR/SC or CAS. A simple microarchitecture
+can implement AMOs using the LR/SC primitives, provided the
+implementation can guarantee the AMO eventually completes. More complex
+implementations might also implement AMOs at memory controllers, and can
+optimize away fetching the original value when the destination is <code>x0</code>.</p>
+</div>
+<div class="paragraph">
+<p>The set of AMOs was chosen to support the C11/C++11 atomic memory
+operations efficiently, and also to support parallel reductions in
+memory. Another use of AMOs is to provide atomic updates to
+memory-mapped device registers (e.g., setting, clearing, or toggling
+bits) in the I/O space.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To help implement multiprocessor synchronization, the AMOs optionally
+provide release consistency semantics. If the <em>aq</em> bit is set, then no
+later memory operations in this RISC-V hart can be observed to take
+place before the AMO. Conversely, if the <em>rl</em> bit is set, then other
+RISC-V harts will not observe the AMO before memory accesses preceding
+the AMO in this RISC-V hart. Setting both the <em>aq</em> and the <em>rl</em> bit on
+an AMO makes the sequence sequentially consistent, meaning that it
+cannot be reordered with earlier or later memory operations from the
+same hart.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The AMOs were designed to implement the C11 and C++11 memory models
+efficiently. Although the FENCE R, RW instruction suffices to implement
+the <em>acquire</em> operation and FENCE RW, W suffices to implement <em>release</em>,
+both imply additional unnecessary ordering as compared to AMOs with the
+corresponding <em>aq</em> or <em>rl</em> bit set.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>An example code sequence for a critical section guarded by a
+test-and-test-and-set spinlock is shown in
+Example <a href="#critical">Example 2</a>. Note the first AMO is marked <em>aq</em> to
+order the lock acquisition before the critical section, and the second
+AMO is marked <em>rl</em> to order the critical section before the lock
+relinquishment.</p>
+</div>
+<div style="page-break-after: always;"></div>
+<div id="critical" class="listingblock">
+<div class="title">Example 2. Sample code for mutual exclusion. <code>a0</code> contains the address of the lock.</div>
+<div class="content">
+<pre class="rouge highlight"><code data-lang="asm">        li           t0, 1        # Initialize swap value.
+    again:
+        lw           t1, (a0)     # Check if lock is held.
+        bnez         t1, again    # Retry if held.
+        amoswap.w.aq t1, t0, (a0) # Attempt to acquire lock.
+        bnez         t1, again    # Retry if held.
+        # ...
+        # Critical section.
+        # ...
+        amoswap.w.rl x0, x0, (a0) # Release lock by storing 0.</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We recommend the use of the AMO Swap idiom shown above for both lock
+acquire and release to simplify the implementation of speculative lock
+elision. (<a href="#Rajwar:2001:SLE">Rajwar &amp; Goodman&#44; 2001</a>)</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The instructions in the "A" extension can be used to provide sequentially
+consistent loads and stores, but this constrains hardware
+reordering of memory accesses more than necessary.
+A C++ sequentially consistent load can be implemented as
+an LR with <em>aq</em> set. However, the LR/SC eventual
+success guarantee may slow down concurrent loads from the same effective
+address. A sequentially consistent store can be implemented as an AMOSWAP
+that writes the old value to <code>x0</code> and has <em>rl</em> set. However the superfluous
+load may impose ordering constraints that are unnecessary for this use case.
+Specific compilation conventions may require both the <em>aq</em> and <em>rl</em>
+bits to be set in either or both the LR and AMOSWAP instructions.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

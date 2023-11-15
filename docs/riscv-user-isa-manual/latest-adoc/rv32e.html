@@ -1,0 +1,108 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/rv32e.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="rv32e">1. RV32E and RV64E Base Integer Instruction Sets, Version 2.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter describes a proposal for the RV32E and RV64E base integer
+instruction sets, designed for microcontrollers in embedded systems.
+RV32E and RV64E are reduced versions of RV32I and RV64I, respectively:
+the only change is to reduce the number of integer registers to 16. This
+chapter only outlines the differences between RV32E/RV64E and
+RV32I/RV64I, and so should be read after <a href="#rv32">[rv32]</a> and <a href="#rv64">[rv64]</a>.
+</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>RV32E was designed to provide an even smaller base core for embedded
+microcontrollers. There is also interest in RV64E for microcontrollers
+within large SoC designs, and to reduce context state for highly
+threaded 64-bit processors.</p>
+</div>
+<div class="paragraph">
+<p>Unless otherwise stated, standard extensions compatible with RV32I and
+RV64I are also compatible with RV32E and RV64E, respectively.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_rv32e_and_rv64e_programmers_model">1.1. RV32E and RV64E Programmers’ Model</h3>
+<div class="paragraph">
+<p>RV32E and RV64E reduce the integer register count to 16 general-purpose
+registers, (<code>x0-x15</code>), where <code>x0</code> is a dedicated zero register.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We have found that in the small RV32I core implementations, the upper 16
+registers consume around one quarter of the total area of the core
+excluding memories, thus their removal saves around 25% core area with a
+corresponding core power reduction.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_rv32e_and_rv64e_instruction_set_encoding">1.2. RV32E and RV64E Instruction Set Encoding</h3>
+<div class="paragraph">
+<p>
+RV32E and RV64E use the same instruction-set encoding as RV32I and RV64I
+respectively, except that only registers <code>x0-x15</code> are provided. All
+encodings specifying the other registers <code>x16-x31</code> are reserved.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The previous draft of this chapter made all encodings using the
+<code>x16-x31</code> registers available as custom. This version takes a more
+conservative approach, making these reserved so that they can be
+allocated between custom space or new standard encodings at a later
+date.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

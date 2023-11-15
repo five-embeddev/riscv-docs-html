@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/a.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="atomics"><span class="header-section-number">9</span> “A” Standard Extension for Atomic Instructions, Version 2.1</h1>
+<section id="atomics" data-number="1">
+<h1 data-number="9"><span class="header-section-number">9</span> “A” Standard Extension for Atomic Instructions, Version 2.1</h1>
 <p>The standard atomic-instruction extension, named “A”,
 contains instructions that atomically
 read-modify-write memory to support synchronization between multiple
@@ -34,7 +36,8 @@ appear to have finally settled on release consistency as the standard
 memory consistency model and so the RISC-V atomic support is built
 around this model.</p>
 </div>
-<h2 id="specifying-ordering-of-atomic-instructions"><span class="header-section-number">9.1</span> Specifying Ordering of Atomic Instructions</h2>
+<section id="specifying-ordering-of-atomic-instructions" data-number="1.1">
+<h2 data-number="9.1"><span class="header-section-number">9.1</span> Specifying Ordering of Atomic Instructions</h2>
 <p>The base RISC-V ISA has a relaxed memory model, with the FENCE
 instruction used to impose additional ordering constraints. The
 address space is divided by the execution environment into memory and
@@ -62,7 +65,9 @@ atomic memory operation is <span><em>sequentially consistent</em></span> and can
 observed to happen before any earlier memory operations or after any
 later memory operations in the same RISC-V hart and to the same
 address domain.</p>
-<h2 id="sec:lrsc"><span class="header-section-number">9.2</span> Load-Reserved/Store-Conditional Instructions</h2>
+</section>
+<section id="sec:lrsc" data-number="1.2">
+<h2 data-number="9.2"><span class="header-section-number">9.2</span> Load-Reserved/Store-Conditional Instructions</h2>
 <p><img src="a_00.svg" alt="image" /></p>
 <p>Complex atomic memory operations on a single memory word or doubleword are performed
 with the load-reserved (LR) and store-conditional (SC) instructions.
@@ -217,13 +222,15 @@ instruction unless the <span><em>rl</em></span> bit is also set. LR.<span><em>rl
 instructions are not guaranteed to provide any stronger ordering than those
 with both bits clear, but may result in lower performance.</p>
 <figure>
-<img src="a_01.svg" alt="Sample code for compare-and-swap function using LR/SC." id="cas" /><figcaption>Sample code for compare-and-swap function using LR/SC.<span label="cas"></span></figcaption>
+<img src="a_01.svg" id="cas" alt="" /><figcaption>Sample code for compare-and-swap function using LR/SC.</figcaption>
 </figure>
 <p>LR/SC can be used to construct lock-free data structures. An example
 using LR/SC to implement a compare-and-swap function is shown in
 Figure <a href="a.html#cas" data-reference-type="ref" data-reference="cas">1.1</a>. If inlined, compare-and-swap functionality need
 only take four instructions.</p>
-<h2 id="sec:lrscseq"><span class="header-section-number">9.3</span> Eventual Success of Store-Conditional Instructions</h2>
+</section>
+<section id="sec:lrscseq" data-number="1.3">
+<h2 data-number="9.3"><span class="header-section-number">9.3</span> Eventual Success of Store-Conditional Instructions</h2>
 <p>The standard A extension defines <span><em>constrained LR/SC loops</em></span>, which have
 the following properties:</p>
 <ul>
@@ -314,7 +321,9 @@ guarantee. However, the weaker livelock-freedom guarantee is sufficient to
 implement the C11 and C++11 languages, and is substantially easier to provide
 in some microarchitectural styles.</p>
 </div>
-<h2 id="sec:amo"><span class="header-section-number">9.4</span> Atomic Memory Operations</h2>
+</section>
+<section id="sec:amo" data-number="1.4">
+<h2 data-number="9.4"><span class="header-section-number">9.4</span> Atomic Memory Operations</h2>
 <p><img src="a_02.svg" alt="image" /></p>
 <p>The atomic memory operation (AMO) instructions perform
 read-modify-write operations for multiprocessor synchronization and
@@ -340,7 +349,7 @@ AMOs.</p>
 OR, bitwise XOR, and signed and unsigned integer maximum and minimum.
 Without ordering constraints, these AMOs can be used to implement
 parallel reduction operations, where typically the return value would
-be discarded by writing to <span>x0</span>.</p>
+be discarded by writing to <span><code>x0</code></span>.</p>
 <div class=commentary>
 <p>We provided fetch-and-op style atomic primitives as they scale to
 highly parallel systems better than LR/SC or CAS.
@@ -348,7 +357,7 @@ A simple microarchitecture can implement AMOs using the LR/SC primitives,
 provided the implementation can guarantee the AMO eventually completes.
 More complex implementations might also implement AMOs at memory
 controllers, and can optimize away fetching the original value when
-the destination is <span>x0</span>.</p>
+the destination is <span><code>x0</code></span>.</p>
 <p>The set of AMOs was chosen to support the C11/C++11 atomic memory
 operations efficiently, and also to support parallel reductions in
 memory. Another use of AMOs is to provide atomic updates to
@@ -378,7 +387,7 @@ first AMO is marked <span><em>aq</em></span> to order the lock acquisition befor
 critical section, and the second AMO is marked <span><em>rl</em></span> to order
 the critical section before the lock relinquishment.</p>
 <figure>
-<img src="a_03.svg" alt="Sample code for mutual exclusion. a0 contains the address of the lock." id="critical" /><figcaption>Sample code for mutual exclusion. <span>a0</span> contains the address of the lock.<span label="critical"></span></figcaption>
+<img src="a_03.svg" id="critical" alt="" /><figcaption>Sample code for mutual exclusion. <span><code>a0</code></span> contains the address of the lock.</figcaption>
 </figure>
 <div class=commentary>
 <p>We recommend the use of the AMO Swap idiom shown above for both lock
@@ -390,6 +399,8 @@ sequentially consistent loads and stores. A sequentially consistent load can
 be implemented as an LR with both <span><em>aq</em></span> and <span><em>rl</em></span> set. A sequentially
 consistent store can be implemented as an AMOSWAP that writes the old value to
 x0 and has both <span><em>aq</em></span> and <span><em>rl</em></span> set.</p>
+</section>
+</section>
 
 </body>
 </html>

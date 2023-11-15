@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,35 +13,36 @@
 <tr><th>Git Revision</th><td> 20181106-Base-Ratification</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/counters.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="counters"><span class="header-section-number">11</span> Counters</h1>
+<section id="counters" data-number="1">
+<h1 data-number="11"><span class="header-section-number">11</span> Counters</h1>
 <p>RISC-V ISAs provide a set of up to 32<span class="math inline">×</span>64-bit performance counters and
 timers that are accessible via unprivileged XLEN read-only CSR
-registers <span>0xC00</span>–<span>0xC1F</span> (with the upper 32 bits accessed
-via CSR registers <span>0xC80</span>–<span>0xC9F</span> on RV32). The first three
+registers <span><code>0xC00</code></span>–<span><code>0xC1F</code></span> (with the upper 32 bits accessed
+via CSR registers <span><code>0xC80</code></span>–<span><code>0xC9F</code></span> on RV32). The first three
 of these (CYCLE, TIME, and INSTRET) have dedicated functions (cycle
 count, real-time clock, and instructions-retired respectively), while
 the remaining counters, if implemented, provide programmable event
 counting.</p>
-<h2 id="base-counters-and-timers"><span class="header-section-number">11.1</span> Base Counters and Timers</h2>
+<section id="base-counters-and-timers" data-number="1.1">
+<h2 data-number="11.1"><span class="header-section-number">11.1</span> Base Counters and Timers</h2>
 <p><img src="counters_00.svg" alt="image" /></p>
 <p>RV32I provides a number of 64-bit read-only user-level counters, which
 are mapped into the 12-bit CSR address space and accessed in 32-bit
 pieces using CSRRS instructions. In RV64I, the CSR instructions can
 manipulate 64-bit CSRs. In particular, the RDCYCLE, RDTIME, and
-RDINSTRET pseudoinstructions read the full 64 bits of the <span>cycle</span>,
-<span>time</span>, and <span>instret</span> counters. Hence, the RDCYCLEH, RDTIMEH,
+RDINSTRET pseudoinstructions read the full 64 bits of the <span><code>cycle</code></span>,
+<span><code>time</code></span>, and <span><code>instret</code></span> counters. Hence, the RDCYCLEH, RDTIMEH,
 and RDINSTRETH instructions are not required in RV64I.</p>
 <div class=commentary>
 <p>Some execution environments might prohibit access to counters to
 impede timing side-channel attacks.</p>
 </div>
-<p>The RDCYCLE pseudoinstruction reads the low XLEN bits of the <span>
-cycle</span> CSR which holds a count of the number of clock cycles
+<p>The RDCYCLE pseudoinstruction reads the low XLEN bits of the <span><code> cycle</code></span> CSR which holds a count of the number of clock cycles
 executed by the processor core on which the hart is running from an
 arbitrary start time in the past. RDCYCLEH is an RV32I
 instruction that reads bits 63–32 of the same cycle counter. The
@@ -95,8 +97,7 @@ standard. The intent of RDCYCLE was primarily performance
 monitoring/tuning, and the specification was written with that goal in
 mind.</p>
 </div>
-<p>The RDTIME pseudoinstruction reads the low XLEN bits of the <span>
-time</span> CSR, which counts wall-clock real time that has passed from an
+<p>The RDTIME pseudoinstruction reads the low XLEN bits of the <span><code> time</code></span> CSR, which counts wall-clock real time that has passed from an
 arbitrary start time in the past. RDTIMEH is an RV32I-only instruction
 that reads bits 63–32 of the same real-time counter. The underlying 64-bit
 counter should never overflow in practice. The execution environment
@@ -112,17 +113,16 @@ implementation of RDTIME, but in this case, platforms should implement
 the RDTIME instruction as an alias for RDCYCLE to make code more
 portable, rather than using RDCYCLE to measure wall-clock time.</p>
 </div>
-<p>The RDINSTRET pseudoinstruction reads the low XLEN bits of the <span>
-instret</span> CSR, which counts the number of instructions retired by
+<p>The RDINSTRET pseudoinstruction reads the low XLEN bits of the <span><code> instret</code></span> CSR, which counts the number of instructions retired by
 this hart from some arbitrary start point in the past. RDINSTRETH is
 an RV32I-only instruction that reads bits 63–32 of the same
 instruction counter. The underlying 64-bit counter should never
 overflow in practice.</p>
 <p>The following code sequence will read a valid 64-bit cycle counter value into
-<span>x3</span>:<span>x2</span>, even if the counter overflows between reading its upper
+<span><code>x3</code></span>:<span><code>x2</code></span>, even if the counter overflows between reading its upper
 and lower halves.</p>
 <figure>
-<img src="counters_01.svg" alt="Sample code for reading the 64-bit cycle counter in RV32." id="rdcycle" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.<span label="rdcycle"></span></figcaption>
+<img src="counters_01.svg" id="rdcycle" alt="" /><figcaption>Sample code for reading the 64-bit cycle counter in RV32.</figcaption>
 </figure>
 <div class=commentary>
 <p>We recommend provision of these basic counters in implementations
@@ -149,12 +149,13 @@ adding output latches to allow a user thread to snapshot the counter
 values atomically, but this would increase the size of the user
 context, especially for implementations with a richer set of counters.</p>
 </div>
-<h2 id="hardware-performance-counters"><span class="header-section-number">11.2</span> Hardware Performance Counters</h2>
+</section>
+<section id="hardware-performance-counters" data-number="1.2">
+<h2 data-number="11.2"><span class="header-section-number">11.2</span> Hardware Performance Counters</h2>
 <p>There is CSR space allocated for 29 additional unprivileged 64-bit
-hardware performance counters, <span>hpmcounter3</span>–<span>hpmcounter31</span>.
+hardware performance counters, <span><code>hpmcounter3</code></span>–<span><code>hpmcounter31</code></span>.
 For RV32, the upper 32 bits of these performance counters is
-accessible via additional CSRs <span>hpmcounter3h</span>–<span>
-hpmcounter31h</span>. These counters count platform-specific events and
+accessible via additional CSRs <span><code>hpmcounter3h</code></span>–<span><code> hpmcounter31h</code></span>. These counters count platform-specific events and
 are configured via additional privileged registers. The number and
 width of these additional counters, and the set of events they count
 is platform-specific.</p>
@@ -167,6 +168,8 @@ ISA-level metrics, such as the number of floating-point instructions
 executed for example, and possibly a few common microarchitectural
 metrics, such as “L1 instruction cache misses”.</p>
 </div>
+</section>
+</section>
 
 </body>
 </html>

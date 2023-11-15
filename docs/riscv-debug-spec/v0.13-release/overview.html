@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,21 +8,22 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>overview.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="overview"><span class="header-section-number">3</span> System Overview</h1>
+<section id="overview" data-number="1">
+<h1 data-number="3"><span class="header-section-number">3</span> System Overview</h1>
 <p>Figure <a href="overview.html#fig:overview" data-reference-type="ref" data-reference="fig:overview">1.1</a> shows the main components of External Debug Support.
 Blocks shown in dotted lines are optional.</p>
 <figure>
-<img src="overview_00.svg" alt="RISC-V Debug System Overview" id="fig:overview" /><figcaption>RISC-V Debug System Overview<span label="fig:overview"></span></figcaption>
+<img src="overview_00.svg" id="fig:overview" alt="" /><figcaption>RISC-V Debug System Overview</figcaption>
 </figure>
 <p>The user interacts with the Debug Host (e.g. laptop), which is running a
 debugger (e.g. gdb). The debugger communicates with a Debug Translator (e.g. OpenOCD, which may include a hardware driver) to communicate with Debug
@@ -43,6 +45,7 @@ access.</p>
 <p>Each RISC-V hart may implement a Trigger Module. When trigger conditions
 are met, harts will halt and inform the debug module that they have
 halted.</p>
+</section>
 
 </body>
 </html>

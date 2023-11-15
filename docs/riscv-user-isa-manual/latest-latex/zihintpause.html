@@ -1,0 +1,67 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> 20191214-</td></tr>
+<tr><th>Spec Release Date</th><td> December 2019</td></tr>
+<tr><th>Git Revision</th><td> isa-449cd0c</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/zihintpause.tex</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+
+<section id="chap:zihintpause" data-number="1">
+<h1 data-number="4"><span class="header-section-number">4</span> “Zihintpause” Pause Hint, Version 2.0</h1>
+<p>The PAUSE instruction is a HINT that indicates the current hart’s rate of
+instruction retirement should be temporarily reduced or paused. The duration of its
+effect must be bounded and may be zero.</p>
+<div class=commentary>
+<p>Software can use the PAUSE instruction to reduce energy consumption while
+executing spin-wait code sequences. Multithreaded cores might temporarily
+relinquish execution resources to other harts when PAUSE is executed.
+It is recommended that a PAUSE instruction generally be included in the code
+sequence for a spin-wait loop.</p>
+<p>A future extension might add primitives similar to the x86 MONITOR/MWAIT
+instructions, which provide a more efficient mechanism to wait on writes to
+a specific memory location.
+However, these instructions would not supplant PAUSE.
+PAUSE is more appropriate when polling for non-memory events, when polling for
+multiple events, or when software does not know precisely what events it is
+polling for.</p>
+<p>The duration of a PAUSE instruction’s effect may vary significantly within and
+among implementations.
+In typical implementations this duration should be much less than the time to
+perform a context switch, probably more on the rough order of an on-chip cache
+miss latency or a cacheless access to main memory.</p>
+<p>A series of PAUSE instructions can be used to create a cumulative delay loosely
+proportional to the number of PAUSE instructions.
+In spin-wait loops in portable code, however, only one PAUSE instruction should
+be used before re-evaluating loop conditions, else the hart might stall longer
+than optimal on some implementations, degrading system performance.</p>
+</div>
+<p>PAUSE is encoded as a FENCE instruction with <span><em>pred</em></span>=W, <span><em>succ</em></span>=0,
+<span><em>fm</em></span>=0, <span><em>rd</em></span>=<span><code>x0</code></span>, and <span><em>rs1</em></span>=<span><code>x0</code></span>.</p>
+<div class=commentary>
+<p>PAUSE is encoded as a hint within the FENCE opcode because some
+implementations are expected to deliberately stall the PAUSE instruction until outstanding
+memory transactions have completed.
+Because the successor set is null, however, PAUSE does not <span><em>mandate</em></span> any
+particular memory ordering—hence, it truly is a HINT.</p>
+<p>Like other FENCE instructions, PAUSE cannot be used within LR/SC sequences
+without voiding the forward-progress guarantee.</p>
+<p>The choice of a predecessor set of W is arbitrary, since the successor set is
+null.
+Other HINTs similar to PAUSE might be encoded with other predecessor sets.</p>
+</div>
+</section>
+
+</body>
+</html>

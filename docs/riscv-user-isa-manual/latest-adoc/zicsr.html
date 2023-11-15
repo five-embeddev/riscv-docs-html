@@ -1,0 +1,375 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/zicsr.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="csrinsts">1. "Zicsr", Control and Status Register (CSR) Instructions, Version 2.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>RISC-V defines a separate address space of 4096 Control and Status
+registers associated with each hart. This chapter defines the full set
+of CSR instructions that operate on these CSRs.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>While CSRs are primarily used by the privileged architecture, there are
+several uses in unprivileged code including for counters and timers, and
+for floating-point status.</p>
+</div>
+<div class="paragraph">
+<p>The counters and timers are no longer considered mandatory parts of the
+standard base ISAs, and so the CSR instructions required to access them
+have been moved out of <a href="#rv32">[rv32]</a> into this separate
+chapter.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_csr_instructions">1.1. CSR Instructions</h3>
+<div class="paragraph">
+<p>All CSR instructions atomically read-modify-write a single CSR, whose
+CSR specifier is encoded in the 12-bit <em>csr</em> field of the instruction
+held in bits 31-20. The immediate forms use a 5-bit zero-extended
+immediate encoded in the <em>rs1</em> field.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nMTU0JyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSd4TWlkWU1pZCBtZWV0JyB2aWV3Qm94PScwIDAgODAwIDE1NCcgd2lkdGg9JzgwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxNCcgZm9udC13ZWlnaHQ9J25vcm1hbCcgdGV4dC1hbmNob3I9J21pZGRsZScgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMC41LDAuNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQsMjEpJz48ZyBzdHJva2U9J2JsYWNrJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS13aWR0aD0nMSc+PGxpbmUgeDI9Jzc5MScvPjxsaW5lIHkyPSczMScvPjxsaW5lIHgyPSc3OTEnIHkxPSczMScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc5MScgeDI9Jzc5MScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTI9JzMnLz48bGluZSB4MT0nNzY2JyB4Mj0nNzY2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkyPSczJy8+PGxpbmUgeDE9Jzc0MicgeDI9Jzc0MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5Mj0nMycvPjxsaW5lIHgxPSc3MTcnIHgyPSc3MTcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTI9JzMnLz48bGluZSB4MT0nNjkyJyB4Mj0nNjkyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkyPSczJy8+PGxpbmUgeDE9JzY2NycgeDI9JzY2NycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5Mj0nMycvPjxsaW5lIHgxPSc2NDMnIHgyPSc2NDMnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzYxOCcgeDI9JzYxOCcgeTI9JzMxJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTI9JzMnLz48bGluZSB4MT0nNTkzJyB4Mj0nNTkzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkyPSczJy8+PGxpbmUgeDE9JzU2OScgeDI9JzU2OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5Mj0nMycvPjxsaW5lIHgxPSc1NDQnIHgyPSc1NDQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTI9JzMnLz48bGluZSB4MT0nNTE5JyB4Mj0nNTE5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OTQnIHgyPSc0OTQnIHkyPSczMScvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkyPSczJy8+PGxpbmUgeDE9JzQ3MCcgeDI9JzQ3MCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5Mj0nMycvPjxsaW5lIHgxPSc0NDUnIHgyPSc0NDUnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQyMCcgeDI9JzQyMCcgeTI9JzMxJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTI9JzMnLz48bGluZSB4MT0nMzk2JyB4Mj0nMzk2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkyPSczJy8+PGxpbmUgeDE9JzM3MScgeDI9JzM3MScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5Mj0nMycvPjxsaW5lIHgxPSczNDYnIHgyPSczNDYnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTI9JzMnLz48bGluZSB4MT0nMzIxJyB4Mj0nMzIxJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyOTcnIHgyPScyOTcnIHkyPSczMScvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkyPSczJy8+PGxpbmUgeDE9JzI3MicgeDI9JzI3MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5Mj0nMycvPjxsaW5lIHgxPScyNDcnIHgyPScyNDcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTI9JzMnLz48bGluZSB4MT0nMjIyJyB4Mj0nMjIyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkyPSczJy8+PGxpbmUgeDE9JzE5OCcgeDI9JzE5OCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTczJyB4Mj0nMTczJyB5Mj0nMycvPjxsaW5lIHgxPScxNzMnIHgyPScxNzMnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczJy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTI9JzMnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzMnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzMnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTI9JzMnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTE9JzMxJyB5Mj0nMjgnLz48L2c+PGc+PGc+PHJlY3QgZmllbGQ9J29wY29kZScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxNzMnIHg9JzYxOCcvPjxyZWN0IGZpZWxkPSdyZCcgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzQ5NCcvPjxyZWN0IGZpZWxkPSdmdW5jdDMnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdjc3InIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScyOTcnLz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsLTExKSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzY2KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjE4KSc+PHRleHQgeT0nNic+NjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTkzKSc+PHRleHQgeT0nNic+NzwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDk0KSc+PHRleHQgeT0nNic+MTE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ3MCknPjx0ZXh0IHk9JzYnPjEyPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0MjApJz48dGV4dCB5PSc2Jz4xNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzk2KSc+PHRleHQgeT0nNic+MTU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI5NyknPjx0ZXh0IHk9JzYnPjE5PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNzIpJz48dGV4dCB5PSc2Jz4yMDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjMxPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMTUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+b3Bjb2RlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZnVuY3QzPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPmNzcjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMzkpJz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+U1lTVEVNPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TWVNURU08L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPlNZU1RFTTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+U1lTVEVNPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5Miw3MCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TWVNURU08L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDg0KSc+PHRleHQgeT0nNic+PHRzcGFuPlNZU1RFTTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPjM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDU2KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDcwKSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDg0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5DU1JSVzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+Q1NSUlM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPkNTUlJDPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5DU1JSV0k8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDcwKSc+PHRleHQgeT0nNic+PHRzcGFuPkNTUlJTSTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsODQpJz48dGV4dCB5PSc2Jz48dHNwYW4+Q1NSUkNJPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+c291cmNlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zb3VyY2U8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPnNvdXJjZTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+dWltbVs0OjBdPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0Niw3MCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj51aW1tWzQ6MF08L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDg0KSc+PHRleHQgeT0nNic+PHRzcGFuPnVpbW1bNDowXTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPjEyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zb3VyY2UvZGVzdDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+c291cmNlL2Rlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPnNvdXJjZS9kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zb3VyY2UvZGVzdDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYsNzApJz48dGV4dCB5PSc2Jz48dHNwYW4+c291cmNlL2Rlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDg0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNvdXJjZS9kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="154">
+</div>
+</div>
+<div class="paragraph">
+<p>The CSRRW (Atomic Read/Write CSR) instruction atomically swaps values in
+the CSRs and integer registers. CSRRW reads the old value of the CSR,
+zero-extends the value to XLEN bits, then writes it to integer register
+<em>rd</em>. The initial value in <em>rs1</em> is written to the CSR. If <em>rd</em>=<code>x0</code>,
+then the instruction shall not read the CSR and shall not cause any of
+the side effects that might occur on a CSR read.</p>
+</div>
+<div class="paragraph">
+<p>The CSRRS (Atomic Read and Set Bits in CSR) instruction reads the value
+of the CSR, zero-extends the value to XLEN bits, and writes it to
+integer register <em>rd</em>. The initial value in integer register <em>rs1</em> is
+treated as a bit mask that specifies bit positions to be set in the CSR.
+Any bit that is high in <em>rs1</em> will cause the corresponding bit to be set
+in the CSR, if that CSR bit is writable. Other bits in the CSR are not
+explicitly written.</p>
+</div>
+<div class="paragraph">
+<p>The CSRRC (Atomic Read and Clear Bits in CSR) instruction reads the
+value of the CSR, zero-extends the value to XLEN bits, and writes it to
+integer register <em>rd</em>. The initial value in integer register <em>rs1</em> is
+treated as a bit mask that specifies bit positions to be cleared in the
+CSR. Any bit that is high in <em>rs1</em> will cause the corresponding bit to
+be cleared in the CSR, if that CSR bit is writable. Other bits in the
+CSR are not explicitly written.</p>
+</div>
+<div class="paragraph">
+<p>For both CSRRS and CSRRC, if <em>rs1</em>=<code>x0</code>, then the instruction will not
+write to the CSR at all, and so shall not cause any of the side effects
+that might otherwise occur on a CSR write, nor raise illegal-instruction
+exceptions on accesses to read-only CSRs. Both CSRRS and CSRRC always
+read the addressed CSR and cause any read side effects regardless of
+<em>rs1</em> and <em>rd</em> fields. Note that if <em>rs1</em> specifies a register holding a
+zero value other than <code>x0</code>, the instruction will still attempt to write
+the unmodified value back to the CSR and will cause any attendant side
+effects. A CSRRW with <em>rs1</em>=<code>x0</code> will attempt to write zero to the
+destination CSR.</p>
+</div>
+<div class="paragraph">
+<p>The CSRRWI, CSRRSI, and CSRRCI variants are similar to CSRRW, CSRRS, and
+CSRRC respectively, except they update the CSR using an XLEN-bit value
+obtained by zero-extending a 5-bit unsigned immediate (uimm[4:0]) field
+encoded in the <em>rs1</em> field instead of a value from an integer register.
+For CSRRSI and CSRRCI, if the uimm[4:0] field is zero, then these
+instructions will not write to the CSR, and shall not cause any of the
+side effects that might otherwise occur on a CSR write, nor raise
+illegal-instruction exceptions on accesses to read-only CSRs. For
+CSRRWI, if <em>rd</em>=<code>x0</code>, then the instruction shall not read the CSR and
+shall not cause any of the side effects that might occur on a CSR read.
+Both CSRRSI and CSRRCI will always read the CSR and cause any read side
+effects regardless of <em>rd</em> and <em>rs1</em> fields.</p>
+</div>
+<table id="csrsideeffects" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 1. Conditions determining whether a CSR instruction reads or writes the specified CSR.</caption>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="5"><strong>Register operand</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instruction</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em>rd</em> is <code>x0</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em>rs1</em> is <code>x0</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Reads CSR</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Writes CSR</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRW</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRW</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRS/CSRRC</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRS/CSRRC</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="5"><p class="tableblock"><strong>Immediate operand</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instruction</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em>rd</em> is <code>x0</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em>uimm</em>\(=\)0</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Reads CSR</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Writes
+CSR</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRWI</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRWI</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRSI/CSRRCI</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CSRRSI/CSRRCI</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">-</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><a href="#csrsideeffects">Table 1</a> summarizes the behavior of the CSR
+instructions with respect to whether they read and/or write the CSR.</p>
+</div>
+<div class="paragraph">
+<p>For any event or consequence that occurs due to a CSR having a
+particular value, if a write to the CSR gives it that value, the
+resulting event or consequence is said to be an <em>indirect effect</em> of the
+write. Indirect effects of a CSR write are not considered by the RISC-V
+ISA to be side effects of that write.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>An example of side effects for CSR accesses would be if reading from a
+specific CSR causes a light bulb to turn on, while writing an odd value
+to the same CSR causes the light to turn off. Assume writing an even
+value has no effect. In this case, both the read and write have side
+effects controlling whether the bulb is lit, as this condition is not
+determined solely from the CSR value. (Note that after writing an odd
+value to the CSR to turn off the light, then reading to turn the light
+on, writing again the same odd value causes the light to turn off again.
+Hence, on the last write, it is not a change in the CSR value that turns
+off the light.)</p>
+</div>
+<div class="paragraph">
+<p>On the other hand, if a bulb is rigged to light whenever the value of a
+particular CSR is odd, then turning the light on and off is not
+considered a side effect of writing to the CSR but merely an indirect
+effect of such writes.</p>
+</div>
+<div class="paragraph">
+<p>More concretely, the RISC-V privileged architecture defined in Volume II
+specifies that certain combinations of CSR values cause a trap to occur.
+When an explicit write to a CSR creates the conditions that trigger the
+trap, the trap is not considered a side effect of the write but merely
+an indirect effect.</p>
+</div>
+<div class="paragraph">
+<p>Standard CSRs do not have any side effects on reads. Standard CSRs may
+have side effects on writes. Custom extensions might add CSRs for which
+accesses have side effects on either reads or writes.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Some CSRs, such as the instructions-retired counter, <code>instret</code>, may be
+modified as side effects of instruction execution. In these cases, if a
+CSR access instruction reads a CSR, it reads the value prior to the
+execution of the instruction. If a CSR access instruction writes such a
+CSR, the write is done instead of the increment. In particular, a value
+written to <code>instret</code> by one instruction will be the value read by the
+following instruction.</p>
+</div>
+<div class="paragraph">
+<p>The assembler pseudoinstruction to read a CSR, CSRR <em>rd, csr</em>, is
+encoded as CSRRS <em>rd, csr, x0</em>. The assembler pseudoinstruction to write
+a CSR, CSRW <em>csr, rs1</em>, is encoded as CSRRW <em>x0, csr, rs1</em>, while CSRWI
+<em>csr, uimm</em>, is encoded as CSRRWI <em>x0, csr, uimm</em>.</p>
+</div>
+<div class="paragraph">
+<p>Further assembler pseudoinstructions are defined to set and clear bits
+in the CSR when the old value is not required: CSRS/CSRC <em>csr, rs1</em>;
+CSRSI/CSRCI <em>csr, uimm</em>.</p>
+</div>
+<div class="sect3">
+<h4 id="_csr_access_ordering">1.1.1. CSR Access Ordering</h4>
+<div class="paragraph">
+<p>Each RISC-V hart normally observes its own CSR accesses, including its
+implicit CSR accesses, as performed in program order. In particular,
+unless specified otherwise, a CSR access is performed after the
+execution of any prior instructions in program order whose behavior
+modifies or is modified by the CSR state and before the execution of any
+subsequent instructions in program order whose behavior modifies or is
+modified by the CSR state. Furthermore, an explicit CSR read returns the
+CSR state before the execution of the instruction, while an explicit CSR
+write suppresses and overrides any implicit writes or modifications to
+the same CSR by the same instruction.</p>
+</div>
+<div class="paragraph">
+<p>Likewise, any side effects from an explicit CSR access are normally
+observed to occur synchronously in program order. Unless specified
+otherwise, the full consequences of any such side effects are observable
+by the very next instruction, and no consequences may be observed
+out-of-order by preceding instructions. (Note the distinction made
+earlier between side effects and indirect effects of CSR writes.)</p>
+</div>
+<div class="paragraph">
+<p>For the RVWMO memory consistency model (<a href="#memorymodel">[memorymodel]</a>), CSR accesses are weakly
+ordered by default, so other harts or devices may observe CSR accesses
+in an order different from program order. In addition, CSR accesses are
+not ordered with respect to explicit memory accesses, unless a CSR
+access modifies the execution behavior of the instruction that performs
+the explicit memory access or unless a CSR access and an explicit memory
+access are ordered by either the syntactic dependencies defined by the
+memory model or the ordering requirements defined by the Memory-Ordering
+PMAs section in Volume II of this manual. To enforce ordering in all
+other cases, software should execute a FENCE instruction between the
+relevant accesses. For the purposes of the FENCE instruction, CSR read
+accesses are classified as device input (I), and CSR write accesses are
+classified as device output (O).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Informally, the CSR space acts as a weakly ordered memory-mapped I/O
+region, as defined by the Memory-Ordering PMAs section in Volume II of
+this manual. As a result, the order of CSR accesses with respect to all
+other accesses is constrained by the same mechanisms that constrain the
+order of memory-mapped I/O accesses to such a region.</p>
+</div>
+<div class="paragraph">
+<p>These CSR-ordering constraints are imposed to support ordering main
+memory and memory-mapped I/O accesses with respect to CSR accesses that
+are visible to, or affected by, devices or other harts. Examples include
+the <code>time</code>, <code>cycle</code>, and <code>mcycle</code> CSRs, in addition to CSRs that reflect
+pending interrupts, like <code>mip</code> and <code>sip</code>. Note that implicit reads of
+such CSRs (e.g., taking an interrupt because of a change in <code>mip</code>) are
+also ordered as device input.</p>
+</div>
+<div class="paragraph">
+<p>Most CSRs (including, e.g., the <code>fcsr</code>) are not visible to other harts;
+their accesses can be freely reordered in the global memory order with
+respect to FENCE instructions without violating this specification.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The hardware platform may define that accesses to certain CSRs are
+strongly ordered, as defined by the Memory-Ordering PMAs section in
+Volume II of this manual. Accesses to strongly ordered CSRs have
+stronger ordering constraints with respect to accesses to both weakly
+ordered CSRs and accesses to memory-mapped I/O regions.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The rules for the reordering of CSR accesses in the global memory order
+should probably be moved to <a href="#memorymodel">[memorymodel]</a> concerning the RVWMO memory consistency model.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/zifencei.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="chap:zifencei"><span class="header-section-number">3</span> “Zifencei” Instruction-Fetch Fence, Version 2.0</h1>
+<section id="chap:zifencei" data-number="1">
+<h1 data-number="3"><span class="header-section-number">3</span> “Zifencei” Instruction-Fetch Fence, Version 2.0</h1>
 <p>This chapter defines the “Zifencei” extension, which includes the
 FENCE.I instruction that provides explicit synchronization between
 writes to instruction memory and instruction fetches on the same hart.
@@ -95,6 +97,7 @@ application thread will not be migrated to a different hart. The EEI
 can provide mechanisms for efficient multiprocessor instruction-stream
 synchronization.</p>
 </div>
+</section>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>The RISC-V Instruction Set Manual, Volume II: Privileged Architecture</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/cfgstr.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="cfgstr"><span class="header-section-number">6</span> Machine Configuration Description</h1>
+<section id="cfgstr" data-number="1">
+<h1 data-number="6"><span class="header-section-number">6</span> Machine Configuration Description</h1>
 <div class=commentary>
 <p>To reduce porting effort for OS boots, we have reverted back to
 using Device Trees to communicate platform information to the
@@ -35,7 +37,8 @@ We call this low-level embedded information a configuration
 description. We define here a standard mechanism to encode and locate
 the configuration information, and to determine the format of the
 configuration information.</p>
-<h2 id="configuration-string-search-procedure"><span class="header-section-number">6.1</span> Configuration String Search Procedure</h2>
+<section id="configuration-string-search-procedure" data-number="1.1">
+<h2 data-number="6.1"><span class="header-section-number">6.1</span> Configuration String Search Procedure</h2>
 <p>The platform must describe how to locate a pointer to find this
 string, for example, by specifying a fixed physical address at which
 the pointer resides. To support a wide variety of platforms,
@@ -47,7 +50,7 @@ specified by the platform.</p>
 initial memory address at which the search for configuration string
 begins.</p>
 <p>The configuration string cannot begin with a padding byte, where a
-padding byte is defined to contain either <span>0x0</span> or <span>0xff</span>, but
+padding byte is defined to contain either <span><code>0x0</code></span> or <span><code>0xff</code></span>, but
 can be preceded by up to 63 padding bytes that are ignored. If 64
 padding bytes are encountered, then the search terminates without
 finding a config string.</p>
@@ -63,13 +66,15 @@ support alignment of binary data structures.</p>
 configuration information. For example, configuration information in
 Device Tree String format would begin with a “/dts-v1/”.
 Configuration information in Flattened Device Tree format would begin
-with the magic number <span>0xd00dfeed</span>. Configuration information in
+with the magic number <span><code>0xd00dfeed</code></span>. Configuration information in
 the config string format would begin with “/cs-v1/”.
 <div class=commentary>
 <p>Config string is a new format that is backwards-compatible with
 device tree string (as far as DTS specs exist) but can include
 additional configuration information in other memory regions.</p>
 </div>
+</section>
+</section>
 
 </body>
 </html>

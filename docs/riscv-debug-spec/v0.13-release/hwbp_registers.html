@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,12 +8,12 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>hwbp_registers.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -21,14 +22,14 @@
 prevent untrusted user code from causing entry into Debug Mode without the
 OS’s permission.</p>
 <p>In this section XLEN means MXLEN when in M-mode, and DXLEN when in Debug Mode.
-Note that this makes several of the fields in <span><span>tdata1</span></span>move around based
+Note that this makes several of the fields in <span><code>tdata1</code></span>move around based
 on the current execution mode and value of MXLEN.</p>
 <p><span>|r|L|</span>
 Value &amp; Description<br />
-0 &amp; Raise a breakpoint exception. (Used when software wants to use the
+&amp; Raise a breakpoint exception. (Used when software wants to use the
 trigger module without an external debugger attached.)<br />
-1 &amp; Enter Debug Mode. (Only supported when the trigger’s is 1.)<br />
-2 – 5 &amp; Reserved for use by the trace specification.<br />
+&amp; Enter Debug Mode. (Only supported when the trigger’s <span><code>dmode</code></span>is 1.)<br />
+– 5 &amp; Reserved for use by the trace specification.<br />
 other &amp; Reserved for future use.<br />
 </p>
 <table>
@@ -42,77 +43,77 @@ other &amp; Reserved for future use.<br />
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0x7a0</td>
-<td style="text-align: left;">Trigger Select (<span>tselect</span>)</td>
+<td style="text-align: left;">Trigger Select (<span><code>tselect</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7a1</td>
-<td style="text-align: left;">Trigger Data 1 (<span>tdata1</span>)</td>
+<td style="text-align: left;">Trigger Data 1 (<span><code>tdata1</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7a1</td>
-<td style="text-align: left;">Match Control (<span>mcontrol</span>)</td>
+<td style="text-align: left;">Match Control (<span><code>mcontrol</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7a1</td>
-<td style="text-align: left;">Instruction Count (<span>icount</span>)</td>
+<td style="text-align: left;">Instruction Count (<span><code>icount</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7a1</td>
-<td style="text-align: left;">Interrupt Trigger (<span>itrigger</span>)</td>
+<td style="text-align: left;">Interrupt Trigger (<span><code>itrigger</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7a1</td>
-<td style="text-align: left;">Exception Trigger (<span>etrigger</span>)</td>
+<td style="text-align: left;">Exception Trigger (<span><code>etrigger</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7a2</td>
-<td style="text-align: left;">Trigger Data 2 (<span>tdata2</span>)</td>
+<td style="text-align: left;">Trigger Data 2 (<span><code>tdata2</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7a3</td>
-<td style="text-align: left;">Trigger Data 3 (<span>tdata3</span>)</td>
+<td style="text-align: left;">Trigger Data 3 (<span><code>tdata3</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7a3</td>
-<td style="text-align: left;">Trigger Extra (RV32) (<span>textra32</span>)</td>
+<td style="text-align: left;">Trigger Extra (RV32) (<span><code>textra32</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7a3</td>
-<td style="text-align: left;">Trigger Extra (RV64) (<span>textra64</span>)</td>
+<td style="text-align: left;">Trigger Extra (RV64) (<span><code>textra64</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7a4</td>
-<td style="text-align: left;">Trigger Info (<span>tinfo</span>)</td>
+<td style="text-align: left;">Trigger Info (<span><code>tinfo</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7a5</td>
-<td style="text-align: left;">Trigger Control (<span>tcontrol</span>)</td>
+<td style="text-align: left;">Trigger Control (<span><code>tcontrol</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7a8</td>
-<td style="text-align: left;">Machine Context (<span>mcontext</span>)</td>
+<td style="text-align: left;">Machine Context (<span><code>mcontext</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7aa</td>
-<td style="text-align: left;">Supervisor Context (<span>scontext</span>)</td>
+<td style="text-align: left;">Supervisor Context (<span><code>scontext</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<h2 id="trigger-select-tselect-at-0x7a0">Trigger Select (<span>tselect</span>, at 0x7a0)</h2>
+<h2 id="trigger-select-tselect-at-0x7a0">Trigger Select (<span><code>tselect</code></span>, at 0x7a0)</h2>
 <p><span id="tselect" label="tselect">[tselect]</span>
 This register determines which trigger is accessible through the other
 trigger registers. The set of accessible triggers must start at 0, and
@@ -120,13 +121,14 @@ be contiguous.</p>
 <p>Writes of values greater than or equal to the number of supported
 triggers may result in a different value in this register than what was
 written. To verify that what they wrote is a valid index, debuggers can
-read back the value and check that <span><span>tselect</span></span>holds what they wrote.</p>
+read back the value and check that <span><code>tselect</code></span>holds what they wrote.</p>
 <p>Since triggers can be used both by Debug Mode and M-mode, the debugger
 must restore this register if it modifies it.</p>
 <p><img src="hwbp_registers_00.svg" alt="image" /></p>
-<h2 id="trigger-data-1-tdata1-at-0x7a1">Trigger Data 1 (<span>tdata1</span>, at 0x7a1)</h2>
+<h2 id="trigger-data-1-tdata1-at-0x7a1">Trigger Data 1 (<span><code>tdata1</code></span>, at 0x7a1)</h2>
 <p><span id="tdata1" label="tdata1">[tdata1]</span></p>
 <p><img src="hwbp_registers_01.svg" alt="image" /></p>
+<div id="data">
 <table>
 <thead>
 <tr class="header">
@@ -146,17 +148,17 @@ must restore this register if it modifies it.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="type" label="type">[type]</span>
 |type|</td>
-<td style="text-align: left;"><p>0: There is no trigger at this <span><span>tselect</span></span>.</p>
+<td style="text-align: left;"><p>0: There is no trigger at this <span><code>tselect</code></span>.</p>
 <p>1: The trigger is a legacy SiFive address match trigger. These
 should not be implemented and aren’t further documented here.</p>
 <p>2: The trigger is an address/data match trigger. The remaining bits
-in this register act as described in <span><span>mcontrol</span></span>.</p>
+in this register act as described in <span><code>mcontrol</code></span>.</p>
 <p>3: The trigger is an instruction count trigger. The remaining bits
-in this register act as described in <span><span>icount</span></span>.</p>
+in this register act as described in <span><code>icount</code></span>.</p>
 <p>4: The trigger is an interrupt trigger. The remaining bits
-in this register act as described in <span><span>itrigger</span></span>.</p>
+in this register act as described in <span><code>itrigger</code></span>.</p>
 <p>5: The trigger is an exception trigger. The remaining bits
-in this register act as described in <span><span>etrigger</span></span>.</p>
+in this register act as described in <span><code>etrigger</code></span>.</p>
 <p>15: This trigger exists (so enumeration shouldn’t terminate), but
 is not currently available.</p>
 <p>Other values are reserved for future use.</p></td>
@@ -166,10 +168,10 @@ is not currently available.</p>
 <tr class="odd">
 <td style="text-align: left;"><span id="dmode" label="dmode">[dmode]</span>
 |dmode|</td>
-<td style="text-align: left;"><p>0: Both Debug and M-mode can write the <span>tdata</span> registers at the
-selected <span><span>tselect</span></span>.</p>
-<p>1: Only Debug Mode can write the <span>tdata</span> registers at the
-selected <span><span>tselect</span></span>. Writes from other modes are ignored.</p>
+<td style="text-align: left;"><p>0: Both Debug and M-mode can write the <span><code>tdata</code></span> registers at the
+selected <span><code>tselect</code></span>.</p>
+<p>1: Only Debug Mode can write the <span><code>tdata</code></span> registers at the
+selected <span><code>tselect</code></span>. Writes from other modes are ignored.</p>
 <p>This bit is only writable from Debug Mode.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -183,20 +185,22 @@ selected <span><span>tselect</span></span>. Writes from other modes are ignored.
 </tr>
 </tbody>
 </table>
-<h2 id="trigger-data-2-tdata2-at-0x7a2">Trigger Data 2 (<span>tdata2</span>, at 0x7a2)</h2>
+</div>
+<h2 id="trigger-data-2-tdata2-at-0x7a2">Trigger Data 2 (<span><code>tdata2</code></span>, at 0x7a2)</h2>
 <p><span id="tdata2" label="tdata2">[tdata2]</span>
 Trigger-specific data.</p>
 <p>If XLEN is less than DXLEN, writes to this register are sign-extended.</p>
 <p><img src="hwbp_registers_02.svg" alt="image" /></p>
-<h2 id="trigger-data-3-tdata3-at-0x7a3">Trigger Data 3 (<span>tdata3</span>, at 0x7a3)</h2>
+<h2 id="trigger-data-3-tdata3-at-0x7a3">Trigger Data 3 (<span><code>tdata3</code></span>, at 0x7a3)</h2>
 <p><span id="tdata3" label="tdata3">[tdata3]</span>
 Trigger-specific data.</p>
 <p>If XLEN is less than DXLEN, writes to this register are sign-extended.</p>
 <p><img src="hwbp_registers_03.svg" alt="image" /></p>
-<h2 id="trigger-info-tinfo-at-0x7a4">Trigger Info (<span>tinfo</span>, at 0x7a4)</h2>
+<h2 id="trigger-info-tinfo-at-0x7a4">Trigger Info (<span><code>tinfo</code></span>, at 0x7a4)</h2>
 <p><span id="tinfo" label="tinfo">[tinfo]</span></p>
 <p>This entire register is read-only.</p>
 <p><img src="hwbp_registers_04.svg" alt="image" /></p>
+<div id="info">
 <table>
 <thead>
 <tr class="header">
@@ -216,26 +220,28 @@ Trigger-specific data.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="info" label="info">[info]</span>
 |info|</td>
-<td style="text-align: left;"><p>One bit for each possible enumerated in <span><span>tdata1</span></span>. Bit N
+<td style="text-align: left;"><p>One bit for each possible <span><code>type</code></span>enumerated in <span><code>tdata1</code></span>. Bit N
 corresponds to type N. If the bit is set, then that type is
 supported by the currently selected trigger.</p>
 <p>If the currently selected trigger doesn’t exist, this field
 contains 1.</p>
-<p>If is not writable, this register may be unimplemented, in
+<p>If <span><code>type</code></span>is not writable, this register may be unimplemented, in
 which case reading it causes an illegal instruction exception. In
 this case the debugger can read the only supported type from
-<span><span>tdata1</span></span>.</p></td>
+<span><code>tdata1</code></span>.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
 </tr>
 </tbody>
 </table>
-<h2 id="trigger-control-tcontrol-at-0x7a5">Trigger Control (<span>tcontrol</span>, at 0x7a5)</h2>
+</div>
+<h2 id="trigger-control-tcontrol-at-0x7a5">Trigger Control (<span><code>tcontrol</code></span>, at 0x7a5)</h2>
 <p><span id="tcontrol" label="tcontrol">[tcontrol]</span>
 This optional register is one solution to a problem regarding triggers
 with action=0 firing in M-mode trap handlers. See
 Section <a href="trigger.html#sec:mmtrigger" data-reference-type="ref" data-reference="sec:mmtrigger">[sec:mmtrigger]</a> for more details.</p>
 <p><img src="hwbp_registers_05.svg" alt="image" /></p>
+<div id="mte">
 <table>
 <thead>
 <tr class="header">
@@ -256,8 +262,8 @@ Section <a href="trigger.html#sec:mmtrigger" data-reference-type="ref" data-ref
 <td style="text-align: left;"><span id="mpte" label="mpte">[mpte]</span>
 |mpte|</td>
 <td style="text-align: left;"><p>M-mode previous trigger enable field.</p>
-<p>When a trap into M-mode is taken, is set to the value of
-.</p></td>
+<p>When a trap into M-mode is taken, <span><code>mpte</code></span>is set to the value of
+<span><code>mte</code></span>.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
@@ -267,17 +273,18 @@ Section <a href="trigger.html#sec:mmtrigger" data-reference-type="ref" data-ref
 <td style="text-align: left;"><p>M-mode trigger enable field.</p>
 <p>0: Triggers with action=0 do not match/fire while the hart is in M-mode.</p>
 <p>1: Triggers do match/fire while the hart is in M-mode.</p>
-<p>When a trap into M-mode is taken, is set to 0. When <span>
-mret</span> is executed, is set to the value of .</p></td>
+<p>When a trap into M-mode is taken, <span><code>mte</code></span>is set to 0. When <span><code> mret</code></span> is executed, <span><code>mte</code></span>is set to the value of <span><code>mpte</code></span>.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="machine-context-mcontext-at-0x7a8">Machine Context (<span>mcontext</span>, at 0x7a8)</h2>
+</div>
+<h2 id="machine-context-mcontext-at-0x7a8">Machine Context (<span><code>mcontext</code></span>, at 0x7a8)</h2>
 <p><span id="mcontext" label="mcontext">[mcontext]</span>
 This register is only writable in M mode and Debug Mode.</p>
 <p><img src="hwbp_registers_06.svg" alt="image" /></p>
+<div id="mcontext">
 <table>
 <thead>
 <tr class="header">
@@ -308,10 +315,12 @@ context.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="supervisor-context-scontext-at-0x7aa">Supervisor Context (<span>scontext</span>, at 0x7aa)</h2>
+</div>
+<h2 id="supervisor-context-scontext-at-0x7aa">Supervisor Context (<span><code>scontext</code></span>, at 0x7aa)</h2>
 <p><span id="scontext" label="scontext">[scontext]</span>
 This register is only writable in S mode, M mode and Debug Mode.</p>
 <p><img src="hwbp_registers_07.svg" alt="image" /></p>
+<div id="data">
 <table>
 <thead>
 <tr class="header">
@@ -342,14 +351,15 @@ specific context.</p>
 </tr>
 </tbody>
 </table>
-<h2 id="match-control-mcontrol-at-0x7a1">Match Control (<span>mcontrol</span>, at 0x7a1)</h2>
+</div>
+<h2 id="match-control-mcontrol-at-0x7a1">Match Control (<span><code>mcontrol</code></span>, at 0x7a1)</h2>
 <p><span id="mcontrol" label="mcontrol">[mcontrol]</span>
-This register is accessible as <span><span>tdata1</span></span>when is 2.</p>
+This register is accessible as <span><code>tdata1</code></span>when <span><code>type</code></span>is 2.</p>
 <p>Address and data trigger implementation are heavily dependent on how
 the processor core is implemented. To accommodate various
 implementations, execute, load, and store address/data triggers may fire at
 whatever point in time is most convenient for the implementation.
-The debugger may request specific timings as described in .
+The debugger may request specific timings as described in <span><code>timing</code></span>.
 Table <a href="hwbp_registers.html#tab:hwbp_timing" data-reference-type="ref" data-reference="tab:hwbp_timing">[tab:hwbp_timing]</a> suggests timings for the best user experience.</p>
 <table>
 <thead>
@@ -397,14 +407,14 @@ Table <a href="hwbp_registers.html#tab:hwbp_timing" data-reference-type="ref" d
 </tr>
 </tbody>
 </table>
-<p><span id="tab:hwbp_timing" label="tab:hwbp_timing">[tab:hwbp_timing]</span></p>
-<p>This trigger type may be limited to address comparisons (is
-always 0) only. If that is the case, then <span><span>tdata2</span></span>must be able to
+<p>This trigger type may be limited to address comparisons (<span><code>select</code></span>is
+always 0) only. If that is the case, then <span><code>tdata2</code></span>must be able to
 hold all valid virtual addresses but it need not be capable of holding
 other values.</p>
 <p><img src="hwbp_registers_08.svg" alt="image" /></p>
 <p><img src="hwbp_registers_09.svg" alt="image" /></p>
 <p><img src="hwbp_registers_10.svg" alt="image" /></p>
+<div id="load">
 <table>
 <thead>
 <tr class="header">
@@ -425,7 +435,7 @@ other values.</p>
 <td style="text-align: left;"><span id="maskmax" label="maskmax">[maskmax]</span>
 |maskmax|</td>
 <td style="text-align: left;">Specifies the largest naturally aligned powers-of-two (NAPOT) range
-supported by the hardware when is 1. The value is the
+supported by the hardware when <span><code>match</code></span>is 1. The value is the
 logarithm base 2 of the
 number of bytes in that range. A value of 0 indicates that only
 exact value matches are supported (one byte range). A value of 63
@@ -438,7 +448,7 @@ size.</td>
 <td style="text-align: left;"><span id="sizehi" label="sizehi">[sizehi]</span>
 |sizehi|</td>
 <td style="text-align: left;">This field only exists if XLEN is greater than 32. In that case it
-extends . If it does not exist then hardware operates as if
+extends <span><code>size</code></span>. If it does not exist then hardware operates as if
 the field contains 0.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -474,28 +484,28 @@ that triggered it is executed. It should be taken before the next
 instruction is executed, but it is better to implement triggers and
 not implement that suggestion than to not implement them at all.</p>
 <p>Most hardware will only implement one timing or the other, possibly
-dependent on , , , and . This bit
+dependent on <span><code>select</code></span>, <span><code>execute</code></span>, <span><code>load</code></span>, and <span><code>store</code></span>. This bit
 primarily exists for the hardware to communicate to the debugger
 what will happen. Hardware may implement the bit fully writable, in
 which case the debugger has a little more control.</p>
-<p>Data load triggers with of 0 will result in the same load
+<p>Data load triggers with <span><code>timing</code></span>of 0 will result in the same load
 happening again when the debugger lets the hart run. For data load
 triggers, debuggers must first attempt to set the breakpoint with
-of 1.</p>
-<p>A chain of triggers that don’t all have the same value
+<span><code>timing</code></span>of 1.</p>
+<p>A chain of triggers that don’t all have the same <span><code>timing</code></span>value
 will never fire (unless consecutive instructions match the
 appropriate triggers).</p>
-<p>If a trigger with of 0 matches, it is
+<p>If a trigger with <span><code>timing</code></span>of 0 matches, it is
 implementation-dependent whether that prevents a trigger with
-of 1 matching as well.</p></td>
+<span><code>timing</code></span>of 1 matching as well.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span id="sizelo" label="sizelo">[sizelo]</span>
 |sizelo|</td>
-<td style="text-align: left;"><p>This field contains the 2 low bits of . The high bits come
-from . The combined value is interpreted as follows:</p>
+<td style="text-align: left;"><p>This field contains the 2 low bits of <span><code>size</code></span>. The high bits come
+from <span><code>sizehi</code></span>. The combined value is interpreted as follows:</p>
 <p>0: The trigger will attempt to match against an access of any size.
 The behavior is only well-defined if <span class="math inline">|<em>s</em><em>e</em><em>l</em><em>e</em><em>c</em><em>t</em>| = 0</span>, or if the access
 size is XLEN.</p>
@@ -536,35 +546,35 @@ has <span class="math inline">|<em>c</em><em>h</em><em>a</em><em>i</em><em>n</em
 on all but the final trigger is ignored. The action on that final
 trigger will be taken if and only if all the triggers in the chain
 match at the same time.</p>
-<p>Because affects the next trigger, hardware must zero it in
-writes to <span><span>mcontrol</span></span>that set to 0 if the next trigger has
-of 1.
-In addition hardware should ignore writes to <span><span>mcontrol</span></span>that set
-to 1 if the previous trigger has both of 0 and
-of 1. Debuggers must avoid the latter case by checking
-on the previous trigger if they’re writing <span><span>mcontrol</span></span>.</p>
+<p>Because <span><code>chain</code></span>affects the next trigger, hardware must zero it in
+writes to <span><code>mcontrol</code></span>that set <span><code>dmode</code></span>to 0 if the next trigger has
+<span><code>dmode</code></span>of 1.
+In addition hardware should ignore writes to <span><code>mcontrol</code></span>that set
+<span><code>dmode</code></span>to 1 if the previous trigger has both <span><code>dmode</code></span>of 0 and
+<span><code>chain</code></span>of 1. Debuggers must avoid the latter case by checking
+<span><code>chain</code></span>on the previous trigger if they’re writing <span><code>mcontrol</code></span>.</p>
 <p>Implementations that wish to limit the maximum length of a trigger
 chain (eg. to meet timing requirements) may do so by zeroing
-in writes to <span><span>mcontrol</span></span>that would make the chain too long.</p></td>
+<span><code>chain</code></span>in writes to <span><code>mcontrol</code></span>that would make the chain too long.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span id="match" label="match">[match]</span>
 |match|</td>
-<td style="text-align: left;"><p>0: Matches when the value equals <span><span>tdata2</span></span>.</p>
+<td style="text-align: left;"><p>0: Matches when the value equals <span><code>tdata2</code></span>.</p>
 <p>1: Matches when the top M bits of the value match the top M bits of
-<span><span>tdata2</span></span>. M is XLEN-1 minus the index of the least-significant
-bit containing 0 in <span><span>tdata2</span></span>.</p>
+<span><code>tdata2</code></span>. M is XLEN-1 minus the index of the least-significant
+bit containing 0 in <span><code>tdata2</code></span>.</p>
 <p>2: Matches when the value is greater than (unsigned) or equal to
-<span><span>tdata2</span></span>.</p>
-<p>3: Matches when the value is less than (unsigned) <span><span>tdata2</span></span>.</p>
+<span><code>tdata2</code></span>.</p>
+<p>3: Matches when the value is less than (unsigned) <span><code>tdata2</code></span>.</p>
 <p>4: Matches when the lower half of the value equals the lower half
-of <span><span>tdata2</span></span>after the lower half of the value is ANDed with the
-upper half of <span><span>tdata2</span></span>.</p>
+of <span><code>tdata2</code></span>after the lower half of the value is ANDed with the
+upper half of <span><code>tdata2</code></span>.</p>
 <p>5: Matches when the upper half of the value equals the lower half
-of <span><span>tdata2</span></span>after the upper half of the value is ANDed with the
-upper half of <span><span>tdata2</span></span>.</p>
+of <span><code>tdata2</code></span>after the upper half of the value is ANDed with the
+upper half of <span><code>tdata2</code></span>.</p>
 <p>Other values are reserved for future use.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -614,24 +624,26 @@ instruction that is executed.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="instruction-count-icount-at-0x7a1">Instruction Count (<span>icount</span>, at 0x7a1)</h2>
+</div>
+<h2 id="instruction-count-icount-at-0x7a1">Instruction Count (<span><code>icount</code></span>, at 0x7a1)</h2>
 <p><span id="icount" label="icount">[icount]</span>
-This register is accessible as <span><span>tdata1</span></span>when is 3.</p>
+This register is accessible as <span><code>tdata1</code></span>when <span><code>type</code></span>is 3.</p>
 <p>CUSTOMTAGBEGINCOMMENTARY
 This trigger type is intended to be used as a single
 step that’s useful both for external debuggers and for software monitor
-programs. For that case it is not necessary to support greater
+programs. For that case it is not necessary to support <span><code>count</code></span>greater
 than
 1. The only two combinations of the mode bits that are useful in those
-scenarios are by itself, or , , and all set.</p>
-<p>If the hardware limits to 1, and changes mode bits instead of
-decrementing , this register can be implemented with just 2
-bits. One for , and one for and tied together. If
+scenarios are <span><code>u</code></span>by itself, or <span><code>m</code></span>, <span><code>s</code></span>, and <span><code>u</code></span>all set.</p>
+<p>If the hardware limits <span><code>count</code></span>to 1, and changes mode bits instead of
+decrementing <span><code>count</code></span>, this register can be implemented with just 2
+bits. One for <span><code>u</code></span>, and one for <span><code>m</code></span>and <span><code>s</code></span>tied together. If
 only the external debugger or only a software monitor needs to be
 supported, a single bit is enough.</p>
 </div>
 <p><img src="hwbp_registers_11.svg" alt="image" /></p>
 <p><img src="hwbp_registers_12.svg" alt="image" /></p>
+<div id="action">
 <table>
 <thead>
 <tr class="header">
@@ -663,8 +675,8 @@ and writing it has no effect.</td>
 <td style="text-align: left;"><span id="count" label="count">[count]</span>
 |count|</td>
 <td style="text-align: left;">When count is decremented to 0, the trigger fires. Instead of
-changing from 1 to 0, it is also acceptable for hardware to
-clear , , and . This allows to be hard-wired
+changing <span><code>count</code></span>from 1 to 0, it is also acceptable for hardware to
+clear <span><code>m</code></span>, <span><code>s</code></span>, and <span><code>u</code></span>. This allows <span><code>count</code></span>to be hard-wired
 to 1 if this register just exists for single step.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">1</td>
@@ -672,7 +684,7 @@ to 1 if this register just exists for single step.</td>
 <tr class="even">
 <td style="text-align: left;"><span id="m" label="m">[m]</span>
 |m|</td>
-<td style="text-align: left;">When set, every instruction completed or exception taken in M-mode decrements
+<td style="text-align: left;">When set, every instruction completed or exception taken in M-mode decrements <span><code>count</code></span>
 by 1.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -680,7 +692,7 @@ by 1.</td>
 <tr class="odd">
 <td style="text-align: left;"><span id="s" label="s">[s]</span>
 |s|</td>
-<td style="text-align: left;">When set, every instruction completed or exception taken in S-mode decrements
+<td style="text-align: left;">When set, every instruction completed or exception taken in S-mode decrements <span><code>count</code></span>
 by 1.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -688,7 +700,7 @@ by 1.</td>
 <tr class="even">
 <td style="text-align: left;"><span id="u" label="u">[u]</span>
 |u|</td>
-<td style="text-align: left;">When set, every instruction completed or exception taken in U-mode decrements
+<td style="text-align: left;">When set, every instruction completed or exception taken in U-mode decrements <span><code>count</code></span>
 by 1.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -703,24 +715,26 @@ in Table <a href="hwbp_registers.html#tab:action" data-reference-type="ref" dat
 </tr>
 </tbody>
 </table>
-<h2 id="interrupt-trigger-itrigger-at-0x7a1">Interrupt Trigger (<span>itrigger</span>, at 0x7a1)</h2>
+</div>
+<h2 id="interrupt-trigger-itrigger-at-0x7a1">Interrupt Trigger (<span><code>itrigger</code></span>, at 0x7a1)</h2>
 <p><span id="itrigger" label="itrigger">[itrigger]</span>
-This register is accessible as <span><span>tdata1</span></span>when is 4.</p>
-<p>This trigger may fire on any of the interrupts configurable in <span>mie</span>
+This register is accessible as <span><code>tdata1</code></span>when <span><code>type</code></span>is 4.</p>
+<p>This trigger may fire on any of the interrupts configurable in <span><code>mie</code></span>
 (described in the Privileged Spec). The interrupts to fire on are
-configured by setting the same bit in <span><span>tdata2</span></span>as would be set in
-<span>mie</span>to enable the interrupt.</p>
+configured by setting the same bit in <span><code>tdata2</code></span>as would be set in
+<span><code>mie</code></span>to enable the interrupt.</p>
 <p>Hardware may only support a subset of interrupts for this trigger. A
-debugger must read back <span><span>tdata2</span></span>after writing it to confirm the
+debugger must read back <span><code>tdata2</code></span>after writing it to confirm the
 requested functionality is actually supported.</p>
 <p>The trigger only fires if the hart takes a trap because of the
 interrupt. (E.g. it does not fire when a timer interrupt occurs but that
-interrupt is not enabled in <span>mie</span>.)</p>
+interrupt is not enabled in <span><code>mie</code></span>.)</p>
 <p>When the trigger fires, all CSRs are updated as defined by the
 Privileged Spec, and the requested action is taken just before the
 first instruction of the interrupt/exception handler is executed.</p>
 <p><img src="hwbp_registers_13.svg" alt="image" /></p>
 <p><img src="hwbp_registers_14.svg" alt="image" /></p>
+<div id="action">
 <table>
 <thead>
 <tr class="header">
@@ -782,22 +796,24 @@ in Table <a href="hwbp_registers.html#tab:action" data-reference-type="ref" dat
 </tr>
 </tbody>
 </table>
-<h2 id="exception-trigger-etrigger-at-0x7a1">Exception Trigger (<span>etrigger</span>, at 0x7a1)</h2>
+</div>
+<h2 id="exception-trigger-etrigger-at-0x7a1">Exception Trigger (<span><code>etrigger</code></span>, at 0x7a1)</h2>
 <p><span id="etrigger" label="etrigger">[etrigger]</span>
-This register is accessible as <span><span>tdata1</span></span>when is 5.</p>
+This register is accessible as <span><code>tdata1</code></span>when <span><code>type</code></span>is 5.</p>
 <p>This trigger may fire on up to XLEN of the Exception Codes defined in
-<span>mcause</span>(described in the Privileged Spec, with Interrupt=0). Those
-causes are configured by writing the corresponding bit in <span><span>tdata2</span></span>.
+<span><code>mcause</code></span>(described in the Privileged Spec, with Interrupt=0). Those
+causes are configured by writing the corresponding bit in <span><code>tdata2</code></span>.
 (E.g. to trap on an illegal instruction, the debugger sets bit 2 in
-<span><span>tdata2</span></span>.)</p>
+<span><code>tdata2</code></span>.)</p>
 <p>Hardware may support only a subset of exceptions. A debugger must read
-back <span><span>tdata2</span></span>after writing it to confirm the requested functionality
+back <span><code>tdata2</code></span>after writing it to confirm the requested functionality
 is actually supported.</p>
 <p>When the trigger fires, all CSRs are updated as defined by the
 Privileged Spec, and the requested action is taken just before the
 first instruction of the interrupt/exception handler is executed.</p>
 <p><img src="hwbp_registers_15.svg" alt="image" /></p>
 <p><img src="hwbp_registers_16.svg" alt="image" /></p>
+<div id="action">
 <table>
 <thead>
 <tr class="header">
@@ -859,14 +875,16 @@ in Table <a href="hwbp_registers.html#tab:action" data-reference-type="ref" dat
 </tr>
 </tbody>
 </table>
-<h2 id="trigger-extra-rv32-textra32-at-0x7a3">Trigger Extra (RV32) (<span>textra32</span>, at 0x7a3)</h2>
+</div>
+<h2 id="trigger-extra-rv32-textra32-at-0x7a3">Trigger Extra (RV32) (<span><code>textra32</code></span>, at 0x7a3)</h2>
 <p><span id="textra32" label="textra32">[textra32]</span>
-This register is accessible as <span><span>tdata3</span></span>when is 2, 3, 4, or
+This register is accessible as <span><code>tdata3</code></span>when <span><code>type</code></span>is 2, 3, 4, or
 5.</p>
 <p>All functionality in this register is optional. The <span class="math inline">|<em>v</em><em>a</em><em>l</em><em>u</em><em>e</em>|</span> bits may
 tie any number of upper bits to 0. The <span class="math inline">|<em>s</em><em>e</em><em>l</em><em>e</em><em>c</em><em>t</em>|</span> bits may only support
 0 (ignore).</p>
 <p><img src="hwbp_registers_17.svg" alt="image" /></p>
+<div id="sselect">
 <table>
 <thead>
 <tr class="header">
@@ -886,44 +904,45 @@ tie any number of upper bits to 0. The <span class="math inline">|<em>s</em><em>
 <tr class="even">
 <td style="text-align: left;"><span id="mvalue" label="mvalue">[mvalue]</span>
 |mvalue|</td>
-<td style="text-align: left;">Data used together with .</td>
+<td style="text-align: left;">Data used together with <span><code>mselect</code></span>.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span id="mselect" label="mselect">[mselect]</span>
 |mselect|</td>
-<td style="text-align: left;"><p>0: Ignore .</p>
+<td style="text-align: left;"><p>0: Ignore <span><code>mvalue</code></span>.</p>
 <p>1: This trigger will only match if the low bits of
-<span><span>mcontext</span></span>equal .</p></td>
+<span><code>mcontext</code></span>equal <span><code>mvalue</code></span>.</p></td>
 <td style="text-align: center;">WARL</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span id="svalue" label="svalue">[svalue]</span>
 |svalue|</td>
-<td style="text-align: left;">Data used together with .</td>
+<td style="text-align: left;">Data used together with <span><code>sselect</code></span>.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span id="sselect" label="sselect">[sselect]</span>
 |sselect|</td>
-<td style="text-align: left;"><p>0: Ignore .</p>
+<td style="text-align: left;"><p>0: Ignore <span><code>svalue</code></span>.</p>
 <p>1: This trigger will only match if the low bits of
-<span><span>scontext</span></span>equal .</p>
-<p>2: This trigger will only match if in <span>satp</span>
+<span><code>scontext</code></span>equal <span><code>svalue</code></span>.</p>
+<p>2: This trigger will only match if <span><code>ASID</code></span>in <span><code>satp</code></span>
 equals the lower ASIDMAX (defined in the Privileged Spec) bits of
-.</p></td>
+<span><code>svalue</code></span>.</p></td>
 <td style="text-align: center;">WARL</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="trigger-extra-rv64-textra64-at-0x7a3">Trigger Extra (RV64) (<span>textra64</span>, at 0x7a3)</h2>
+</div>
+<h2 id="trigger-extra-rv64-textra64-at-0x7a3">Trigger Extra (RV64) (<span><code>textra64</code></span>, at 0x7a3)</h2>
 <p><span id="textra64" label="textra64">[textra64]</span>
-This is the layout of <span>textra</span> if XLEN is 64. The fields are defined
-above, in <span><span>textra32</span></span>.</p>
+This is the layout of <span><code>textra</code></span> if XLEN is 64. The fields are defined
+above, in <span><code>textra32</code></span>.</p>
 <p><img src="hwbp_registers_18.svg" alt="image" /></p>
 <p><img src="hwbp_registers_19.svg" alt="image" /></p>
 

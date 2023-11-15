@@ -10,38 +10,32 @@
 <li><b>2</b><a href=priv-csrs.html#control-and-status-registers-csrs>Control and Status Registers (CSRs)</a><ul>
   <li><b>2.1</b><a href=priv-csrs.html#csr-address-mapping-conventions>CSR Address Mapping Conventions</a></li>
   <li><b>2.2</b><a href=priv-csrs.html#csr-listing>CSR Listing</a></li>
-  <li><b>2.3</b><a href=priv-csrs.html#csr-field-specifications>CSR Field Specifications</a><ul>
-    <li><b></b><a href=priv-csrs.html#reserved-writes-ignored-reads-ignore-values-wiri>Reserved Writes Ignored, Reads Ignore Values (WIRI)</a></li>
-    <li><b></b><a href=priv-csrs.html#reserved-writes-preserve-values-reads-ignore-values-wpri>Reserved Writes Preserve Values, Reads Ignore Values (WPRI)</a></li>
-    <li><b></b><a href=priv-csrs.html#writeread-only-legal-values-wlrl>Write/Read Only Legal Values (WLRL)</a></li>
-    <li><b></b><a href=priv-csrs.html#write-any-values-reads-legal-values-warl>Write Any Values, Reads Legal Values (WARL)</a></li>
-</ul>
-</li>
+  <li><b>2.3</b><a href=priv-csrs.html#csr-field-specifications>CSR Field Specifications</a></li>
 </ul>
 </li>
 <li><b>3</b><a href=machine.html#machine>Machine-Level ISA, version 1.10</a><ul>
   <li><b>3.1</b><a href=machine.html#machine-level-csrs>Machine-Level CSRs</a><ul>
-    <li><b>3.1.1</b><a href=machine.html#machine-isa-register-misa>Machine ISA Register <span>misa</span></a></li>
-    <li><b>3.1.2</b><a href=machine.html#machine-vendor-id-register-mvendorid>Machine Vendor ID Register <span>mvendorid</span></a></li>
-    <li><b>3.1.3</b><a href=machine.html#machine-architecture-id-register-marchid>Machine Architecture ID Register <span>marchid</span></a></li>
-    <li><b>3.1.4</b><a href=machine.html#machine-implementation-id-register-mimpid>Machine Implementation ID Register <span>mimpid</span></a></li>
-    <li><b>3.1.5</b><a href=machine.html#hart-id-register-mhartid>Hart ID Register <span>mhartid</span></a></li>
-    <li><b>3.1.6</b><a href=machine.html#machine-status-register-mstatus>Machine Status Register (<span>mstatus</span>)</a></li>
-    <li><b>3.1.7</b><a href=machine.html#privstack>Privilege and Global Interrupt-Enable Stack in <span>mstatus</span> register</a></li>
-    <li><b>3.1.8</b><a href=machine.html#base-isa-control-in-mstatus-register>Base ISA Control in <span>mstatus</span> Register</a></li>
-    <li><b>3.1.9</b><a href=machine.html#memory-privilege-in-mstatus-register>Memory Privilege in <span>mstatus</span> Register</a></li>
-    <li><b>3.1.10</b><a href=machine.html#virtualization-support-in-mstatus-register>Virtualization Support in <span>mstatus</span> Register</a></li>
-    <li><b>3.1.11</b><a href=machine.html#extension-context-status-in-mstatus-register>Extension Context Status in <span>mstatus</span> Register</a></li>
-    <li><b>3.1.12</b><a href=machine.html#machine-trap-vector-base-address-register-mtvec>Machine Trap-Vector Base-Address Register (<span>mtvec</span>)</a></li>
-    <li><b>3.1.13</b><a href=machine.html#machine-trap-delegation-registers-medeleg-and-mideleg>Machine Trap Delegation Registers (<span>medeleg</span> and <span>mideleg</span>)</a></li>
-    <li><b>3.1.14</b><a href=machine.html#machine-interrupt-registers-mip-and-mie>Machine Interrupt Registers (<span>mip</span> and <span>mie</span>)</a></li>
-    <li><b>3.1.15</b><a href=machine.html#machine-timer-registers-mtime-and-mtimecmp>Machine Timer Registers (<span>mtime</span> and <span>mtimecmp</span>)</a></li>
+    <li><b>3.1.1</b><a href=machine.html#machine-isa-register-misa>Machine ISA Register <span><code>misa</code></span></a></li>
+    <li><b>3.1.2</b><a href=machine.html#machine-vendor-id-register-mvendorid>Machine Vendor ID Register <span><code>mvendorid</code></span></a></li>
+    <li><b>3.1.3</b><a href=machine.html#machine-architecture-id-register-marchid>Machine Architecture ID Register <span><code>marchid</code></span></a></li>
+    <li><b>3.1.4</b><a href=machine.html#machine-implementation-id-register-mimpid>Machine Implementation ID Register <span><code>mimpid</code></span></a></li>
+    <li><b>3.1.5</b><a href=machine.html#hart-id-register-mhartid>Hart ID Register <span><code>mhartid</code></span></a></li>
+    <li><b>3.1.6</b><a href=machine.html#machine-status-register-mstatus>Machine Status Register (<span><code>mstatus</code></span>)</a></li>
+    <li><b>3.1.7</b><a href=machine.html#privstack>Privilege and Global Interrupt-Enable Stack in <span><code>mstatus</code></span> register</a></li>
+    <li><b>3.1.8</b><a href=machine.html#base-isa-control-in-mstatus-register>Base ISA Control in <span><code>mstatus</code></span> Register</a></li>
+    <li><b>3.1.9</b><a href=machine.html#memory-privilege-in-mstatus-register>Memory Privilege in <span><code>mstatus</code></span> Register</a></li>
+    <li><b>3.1.10</b><a href=machine.html#virtualization-support-in-mstatus-register>Virtualization Support in <span><code>mstatus</code></span> Register</a></li>
+    <li><b>3.1.11</b><a href=machine.html#extension-context-status-in-mstatus-register>Extension Context Status in <span><code>mstatus</code></span> Register</a></li>
+    <li><b>3.1.12</b><a href=machine.html#machine-trap-vector-base-address-register-mtvec>Machine Trap-Vector Base-Address Register (<span><code>mtvec</code></span>)</a></li>
+    <li><b>3.1.13</b><a href=machine.html#machine-trap-delegation-registers-medeleg-and-mideleg>Machine Trap Delegation Registers (<span><code>medeleg</code></span> and <span><code>mideleg</code></span>)</a></li>
+    <li><b>3.1.14</b><a href=machine.html#machine-interrupt-registers-mip-and-mie>Machine Interrupt Registers (<span><code>mip</code></span> and <span><code>mie</code></span>)</a></li>
+    <li><b>3.1.15</b><a href=machine.html#machine-timer-registers-mtime-and-mtimecmp>Machine Timer Registers (<span><code>mtime</code></span> and <span><code>mtimecmp</code></span>)</a></li>
     <li><b>3.1.16</b><a href=machine.html#hardware-performance-monitor>Hardware Performance Monitor</a></li>
-    <li><b>3.1.17</b><a href=machine.html#sec:mcounteren>Counter-Enable Registers (<span>counteren</span>)</a></li>
-    <li><b>3.1.18</b><a href=machine.html#machine-scratch-register-mscratch>Machine Scratch Register (<span>mscratch</span>)</a></li>
-    <li><b>3.1.19</b><a href=machine.html#machine-exception-program-counter-mepc>Machine Exception Program Counter (<span>mepc</span>)</a></li>
-    <li><b>3.1.20</b><a href=machine.html#machine-cause-register-mcause>Machine Cause Register (<span>mcause</span>)</a></li>
-    <li><b>3.1.21</b><a href=machine.html#machine-trap-value-mtval-register>Machine Trap Value (<span>mtval</span>) Register</a></li>
+    <li><b>3.1.17</b><a href=machine.html#sec:mcounteren>Counter-Enable Registers (<span><code>[m|h|s]counteren</code></span>)</a></li>
+    <li><b>3.1.18</b><a href=machine.html#machine-scratch-register-mscratch>Machine Scratch Register (<span><code>mscratch</code></span>)</a></li>
+    <li><b>3.1.19</b><a href=machine.html#machine-exception-program-counter-mepc>Machine Exception Program Counter (<span><code>mepc</code></span>)</a></li>
+    <li><b>3.1.20</b><a href=machine.html#machine-cause-register-mcause>Machine Cause Register (<span><code>mcause</code></span>)</a></li>
+    <li><b>3.1.21</b><a href=machine.html#machine-trap-value-mtval-register>Machine Trap Value (<span><code>mtval</code></span>) Register</a></li>
 </ul>
 </li>
   <li><b>3.2</b><a href=machine.html#machine-mode-privileged-instructions>Machine-Mode Privileged Instructions</a><ul>
@@ -69,18 +63,18 @@
 </li>
 <li><b>4</b><a href=supervisor.html#supervisor>Supervisor-Level ISA, Version 1.10</a><ul>
   <li><b>4.1</b><a href=supervisor.html#supervisor-csrs>Supervisor CSRs</a><ul>
-    <li><b>4.1.1</b><a href=supervisor.html#sstatus>Supervisor Status Register (sstatus)</a></li>
-    <li><b>4.1.2</b><a href=supervisor.html#base-isa-control-in-sstatus-register>Base ISA Control in <span>sstatus</span> Register</a></li>
-    <li><b>4.1.3</b><a href=supervisor.html#sec:sum>Memory Privilege in <span>sstatus</span> Register</a></li>
-    <li><b>4.1.4</b><a href=supervisor.html#supervisor-trap-vector-base-address-register-stvec>Supervisor Trap Vector Base Address Register (<span>stvec</span>)</a></li>
-    <li><b>4.1.5</b><a href=supervisor.html#supervisor-interrupt-registers-sip-and-sie>Supervisor Interrupt Registers (<span>sip</span> and <span>sie</span>)</a></li>
+    <li><b>4.1.1</b><a href=supervisor.html#sstatus>Supervisor Status Register (<code>sstatus)</code></a></li>
+    <li><b>4.1.2</b><a href=supervisor.html#base-isa-control-in-sstatus-register>Base ISA Control in <span><code>sstatus</code></span> Register</a></li>
+    <li><b>4.1.3</b><a href=supervisor.html#sec:sum>Memory Privilege in <span><code>sstatus</code></span> Register</a></li>
+    <li><b>4.1.4</b><a href=supervisor.html#supervisor-trap-vector-base-address-register-stvec>Supervisor Trap Vector Base Address Register (<span><code>stvec</code></span>)</a></li>
+    <li><b>4.1.5</b><a href=supervisor.html#supervisor-interrupt-registers-sip-and-sie>Supervisor Interrupt Registers (<span><code>sip</code></span> and <span><code>sie</code></span>)</a></li>
     <li><b>4.1.6</b><a href=supervisor.html#supervisor-timers-and-performance-counters>Supervisor Timers and Performance Counters</a></li>
-    <li><b>4.1.7</b><a href=supervisor.html#counter-enable-register-scounteren>Counter-Enable Register (<span>scounteren</span>)</a></li>
-    <li><b>4.1.8</b><a href=supervisor.html#supervisor-scratch-register-sscratch>Supervisor Scratch Register (<span>sscratch</span>)</a></li>
-    <li><b>4.1.9</b><a href=supervisor.html#supervisor-exception-program-counter-sepc>Supervisor Exception Program Counter (<span>sepc</span>)</a></li>
-    <li><b>4.1.10</b><a href=supervisor.html#supervisor-cause-register-scause>Supervisor Cause Register (<span>scause</span>)</a></li>
-    <li><b>4.1.11</b><a href=supervisor.html#supervisor-trap-value-stval-register>Supervisor Trap Value (<span>stval</span>) Register</a></li>
-    <li><b>4.1.12</b><a href=supervisor.html#sec:satp>Supervisor Address Translation and Protection (<span>satp</span>) Register</a></li>
+    <li><b>4.1.7</b><a href=supervisor.html#counter-enable-register-scounteren>Counter-Enable Register (<span><code>scounteren</code></span>)</a></li>
+    <li><b>4.1.8</b><a href=supervisor.html#supervisor-scratch-register-sscratch>Supervisor Scratch Register (<span><code>sscratch</code></span>)</a></li>
+    <li><b>4.1.9</b><a href=supervisor.html#supervisor-exception-program-counter-sepc>Supervisor Exception Program Counter (<span><code>sepc</code></span>)</a></li>
+    <li><b>4.1.10</b><a href=supervisor.html#supervisor-cause-register-scause>Supervisor Cause Register (<span><code>scause</code></span>)</a></li>
+    <li><b>4.1.11</b><a href=supervisor.html#supervisor-trap-value-stval-register>Supervisor Trap Value (<span><code>stval</code></span>) Register</a></li>
+    <li><b>4.1.12</b><a href=supervisor.html#sec:satp>Supervisor Address Translation and Protection (<span><code>satp</code></span>) Register</a></li>
 </ul>
 </li>
   <li><b>4.2</b><a href=supervisor.html#supervisor-instructions>Supervisor Instructions</a><ul>

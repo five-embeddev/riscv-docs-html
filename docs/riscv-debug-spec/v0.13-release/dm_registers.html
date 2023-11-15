@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,12 +8,12 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>dm_registers.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -28,171 +29,172 @@
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0x04</td>
-<td style="text-align: left;">Abstract Data 0 (<span>data0</span>)</td>
+<td style="text-align: left;">Abstract Data 0 (<span><code>data0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x0f</td>
-<td style="text-align: left;">Abstract Data 11 (<span>data11</span>)</td>
+<td style="text-align: left;">Abstract Data 11 (<span><code>data11</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x10</td>
-<td style="text-align: left;">Debug Module Control (<span>dmcontrol</span>)</td>
+<td style="text-align: left;">Debug Module Control (<span><code>dmcontrol</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x11</td>
-<td style="text-align: left;">Debug Module Status (<span>dmstatus</span>)</td>
+<td style="text-align: left;">Debug Module Status (<span><code>dmstatus</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x12</td>
-<td style="text-align: left;">Hart Info (<span>hartinfo</span>)</td>
+<td style="text-align: left;">Hart Info (<span><code>hartinfo</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x13</td>
-<td style="text-align: left;">Halt Summary 1 (<span>haltsum1</span>)</td>
+<td style="text-align: left;">Halt Summary 1 (<span><code>haltsum1</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x14</td>
-<td style="text-align: left;">Hart Array Window Select (<span>hawindowsel</span>)</td>
+<td style="text-align: left;">Hart Array Window Select (<span><code>hawindowsel</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x15</td>
-<td style="text-align: left;">Hart Array Window (<span>hawindow</span>)</td>
+<td style="text-align: left;">Hart Array Window (<span><code>hawindow</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x16</td>
-<td style="text-align: left;">Abstract Control and Status (<span>abstractcs</span>)</td>
+<td style="text-align: left;">Abstract Control and Status (<span><code>abstractcs</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x17</td>
-<td style="text-align: left;">Abstract Command (<span>command</span>)</td>
+<td style="text-align: left;">Abstract Command (<span><code>command</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x18</td>
-<td style="text-align: left;">Abstract Command Autoexec (<span>abstractauto</span>)</td>
+<td style="text-align: left;">Abstract Command Autoexec (<span><code>abstractauto</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x19</td>
-<td style="text-align: left;">Configuration String Pointer 0 (<span>confstrptr0</span>)</td>
+<td style="text-align: left;">Configuration String Pointer 0 (<span><code>confstrptr0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x1a</td>
-<td style="text-align: left;">Configuration String Pointer 1 (<span>confstrptr1</span>)</td>
+<td style="text-align: left;">Configuration String Pointer 1 (<span><code>confstrptr1</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x1b</td>
-<td style="text-align: left;">Configuration String Pointer 2 (<span>confstrptr2</span>)</td>
+<td style="text-align: left;">Configuration String Pointer 2 (<span><code>confstrptr2</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x1c</td>
-<td style="text-align: left;">Configuration String Pointer 3 (<span>confstrptr3</span>)</td>
+<td style="text-align: left;">Configuration String Pointer 3 (<span><code>confstrptr3</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x1d</td>
-<td style="text-align: left;">Next Debug Module (<span>nextdm</span>)</td>
+<td style="text-align: left;">Next Debug Module (<span><code>nextdm</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x20</td>
-<td style="text-align: left;">Program Buffer 0 (<span>progbuf0</span>)</td>
+<td style="text-align: left;">Program Buffer 0 (<span><code>progbuf0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x2f</td>
-<td style="text-align: left;">Program Buffer 15 (<span>progbuf15</span>)</td>
+<td style="text-align: left;">Program Buffer 15 (<span><code>progbuf15</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x30</td>
-<td style="text-align: left;">Authentication Data (<span>authdata</span>)</td>
+<td style="text-align: left;">Authentication Data (<span><code>authdata</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x34</td>
-<td style="text-align: left;">Halt Summary 2 (<span>haltsum2</span>)</td>
+<td style="text-align: left;">Halt Summary 2 (<span><code>haltsum2</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x35</td>
-<td style="text-align: left;">Halt Summary 3 (<span>haltsum3</span>)</td>
+<td style="text-align: left;">Halt Summary 3 (<span><code>haltsum3</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x37</td>
-<td style="text-align: left;">System Bus Address 127:96 (<span>sbaddress3</span>)</td>
+<td style="text-align: left;">System Bus Address 127:96 (<span><code>sbaddress3</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x38</td>
-<td style="text-align: left;">System Bus Access Control and Status (<span>sbcs</span>)</td>
+<td style="text-align: left;">System Bus Access Control and Status (<span><code>sbcs</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x39</td>
-<td style="text-align: left;">System Bus Address 31:0 (<span>sbaddress0</span>)</td>
+<td style="text-align: left;">System Bus Address 31:0 (<span><code>sbaddress0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x3a</td>
-<td style="text-align: left;">System Bus Address 63:32 (<span>sbaddress1</span>)</td>
+<td style="text-align: left;">System Bus Address 63:32 (<span><code>sbaddress1</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x3b</td>
-<td style="text-align: left;">System Bus Address 95:64 (<span>sbaddress2</span>)</td>
+<td style="text-align: left;">System Bus Address 95:64 (<span><code>sbaddress2</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x3c</td>
-<td style="text-align: left;">System Bus Data 31:0 (<span>sbdata0</span>)</td>
+<td style="text-align: left;">System Bus Data 31:0 (<span><code>sbdata0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x3d</td>
-<td style="text-align: left;">System Bus Data 63:32 (<span>sbdata1</span>)</td>
+<td style="text-align: left;">System Bus Data 63:32 (<span><code>sbdata1</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x3e</td>
-<td style="text-align: left;">System Bus Data 95:64 (<span>sbdata2</span>)</td>
+<td style="text-align: left;">System Bus Data 95:64 (<span><code>sbdata2</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x3f</td>
-<td style="text-align: left;">System Bus Data 127:96 (<span>sbdata3</span>)</td>
+<td style="text-align: left;">System Bus Data 127:96 (<span><code>sbdata3</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x40</td>
-<td style="text-align: left;">Halt Summary 0 (<span>haltsum0</span>)</td>
+<td style="text-align: left;">Halt Summary 0 (<span><code>haltsum0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<h2 id="debug-module-status-dmstatus-at-0x11">Debug Module Status (<span>dmstatus</span>, at 0x11)</h2>
+<h2 id="debug-module-status-dmstatus-at-0x11">Debug Module Status (<span><code>dmstatus</code></span>, at 0x11)</h2>
 <p><span id="dmstatus" label="dmstatus">[dmstatus]</span>
 This register reports status for the overall Debug Module as well as
-the currently selected harts, as defined in . Its address will
-not change in the future, because it contains .</p>
+the currently selected harts, as defined in <span><code>hasel</code></span>. Its address will
+not change in the future, because it contains <span><code>version</code></span>.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_00.svg" alt="image" /></p>
 <p><img src="dm_registers_01.svg" alt="image" /></p>
 <p><img src="dm_registers_02.svg" alt="image" /></p>
 <p><img src="dm_registers_03.svg" alt="image" /></p>
+<div id="version">
 <table>
 <thead>
 <tr class="header">
@@ -212,11 +214,11 @@ not change in the future, because it contains .</p>
 <tr class="even">
 <td style="text-align: left;"><span id="impebreak" label="impebreak">[impebreak]</span>
 |impebreak|</td>
-<td style="text-align: left;"><p>If 1, then there is an implicit <span>ebreak</span> instruction at the
+<td style="text-align: left;"><p>If 1, then there is an implicit <span><code>ebreak</code></span> instruction at the
 non-existent word immediately after the Program Buffer. This saves
-the debugger from having to write the <span>ebreak</span> itself, and
+the debugger from having to write the <span><code>ebreak</code></span> itself, and
 allows the Program Buffer to be one word smaller.</p>
-<p>This must be 1 when is 1.</p></td>
+<p>This must be 1 when <span><code>progbufsize</code></span>is 1.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
 </tr>
@@ -324,11 +326,11 @@ preset as 1.</p></td>
 <td style="text-align: left;"><span id="authbusy" label="authbusy">[authbusy]</span>
 |authbusy|</td>
 <td style="text-align: left;"><p>0: The authentication module is ready to process the next
-read/write to <span><span>authdata</span></span>.</p>
-<p>1: The authentication module is busy. Accessing <span><span>authdata</span></span>results
+read/write to <span><code>authdata</code></span>.</p>
+<p>1: The authentication module is busy. Accessing <span><code>authdata</code></span>results
 in unspecified behavior.</p>
-<p>only becomes set in immediate response to an access to
-<span><span>authdata</span></span>.</p></td>
+<p><span><code>authbusy</code></span>only becomes set in immediate response to an access to
+<span><code>authdata</code></span>.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">0</td>
 </tr>
@@ -336,7 +338,7 @@ in unspecified behavior.</p>
 <td style="text-align: left;"><span id="hasresethaltreq" label="hasresethaltreq">[hasresethaltreq]</span>
 |hasresethaltreq|</td>
 <td style="text-align: left;">1 if this Debug Module supports halt-on-reset functionality
-controllable by the and bits.
+controllable by the <span><code>setresethaltreq</code></span>and <span><code>clrresethaltreq</code></span>bits.
 0 otherwise.</td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
@@ -344,9 +346,9 @@ controllable by the and bits.
 <tr class="even">
 <td style="text-align: left;"><span id="confstrptrvalid" label="confstrptrvalid">[confstrptrvalid]</span>
 |confstrptrvalid|</td>
-<td style="text-align: left;"><p>0: <span><span>confstrptr0</span></span>–<span><span>confstrptr3</span></span>hold information which
+<td style="text-align: left;"><p>0: <span><code>confstrptr0</code></span>–<span><code>confstrptr3</code></span>hold information which
 is not relevant to the configuration string.</p>
-<p>1: <span><span>confstrptr0</span></span>–<span><span>confstrptr3</span></span>hold the address of the
+<p>1: <span><code>confstrptr0</code></span>–<span><code>confstrptr3</code></span>hold the address of the
 configuration string.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
@@ -366,33 +368,35 @@ available version of this spec.</p></td>
 </tr>
 </tbody>
 </table>
-<h2 id="debug-module-control-dmcontrol-at-0x10">Debug Module Control (<span>dmcontrol</span>, at 0x10)</h2>
+</div>
+<h2 id="debug-module-control-dmcontrol-at-0x10">Debug Module Control (<span><code>dmcontrol</code></span>, at 0x10)</h2>
 <p><span id="dmcontrol" label="dmcontrol">[dmcontrol]</span>
 This register controls the overall Debug Module
-as well as the currently selected harts, as defined in .</p>
+as well as the currently selected harts, as defined in <span><code>hasel</code></span>.</p>
 <p><span id="hartsel" label="hartsel">[hartsel]</span>
-Throughout this document we refer to , which is
-combined with . While the spec allows for 20 bits,
+Throughout this document we refer to <span><code>hartsel</code></span>, which is <span><code>hartselhi</code></span>
+combined with <span><code>hartsello</code></span>. While the spec allows for 20 <span><code>hartsel</code></span>bits,
 an implementation may choose to implement fewer than that. The actual
-width of is called <span>HARTSELLEN</span>. It must be at least 0
-and at most 20. A debugger should discover <span>HARTSELLEN</span> by writing
-all ones to (assuming the maximum size) and reading back the
+width of <span><code>hartsel</code></span>is called <span><code>HARTSELLEN</code></span>. It must be at least 0
+and at most 20. A debugger should discover <span><code>HARTSELLEN</code></span> by writing
+all ones to <span><code>hartsel</code></span>(assuming the maximum size) and reading back the
 value to see which bits were actually set. Debuggers must not change
-while an abstract command is executing.</p>
+<span><code>hartsel</code></span>while an abstract command is executing.</p>
 <div class=commentary>
-<p>There are separate and bits so that
-it is possible to write <span><span>dmcontrol</span></span>without changing the halt-on-reset
+<p>There are separate <span><code>setresethaltreq</code></span>and <span><code>clrresethaltreq</code></span>bits so that
+it is possible to write <span><code>dmcontrol</code></span>without changing the halt-on-reset
 request bit for each selected hart, when not all selected harts have
 the same configuration.</p>
 </div>
 <p>On any given write, a debugger may only write 1 to at most one of the
-following bits: , , ,
-, and . The others must be written 0.</p>
+following bits: <span><code>resumereq</code></span>, <span><code>hartreset</code></span>, <span><code>ackhavereset</code></span>,
+<span><code>setresethaltreq</code></span>, and <span><code>clrresethaltreq</code></span>. The others must be written 0.</p>
 <p><span id="resethaltreq" label="resethaltreq">[resethaltreq]</span>
-is an optional internal bit of per-hart state that cannot be
-read, but can be written with and .</p>
+<span><code>resethaltreq</code></span>is an optional internal bit of per-hart state that cannot be
+read, but can be written with <span><code>setresethaltreq</code></span>and <span><code>clrresethaltreq</code></span>.</p>
 <p><img src="dm_registers_04.svg" alt="image" /></p>
 <p><img src="dm_registers_05.svg" alt="image" /></p>
+<div id="dmactive">
 <table>
 <thead>
 <tr class="header">
@@ -417,7 +421,7 @@ harts. This may cancel outstanding halt requests for those harts.</p>
 <p>Writing 1 sets the halt request bit for all currently selected
 harts. Running harts will halt whenever their halt request bit is
 set.</p>
-<p>Writes apply to the new value of and .</p></td>
+<p>Writes apply to the new value of <span><code>hartsel</code></span>and <span><code>hasel</code></span>.</p></td>
 <td style="text-align: center;">W</td>
 <td style="text-align: left;">-</td>
 </tr>
@@ -427,8 +431,8 @@ set.</p>
 <td style="text-align: left;"><p>Writing 1 causes the currently selected harts to resume once, if
 they are halted when the write occurs. It also clears the resume
 ack bit for those harts.</p>
-<p>is ignored if is set.</p>
-<p>Writes apply to the new value of and .</p></td>
+<p><span><code>resumereq</code></span>is ignored if <span><code>haltreq</code></span>is set.</p>
+<p>Writes apply to the new value of <span><code>hartsel</code></span>and <span><code>hasel</code></span>.</p></td>
 <td style="text-align: center;">W1</td>
 <td style="text-align: left;">-</td>
 </tr>
@@ -443,7 +447,7 @@ selected.</p>
 <p>If this feature is not implemented, the bit always stays 0, so
 after writing 1 the debugger can read the register back to see if
 the feature is supported.</p>
-<p>Writes apply to the new value of and .</p></td>
+<p>Writes apply to the new value of <span><code>hartsel</code></span>and <span><code>hasel</code></span>.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
@@ -451,8 +455,8 @@ the feature is supported.</p>
 <td style="text-align: left;"><span id="ackhavereset" label="ackhavereset">[ackhavereset]</span>
 |ackhavereset|</td>
 <td style="text-align: left;"><p>0: No effect.</p>
-<p>1: Clears <span>havereset</span> for any selected harts.</p>
-<p>Writes apply to the new value of and .</p></td>
+<p>1: Clears <span><code>havereset</code></span> for any selected harts.</p>
+<p>Writes apply to the new value of <span><code>hartsel</code></span>and <span><code>hasel</code></span>.</p></td>
 <td style="text-align: center;">W1</td>
 <td style="text-align: left;">-</td>
 </tr>
@@ -460,9 +464,9 @@ the feature is supported.</p>
 <td style="text-align: left;"><span id="hasel" label="hasel">[hasel]</span>
 |hasel|</td>
 <td style="text-align: left;"><p>Selects the definition of currently selected harts.</p>
-<p>0: There is a single currently selected hart, that is selected by .</p>
+<p>0: There is a single currently selected hart, that is selected by <span><code>hartsel</code></span>.</p>
 <p>1: There may be multiple currently selected harts – the hart
-selected by , plus those selected by the hart array mask
+selected by <span><code>hartsel</code></span>, plus those selected by the hart array mask
 register.</p>
 <p>An implementation which does not implement the hart array mask register
 must tie this field to 0. A debugger which wishes to use the hart array
@@ -474,7 +478,7 @@ is supported.</p></td>
 <tr class="odd">
 <td style="text-align: left;"><span id="hartsello" label="hartsello">[hartsello]</span>
 |hartsello|</td>
-<td style="text-align: left;">The low 10 bits of : the DM-specific index of the hart to
+<td style="text-align: left;">The low 10 bits of <span><code>hartsel</code></span>: the DM-specific index of the hart to
 select. This hart is always part of the currently selected harts.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -482,7 +486,7 @@ select. This hart is always part of the currently selected harts.</td>
 <tr class="even">
 <td style="text-align: left;"><span id="hartselhi" label="hartselhi">[hartselhi]</span>
 |hartselhi|</td>
-<td style="text-align: left;">The high 10 bits of : the DM-specific index of the hart to
+<td style="text-align: left;">The high 10 bits of <span><code>hartsel</code></span>: the DM-specific index of the hart to
 select. This hart is always part of the currently selected harts.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -491,13 +495,13 @@ select. This hart is always part of the currently selected harts.</td>
 <td style="text-align: left;"><span id="setresethaltreq" label="setresethaltreq">[setresethaltreq]</span>
 |setresethaltreq|</td>
 <td style="text-align: left;"><p>This optional field writes the halt-on-reset request bit for all
-currently selected harts, unless is
+currently selected harts, unless <span><code>clrresethaltreq</code></span>is
 simultaneously set to 1.
 When set to 1, each selected hart will halt upon the next deassertion
 of its reset. The halt-on-reset request bit is not automatically
-cleared. The debugger must write to to clear it.</p>
-<p>Writes apply to the new value of and .</p>
-<p>If is 0, this field is not implemented.</p></td>
+cleared. The debugger must write to <span><code>clrresethaltreq</code></span>to clear it.</p>
+<p>Writes apply to the new value of <span><code>hartsel</code></span>and <span><code>hasel</code></span>.</p>
+<p>If <span><code>hasresethaltreq</code></span>is 0, this field is not implemented.</p></td>
 <td style="text-align: center;">W1</td>
 <td style="text-align: left;">-</td>
 </tr>
@@ -506,7 +510,7 @@ cleared. The debugger must write to to clear it.</p>
 |clrresethaltreq|</td>
 <td style="text-align: left;"><p>This optional field clears the halt-on-reset request bit for all
 currently selected harts.</p>
-<p>Writes apply to the new value of and .</p></td>
+<p>Writes apply to the new value of <span><code>hartsel</code></span>and <span><code>hasel</code></span>.</p></td>
 <td style="text-align: center;">W1</td>
 <td style="text-align: left;">-</td>
 </tr>
@@ -528,7 +532,7 @@ to deassert the reset.</td>
 |dmactive|</td>
 <td style="text-align: left;"><p>This bit serves as a reset signal for the Debug Module itself.</p>
 <p>0: The module’s state, including authentication mechanism,
-takes its reset values (the bit is the only bit which can
+takes its reset values (the <span><code>dmactive</code></span>bit is the only bit which can
 be written to something other than its reset value).</p>
 <p>1: The module functions normally.</p>
 <p>No other mechanism should exist that may result in resetting the
@@ -545,18 +549,20 @@ power gated while debugging is active.</p></td>
 </tr>
 </tbody>
 </table>
-<h2 id="hart-info-hartinfo-at-0x12">Hart Info (<span>hartinfo</span>, at 0x12)</h2>
+</div>
+<h2 id="hart-info-hartinfo-at-0x12">Hart Info (<span><code>hartinfo</code></span>, at 0x12)</h2>
 <p><span id="hartinfo" label="hartinfo">[hartinfo]</span>
 This register gives information about the hart currently
-selected by .</p>
+selected by <span><code>hartsel</code></span>.</p>
 <p>This register is optional. If it is not present it should
 read all-zero.</p>
 <p>If this register is included, the debugger can do more with
 the Program Buffer by writing programs which
-explicitly access the <span>data</span> and/or <span>dscratch</span>
+explicitly access the <span><code>data</code></span> and/or <span><code>dscratch</code></span>
 registers.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_06.svg" alt="image" /></p>
+<div id="dataaddr">
 <table>
 <thead>
 <tr class="header">
@@ -576,8 +582,8 @@ registers.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="nscratch" label="nscratch">[nscratch]</span>
 |nscratch|</td>
-<td style="text-align: left;">Number of <span>dscratch</span> registers available for the debugger
-to use during program buffer execution, starting from <span><span>dscratch0</span></span>.
+<td style="text-align: left;">Number of <span><code>dscratch</code></span> registers available for the debugger
+to use during program buffer execution, starting from <span><code>dscratch0</code></span>.
 The debugger can make no assumptions about the contents of these
 registers between commands.</td>
 <td style="text-align: center;">R</td>
@@ -586,10 +592,10 @@ registers between commands.</td>
 <tr class="odd">
 <td style="text-align: left;"><span id="dataaccess" label="dataaccess">[dataaccess]</span>
 |dataaccess|</td>
-<td style="text-align: left;"><p>0: The <span>data</span> registers are shadowed in the hart by CSRs.
+<td style="text-align: left;"><p>0: The <span><code>data</code></span> registers are shadowed in the hart by CSRs.
 Each CSR is DXLEN bits in size, and corresponds
 to a single argument, per Table <a href="debug_module.html#tab:datareg" data-reference-type="ref" data-reference="tab:datareg">[tab:datareg]</a>.</p>
-<p>1: The <span>data</span> registers are shadowed in the hart’s memory map.
+<p>1: The <span><code>data</code></span> registers are shadowed in the hart’s memory map.
 Each register takes up 4 bytes in the memory map.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
@@ -597,11 +603,11 @@ Each register takes up 4 bytes in the memory map.</p></td>
 <tr class="even">
 <td style="text-align: left;"><span id="datasize" label="datasize">[datasize]</span>
 |datasize|</td>
-<td style="text-align: left;"><p>If is 0: Number of CSRs dedicated to
-shadowing the <span>data</span> registers.</p>
-<p>If is 1: Number of 32-bit words in the memory map
-dedicated to shadowing the <span>data</span> registers.</p>
-<p>Since there are at most 12 <span>data</span> registers, the value in this
+<td style="text-align: left;"><p>If <span><code>dataaccess</code></span>is 0: Number of CSRs dedicated to
+shadowing the <span><code>data</code></span> registers.</p>
+<p>If <span><code>dataaccess</code></span>is 1: Number of 32-bit words in the memory map
+dedicated to shadowing the <span><code>data</code></span> registers.</p>
+<p>Since there are at most 12 <span><code>data</code></span> registers, the value in this
 register must be 12 or smaller.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
@@ -609,20 +615,22 @@ register must be 12 or smaller.</p></td>
 <tr class="odd">
 <td style="text-align: left;"><span id="dataaddr" label="dataaddr">[dataaddr]</span>
 |dataaddr|</td>
-<td style="text-align: left;"><p>If is 0: The number of the first CSR dedicated to
-shadowing the <span>data</span> registers.</p>
-<p>If is 1: Signed address of RAM where the <span>data</span>
-registers are shadowed, to be used to access relative to <span>zero</span>.</p></td>
+<td style="text-align: left;"><p>If <span><code>dataaccess</code></span>is 0: The number of the first CSR dedicated to
+shadowing the <span><code>data</code></span> registers.</p>
+<p>If <span><code>dataaccess</code></span>is 1: Signed address of RAM where the <span><code>data</code></span>
+registers are shadowed, to be used to access relative to <span><code>zero</code></span>.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
 </tr>
 </tbody>
 </table>
-<h2 id="hart-array-window-select-hawindowsel-at-0x14">Hart Array Window Select (<span>hawindowsel</span>, at 0x14)</h2>
+</div>
+<h2 id="hart-array-window-select-hawindowsel-at-0x14">Hart Array Window Select (<span><code>hawindowsel</code></span>, at 0x14)</h2>
 <p><span id="hawindowsel" label="hawindowsel">[hawindowsel]</span>
 This register selects which of the 32-bit portion of the hart array mask
-register (see Section <a href="debug_module.html#hartarraymask" data-reference-type="ref" data-reference="hartarraymask">[hartarraymask]</a>) is accessible in <span><span>hawindow</span></span>.</p>
+register (see Section <a href="debug_module.html#hartarraymask" data-reference-type="ref" data-reference="hartarraymask">[hartarraymask]</a>) is accessible in <span><code>hawindow</code></span>.</p>
 <p><img src="dm_registers_07.svg" alt="image" /></p>
+<div id="hawindowsel">
 <table>
 <thead>
 <tr class="header">
@@ -650,26 +658,28 @@ of this field may actually be writable.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="hart-array-window-hawindow-at-0x15">Hart Array Window (<span>hawindow</span>, at 0x15)</h2>
+</div>
+<h2 id="hart-array-window-hawindow-at-0x15">Hart Array Window (<span><code>hawindow</code></span>, at 0x15)</h2>
 <p><span id="hawindow" label="hawindow">[hawindow]</span>
 This register provides R/W access to a 32-bit portion of the
 hart array mask register (see Section <a href="debug_module.html#hartarraymask" data-reference-type="ref" data-reference="hartarraymask">[hartarraymask]</a>).
-The position of the window is determined by <span><span>hawindowsel</span></span>. I.e. bit 0
+The position of the window is determined by <span><code>hawindowsel</code></span>. I.e. bit 0
 refers to hart <span class="math inline">${\tt {hawindowsel}}* 32$</span>, while bit 31 refers to hart
 <span class="math inline">${\tt {hawindowsel}}* 32 + 31$</span>.</p>
 <p>Since some bits in the hart array mask register may be constant 0, some
 bits in this register may be constant 0, depending on the current value
-of .</p>
+of <span><code>hawindowsel</code></span>.</p>
 <p><img src="dm_registers_08.svg" alt="image" /></p>
-<h2 id="abstract-control-and-status-abstractcs-at-0x16">Abstract Control and Status (<span>abstractcs</span>, at 0x16)</h2>
+<h2 id="abstract-control-and-status-abstractcs-at-0x16">Abstract Control and Status (<span><code>abstractcs</code></span>, at 0x16)</h2>
 <p><span id="abstractcs" label="abstractcs">[abstractcs]</span>
 Writing this register while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.</p>
+<span><code>cmderr</code></span>to be set to 1 (busy) if it is 0.</p>
 <div class=commentary>
-<p>must be at least 1 to support RV32 harts, 2 to support
+<p><span><code>datacount</code></span>must be at least 1 to support RV32 harts, 2 to support
 RV64 harts, or 4 to support RV128 harts.</p>
 </div>
 <p><img src="dm_registers_09.svg" alt="image" /></p>
+<div id="datacount">
 <table>
 <thead>
 <tr class="header">
@@ -697,7 +707,7 @@ RV64 harts, or 4 to support RV128 harts.</p>
 <td style="text-align: left;"><span id="busy" label="busy">[busy]</span>
 |busy|</td>
 <td style="text-align: left;"><p>1: An abstract command is currently being executed.</p>
-<p>This bit is set as soon as <span><span>command</span></span>is written, and is
+<p>This bit is set as soon as <span><code>command</code></span>is written, and is
 not cleared until that command has completed.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">0</td>
@@ -708,12 +718,12 @@ not cleared until that command has completed.</p></td>
 <td style="text-align: left;"><p>Gets set if an abstract command fails. The bits in this field remain set until
 they are cleared by writing 1 to them. No abstract command is
 started until the value is reset to 0.</p>
-<p>This field only contains a valid value if is 0.</p>
+<p>This field only contains a valid value if <span><code>busy</code></span>is 0.</p>
 <p>0 (none): No error.</p>
-<p>1 (busy): An abstract command was executing while <span><span>command</span></span>,
-<span><span>abstractcs</span></span>, or <span><span>abstractauto</span></span>was written, or when one
-of the <span>data</span> or <span>progbuf</span> registers was read or written.
-This status is only written if contains 0.</p>
+<p>1 (busy): An abstract command was executing while <span><code>command</code></span>,
+<span><code>abstractcs</code></span>, or <span><code>abstractauto</code></span>was written, or when one
+of the <span><code>data</code></span> or <span><code>progbuf</code></span> registers was read or written.
+This status is only written if <span><code>cmderr</code></span>contains 0.</p>
 <p>2 (not supported): The requested command is not supported,
 regardless of whether the hart is running or not.</p>
 <p>3 (exception): An exception occurred while executing the command
@@ -728,29 +738,31 @@ hart wasn’t in the required state (running/halted), or unavailable.</p>
 <tr class="odd">
 <td style="text-align: left;"><span id="datacount" label="datacount">[datacount]</span>
 |datacount|</td>
-<td style="text-align: left;">Number of <span>data</span> registers that are implemented as part of the
+<td style="text-align: left;">Number of <span><code>data</code></span> registers that are implemented as part of the
 abstract command interface. Valid sizes are 1 – 12.</td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">Preset</td>
 </tr>
 </tbody>
 </table>
-<h2 id="abstract-command-command-at-0x17">Abstract Command (<span>command</span>, at 0x17)</h2>
+</div>
+<h2 id="abstract-command-command-at-0x17">Abstract Command (<span><code>command</code></span>, at 0x17)</h2>
 <p><span id="command" label="command">[command]</span>
 Writes to this register cause the corresponding abstract command to be
 executed.</p>
 <p>Writing this register while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.</p>
-<p>If is non-zero, writes to this register are ignored.</p>
+<span><code>cmderr</code></span>to be set to 1 (busy) if it is 0.</p>
+<p>If <span><code>cmderr</code></span>is non-zero, writes to this register are ignored.</p>
 <div class=commentary>
-<p>inhibits starting a new command to accommodate debuggers
+<p><span><code>cmderr</code></span>inhibits starting a new command to accommodate debuggers
 that, for performance reasons, send several commands to be executed
-in a row without checking in between. They can safely do
-so and check at the end without worrying that one command
+in a row without checking <span><code>cmderr</code></span>in between. They can safely do
+so and check <span><code>cmderr</code></span>at the end without worrying that one command
 failed but then a later command (which might have depended on the
 previous one succeeding) passed.</p>
 </div>
 <p><img src="dm_registers_10.svg" alt="image" /></p>
+<div id="control">
 <table>
 <thead>
 <tr class="header">
@@ -785,14 +797,16 @@ described for each abstract command.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="abstract-command-autoexec-abstractauto-at-0x18">Abstract Command Autoexec (<span>abstractauto</span>, at 0x18)</h2>
+</div>
+<h2 id="abstract-command-autoexec-abstractauto-at-0x18">Abstract Command Autoexec (<span><code>abstractauto</code></span>, at 0x18)</h2>
 <p><span id="abstractauto" label="abstractauto">[abstractauto]</span>
 This register is optional. Including it allows more efficient burst
 accesses. A debugger can detect whether it is support by setting bits
 and reading them back.</p>
 <p>Writing this register while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.</p>
+<span><code>cmderr</code></span>to be set to 1 (busy) if it is 0.</p>
 <p><img src="dm_registers_11.svg" alt="image" /></p>
+<div id="autoexecdata">
 <table>
 <thead>
 <tr class="header">
@@ -813,7 +827,7 @@ to be set to 1 (busy) if it is 0.</p>
 <td style="text-align: left;"><span id="autoexecprogbuf" label="autoexecprogbuf">[autoexecprogbuf]</span>
 |autoexecprogbuf|</td>
 <td style="text-align: left;">When a bit in this field is 1, read or write accesses to the
-corresponding <span>progbuf</span> word cause the command in <span><span>command</span></span>to
+corresponding <span><code>progbuf</code></span> word cause the command in <span><code>command</code></span>to
 be executed again.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -822,68 +836,69 @@ be executed again.</td>
 <td style="text-align: left;"><span id="autoexecdata" label="autoexecdata">[autoexecdata]</span>
 |autoexecdata|</td>
 <td style="text-align: left;">When a bit in this field is 1, read or write accesses to the
-corresponding <span>data</span> word cause the command in <span><span>command</span></span>to be
+corresponding <span><code>data</code></span> word cause the command in <span><code>command</code></span>to be
 executed again.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="configuration-string-pointer-0-confstrptr0-at-0x19">Configuration String Pointer 0 (<span>confstrptr0</span>, at 0x19)</h2>
+</div>
+<h2 id="configuration-string-pointer-0-confstrptr0-at-0x19">Configuration String Pointer 0 (<span><code>confstrptr0</code></span>, at 0x19)</h2>
 <p><span id="confstrptr0" label="confstrptr0">[confstrptr0]</span>
-When is set, reading this register returns bits 31:0
-of the configuration string pointer. Reading the other <span>confstrptr</span>
+When <span><code>confstrptrvalid</code></span>is set, reading this register returns bits 31:0
+of the configuration string pointer. Reading the other <span><code>confstrptr</code></span>
 registers returns the upper bits of the address.</p>
 <p>When system bus mastering is implemented, this must be an
 address that can be used with the System Bus Access module. Otherwise,
 this must be an address that can be used to access the
 configuration string from the hart with ID 0.</p>
-<p>If is 0, then the <span>confstrptr</span> registers
+<p>If <span><code>confstrptrvalid</code></span>is 0, then the <span><code>confstrptr</code></span> registers
 hold identifier information which is not
 further specified in this document.</p>
 <p>The configuration string itself is described in the Privileged Spec.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_12.svg" alt="image" /></p>
-<h2 id="next-debug-module-nextdm-at-0x1d">Next Debug Module (<span>nextdm</span>, at 0x1d)</h2>
+<h2 id="next-debug-module-nextdm-at-0x1d">Next Debug Module (<span><code>nextdm</code></span>, at 0x1d)</h2>
 <p><span id="nextdm" label="nextdm">[nextdm]</span>
 If there is more than one DM accessible on this DMI, this register
 contains the base address of the next one in the chain, or 0 if this is
 the last one in the chain.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_13.svg" alt="image" /></p>
-<h2 id="abstract-data-0-data0-at-0x04">Abstract Data 0 (<span>data0</span>, at 0x04)</h2>
+<h2 id="abstract-data-0-data0-at-0x04">Abstract Data 0 (<span><code>data0</code></span>, at 0x04)</h2>
 <p><span id="data0" label="data0">[data0]</span>
-<span><span>data0</span></span>through <span><span>data11</span></span>are basic read/write registers that may
-be read or changed by abstract commands. indicates how many
-of them are implemented, starting at <span><span>data0</span></span>, counting up.
+<span><code>data0</code></span>through <span><code>data11</code></span>are basic read/write registers that may
+be read or changed by abstract commands. <span><code>datacount</code></span>indicates how many
+of them are implemented, starting at <span><code>data0</code></span>, counting up.
 Table <a href="debug_module.html#tab:datareg" data-reference-type="ref" data-reference="tab:datareg">[tab:datareg]</a> shows how abstract commands use these
 registers.</p>
 <p>Accessing these registers while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.</p>
-<p>Attempts to write them while is set does not change their value.</p>
+<span><code>cmderr</code></span>to be set to 1 (busy) if it is 0.</p>
+<p>Attempts to write them while <span><code>busy</code></span>is set does not change their value.</p>
 <p>The values in these registers may not be preserved after an abstract
 command is executed. The only guarantees on their contents are the ones
 offered by the command in question. If the command fails, no
 assumptions can be made about the contents of these registers.</p>
 <p><img src="dm_registers_14.svg" alt="image" /></p>
-<h2 id="program-buffer-0-progbuf0-at-0x20">Program Buffer 0 (<span>progbuf0</span>, at 0x20)</h2>
+<h2 id="program-buffer-0-progbuf0-at-0x20">Program Buffer 0 (<span><code>progbuf0</code></span>, at 0x20)</h2>
 <p><span id="progbuf0" label="progbuf0">[progbuf0]</span>
-<span><span>progbuf0</span></span>through <span><span>progbuf15</span></span>provide read/write access to the
-optional program buffer. indicates how many of them are
-implemented starting at <span><span>progbuf0</span></span>, counting up.</p>
+<span><code>progbuf0</code></span>through <span><code>progbuf15</code></span>provide read/write access to the
+optional program buffer. <span><code>progbufsize</code></span>indicates how many of them are
+implemented starting at <span><code>progbuf0</code></span>, counting up.</p>
 <p>Accessing these registers while an abstract command is executing causes
-to be set to 1 (busy) if it is 0.</p>
-<p>Attempts to write them while is set does not change their value.</p>
+<span><code>cmderr</code></span>to be set to 1 (busy) if it is 0.</p>
+<p>Attempts to write them while <span><code>busy</code></span>is set does not change their value.</p>
 <p><img src="dm_registers_15.svg" alt="image" /></p>
-<h2 id="authentication-data-authdata-at-0x30">Authentication Data (<span>authdata</span>, at 0x30)</h2>
+<h2 id="authentication-data-authdata-at-0x30">Authentication Data (<span><code>authdata</code></span>, at 0x30)</h2>
 <p><span id="authdata" label="authdata">[authdata]</span>
 This register serves as a 32-bit serial port to/from the authentication
 module.</p>
-<p>When is clear, the debugger can communicate with the
+<p>When <span><code>authbusy</code></span>is clear, the debugger can communicate with the
 authentication module by reading or writing this register. There is no
 separate mechanism to signal overflow/underflow.</p>
 <p><img src="dm_registers_16.svg" alt="image" /></p>
-<h2 id="halt-summary-0-haltsum0-at-0x40">Halt Summary 0 (<span>haltsum0</span>, at 0x40)</h2>
+<h2 id="halt-summary-0-haltsum0-at-0x40">Halt Summary 0 (<span><code>haltsum0</code></span>, at 0x40)</h2>
 <p><span id="haltsum0" label="haltsum0">[haltsum0]</span>
 Each bit in this read-only register indicates whether one specific hart
 is halted or not. Unavailable/nonexistent harts are not considered to
@@ -892,7 +907,7 @@ be halted.</p>
 MSB reflects halt status of hart {hartsel[19:5],5’h1f}.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_17.svg" alt="image" /></p>
-<h2 id="halt-summary-1-haltsum1-at-0x13">Halt Summary 1 (<span>haltsum1</span>, at 0x13)</h2>
+<h2 id="halt-summary-1-haltsum1-at-0x13">Halt Summary 1 (<span><code>haltsum1</code></span>, at 0x13)</h2>
 <p><span id="haltsum1" label="haltsum1">[haltsum1]</span>
 Each bit in this read-only register indicates whether any of a group of
 harts is halted or not. Unavailable/nonexistent harts are not considered to
@@ -905,7 +920,7 @@ The MSB reflects the halt status of harts {hartsel[19:10],10’h3e0}
 through {hartsel[19:10],10’h3ff}.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_18.svg" alt="image" /></p>
-<h2 id="halt-summary-2-haltsum2-at-0x34">Halt Summary 2 (<span>haltsum2</span>, at 0x34)</h2>
+<h2 id="halt-summary-2-haltsum2-at-0x34">Halt Summary 2 (<span><code>haltsum2</code></span>, at 0x34)</h2>
 <p><span id="haltsum2" label="haltsum2">[haltsum2]</span>
 Each bit in this read-only register indicates whether any of a group of
 harts is halted or not. Unavailable/nonexistent harts are not considered to
@@ -918,7 +933,7 @@ The MSB reflects the halt status of harts {hartsel[19:15],15’h7c00}
 through {hartsel[19:15],15’h7fff}.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_19.svg" alt="image" /></p>
-<h2 id="halt-summary-3-haltsum3-at-0x35">Halt Summary 3 (<span>haltsum3</span>, at 0x35)</h2>
+<h2 id="halt-summary-3-haltsum3-at-0x35">Halt Summary 3 (<span><code>haltsum3</code></span>, at 0x35)</h2>
 <p><span id="haltsum3" label="haltsum3">[haltsum3]</span>
 Each bit in this read-only register indicates whether any of a group of
 harts is halted or not. Unavailable/nonexistent harts are not considered to
@@ -929,11 +944,12 @@ be halted.</p>
 The MSB reflects the halt status of harts 20’hf8000 through 20’hfffff.</p>
 <p>This entire register is read-only.</p>
 <p><img src="dm_registers_20.svg" alt="image" /></p>
-<h2 id="system-bus-access-control-and-status-sbcs-at-0x38">System Bus Access Control and Status (<span>sbcs</span>, at 0x38)</h2>
+<h2 id="system-bus-access-control-and-status-sbcs-at-0x38">System Bus Access Control and Status (<span><code>sbcs</code></span>, at 0x38)</h2>
 <p><span id="sbcs" label="sbcs">[sbcs]</span></p>
 <p><img src="dm_registers_21.svg" alt="image" /></p>
 <p><img src="dm_registers_22.svg" alt="image" /></p>
 <p><img src="dm_registers_23.svg" alt="image" /></p>
+<div id="sbaccess8">
 <table>
 <thead>
 <tr class="header">
@@ -965,7 +981,7 @@ spec older than 1 January, 2018.</p>
 |sbbusyerror|</td>
 <td style="text-align: left;"><p>Set when the debugger attempts to read data while a read is in
 progress, or when the debugger initiates a new access while one is
-already in progress (while is set). It remains set until
+already in progress (while <span><code>sbbusy</code></span>is set). It remains set until
 it’s explicitly cleared by the debugger.</p>
 <p>While this field is set, no more system bus accesses can be
 initiated by the Debug Module.</p></td>
@@ -979,16 +995,16 @@ initiated by the Debug Module.</p></td>
 system bus itself is busy is related, but not the same thing.) This
 bit goes high immediately when a read or write is requested for any
 reason, and does not go low until the access is fully completed.</p>
-<p>Writes to <span><span>sbcs</span></span>while is high result in undefined
-behavior. A debugger must not write to <span><span>sbcs</span></span>until it reads
-as 0.</p></td>
+<p>Writes to <span><code>sbcs</code></span>while <span><code>sbbusy</code></span>is high result in undefined
+behavior. A debugger must not write to <span><code>sbcs</code></span>until it reads
+<span><code>sbbusy</code></span>as 0.</p></td>
 <td style="text-align: center;">R</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span id="sbreadonaddr" label="sbreadonaddr">[sbreadonaddr]</span>
 |sbreadonaddr|</td>
-<td style="text-align: left;">When 1, every write to <span><span>sbaddress0</span></span>automatically triggers a
+<td style="text-align: left;">When 1, every write to <span><code>sbaddress0</code></span>automatically triggers a
 system bus read at the new address.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -1002,23 +1018,23 @@ system bus read at the new address.</td>
 <p>2: 32-bit</p>
 <p>3: 64-bit</p>
 <p>4: 128-bit</p>
-<p>If has an unsupported value when the DM starts a bus
-access, the access is not performed and is set to 4.</p></td>
+<p>If <span><code>sbaccess</code></span>has an unsupported value when the DM starts a bus
+access, the access is not performed and <span><code>sberror</code></span>is set to 4.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">2</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span id="sbautoincrement" label="sbautoincrement">[sbautoincrement]</span>
 |sbautoincrement|</td>
-<td style="text-align: left;">When 1, <span>sbaddress</span> is incremented by the access size (in
-bytes) selected in after every system bus access.</td>
+<td style="text-align: left;">When 1, <span><code>sbaddress</code></span> is incremented by the access size (in
+bytes) selected in <span><code>sbaccess</code></span>after every system bus access.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span id="sbreadondata" label="sbreadondata">[sbreadondata]</span>
 |sbreadondata|</td>
-<td style="text-align: left;">When 1, every read from <span><span>sbdata0</span></span>automatically triggers a
+<td style="text-align: left;">When 1, every read from <span><code>sbdata0</code></span>automatically triggers a
 system bus read at the (possibly auto-incremented) address.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
@@ -1086,19 +1102,21 @@ access support.)</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-address-310-sbaddress0-at-0x39">System Bus Address 31:0 (<span>sbaddress0</span>, at 0x39)</h2>
+</div>
+<h2 id="system-bus-address-310-sbaddress0-at-0x39">System Bus Address 31:0 (<span><code>sbaddress0</code></span>, at 0x39)</h2>
 <p><span id="sbaddress0" label="sbaddress0">[sbaddress0]</span>
-If is 0, then this register is not present.</p>
+If <span><code>sbasize</code></span>is 0, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
-and don’t do anything else.</p>
-<p><span>If is 0, is 0, and
+<span><code>sbbusyerror</code></span>and don’t do anything else.</p>
+<p><span>If <span><code>sberror</code></span>is 0, <span><code>sbbusyerror</code></span>is 0, and <span><code>sbreadonaddr</code></span>
 is set then writes to this register start the following:</span></p>
-<p>Set .</p>
-<p>Perform a bus read from the new value of <span>sbaddress</span>.</p>
-<p>If the read succeeded and is set, increment
-<span>sbaddress</span>.</p>
-<p>Clear .</p>
+<p>Set <span><code>sbbusy</code></span>.</p>
+<p>Perform a bus read from the new value of <span><code>sbaddress</code></span>.</p>
+<p>If the read succeeded and <span><code>sbautoincrement</code></span>is set, increment
+<span><code>sbaddress</code></span>.</p>
+<p>Clear <span><code>sbbusy</code></span>.</p>
 <p><img src="dm_registers_24.svg" alt="image" /></p>
+<div id="address">
 <table>
 <thead>
 <tr class="header">
@@ -1118,18 +1136,20 @@ is set then writes to this register start the following:</span></p>
 <tr class="even">
 <td style="text-align: left;"><span id="address" label="address">[address]</span>
 |address|</td>
-<td style="text-align: left;">Accesses bits 31:0 of the physical address in <span>sbaddress</span>.</td>
+<td style="text-align: left;">Accesses bits 31:0 of the physical address in <span><code>sbaddress</code></span>.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-address-6332-sbaddress1-at-0x3a">System Bus Address 63:32 (<span>sbaddress1</span>, at 0x3a)</h2>
+</div>
+<h2 id="system-bus-address-6332-sbaddress1-at-0x3a">System Bus Address 63:32 (<span><code>sbaddress1</code></span>, at 0x3a)</h2>
 <p><span id="sbaddress1" label="sbaddress1">[sbaddress1]</span>
-If is less than 33, then this register is not present.</p>
+If <span><code>sbasize</code></span>is less than 33, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
-and don’t do anything else.</p>
+<span><code>sbbusyerror</code></span>and don’t do anything else.</p>
 <p><img src="dm_registers_25.svg" alt="image" /></p>
+<div id="address">
 <table>
 <thead>
 <tr class="header">
@@ -1149,19 +1169,21 @@ and don’t do anything else.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="address" label="address">[address]</span>
 |address|</td>
-<td style="text-align: left;">Accesses bits 63:32 of the physical address in <span>sbaddress</span> (if
+<td style="text-align: left;">Accesses bits 63:32 of the physical address in <span><code>sbaddress</code></span> (if
 the system address bus is that wide).</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-address-9564-sbaddress2-at-0x3b">System Bus Address 95:64 (<span>sbaddress2</span>, at 0x3b)</h2>
+</div>
+<h2 id="system-bus-address-9564-sbaddress2-at-0x3b">System Bus Address 95:64 (<span><code>sbaddress2</code></span>, at 0x3b)</h2>
 <p><span id="sbaddress2" label="sbaddress2">[sbaddress2]</span>
-If is less than 65, then this register is not present.</p>
+If <span><code>sbasize</code></span>is less than 65, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
-and don’t do anything else.</p>
+<span><code>sbbusyerror</code></span>and don’t do anything else.</p>
 <p><img src="dm_registers_26.svg" alt="image" /></p>
+<div id="address">
 <table>
 <thead>
 <tr class="header">
@@ -1181,19 +1203,21 @@ and don’t do anything else.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="address" label="address">[address]</span>
 |address|</td>
-<td style="text-align: left;">Accesses bits 95:64 of the physical address in <span>sbaddress</span> (if
+<td style="text-align: left;">Accesses bits 95:64 of the physical address in <span><code>sbaddress</code></span> (if
 the system address bus is that wide).</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-address-12796-sbaddress3-at-0x37">System Bus Address 127:96 (<span>sbaddress3</span>, at 0x37)</h2>
+</div>
+<h2 id="system-bus-address-12796-sbaddress3-at-0x37">System Bus Address 127:96 (<span><code>sbaddress3</code></span>, at 0x37)</h2>
 <p><span id="sbaddress3" label="sbaddress3">[sbaddress3]</span>
-If is less than 97, then this register is not present.</p>
+If <span><code>sbasize</code></span>is less than 97, then this register is not present.</p>
 <p>When the system bus master is busy, writes to this register will set
-and don’t do anything else.</p>
+<span><code>sbbusyerror</code></span>and don’t do anything else.</p>
 <p><img src="dm_registers_27.svg" alt="image" /></p>
+<div id="address">
 <table>
 <thead>
 <tr class="header">
@@ -1213,42 +1237,42 @@ and don’t do anything else.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="address" label="address">[address]</span>
 |address|</td>
-<td style="text-align: left;">Accesses bits 127:96 of the physical address in <span>sbaddress</span> (if
+<td style="text-align: left;">Accesses bits 127:96 of the physical address in <span><code>sbaddress</code></span> (if
 the system address bus is that wide).</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-data-310-sbdata0-at-0x3c">System Bus Data 31:0 (<span>sbdata0</span>, at 0x3c)</h2>
+</div>
+<h2 id="system-bus-data-310-sbdata0-at-0x3c">System Bus Data 31:0 (<span><code>sbdata0</code></span>, at 0x3c)</h2>
 <p><span id="sbdata0" label="sbdata0">[sbdata0]</span>
-If all of the <span>sbaccess</span> bits in <span><span>sbcs</span></span>are 0, then this register
+If all of the <span><code>sbaccess</code></span> bits in <span><code>sbcs</code></span>are 0, then this register
 is not present.</p>
-<p>Any successful system bus read updates <span>sbdata</span>. If the width of
-the read access is less than the width of <span>sbdata</span>, the contents of
+<p>Any successful system bus read updates <span><code>sbdata</code></span>. If the width of
+the read access is less than the width of <span><code>sbdata</code></span>, the contents of
 the remaining high bits may take on any value.</p>
-<p>If or both aren’t 0 then accesses do nothing.</p>
-<p>If the bus master is busy then accesses set , and don’t do
+<p>If <span><code>sberror</code></span>or <span><code>sbbusyerror</code></span>both aren’t 0 then accesses do nothing.</p>
+<p>If the bus master is busy then accesses set <span><code>sbbusyerror</code></span>, and don’t do
 anything else.</p>
 <p><span>Writes to this register start the following:</span></p>
-<p>Set .</p>
-<p>Perform a bus write of the new value of <span>sbdata</span> to <span>sbaddress</span>.</p>
-<p>If the write succeeded and is set,
-increment <span>sbaddress</span>.</p>
-<p>Clear .</p>
+<p>Set <span><code>sbbusy</code></span>.</p>
+<p>Perform a bus write of the new value of <span><code>sbdata</code></span> to <span><code>sbaddress</code></span>.</p>
+<p>If the write succeeded and <span><code>sbautoincrement</code></span>is set,
+increment <span><code>sbaddress</code></span>.</p>
+<p>Clear <span><code>sbbusy</code></span>.</p>
 <p><span>Reads from this register start the following:</span></p>
 <p>“Return” the data.</p>
-<p>Set .</p>
-<p>If is set, perform a system bus read from the
-address contained in <span>sbaddress</span>, placing the result in <span>
-sbdata</span>.</p>
-<p>If is set, increment <span>sbaddress</span>.</p>
-<p>Clear .</p>
-<p>Only <span><span>sbdata0</span></span>has this behavior. The other <span>sbdata</span> registers
+<p>Set <span><code>sbbusy</code></span>.</p>
+<p>If <span><code>sbreadondata</code></span>is set, perform a system bus read from the
+address contained in <span><code>sbaddress</code></span>, placing the result in <span><code> sbdata</code></span>.</p>
+<p>If <span><code>sbautoincrement</code></span>is set, increment <span><code>sbaddress</code></span>.</p>
+<p>Clear <span><code>sbbusy</code></span>.</p>
+<p>Only <span><code>sbdata0</code></span>has this behavior. The other <span><code>sbdata</code></span> registers
 have no side effects. On systems that have buses wider than 32 bits, a
-debugger should access <span><span>sbdata0</span></span>after accessing the other <span>
-sbdata</span> registers.</p>
+debugger should access <span><code>sbdata0</code></span>after accessing the other <span><code> sbdata</code></span> registers.</p>
 <p><img src="dm_registers_28.svg" alt="image" /></p>
+<div id="data">
 <table>
 <thead>
 <tr class="header">
@@ -1268,19 +1292,21 @@ sbdata</span> registers.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="data" label="data">[data]</span>
 |data|</td>
-<td style="text-align: left;">Accesses bits 31:0 of <span>sbdata</span>.</td>
+<td style="text-align: left;">Accesses bits 31:0 of <span><code>sbdata</code></span>.</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-data-6332-sbdata1-at-0x3d">System Bus Data 63:32 (<span>sbdata1</span>, at 0x3d)</h2>
+</div>
+<h2 id="system-bus-data-6332-sbdata1-at-0x3d">System Bus Data 63:32 (<span><code>sbdata1</code></span>, at 0x3d)</h2>
 <p><span id="sbdata1" label="sbdata1">[sbdata1]</span>
-If and are 0, then this
+If <span><code>sbaccess64</code></span>and <span><code>sbaccess128</code></span>are 0, then this
 register is not present.</p>
-<p>If the bus master is busy then accesses set , and don’t do
+<p>If the bus master is busy then accesses set <span><code>sbbusyerror</code></span>, and don’t do
 anything else.</p>
 <p><img src="dm_registers_29.svg" alt="image" /></p>
+<div id="data">
 <table>
 <thead>
 <tr class="header">
@@ -1300,19 +1326,21 @@ anything else.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="data" label="data">[data]</span>
 |data|</td>
-<td style="text-align: left;">Accesses bits 63:32 of <span>sbdata</span> (if the system bus is that
+<td style="text-align: left;">Accesses bits 63:32 of <span><code>sbdata</code></span> (if the system bus is that
 wide).</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-data-9564-sbdata2-at-0x3e">System Bus Data 95:64 (<span>sbdata2</span>, at 0x3e)</h2>
+</div>
+<h2 id="system-bus-data-9564-sbdata2-at-0x3e">System Bus Data 95:64 (<span><code>sbdata2</code></span>, at 0x3e)</h2>
 <p><span id="sbdata2" label="sbdata2">[sbdata2]</span>
-This register only exists if is 1.</p>
-<p>If the bus master is busy then accesses set , and don’t do
+This register only exists if <span><code>sbaccess128</code></span>is 1.</p>
+<p>If the bus master is busy then accesses set <span><code>sbbusyerror</code></span>, and don’t do
 anything else.</p>
 <p><img src="dm_registers_30.svg" alt="image" /></p>
+<div id="data">
 <table>
 <thead>
 <tr class="header">
@@ -1332,19 +1360,21 @@ anything else.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="data" label="data">[data]</span>
 |data|</td>
-<td style="text-align: left;">Accesses bits 95:64 of <span>sbdata</span> (if the system bus is that
+<td style="text-align: left;">Accesses bits 95:64 of <span><code>sbdata</code></span> (if the system bus is that
 wide).</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
-<h2 id="system-bus-data-12796-sbdata3-at-0x3f">System Bus Data 127:96 (<span>sbdata3</span>, at 0x3f)</h2>
+</div>
+<h2 id="system-bus-data-12796-sbdata3-at-0x3f">System Bus Data 127:96 (<span><code>sbdata3</code></span>, at 0x3f)</h2>
 <p><span id="sbdata3" label="sbdata3">[sbdata3]</span>
-This register only exists if is 1.</p>
-<p>If the bus master is busy then accesses set , and don’t do
+This register only exists if <span><code>sbaccess128</code></span>is 1.</p>
+<p>If the bus master is busy then accesses set <span><code>sbbusyerror</code></span>, and don’t do
 anything else.</p>
 <p><img src="dm_registers_31.svg" alt="image" /></p>
+<div id="data">
 <table>
 <thead>
 <tr class="header">
@@ -1364,13 +1394,14 @@ anything else.</p>
 <tr class="even">
 <td style="text-align: left;"><span id="data" label="data">[data]</span>
 |data|</td>
-<td style="text-align: left;">Accesses bits 127:96 of <span>sbdata</span> (if the system bus is that
+<td style="text-align: left;">Accesses bits 127:96 of <span><code>sbdata</code></span> (if the system bus is that
 wide).</td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 </tbody>
 </table>
+</div>
 
 </body>
 </html>

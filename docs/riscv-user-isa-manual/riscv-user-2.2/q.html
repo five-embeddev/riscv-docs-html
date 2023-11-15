@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/q.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="q-standard-extension-for-quad-precision-floating-point-version-2.0"><span class="header-section-number">14</span> “Q” Standard Extension for Quad-Precision Floating-Point,
+<section id="q-standard-extension-for-quad-precision-floating-point-version-2.0" data-number="1">
+<h1 data-number="14"><span class="header-section-number">14</span> “Q” Standard Extension for Quad-Precision Floating-Point,
 Version 2.0</h1>
 <p>This chapter describes the Q standard extension for 128-bit binary
 floating-point instructions compliant with the IEEE 754-2008
@@ -29,14 +31,17 @@ The NaN-boxing scheme described in Section <a href="d.html#nanboxing" data-refe
 extended recursively to allow a single-precision value to be NaN-boxed
 inside a double-precision value which is itself NaN-boxed inside a
 quad-precision value.</p>
-<h2 id="quad-precision-load-and-store-instructions"><span class="header-section-number">14.1</span> Quad-Precision Load and Store Instructions</h2>
+<section id="quad-precision-load-and-store-instructions" data-number="1.1">
+<h2 data-number="14.1"><span class="header-section-number">14.1</span> Quad-Precision Load and Store Instructions</h2>
 <p>New 128-bit variants of LOAD-FP and STORE-FP instructions are added,
 encoded with a new value for the funct3 width field.</p>
 <p><img src="q_00.svg" alt="image" /></p>
 <p><img src="q_01.svg" alt="image" /></p>
 <p>FLQ and FSQ are only guaranteed to execute atomically if the effective address
 is naturally aligned and XLEN=128.</p>
-<h2 id="quad-precision-computational-instructions"><span class="header-section-number">14.2</span> Quad-Precision Computational Instructions</h2>
+</section>
+<section id="quad-precision-computational-instructions" data-number="1.2">
+<h2 data-number="14.2"><span class="header-section-number">14.2</span> Quad-Precision Computational Instructions</h2>
 <p>A new supported format is added to the format field of most
 instructions, as shown in Table <a href="q.html#tab:fpextfmt" data-reference-type="ref" data-reference="tab:fpextfmt">[tab:fpextfmt]</a>.</p>
 <table>
@@ -75,7 +80,9 @@ defined analogously to their double-precision counterparts, but operate on
 quad-precision operands and produce quad-precision results.</p>
 <p><img src="q_02.svg" alt="image" /></p>
 <p><img src="q_03.svg" alt="image" /></p>
-<h2 id="quad-precision-convert-and-move-instructions"><span class="header-section-number">14.3</span> Quad-Precision Convert and Move Instructions</h2>
+</section>
+<section id="quad-precision-convert-and-move-instructions" data-number="1.3">
+<h2 data-number="14.3"><span class="header-section-number">14.3</span> Quad-Precision Convert and Move Instructions</h2>
 <p><img src="q_04.svg" alt="image" /></p>
 <p>New floating-point to floating-point conversion instructions FCVT.S.Q,
 FCVT.Q.S, FCVT.D.Q, FCVT.Q.D are added.</p>
@@ -89,16 +96,22 @@ patterns must be moved to the integer registers via memory.</p>
 <div class=commentary>
 <p>RV128 supports FMV.X.Q and FMV.Q.X in the Q extension.</p>
 </div>
-<h2 id="quad-precision-floating-point-compare-instructions"><span class="header-section-number">14.4</span> Quad-Precision Floating-Point Compare Instructions</h2>
+</section>
+<section id="quad-precision-floating-point-compare-instructions" data-number="1.4">
+<h2 data-number="14.4"><span class="header-section-number">14.4</span> Quad-Precision Floating-Point Compare Instructions</h2>
 <p>Floating-point compare instructions perform the specified comparison (equal,
 less than, or less than or equal) between floating-point registers <span><em>rs1</em></span>
 and <span><em>rs2</em></span> and record the Boolean result in integer register <span><em>rd</em></span>.</p>
 <p><img src="q_07.svg" alt="image" /></p>
-<h2 id="quad-precision-floating-point-classify-instruction"><span class="header-section-number">14.5</span> Quad-Precision Floating-Point Classify Instruction</h2>
+</section>
+<section id="quad-precision-floating-point-classify-instruction" data-number="1.5">
+<h2 data-number="14.5"><span class="header-section-number">14.5</span> Quad-Precision Floating-Point Classify Instruction</h2>
 <p>The quad-precision floating-point classify instruction, FCLASS.Q, is
 defined analogously to its double-precision counterpart, but operates on
 quad-precision operands.</p>
 <p><img src="q_08.svg" alt="image" /></p>
+</section>
+</section>
 
 </body>
 </html>

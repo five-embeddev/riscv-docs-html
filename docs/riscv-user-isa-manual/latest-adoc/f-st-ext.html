@@ -1,0 +1,962 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/f-st-ext.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="single-float">1. "F" Standard Extension for Single-Precision Floating-Point, Version 2.2</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter describes the standard instruction-set extension for
+single-precision floating-point, which is named "F" and adds
+single-precision floating-point computational instructions compliant
+with the IEEE 754-2008 arithmetic standard (<a href="#ieee754-2008"><em>ANSI/IEEE Std 754-2008&#44; IEEE Standard for Floating-Point Arithmetic</em>&#44; 2008</a>). The F extension depends on the "Zicsr" extension for control and status register access.</p>
+</div>
+<div class="sect2">
+<h3 id="_f_register_state">1.1. F Register State</h3>
+<div class="paragraph">
+<p>The F extension adds 32 floating-point registers, <code>f0-f31</code>, each 32
+bits wide, and a floating-point control and status register <code>fcsr</code>,
+which contains the operating mode and exception status of the
+floating-point unit. This additional state is shown in
+<a href="#fprs">Table 1</a>. We use the term FLEN to describe the width of
+the floating-point registers in the RISC-V ISA, and FLEN=32 for the F
+single-precision floating-point extension. Most floating-point
+instructions operate on values in the floating-point register file.
+Floating-point load and store instructions transfer floating-point
+values between registers and memory. Instructions to transfer values to and from the integer register file are also provided.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We considered a unified register file for both integer and
+floating-point values as this simplifies software register allocation
+and calling conventions, and reduces total user state. However, a split
+organization increases the total number of registers accessible with a
+given instruction width, simplifies provision of enough regfile ports
+for wide superscalar issue, supports decoupled floating-point-unit
+architectures, and simplifies use of internal floating-point encoding
+techniques. Compiler support and calling conventions for split register
+file architectures are well understood, and using dirty bits on
+floating-point register file state can reduce context-switch overhead.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<table id="fprs" class="tableblock frame-all grid-rows" style="width: 50%;">
+<caption class="title">Table 1. RISC-V standard F extension single-precision floating-point state</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="small">FLEN-1</span></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock"><span class="small">0</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f0</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f1</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f2</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f3</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f4</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f5</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f6</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f7</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f8</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f9</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f10</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f11</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f12</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f13</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f14</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f15</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f16</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f17</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f18</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f19</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f20</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f21</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f22</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f23</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f24</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f25</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f26</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f27</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f28</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f29</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f30</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">f31</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">FLEN</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="small">31</span></p></td>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock"><span class="small">0</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">fcsr</span></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top" colspan="3"><p class="tableblock"><span class="small">32</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_floating_point_control_and_status_register">1.2. Floating-Point Control and Status Register</h3>
+<div class="paragraph">
+<p>The floating-point control and status register, <code>fcsr</code>, is a RISC-V
+control and status register (CSR). It is a 32-bit read/write register
+that selects the dynamic rounding mode for floating-point arithmetic
+operations and holds the accrued exception flags, as shown in <a href="#fcsr">Floating-Point Control and Status Register</a>.</p>
+</div>
+<div id="fcsr" class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nNTAnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgNTAnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTAnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDE1KSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMjEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMjEnIHkyPScyMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPScyMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPScyMScvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkyPScyMScvPjxsaW5lIHgxPSc3MTcnIHgyPSc3MTcnIHkyPScyMScvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPScyMScvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkyPScyMScvPjxsaW5lIHgxPSc2NDMnIHgyPSc2NDMnIHkyPScyJy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nNjE4JyB4Mj0nNjE4JyB5Mj0nMicvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTI9JzIxJy8+PGxpbmUgeDE9JzU2OScgeDI9JzU2OScgeTI9JzInLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSc1NDQnIHgyPSc1NDQnIHkyPScyJy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nNTE5JyB4Mj0nNTE5JyB5Mj0nMicvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzQ5NCcgeDI9JzQ5NCcgeTI9JzInLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkyPScyJy8+PGxpbmUgeDE9JzQ3MCcgeDI9JzQ3MCcgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5Mj0nMicvPjxsaW5lIHgxPSc0NDUnIHgyPSc0NDUnIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzQyMCcgeDI9JzQyMCcgeTI9JzInLz48bGluZSB4MT0nNDIwJyB4Mj0nNDIwJyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPScyJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMicvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzInLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPScyJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMicvPjxsaW5lIHgxPScyOTcnIHgyPScyOTcnIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzI3MicgeDI9JzI3MicgeTI9JzInLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPScyNDcnIHgyPScyNDcnIHkyPScyJy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nMjIyJyB4Mj0nMjIyJyB5Mj0nMicvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzE5OCcgeDI9JzE5OCcgeTI9JzInLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPScxNzMnIHgyPScxNzMnIHkyPScyJy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTE9JzIxJyB5Mj0nMTknLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5Mj0nMicvPjxsaW5lIHgxPScxNDgnIHgyPScxNDgnIHkxPScyMScgeTI9JzE5Jy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTI9JzInLz48bGluZSB4MT0nMTI0JyB4Mj0nMTI0JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMicvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5Mj0nMicvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5Mj0nMicvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5MT0nMjEnIHkyPScxOScvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5Mj0nMicvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5MT0nMjEnIHkyPScxOScvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nTlgnIGhlaWdodD0nMjEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDQ1LDEwMCUsNTAlKScgd2lkdGg9JzI1JyB4PSc3NjYnLz48cmVjdCBmaWVsZD0nVUYnIGhlaWdodD0nMjEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDQ1LDEwMCUsNTAlKScgd2lkdGg9JzI1JyB4PSc3NDInLz48cmVjdCBmaWVsZD0nT0YnIGhlaWdodD0nMjEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDQ1LDEwMCUsNTAlKScgd2lkdGg9JzI1JyB4PSc3MTcnLz48cmVjdCBmaWVsZD0nRFonIGhlaWdodD0nMjEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDQ1LDEwMCUsNTAlKScgd2lkdGg9JzI1JyB4PSc2OTInLz48cmVjdCBmaWVsZD0nTlYnIGhlaWdodD0nMjEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDQ1LDEwMCUsNTAlKScgd2lkdGg9JzI1JyB4PSc2NjcnLz48cmVjdCBmaWVsZD0nUm91bmRpbmcgTW9kZScgaGVpZ2h0PScyMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMTI2LDEwMCUsNTAlKScgd2lkdGg9Jzc0JyB4PSc1OTMnLz48cmVjdCBmaWVsZD0nUmVzZXJ2ZWQnIGhlaWdodD0nMjEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDIxNSwxMDAlLDUwJSknIHdpZHRoPSc1OTMnLz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsLTkpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NDIpJz48dGV4dCB5PSc2Jz4xPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3MTcpJz48dGV4dCB5PSc2Jz4yPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz4zPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2NjcpJz48dGV4dCB5PSc2Jz40PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2NDMpJz48dGV4dCB5PSc2Jz41PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NjkpJz48dGV4dCB5PSc2Jz44PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiw5KSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzY2KSc+PHRleHQgeT0nNic+PHRzcGFuPk5YPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5VRjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3MTcpJz48dGV4dCB5PSc2Jz48dHNwYW4+T0Y8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPkRaPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY2NyknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5OVjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz48dHNwYW4+Um91bmRpbmcgTW9kZTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyODQpJz48dGV4dCB5PSc2Jz48dHNwYW4+UmVzZXJ2ZWQ8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDI2KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzY2KSc+PHRleHQgeT0nNic+PHRzcGFuPjE8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4xPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3MTcpJz48dGV4dCB5PSc2Jz48dHNwYW4+MTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjE8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY2NyknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4xPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjg0KSc+PHRleHQgeT0nNic+PHRzcGFuPjI0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="50">
+</div>
+<div class="title">Figure 1. Floating-point control and status register</div>
+</div>
+<div class="paragraph">
+<p>The <code>fcsr</code> register can be read and written with the FRCSR and FSCSR
+instructions, which are assembler pseudoinstructions built on the
+underlying CSR access instructions. FRCSR reads <code>fcsr</code> by copying it
+into integer register <em>rd</em>. FSCSR swaps the value in <code>fcsr</code> by copying
+the original value into integer register <em>rd</em>, and then writing a new
+value obtained from integer register <em>rs1</em> into <code>fcsr</code>.</p>
+</div>
+<div class="paragraph">
+<p>The fields within the <code>fcsr</code> can also be accessed individually through
+different CSR addresses, and separate assembler pseudoinstructions are defined
+for these accesses. The FRRM instruction reads the Rounding Mode field <code>frm</code>
+(<code>fcsr</code> bits 7&#8212;&#8203;5) and copies it into the least-significant three bits of
+integer register <em>rd</em>, with zero in all other bits. FSRM swaps the value in
+<code>frm</code> by copying the original value into integer register <em>rd</em>, and then
+writing a new value obtained from the three least-significant bits of integer
+register <em>rs1</em> into <code>frm</code>. FRFLAGS and FSFLAGS are defined analogously for the
+Accrued Exception Flags field <code>fflags</code> (<code>fcsr</code> bits 4&#8212;&#8203;0).</p>
+</div>
+<div class="paragraph">
+<p>Bits 31&#8212;&#8203;8 of the <code>fcsr</code> are reserved for other standard extensions. If
+these extensions are not present, implementations shall ignore writes to
+these bits and supply a zero value when read. Standard software should
+preserve the contents of these bits.</p>
+</div>
+<div class="paragraph">
+<p>Floating-point operations use either a static rounding mode encoded in
+the instruction, or a dynamic rounding mode held in <code>frm</code>. Rounding
+modes are encoded as shown in <a href="#rm">Table 2</a>. A value of 111 in the
+instruction&#8217;s <em>rm</em> field selects the dynamic rounding mode held in
+<code>frm</code>. The behavior of floating-point instructions that depend on
+rounding mode when executed with a reserved rounding mode is <em>reserved</em>, including both static reserved rounding modes (101-110) and dynamic reserved rounding modes (101-111). Some instructions, including widening conversions, have the <em>rm</em> field but are nevertheless mathematically unaffected by the rounding mode; software should set their <em>rm</em> field to
+RNE (000) but implementations must treat the <em>rm</em> field as usual (in
+particular, with regard to decoding legal vs. reserved encodings).</p>
+</div>
+<table id="rm" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 2. Rounding mode encoding.</caption>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Rounding Mode</th>
+<th class="tableblock halign-center valign-top">Mnemonic</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">000</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">RNE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round to Nearest, ties to Even</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">001</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">RTZ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round towards Zero</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">010</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">RDN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round Down (towards \(-\infty\))</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">011</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">RUP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round Up (towards \(+\infty\))</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">100</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">RMM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Round to Nearest, ties to Max Magnitude</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">101</p></td>
+<td class="tableblock halign-center valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Reserved for future use.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">110</p></td>
+<td class="tableblock halign-center valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>Reserved for future use.</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">111</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">DYN</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">In instruction&#8217;s <em>rm</em> field, selects dynamic rounding mode; In Rounding Mode register, <em>reserved</em>.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The C99 language standard effectively mandates the provision of a
+dynamic rounding mode register. In typical implementations, writes to
+the dynamic rounding mode CSR state will serialize the pipeline. Static
+rounding modes are used to implement specialized arithmetic operations
+that often have to switch frequently between different rounding modes.</p>
+</div>
+<div class="paragraph">
+<p>The ratified version of the F spec mandated that an illegal-instruction
+exception was raised when an instruction was executed with a reserved
+dynamic rounding mode. This has been weakened to reserved, which matches
+the behavior of static rounding-mode instructions. Raising an
+illegal-instruction exception is still valid behavior when encountering a
+reserved encoding, so implementations compatible with the ratified spec
+are compatible with the weakened spec.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The accrued exception flags indicate the exception conditions that have
+arisen on any floating-point arithmetic instruction since the field was
+last reset by software, as shown in <a href="#bitdef">Table 3</a>. The base
+RISC-V ISA does not support generating a trap on the setting of a
+floating-point exception flag.
+</p>
+</div>
+<table id="bitdef" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 3. Accrued exception flag encoding.</caption>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Flag Mnemonic</th>
+<th class="tableblock halign-left valign-top">Flag Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">NV</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invalid Operation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">DZ</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Divide by Zero</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">OF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Overflow</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">UF</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Underflow</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">NX</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inexact</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>As allowed by the standard, we do not support traps on floating-point
+exceptions in the F extension, but instead require explicit checks of
+the flags in software. We considered adding branches controlled directly
+by the contents of the floating-point accrued exception flags, but
+ultimately chose to omit these instructions to keep the ISA simple.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_nan_generation_and_propagation">1.3. NaN Generation and Propagation</h3>
+<div class="paragraph">
+<p>Except when otherwise stated, if the result of a floating-point
+operation is NaN, it is the canonical NaN. The canonical NaN has a
+positive sign and all significand bits clear except the MSB, a.k.a. the
+quiet bit. For single-precision floating-point, this corresponds to the pattern <code>0x7fc00000</code>.
+
+</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We considered propagating NaN payloads, as is recommended by the
+standard, but this decision would have increased hardware cost.
+Moreover, since this feature is optional in the standard, it cannot be
+used in portable code.</p>
+</div>
+<div class="paragraph">
+<p>Implementors are free to provide a NaN payload propagation scheme as a
+nonstandard extension enabled by a nonstandard operating mode. However, the canonical NaN scheme described above must always be supported and should be the default mode.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<hr>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We require implementations to return the standard-mandated default
+values in the case of exceptional conditions, without any further
+intervention on the part of user-level software (unlike the Alpha ISA
+floating-point trap barriers). We believe full hardware handling of
+exceptional cases will become more common, and so wish to avoid
+complicating the user-level ISA to optimize other approaches.
+Implementations can always trap to machine-mode software handlers to
+provide exceptional default values.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_subnormal_arithmetic">1.4. Subnormal Arithmetic</h3>
+<div class="paragraph">
+<p>Operations on subnormal numbers are handled in accordance with the IEEE 754-2008 standard.
+</p>
+</div>
+<div class="paragraph">
+<p>In the parlance of the IEEE standard, tininess is detected after
+rounding.
+</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Detecting tininess after rounding results in fewer spurious underflow
+signals.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_single_precision_load_and_store_instructions">1.5. Single-Precision Load and Store Instructions</h3>
+<div class="paragraph">
+<p>Floating-point loads and stores use the same base+offset addressing mode as the integer base ISAs, with a base address in register <em>rs1</em> and a 12-bit signed byte offset. The FLW instruction loads a single-precision floating-point value from memory into floating-point register <em>rd</em>. FSW stores a single-precision value from floating-point register <em>rs2</em> to memory.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nODQnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgODQnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMnLz48bGluZSB4MT0nMTczJyB4Mj0nMTczJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxNDgnIHgyPScxNDgnIHkyPSczJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTI0JyB4Mj0nMTI0JyB5Mj0nMycvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkyPSczJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkyPSczJy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkyPSczJy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkyPSczJy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkxPSczMScgeTI9JzI4Jy8+PC9nPjxnPjxnPjxyZWN0IGZpZWxkPSdvcGNvZGUnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTczJyB4PSc2MTgnLz48cmVjdCBmaWVsZD0ncmQnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PSc0OTQnLz48cmVjdCBmaWVsZD0nd2lkdGgnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdpbW1bMTE6MF0nIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDgwLDEwMCUsNTAlKScgd2lkdGg9JzI5NycvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4xMTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MTI8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQyMCknPjx0ZXh0IHk9JzYnPjE0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz4xNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjk3KSc+PHRleHQgeT0nNic+MTk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI3MiknPjx0ZXh0IHk9JzYnPjIwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwxNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcGNvZGU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPnJkPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj53aWR0aDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMxPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5pbW1bMTE6MF08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPkxPQUQtRlA8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+VzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmJhc2U8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4xMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+b2Zmc2V0WzExOjBdPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="84">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nODQnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgODQnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczJy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTI9JzMnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzMnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzMnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTI9JzMnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTE9JzMxJyB5Mj0nMjgnLz48L2c+PGc+PGc+PHJlY3QgZmllbGQ9J29wY29kZScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxNzMnIHg9JzYxOCcvPjxyZWN0IGZpZWxkPSdpbW1bNDowXScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woODAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PSc0OTQnLz48cmVjdCBmaWVsZD0nd2lkdGgnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdyczInIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzE3MycvPjxyZWN0IGZpZWxkPSdpbW1bMTE6NV0nIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDgwLDEwMCUsNTAlKScgd2lkdGg9JzE3MycvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4xMTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MTI8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQyMCknPjx0ZXh0IHk9JzYnPjE0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz4xNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjk3KSc+PHRleHQgeT0nNic+MTk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI3MiknPjx0ZXh0IHk9JzYnPjIwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNzMpJz48dGV4dCB5PSc2Jz4yNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+MjU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDApJz48dGV4dCB5PSc2Jz4zMTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDE1KSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPm9wY29kZTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+aW1tWzQ6MF08L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1KSc+PHRleHQgeT0nNic+PHRzcGFuPndpZHRoPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5pbW1bMTE6NV08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPlNUT1JFLUZQPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+b2Zmc2V0WzQ6MF08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5XPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+YmFzZTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzQpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vZmZzZXRbMTE6NV08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="84">
+</div>
+</div>
+<div id="sp-ldst" class="paragraph">
+<p>FLW and FSW are only guaranteed to execute atomically if the effective
+address is naturally aligned.</p>
+</div>
+<div class="paragraph">
+<p>FLW and FSW do not modify the bits being transferred; in particular, the payloads of non-canonical NaNs are preserved.</p>
+</div>
+<div class="paragraph">
+<p>As described in <a href="#ldst">[ldst]</a>, the execution environment defines whether misaligned floating-point loads and stores are handled invisibly or raise a contained or fatal trap.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="single-float-compute">1.6. Single-Precision Floating-Point Computational Instructions</h3>
+<div class="paragraph">
+<p>Floating-point arithmetic instructions with one or two source operands
+use the R-type format with the OP-FP major opcode. FADD.S and FMUL.S
+perform single-precision floating-point addition and multiplication
+respectively, between <em>rs1</em> and <em>rs2</em>. FSUB.S performs the
+single-precision floating-point subtraction of <em>rs2</em> from <em>rs1</em>. FDIV.S performs the single-precision floating-point division of <em>rs1</em> by <em>rs2</em>. FSQRT.S computes the square root of <em>rs1</em>. In each case, the result is written to <em>rd</em>.</p>
+</div>
+<div class="paragraph">
+<p>The 2-bit floating-point format field <em>fmt</em> is encoded as shown in
+<a href="#fmt">Table 4</a>. It is set to <em>S</em> (00) for all instructions in the F extension.</p>
+</div>
+<table id="fmt" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 4. Format field encoding</caption>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><em>fmt</em> field</th>
+<th class="tableblock halign-center valign-top">Mnemonic</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">00</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">S</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">32-bit single-precision</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">01</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">64-bit double-precision</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">10</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">H</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">16-bit half-precision</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">11</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Q</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">128-bit quad-precision</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>All floating-point operations that perform rounding can select the
+rounding mode using the <em>rm</em> field with the encoding shown in
+<a href="#rm">Table 2</a>.</p>
+</div>
+<div class="paragraph">
+<p>Floating-point minimum-number and maximum-number instructions FMIN.S and FMAX.S write, respectively, the smaller or larger of <em>rs1</em> and <em>rs2</em> to <em>rd</em>. For the purposes of these instructions only, the value
+\(-0.0\) is considered to be less than the value
+\(+0.0\). If both inputs are NaNs, the result is the canonical NaN. If only one operand is a NaN, the result is the non-NaN operand.
+Signaling NaN inputs set the invalid operation exception flag, even when the result is not NaN.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Note that in version 2.2 of the F extension, the FMIN.S and FMAX.S
+instructions were amended to implement the proposed IEEE 754-201x
+minimumNumber and maximumNumber operations, rather than the IEEE
+754-2008 minNum and maxNum operations. These operations differ in their
+handling of signaling NaNs.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nMTI2JyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSd4TWlkWU1pZCBtZWV0JyB2aWV3Qm94PScwIDAgODAwIDEyNicgd2lkdGg9JzgwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxNCcgZm9udC13ZWlnaHQ9J25vcm1hbCcgdGV4dC1hbmNob3I9J21pZGRsZScgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMC41LDAuNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQsMjEpJz48ZyBzdHJva2U9J2JsYWNrJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS13aWR0aD0nMSc+PGxpbmUgeDI9Jzc5MScvPjxsaW5lIHkyPSczMScvPjxsaW5lIHgyPSc3OTEnIHkxPSczMScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc5MScgeDI9Jzc5MScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTI9JzMnLz48bGluZSB4MT0nNzY2JyB4Mj0nNzY2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkyPSczJy8+PGxpbmUgeDE9Jzc0MicgeDI9Jzc0MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5Mj0nMycvPjxsaW5lIHgxPSc3MTcnIHgyPSc3MTcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTI9JzMnLz48bGluZSB4MT0nNjkyJyB4Mj0nNjkyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkyPSczJy8+PGxpbmUgeDE9JzY2NycgeDI9JzY2NycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5Mj0nMycvPjxsaW5lIHgxPSc2NDMnIHgyPSc2NDMnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzYxOCcgeDI9JzYxOCcgeTI9JzMxJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTI9JzMnLz48bGluZSB4MT0nNTkzJyB4Mj0nNTkzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkyPSczJy8+PGxpbmUgeDE9JzU2OScgeDI9JzU2OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5Mj0nMycvPjxsaW5lIHgxPSc1NDQnIHgyPSc1NDQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTI9JzMnLz48bGluZSB4MT0nNTE5JyB4Mj0nNTE5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OTQnIHgyPSc0OTQnIHkyPSczMScvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkyPSczJy8+PGxpbmUgeDE9JzQ3MCcgeDI9JzQ3MCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5Mj0nMycvPjxsaW5lIHgxPSc0NDUnIHgyPSc0NDUnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQyMCcgeDI9JzQyMCcgeTI9JzMxJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTI9JzMnLz48bGluZSB4MT0nMzk2JyB4Mj0nMzk2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkyPSczJy8+PGxpbmUgeDE9JzM3MScgeDI9JzM3MScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5Mj0nMycvPjxsaW5lIHgxPSczNDYnIHgyPSczNDYnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTI9JzMnLz48bGluZSB4MT0nMzIxJyB4Mj0nMzIxJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyOTcnIHgyPScyOTcnIHkyPSczMScvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkyPSczJy8+PGxpbmUgeDE9JzI3MicgeDI9JzI3MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5Mj0nMycvPjxsaW5lIHgxPScyNDcnIHgyPScyNDcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTI9JzMnLz48bGluZSB4MT0nMjIyJyB4Mj0nMjIyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkyPSczJy8+PGxpbmUgeDE9JzE5OCcgeDI9JzE5OCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTczJyB4Mj0nMTczJyB5Mj0nMzEnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5Mj0nMycvPjxsaW5lIHgxPScxNDgnIHgyPScxNDgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTI9JzMxJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkyPSczJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkyPSczJy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkyPSczJy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkyPSczJy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkxPSczMScgeTI9JzI4Jy8+PC9nPjxnPjxnPjxyZWN0IGZpZWxkPSdvcGNvZGUnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTczJyB4PSc2MTgnLz48cmVjdCBmaWVsZD0ncmQnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PSc0OTQnLz48cmVjdCBmaWVsZD0ncm0nIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdyczInIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzE3MycvPjxyZWN0IGZpZWxkPSdmbXQnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNDknIHg9JzEyNCcvPjxyZWN0IGZpZWxkPSdmdW5jdDUnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTI0Jy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE3MyknPjx0ZXh0IHk9JzYnPjI0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4yNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTI0KSc+PHRleHQgeT0nNic+MjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDk5KSc+PHRleHQgeT0nNic+Mjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDApJz48dGV4dCB5PSc2Jz4zMTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDE1KSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPm9wY29kZTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+cmQ8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1KSc+PHRleHQgeT0nNic+PHRzcGFuPnJtPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYpJz48dGV4dCB5PSc2Jz48dHNwYW4+Zm10PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPmZ1bmN0NTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMzkpJz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+T1AtRlA8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPk9QLUZQPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5Miw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5PUC1GUDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+T1AtRlA8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+Uk08L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPlJNPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5STTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+TUlOL01BWDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjMTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDQyKSc+PHRleHQgeT0nNic+PHRzcGFuPjA8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDU2KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzI8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4yPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiw1NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPkZBREQvRlNVQjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5GTVVML0ZESVY8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksNDIpJz48dGV4dCB5PSc2Jz48dHNwYW4+RlNRUlQ8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksNTYpJz48dGV4dCB5PSc2Jz48dHNwYW4+Rk1JTi1NQVg8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="126">
+</div>
+</div>
+<div id="spfloat" class="paragraph">
+<p></p>
+</div>
+<div class="paragraph">
+<p>Floating-point fused multiply-add instructions require a new standard
+instruction format. R4-type instructions specify three source registers (<em>rs1</em>, <em>rs2</em>, and <em>rs3</em>) and a destination register (<em>rd</em>). This format is only used by the floating-point fused multiply-add instructions.</p>
+</div>
+<div class="paragraph">
+<p>FMADD.S multiplies the values in <em>rs1</em> and <em>rs2</em>, adds the value in
+<em>rs3</em>, and writes the final result to <em>rd</em>. FMADD.S computes
+<em>(rs1\(\times\)rs2)\(\+\)rs3</em>.</p>
+</div>
+<div class="paragraph">
+<p>FMSUB.S multiplies the values in <em>rs1</em> and <em>rs2</em>, subtracts the value in <em>rs3</em>, and writes the final result to <em>rd</em>. FMSUB.S computes
+<em>(rs1\(\times\)rs2)\(\-\)rs3</em>.</p>
+</div>
+<div class="paragraph">
+<p>FNMSUB.S multiplies the values in <em>rs1</em> and <em>rs2</em>, negates the product, adds the value in <em>rs3</em>, and writes the final result to <em>rd</em>. FNMSUB.S computes <em>-(rs1\(\times\)rs2)\(\+\)rs3</em>.</p>
+</div>
+<div class="paragraph">
+<p>FNMADD.S multiplies the values in <em>rs1</em> and <em>rs2</em>, negates the product, subtracts the value in <em>rs3</em>, and writes the final result to <em>rd</em>. FNMADD.S computes <em>-(rs1\(\times\)rs2)\(\-\)rs3</em>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The FNMSUB and FNMADD instructions are counterintuitively named, owing
+to the naming of the corresponding instructions in MIPS-IV. The MIPS
+instructions were defined to negate the sum, rather than negating the
+product as the RISC-V instructions do, so the naming scheme was more
+rational at the time. The two definitions differ with respect to
+signed-zero results. The RISC-V definition matches the behavior of the
+x86 and ARM fused multiply-add instructions, but unfortunately the
+RISC-V FNMSUB and FNMADD instruction names are swapped compared to x86
+and ARM.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nODQnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgODQnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczMScvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMycvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5Mj0nMycvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5Mj0nMycvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5Mj0nMycvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5MT0nMzEnIHkyPScyOCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nb3Bjb2RlJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JtJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9Jzc0JyB4PSc0MjAnLz48cmVjdCBmaWVsZD0ncnMxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScyOTcnLz48cmVjdCBmaWVsZD0ncnMyJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScxNzMnLz48cmVjdCBmaWVsZD0nZm10JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzQ5JyB4PScxMjQnLz48cmVjdCBmaWVsZD0ncnMzJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0Jy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE3MyknPjx0ZXh0IHk9JzYnPjI0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4yNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTI0KSc+PHRleHQgeT0nNic+MjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDk5KSc+PHRleHQgeT0nNic+Mjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDApJz48dGV4dCB5PSc2Jz4zMTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDE1KSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPm9wY29kZTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+cmQ8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1KSc+PHRleHQgeT0nNic+PHRzcGFuPnJtPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYpJz48dGV4dCB5PSc2Jz48dHNwYW4+Zm10PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMzkpJz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+RltOXU1BREQvRltOXU1TVUI8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+Uk08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmMxPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjMjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPjI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPlM8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjMzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="Diagram" width="800" height="84">
+</div>
+</div>
+<div id="fnmaddsub" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The fused multiply-add (FMA) instructions consume a large part of the
+32-bit instruction encoding space. Some alternatives considered were to
+restrict FMA to only use dynamic rounding modes, but static rounding
+modes are useful in code that exploits the lack of product rounding.
+Another alternative would have been to use rd to provide rs3, but this
+would require additional move instructions in some common sequences. The current design still leaves a large portion of the 32-bit encoding space open while avoiding having FMA be non-orthogonal.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The fused multiply-add instructions must set the invalid operation
+exception flag when the multiplicands are \(\infty\) and zero, even when the addend is a quiet NaN.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The IEEE 754-2008 standard permits, but does not require, raising the
+invalid exception for the operation \(\infty\times 0\ +\)qNaN.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_single_precision_floating_point_conversion_and_move_instructions">1.7. Single-Precision Floating-Point Conversion and Move Instructions</h3>
+<div class="paragraph">
+<p>Floating-point-to-integer and integer-to-floating-point conversion
+instructions are encoded in the OP-FP major opcode space. FCVT.W.S or
+FCVT.L.S converts a floating-point number in floating-point register
+<em>rs1</em> to a signed 32-bit or 64-bit integer, respectively, in integer
+register <em>rd</em>. FCVT.S.W or FCVT.S.L converts a 32-bit or 64-bit signed
+integer, respectively, in integer register <em>rs1</em> into a floating-point
+number in floating-point register <em>rd</em>. FCVT.WU.S, FCVT.LU.S, FCVT.S.WU,
+and FCVT.S.LU variants convert to or from unsigned integer values. For
+XLEN\(&gt;32\), FCVT.W[U].S sign-extends the 32-bit result to the
+destination register width. FCVT.L[U].S and FCVT.S.L[U] are RV64-only
+instructions. If the rounded result is not representable in the
+destination format, it is clipped to the nearest value and the invalid
+flag is set. <a href="#int_conv">Table 5</a> gives the range of valid inputs
+for FCVT.<em>int</em>.S and the behavior for invalid inputs.
+</p>
+</div>
+<div class="paragraph">
+<p>All floating-point to integer and integer to floating-point conversion
+instructions round according to the <em>rm</em> field. A floating-point
+register can be initialized to floating-point positive zero using
+FCVT.S.W <em>rd</em>, <code>x0</code>, which will never set any exception flags.</p>
+</div>
+<table id="int_conv" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 5. Domains of float-to-integer conversions and behavior for invalid inputs</caption>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-right valign-top">FCVT.W.S</th>
+<th class="tableblock halign-right valign-top">FCVT.WU.S</th>
+<th class="tableblock halign-right valign-top">FCVT.L.S</th>
+<th class="tableblock halign-right valign-top">FCVT.LU.S</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Minimum valid input (after rounding)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(-2^{31}\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(-2^{63}\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Maximum valid input (after rounding)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{31}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{32}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{63}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{64}-1\)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output for out-of-range negative input</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(-2^{31}\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(-2^{63}\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output for \(-\infty\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(-2^{31}\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(-2^{63}\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">0</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output for out-of-range positive input</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{31}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{32}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{63}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{64}-1\)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Output for \(+\infty\) or NaN</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{31}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{32}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{63}-1\)</p></td>
+<td class="tableblock halign-right valign-top"><p class="tableblock">\(2^{64}-1\)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>All floating-point conversion instructions set the Inexact exception
+flag if the rounded result differs from the operand value and the
+Invalid exception flag is not set.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nOTgnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgOTgnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczMScvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMycvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5Mj0nMycvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5Mj0nMycvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5Mj0nMycvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5MT0nMzEnIHkyPScyOCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nb3Bjb2RlJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JtJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9Jzc0JyB4PSc0MjAnLz48cmVjdCBmaWVsZD0ncnMxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScyOTcnLz48cmVjdCBmaWVsZD0ncnMyJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScxNzMnLz48cmVjdCBmaWVsZD0nZm10JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzQ5JyB4PScxMjQnLz48cmVjdCBmaWVsZD0nZnVuY3Q1JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzEyNCcvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4xMTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MTI8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQyMCknPjx0ZXh0IHk9JzYnPjE0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz4xNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjk3KSc+PHRleHQgeT0nNic+MTk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI3MiknPjx0ZXh0IHk9JzYnPjIwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNzMpJz48dGV4dCB5PSc2Jz4yNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+MjU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCknPjx0ZXh0IHk9JzYnPjI2PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjI3PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwxNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcGNvZGU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPnJkPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5ybTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMxPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPmZtdDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mdW5jdDU8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPk9QLUZQPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5PUC1GUDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5STTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+Uk08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPldbVV0vTFtVXUQ8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyLDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPldbVV0vTFtVXTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPjI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPlM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPlM8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+RkNWVC5pbnQuZm10PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPkZDVlQuZm10LmludDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PC9nPjwvZz48L2c+PC9nPjwvc3ZnPg==" alt="Diagram" width="800" height="98">
+</div>
+</div>
+<div id="fcvt" class="paragraph">
+<p>Floating-point to floating-point sign-injection instructions, FSGNJ.S,
+FSGNJN.S, and FSGNJX.S, produce a result that takes all bits except the
+sign bit from <em>rs1</em>. For FSGNJ, the result&#8217;s sign bit is <em>rs2</em>'s sign
+bit; for FSGNJN, the result&#8217;s sign bit is the opposite of <em>rs2</em>'s sign
+bit; and for FSGNJX, the sign bit is the XOR of the sign bits of <em>rs1</em>
+and <em>rs2</em>. Sign-injection instructions do not set floating-point
+exception flags, nor do they canonicalize NaNs. Note, FSGNJ.S <em>rx, ry,
+ry</em> moves <em>ry</em> to <em>rx</em> (assembler pseudoinstruction FMV.S <em>rx, ry</em>);
+FSGNJN.S <em>rx, ry, ry</em> moves the negation of <em>ry</em> to <em>rx</em> (assembler
+pseudoinstruction FNEG.S <em>rx, ry</em>); and FSGNJX.S <em>rx, ry, ry</em> moves the absolute value of <em>ry</em> to <em>rx</em> (assembler pseudoinstruction FABS.S <em>rx,
+ry</em>).</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nODQnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgODQnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczMScvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMycvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5Mj0nMycvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5Mj0nMycvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5Mj0nMycvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5MT0nMzEnIHkyPScyOCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nb3Bjb2RlJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JtJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9Jzc0JyB4PSc0MjAnLz48cmVjdCBmaWVsZD0ncnMxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScyOTcnLz48cmVjdCBmaWVsZD0ncnMyJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScxNzMnLz48cmVjdCBmaWVsZD0nZm10JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzQ5JyB4PScxMjQnLz48cmVjdCBmaWVsZD0nZnVuY3Q1JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzEyNCcvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4xMTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MTI8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQyMCknPjx0ZXh0IHk9JzYnPjE0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz4xNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjk3KSc+PHRleHQgeT0nNic+MTk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI3MiknPjx0ZXh0IHk9JzYnPjIwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNzMpJz48dGV4dCB5PSc2Jz4yNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+MjU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCknPjx0ZXh0IHk9JzYnPjI2PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjI3PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwxNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcGNvZGU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPnJkPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5ybTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMxPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPmZtdDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mdW5jdDU8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPk9QLUZQPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZGVzdDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1KSc+PHRleHQgeT0nNic+PHRzcGFuPjM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPkpbTl0vSlg8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmMxPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjMjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPjI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPlM8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+RlNHTko8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="84">
+</div>
+</div>
+<div id="inj" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The sign-injection instructions provide floating-point MV, ABS, and NEG, as well as supporting a few other operations, including the IEEE
+copySign operation and sign manipulation in transcendental math function libraries. Although MV, ABS, and NEG only need a single register operand, whereas FSGNJ instructions need two, it is unlikely most microarchitectures would add optimizations to benefit from the reduced number of register reads for these relatively infrequent instructions. Even in this case, a microarchitecture can simply detect when both source registers are the same for FSGNJ instructions and only read a single copy.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Instructions are provided to move bit patterns between the
+floating-point and integer registers. FMV.X.W moves the single-precision value in floating-point register <em>rs1</em> represented in IEEE 754-2008 encoding to the lower 32 bits of integer register <em>rd</em>. The bits are not modified in the transfer, and in particular, the payloads of non-canonical NaNs are preserved. For RV64, the higher 32 bits of the destination register are filled with copies of the floating-point number&#8217;s sign bit.</p>
+</div>
+<div class="paragraph">
+<p>FMV.W.X moves the single-precision value encoded in IEEE 754-2008
+standard encoding from the lower 32 bits of integer register <em>rs1</em> to
+the floating-point register <em>rd</em>. The bits are not modified in the
+transfer, and in particular, the payloads of non-canonical NaNs are
+preserved.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The FMV.W.X and FMV.X.W instructions were previously called FMV.S.X and FMV.X.S. The use of W is more consistent with their semantics as an instruction that moves 32 bits without interpreting them. This became clearer after defining NaN-boxing. To avoid disturbing existing code, both the W and S versions will be supported by tools.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nOTgnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgOTgnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczMScvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMycvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5Mj0nMycvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5Mj0nMycvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5Mj0nMycvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5MT0nMzEnIHkyPScyOCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nb3Bjb2RlJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JtJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9Jzc0JyB4PSc0MjAnLz48cmVjdCBmaWVsZD0ncnMxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScyOTcnLz48cmVjdCBmaWVsZD0ncnMyJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScxNzMnLz48cmVjdCBmaWVsZD0nZm10JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzQ5JyB4PScxMjQnLz48cmVjdCBmaWVsZD0nZnVuY3Q1JyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzEyNCcvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NjYpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2MTgpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4xMTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MTI8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQyMCknPjx0ZXh0IHk9JzYnPjE0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz4xNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjk3KSc+PHRleHQgeT0nNic+MTk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI3MiknPjx0ZXh0IHk9JzYnPjIwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNzMpJz48dGV4dCB5PSc2Jz4yNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+MjU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCknPjx0ZXh0IHk9JzYnPjI2PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjI3PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwxNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5vcGNvZGU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPnJkPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5ybTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMxPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPmZtdDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mdW5jdDU8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPk9QLUZQPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5PUC1GUDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4wMDA8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPjAwMDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+c3JjPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+MDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+MDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2KSc+PHRleHQgeT0nNic+PHRzcGFuPjI8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPlM8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTM2LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPlM8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDksMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+Rk1WLlguVzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5GTVYuVy5YPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="98">
+</div>
+</div>
+<div id="spfloat-mv" class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The base floating-point ISA was defined so as to allow implementations
+to employ an internal recoding of the floating-point format in registers to simplify handling of subnormal values and possibly to reduce functional unit latency. To this end, the F extension avoids
+representing integer values in the floating-point registers by defining conversion and comparison operations that read and write the integer register file directly. This also removes many of the common cases where explicit moves between integer and floating-point registers are required, reducing instruction count and critical paths for common mixed-format code sequences.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_single_precision_floating_point_compare_instructions">1.8. Single-Precision Floating-Point Compare Instructions</h3>
+<div class="paragraph">
+<p>Floating-point compare instructions (FEQ.S, FLT.S, FLE.S) perform the
+specified comparison between floating-point registers
+(\(\mbox{\em rs1}
+= \mbox{\em rs2}\), \(\mbox{\em rs1} &lt; \mbox{\em rs2}\),
+\(\mbox{\em rs1} \leq
+\mbox{\em rs2}\)) writing 1 to the integer register <em>rd</em> if the
+condition holds, and 0 otherwise.</p>
+</div>
+<div class="paragraph">
+<p>FLT.S and FLE.S perform what the IEEE 754-2008 standard refers to as
+<em>signaling</em> comparisons: that is, they set the invalid operation
+exception flag if either input is NaN. FEQ.S performs a <em>quiet</em>
+comparison: it only sets the invalid operation exception flag if either input is a signaling NaN. For all three instructions, the result is 0 if either operand is NaN.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nMTEyJyBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSd4TWlkWU1pZCBtZWV0JyB2aWV3Qm94PScwIDAgODAwIDExMicgd2lkdGg9JzgwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48ZyBmb250LWZhbWlseT0nc2Fucy1zZXJpZicgZm9udC1zaXplPScxNCcgZm9udC13ZWlnaHQ9J25vcm1hbCcgdGV4dC1hbmNob3I9J21pZGRsZScgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMC41LDAuNSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQsMjEpJz48ZyBzdHJva2U9J2JsYWNrJyBzdHJva2UtbGluZWNhcD0ncm91bmQnIHN0cm9rZS13aWR0aD0nMSc+PGxpbmUgeDI9Jzc5MScvPjxsaW5lIHkyPSczMScvPjxsaW5lIHgyPSc3OTEnIHkxPSczMScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc5MScgeDI9Jzc5MScgeTI9JzMxJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTI9JzMnLz48bGluZSB4MT0nNzY2JyB4Mj0nNzY2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkyPSczJy8+PGxpbmUgeDE9Jzc0MicgeDI9Jzc0MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5Mj0nMycvPjxsaW5lIHgxPSc3MTcnIHgyPSc3MTcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTI9JzMnLz48bGluZSB4MT0nNjkyJyB4Mj0nNjkyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkyPSczJy8+PGxpbmUgeDE9JzY2NycgeDI9JzY2NycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5Mj0nMycvPjxsaW5lIHgxPSc2NDMnIHgyPSc2NDMnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzYxOCcgeDI9JzYxOCcgeTI9JzMxJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTI9JzMnLz48bGluZSB4MT0nNTkzJyB4Mj0nNTkzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkyPSczJy8+PGxpbmUgeDE9JzU2OScgeDI9JzU2OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5Mj0nMycvPjxsaW5lIHgxPSc1NDQnIHgyPSc1NDQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTI9JzMnLz48bGluZSB4MT0nNTE5JyB4Mj0nNTE5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OTQnIHgyPSc0OTQnIHkyPSczMScvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkyPSczJy8+PGxpbmUgeDE9JzQ3MCcgeDI9JzQ3MCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5Mj0nMycvPjxsaW5lIHgxPSc0NDUnIHgyPSc0NDUnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQyMCcgeDI9JzQyMCcgeTI9JzMxJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTI9JzMnLz48bGluZSB4MT0nMzk2JyB4Mj0nMzk2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkyPSczJy8+PGxpbmUgeDE9JzM3MScgeDI9JzM3MScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5Mj0nMycvPjxsaW5lIHgxPSczNDYnIHgyPSczNDYnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTI9JzMnLz48bGluZSB4MT0nMzIxJyB4Mj0nMzIxJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyOTcnIHgyPScyOTcnIHkyPSczMScvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkyPSczJy8+PGxpbmUgeDE9JzI3MicgeDI9JzI3MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5Mj0nMycvPjxsaW5lIHgxPScyNDcnIHgyPScyNDcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTI9JzMnLz48bGluZSB4MT0nMjIyJyB4Mj0nMjIyJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkyPSczJy8+PGxpbmUgeDE9JzE5OCcgeDI9JzE5OCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTczJyB4Mj0nMTczJyB5Mj0nMzEnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5Mj0nMycvPjxsaW5lIHgxPScxNDgnIHgyPScxNDgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTI9JzMxJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkyPSczJy8+PGxpbmUgeDE9Jzk5JyB4Mj0nOTknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkyPSczJy8+PGxpbmUgeDE9Jzc0JyB4Mj0nNzQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkyPSczJy8+PGxpbmUgeDE9JzQ5JyB4Mj0nNDknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkyPSczJy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkxPSczMScgeTI9JzI4Jy8+PC9nPjxnPjxnPjxyZWN0IGZpZWxkPSdvcGNvZGUnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTczJyB4PSc2MTgnLz48cmVjdCBmaWVsZD0ncmQnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PSc0OTQnLz48cmVjdCBmaWVsZD0ncm0nIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdyczInIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzE3MycvPjxyZWN0IGZpZWxkPSdmbXQnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNDknIHg9JzEyNCcvPjxyZWN0IGZpZWxkPSdmdW5jdDUnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTI0Jy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE3MyknPjx0ZXh0IHk9JzYnPjI0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4yNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTI0KSc+PHRleHQgeT0nNic+MjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDk5KSc+PHRleHQgeT0nNic+Mjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDApJz48dGV4dCB5PSc2Jz4zMTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDE1KSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPm9wY29kZTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+cmQ8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1KSc+PHRleHQgeT0nNic+PHRzcGFuPnJtPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYpJz48dGV4dCB5PSc2Jz48dHNwYW4+Zm10PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+PHRzcGFuPmZ1bmN0NTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMzkpJz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+T1AtRlA8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kZXN0PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+MzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+RVE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPkxUPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSw0MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5MRTwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPnNyYzE8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmMyPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYpJz48dGV4dCB5PSc2Jz48dHNwYW4+MjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+UzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDkpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5GQ01QPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="112">
+</div>
+</div>
+<div id="spfloat-comp" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The F extension provides a \(\leq\) comparison, whereas the
+base ISAs provide a \(\geq\) branch comparison. Because
+\(\leq\) can be synthesized from \(\geq\) and
+vice-versa, there is no performance implication to this inconsistency,
+but it is nevertheless an unfortunate incongruity in the ISA.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_single_precision_floating_point_classify_instruction">1.9. Single-Precision Floating-Point Classify Instruction</h3>
+<div class="paragraph">
+<p>The FCLASS.S instruction examines the value in floating-point register
+<em>rs1</em> and writes to integer register <em>rd</em> a 10-bit mask that indicates
+the class of the floating-point number. The format of the mask is
+described in <a href="#fclass">Table 6</a>. The corresponding bit in <em>rd</em> will
+be set if the property is true and clear otherwise. All other bits in
+<em>rd</em> are cleared. Note that exactly one bit in <em>rd</em> will be set.
+FCLASS.S does not set the floating-point exception flags.
+</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nODQnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgODQnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczMScvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMycvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5Mj0nMycvPjxsaW5lIHgxPSc3NCcgeDI9Jzc0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5Mj0nMycvPjxsaW5lIHgxPSc0OScgeDI9JzQ5JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5Mj0nMycvPjxsaW5lIHgxPScyNScgeDI9JzI1JyB5MT0nMzEnIHkyPScyOCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nb3Bjb2RlJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JtJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9Jzc0JyB4PSc0MjAnLz48cmVjdCBmaWVsZD0ncnMxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nMTI0JyB4PScyOTcnLz48cmVjdCBmaWVsZD0ncnMyJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzEyNCcgeD0nMTczJy8+PHJlY3QgZmllbGQ9J2ZtdCcgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPSc0OScgeD0nMTI0Jy8+PHJlY3QgZmllbGQ9J2Z1bmN0NScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxMjQnLz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsLTExKSc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzY2KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjE4KSc+PHRleHQgeT0nNic+NjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTkzKSc+PHRleHQgeT0nNic+NzwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDk0KSc+PHRleHQgeT0nNic+MTE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ3MCknPjx0ZXh0IHk9JzYnPjEyPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0MjApJz48dGV4dCB5PSc2Jz4xNDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzk2KSc+PHRleHQgeT0nNic+MTU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI5NyknPjx0ZXh0IHk9JzYnPjE5PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNzIpJz48dGV4dCB5PSc2Jz4yMDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTczKSc+PHRleHQgeT0nNic+MjQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0OCknPjx0ZXh0IHk9JzYnPjI1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMjQpJz48dGV4dCB5PSc2Jz4yNjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoOTkpJz48dGV4dCB5PSc2Jz4yNzwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjMxPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMTUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+b3Bjb2RlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+cm08L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMyPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEzNiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mbXQ8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDkpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZnVuY3Q1PC90c3Bhbj48L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwzOSknPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj43PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5PUC1GUDwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4wMDE8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5zcmM8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4wPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYpJz48dGV4dCB5PSc2Jz48dHNwYW4+MjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMzYsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+UzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDkpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5GQ0xBU1M8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="84">
+</div>
+</div>
+<table id="fclass" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 6. Format of result of FCLASS instruction.</caption>
+<colgroup>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><em>rd</em> bit</th>
+<th class="tableblock halign-left valign-top">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is \(-\infty\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is a negative normal number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is a negative subnormal number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is \(-0\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is \(+0\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is a positive subnormal number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is a positive normal number.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is \(+\infty\).</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is a signaling NaN.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">9</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><em>rs1</em> is a quiet NaN.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+</body>
+</html>

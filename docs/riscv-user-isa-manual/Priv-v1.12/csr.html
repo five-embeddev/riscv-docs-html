@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/csr.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="csrinsts"><span class="header-section-number">10</span> “Zicsr”, Control and Status Register (CSR) Instructions, Version 2.0</h1>
+<section id="csrinsts" data-number="1">
+<h1 data-number="10"><span class="header-section-number">10</span> “Zicsr”, Control and Status Register (CSR) Instructions, Version 2.0</h1>
 <p>RISC-V defines a separate address space of 4096 Control and Status
 registers associated with each hart. This chapter defines the full
 set of CSR instructions that operate on these CSRs.</p>
@@ -30,7 +32,8 @@ the standard base ISAs, and so the CSR instructions required to
 access them have been moved out of Chapter <a href="rv32.html#rv32" data-reference-type="ref" data-reference="rv32">[rv32]</a> into this
 separate chapter.</p>
 </div>
-<h2 id="csr-instructions"><span class="header-section-number">10.1</span> CSR Instructions</h2>
+<section id="csr-instructions" data-number="1.1">
+<h2 data-number="10.1"><span class="header-section-number">10.1</span> CSR Instructions</h2>
 <p>All CSR instructions atomically read-modify-write a single CSR, whose
 CSR specifier is encoded in the 12-bit <span><em>csr</em></span> field of the
 instruction held in bits 31–20. The immediate forms use a 5-bit
@@ -40,7 +43,7 @@ zero-extended immediate encoded in the <span><em>rs1</em></span> field.</p>
 in the CSRs and integer registers. CSRRW reads the old value of the
 CSR, zero-extends the value to XLEN bits, then writes it to integer
 register <span><em>rd</em></span>. The initial value in <span><em>rs1</em></span> is written to the
-CSR. If <span><em>rd</em></span>=<span>x0</span>, then the instruction shall not read the CSR
+CSR. If <span><em>rd</em></span>=<span><code>x0</code></span>, then the instruction shall not read the CSR
 and shall not cause any of the side effects that might occur on a CSR
 read.</p>
 <p>The CSRRS (Atomic Read and Set Bits in CSR) instruction reads the
@@ -57,16 +60,15 @@ to integer register <span><em>rd</em></span>. The initial value in integer regis
 cleared in the CSR. Any bit that is high in <span><em>rs1</em></span> will cause the
 corresponding bit to be cleared in the CSR, if that CSR bit is writable.
 Other bits in the CSR are not explicitly written.</p>
-<p>For both CSRRS and CSRRC, if <span><em>rs1</em></span>=<span>x0</span>, then the instruction
+<p>For both CSRRS and CSRRC, if <span><em>rs1</em></span>=<span><code>x0</code></span>, then the instruction
 will not write to the CSR at all, and so shall not cause any of the
 side effects that might otherwise occur on a CSR write, nor
 raise illegal instruction exceptions on accesses to read-only CSRs.
 Both CSRRS and CSRRC always read the addressed CSR and cause any read
 side effects regardless of <span><em>rs1</em></span> and <span><em>rd</em></span> fields. Note that
-if <span><em>rs1</em></span> specifies a register holding a zero value other than <span>
-x0</span>, the instruction will still attempt to write the unmodified
+if <span><em>rs1</em></span> specifies a register holding a zero value other than <span><code> x0</code></span>, the instruction will still attempt to write the unmodified
 value back to the CSR and will cause any attendant side effects. A
-CSRRW with <span><em>rs1</em></span>=<span>x0</span> will attempt to write zero to the
+CSRRW with <span><em>rs1</em></span>=<span><code>x0</code></span> will attempt to write zero to the
 destination CSR.</p>
 <p>The CSRRWI, CSRRSI, and CSRRCI variants are similar to CSRRW, CSRRS,
 and CSRRC respectively, except they update the CSR using an XLEN-bit
@@ -76,13 +78,13 @@ register. For CSRRSI and CSRRCI, if the uimm[4:0] field is zero, then
 these instructions will not write to the CSR, and shall not cause any
 of the side effects that might otherwise occur on a CSR write, nor raise
 illegal instruction exceptions on accesses to read-only CSRs.
-For CSRRWI, if <span><em>rd</em></span>=<span>x0</span>, then the instruction shall not read the
+For CSRRWI, if <span><em>rd</em></span>=<span><code>x0</code></span>, then the instruction shall not read the
 CSR and shall not cause any of the side effects that might occur on a
 CSR read. Both CSRRSI and CSRRCI will always read the CSR and cause
 any read side effects regardless of <span><em>rd</em></span> and <span><em>rs1</em></span> fields.</p>
 <figure>
-<img src="csr_01.svg" alt="Conditions determining whether a CSR instruction reads or writes the specified CSR." id="tab:csrsideeffects" /><figcaption>Conditions determining whether a CSR instruction reads or writes
-the specified CSR.<span label="tab:csrsideeffects"></span></figcaption>
+<img src="csr_01.svg" id="tab:csrsideeffects" alt="" /><figcaption>Conditions determining whether a CSR instruction reads or writes
+the specified CSR.</figcaption>
 </figure>
 <p>Table <a href="csr.html#tab:csrsideeffects" data-reference-type="ref" data-reference="tab:csrsideeffects">1.1</a> summarizes the behavior of the CSR
 instructions with respect to whether they read and/or write the CSR.</p>
@@ -119,12 +121,12 @@ Standard CSRs may have side effects on writes.
 Custom extensions might add CSRs for which accesses have side effects
 on either reads or writes.</p>
 </div>
-<p>Some CSRs, such as the instructions-retired counter, <span>instret</span>,
+<p>Some CSRs, such as the instructions-retired counter, <span><code>instret</code></span>,
 may be modified as side effects of instruction execution. In these
 cases, if a CSR access instruction reads a CSR, it reads the value
 prior to the execution of the instruction. If a CSR access
 instruction writes such a CSR, the write is done instead of the
-increment. In particular, a value written to <span>instret</span> by one
+increment. In particular, a value written to <span><code>instret</code></span> by one
 instruction will be the value read by the following instruction.</p>
 <p>The assembler pseudoinstruction to read a CSR, CSRR <span><em>rd, csr</em></span>, is
 encoded as CSRRS <span><em>rd, csr, x0</em></span>. The assembler pseudoinstruction
@@ -134,7 +136,8 @@ csr, uimm</em></span>.</p>
 <p>Further assembler pseudoinstructions are defined to set and clear
 bits in the CSR when the old value is not required: CSRS/CSRC <span>
 <em>csr, rs1</em></span>; CSRSI/CSRCI <span><em>csr, uimm</em></span>.</p>
-<h3 id="csr-access-ordering" class="unnumbered">CSR Access Ordering</h3>
+<section id="csr-access-ordering" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="9">CSR Access Ordering</h3>
 <p>Each RISC-V hart normally observes its own CSR accesses, including its
 implicit CSR accesses, as performed in program order.
 In particular, unless specified otherwise, a CSR access is performed
@@ -175,12 +178,12 @@ I/O accesses to such a region.</p>
 <p>These CSR-ordering constraints are imposed to support ordering main
 memory and memory-mapped I/O accesses with respect to CSR accesses that
 are visible to, or affected by, devices or other harts.
-Examples include the <span>time</span>, <span>cycle</span>, and <span>mcycle</span>
-CSRs, in addition to CSRs that reflect pending interrupts, like <span>mip</span> and
-<span>sip</span>.
+Examples include the <span><code>time</code></span>, <span><code>cycle</code></span>, and <span><code>mcycle</code></span>
+CSRs, in addition to CSRs that reflect pending interrupts, like <span><code>mip</code></span> and
+<span><code>sip</code></span>.
 Note that implicit reads of such CSRs (e.g., taking an interrupt because of
-a change in <span>mip</span>) are also ordered as device input.</p>
-<p>Most CSRs (including, e.g., the <span>fcsr</span>) are not visible to other harts;
+a change in <span><code>mip</code></span>) are also ordered as device input.</p>
+<p>Most CSRs (including, e.g., the <span><code>fcsr</code></span>) are not visible to other harts;
 their accesses can be freely reordered in the global memory order with respect
 to FENCE instructions without violating this specification.</p>
 </div>
@@ -194,6 +197,9 @@ to memory-mapped I/O regions.</p>
 should probably be moved to Chapter <a href="rvwmo.html#ch:memorymodel" data-reference-type="ref" data-reference="ch:memorymodel">[ch:memorymodel]</a> concerning the
 RVWMO memory consistency model.</p>
 </div>
+</section>
+</section>
+</section>
 
 </body>
 </html>

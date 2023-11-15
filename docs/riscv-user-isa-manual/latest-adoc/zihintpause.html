@@ -1,0 +1,110 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/zihintpause.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="zihintpause">1. "Zihintpause" Pause Hint, Version 2.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The PAUSE instruction is a HINT that indicates the current hart&#8217;s rate
+of instruction retirement should be temporarily reduced or paused. The
+duration of its effect must be bounded and may be zero.
+
+</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Software can use the PAUSE instruction to reduce energy consumption
+while executing spin-wait code sequences. Multithreaded cores might
+temporarily relinquish execution resources to other harts when PAUSE is
+executed. It is recommended that a PAUSE instruction generally be
+included in the code sequence for a spin-wait loop.
+</p>
+</div>
+<div class="paragraph">
+<p>A future extension might add primitives similar to the x86 MONITOR/MWAIT
+instructions, which provide a more efficient mechanism to wait on writes
+to a specific memory location. However, these instructions would not
+supplant PAUSE. PAUSE is more appropriate when polling for non-memory
+events, when polling for multiple events, or when software does not know
+precisely what events it is polling for.</p>
+</div>
+<div class="paragraph">
+<p>The duration of a PAUSE instruction&#8217;s effect may vary significantly
+within and among implementations. In typical implementations this
+duration should be much less than the time to perform a context switch,
+probably more on the rough order of an on-chip cache miss latency or a
+cacheless access to main memory.
+</p>
+</div>
+<div class="paragraph">
+<p>A series of PAUSE instructions can be used to create a cumulative delay
+loosely proportional to the number of PAUSE instructions. In spin-wait
+loops in portable code, however, only one PAUSE instruction should be
+used before re-evaluating loop conditions, else the hart might stall
+longer than optimal on some implementations, degrading system
+performance.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>PAUSE is encoded as a FENCE instruction with <em>pred</em>=<code>W</code>, <em>succ</em>=<code>0</code>, <em>fm</em>=<code>0</code>,
+<em>rd</em>=<code>x0</code>, and <em>rs1</em>=<code>x0</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>PAUSE is encoded as a hint within the FENCE opcode because some
+implementations are expected to deliberately stall the PAUSE instruction
+until outstanding memory transactions have completed. Because the
+successor set is null, however, PAUSE does not <em>mandate</em> any particular
+memory ordering—hence, it truly is a HINT.
+</p>
+</div>
+<div class="paragraph">
+<p>Like other FENCE instructions, PAUSE cannot be used within LR/SC
+sequences without voiding the forward-progress guarantee.
+</p>
+</div>
+<div class="paragraph">
+<p>The choice of a predecessor set of W is arbitrary, since the successor
+set is null. Other HINTs similar to PAUSE might be encoded with other
+predecessor sets.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+
+</body>
+</html>

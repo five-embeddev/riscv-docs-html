@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,12 +8,12 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>core_registers.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -29,34 +30,35 @@
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">0x7b0</td>
-<td style="text-align: left;">Debug Control and Status (<span>dcsr</span>)</td>
+<td style="text-align: left;">Debug Control and Status (<span><code>dcsr</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7b1</td>
-<td style="text-align: left;">Debug PC (<span>dpc</span>)</td>
+<td style="text-align: left;">Debug PC (<span><code>dpc</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="odd">
 <td style="text-align: right;">0x7b2</td>
-<td style="text-align: left;">Debug Scratch Register 0 (<span>dscratch0</span>)</td>
+<td style="text-align: left;">Debug Scratch Register 0 (<span><code>dscratch0</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: right;">0x7b3</td>
-<td style="text-align: left;">Debug Scratch Register 1 (<span>dscratch1</span>)</td>
+<td style="text-align: left;">Debug Scratch Register 1 (<span><code>dscratch1</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<h2 id="debug-control-and-status-dcsr-at-0x7b0">Debug Control and Status (<span>dcsr</span>, at 0x7b0)</h2>
+<h2 id="debug-control-and-status-dcsr-at-0x7b0">Debug Control and Status (<span><code>dcsr</code></span>, at 0x7b0)</h2>
 <p><span id="dcsr" label="dcsr">[dcsr]</span>
 <div class=commentary>
-<p>priorities are assigned such that the least predictable
+<p><span><code>cause</code></span>priorities are assigned such that the least predictable
 events have the highest priority.</p>
 </div>
 <p><img src="core_registers_00.svg" alt="image" /></p>
 <p><img src="core_registers_01.svg" alt="image" /></p>
+<div id="prv">
 <table>
 <thead>
 <tr class="header">
@@ -86,27 +88,27 @@ available version of this spec.</p></td>
 <tr class="odd">
 <td style="text-align: left;"><span id="ebreakm" label="ebreakm">[ebreakm]</span>
 |ebreakm|</td>
-<td style="text-align: left;"><p>0: <span>ebreak</span> instructions in M-mode behave as described in the
+<td style="text-align: left;"><p>0: <span><code>ebreak</code></span> instructions in M-mode behave as described in the
 Privileged Spec.</p>
-<p>1: <span>ebreak</span> instructions in M-mode enter Debug Mode.</p></td>
+<p>1: <span><code>ebreak</code></span> instructions in M-mode enter Debug Mode.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><span id="ebreaks" label="ebreaks">[ebreaks]</span>
 |ebreaks|</td>
-<td style="text-align: left;"><p>0: <span>ebreak</span> instructions in S-mode behave as described in the
+<td style="text-align: left;"><p>0: <span><code>ebreak</code></span> instructions in S-mode behave as described in the
 Privileged Spec.</p>
-<p>1: <span>ebreak</span> instructions in S-mode enter Debug Mode.</p></td>
+<p>1: <span><code>ebreak</code></span> instructions in S-mode enter Debug Mode.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><span id="ebreaku" label="ebreaku">[ebreaku]</span>
 |ebreaku|</td>
-<td style="text-align: left;"><p>0: <span>ebreak</span> instructions in U-mode behave as described in the
+<td style="text-align: left;"><p>0: <span><code>ebreak</code></span> instructions in U-mode behave as described in the
 Privileged Spec.</p>
-<p>1: <span>ebreak</span> instructions in U-mode enter Debug Mode.</p></td>
+<p>1: <span><code>ebreak</code></span> instructions in U-mode enter Debug Mode.</p></td>
 <td style="text-align: center;">R/W</td>
 <td style="text-align: left;">0</td>
 </tr>
@@ -126,9 +128,8 @@ is running.</p></td>
 <td style="text-align: left;"><span id="stopcount" label="stopcount">[stopcount]</span>
 |stopcount|</td>
 <td style="text-align: left;"><p>0: Increment counters as usual.</p>
-<p>1: Don’t increment any counters while in Debug Mode or on <span>
-ebreak</span> instructions that cause entry into Debug Mode. These
-counters include the <span>cycle</span> and <span>instret</span> CSRs. This is
+<p>1: Don’t increment any counters while in Debug Mode or on <span><code> ebreak</code></span> instructions that cause entry into Debug Mode. These
+counters include the <span><code>cycle</code></span> and <span><code>instret</code></span> CSRs. This is
 preferred for most debugging scenarios.</p>
 <p>An implementation may hardwire this bit to 0 or 1.</p></td>
 <td style="text-align: center;">WARL</td>
@@ -148,14 +149,14 @@ preferred for most debugging scenarios.</p>
 |cause|</td>
 <td style="text-align: left;"><p>Explains why Debug Mode was entered.</p>
 <p>When there are multiple reasons to enter Debug Mode in a single
-cycle, hardware should set to the cause with the highest
+cycle, hardware should set <span><code>cause</code></span>to the cause with the highest
 priority.</p>
-<p>1: An <span>ebreak</span> instruction was executed. (priority 3)</p>
+<p>1: An <span><code>ebreak</code></span> instruction was executed. (priority 3)</p>
 <p>2: The Trigger Module caused a breakpoint exception. (priority 4, highest)</p>
-<p>3: The debugger requested entry to Debug Mode using .
+<p>3: The debugger requested entry to Debug Mode using <span><code>haltreq</code></span>.
 (priority 1)</p>
-<p>4: The hart single stepped because was set. (priority 0, lowest)</p>
-<p>5: The hart halted directly out of reset due to . It
+<p>4: The hart single stepped because <span><code>step</code></span>was set. (priority 0, lowest)</p>
+<p>5: The hart halted directly out of reset due to <span><code>resethaltreq</code></span>. It
 is also acceptable to report 3 when this happens. (priority 2)</p>
 <p>Other values are reserved for future use.</p></td>
 <td style="text-align: center;">R</td>
@@ -164,8 +165,8 @@ is also acceptable to report 3 when this happens. (priority 2)</p>
 <tr class="even">
 <td style="text-align: left;"><span id="mprven" label="mprven">[mprven]</span>
 |mprven|</td>
-<td style="text-align: left;"><p>0: in <span>mstatus</span>is ignored in Debug Mode.</p>
-<p>1: in <span>mstatus</span>takes effect in Debug Mode.</p>
+<td style="text-align: left;"><p>0: in <span><code>mstatus</code></span>is ignored in Debug Mode.</p>
+<p>1: in <span><code>mstatus</code></span>takes effect in Debug Mode.</p>
 <p>Implementing this bit is optional. It may be tied to either 0 or 1.</p></td>
 <td style="text-align: center;">WARL</td>
 <td style="text-align: left;">Preset</td>
@@ -208,37 +209,38 @@ change to it, the hart may change to any supported privilege level.</p></td>
 </tr>
 </tbody>
 </table>
-<h2 id="debug-pc-dpc-at-0x7b1">Debug PC (<span>dpc</span>, at 0x7b1)</h2>
+</div>
+<h2 id="debug-pc-dpc-at-0x7b1">Debug PC (<span><code>dpc</code></span>, at 0x7b1)</h2>
 <p><span id="dpc" label="dpc">[dpc]</span>
-Upon entry to debug mode, <span><span>dpc</span></span>is updated with the virtual address of
+Upon entry to debug mode, <span><code>dpc</code></span>is updated with the virtual address of
 the next instruction to be executed. The behavior is described in more
 detail in Table <a href="core_registers.html#tab:dpc" data-reference-type="ref" data-reference="tab:dpc">[tab:dpc]</a>.</p>
 <p><span>|l|L|</span>
 Cause &amp; Virtual Address in DPC<br />
-&amp; Address of the <span>ebreak</span> instruction<br />
+<span><code>ebreak</code></span> &amp; Address of the <span><code>ebreak</code></span> instruction<br />
 single step &amp; Address of the instruction that would be executed
 next if no debugging was going on. Ie. <span class="math inline">${\tt pc}+4$</span> for 32-bit instructions
 that don’t change program flow, the destination PC on taken
 jumps/branches, etc.<br />
-trigger module &amp; If is 0, the address of the
-instruction which caused the trigger to fire. If is 1, the
+trigger module &amp; If <span><code>timing</code></span>is 0, the address of the
+instruction which caused the trigger to fire. If <span><code>timing</code></span>is 1, the
 address of the next instruction to be executed at the time that
 debug mode was entered.<br />
 halt request &amp; Address of the next instruction to be
 executed at the time that debug mode was entered<br />
 </p>
 <p>When resuming, the hart’s PC is updated to the virtual address stored in
-<span><span>dpc</span></span>. A debugger may write <span><span>dpc</span></span>to change where the hart resumes.</p>
+<span><code>dpc</code></span>. A debugger may write <span><code>dpc</code></span>to change where the hart resumes.</p>
 <p><img src="core_registers_02.svg" alt="image" /></p>
-<h2 id="debug-scratch-register-0-dscratch0-at-0x7b2">Debug Scratch Register 0 (<span>dscratch0</span>, at 0x7b2)</h2>
+<h2 id="debug-scratch-register-0-dscratch0-at-0x7b2">Debug Scratch Register 0 (<span><code>dscratch0</code></span>, at 0x7b2)</h2>
 <p><span id="dscratch0" label="dscratch0">[dscratch0]</span>
 Optional scratch register that can be used by implementations that need
-it. A debugger must not write to this register unless <span><span>hartinfo</span></span>
+it. A debugger must not write to this register unless <span><code>hartinfo</code></span>
 explicitly mentions it (the Debug Module may use this register internally).</p>
-<h2 id="debug-scratch-register-1-dscratch1-at-0x7b3">Debug Scratch Register 1 (<span>dscratch1</span>, at 0x7b3)</h2>
+<h2 id="debug-scratch-register-1-dscratch1-at-0x7b3">Debug Scratch Register 1 (<span><code>dscratch1</code></span>, at 0x7b3)</h2>
 <p><span id="dscratch1" label="dscratch1">[dscratch1]</span>
 Optional scratch register that can be used by implementations that need
-it. A debugger must not write to this register unless <span><span>hartinfo</span></span>
+it. A debugger must not write to this register unless <span><code>hartinfo</code></span>
 explicitly mentions it (the Debug Module may use this register internally).</p>
 
 </body>

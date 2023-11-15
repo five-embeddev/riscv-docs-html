@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/extensions.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="extensions"><span class="header-section-number">26</span> Extending RISC-V</h1>
+<section id="extensions" data-number="1">
+<h1 data-number="26"><span class="header-section-number">26</span> Extending RISC-V</h1>
 <p>In addition to supporting standard general-purpose software
 development, another goal of RISC-V is to provide a basis for more
 specialized instruction-set extensions or more customized
@@ -33,10 +35,12 @@ be extended, together with the scheme for managing instruction-set
 extensions developed by independent groups. This volume only deals
 with the unprivileged ISA, although the same approach and terminology is
 used for supervisor-level extensions described in the second volume.</p>
-<h2 id="extension-terminology"><span class="header-section-number">26.1</span> Extension Terminology</h2>
+<section id="extension-terminology" data-number="1.1">
+<h2 data-number="26.1"><span class="header-section-number">26.1</span> Extension Terminology</h2>
 <p>This section defines some standard terminology for describing RISC-V
 extensions.</p>
-<h3 id="standard-versus-non-standard-extension" class="unnumbered">Standard versus Non-Standard Extension</h3>
+<section id="standard-versus-non-standard-extension" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Standard versus Non-Standard Extension</h3>
 <p>Any RISC-V processor implementation must support a base integer ISA
 (RV32I or RV64I). In addition, an implementation may support one or
 more extensions. We divide extensions into two broad categories: <span>
@@ -52,7 +56,9 @@ anticipate a wide variety of non-standard extensions will be
 developed over time, with some eventually being promoted to standard
 extensions.</p></li>
 </ul>
-<h3 id="instruction-encoding-spaces-and-prefixes" class="unnumbered">Instruction Encoding Spaces and Prefixes</h3>
+</section>
+<section id="instruction-encoding-spaces-and-prefixes" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Instruction Encoding Spaces and Prefixes</h3>
 <p>An instruction encoding space is some number of instruction bits
 within which a base ISA or ISA extension is encoded. RISC-V supports
 varying instruction lengths, but even within a single instruction
@@ -77,9 +83,11 @@ a smaller set of common sizes simplifies packing independently
 developed extensions into a single global encoding.
 Table <a href="extensions.html#encodingspaces" data-reference-type="ref" data-reference="encodingspaces">1.1</a> gives the suggested sizes for RISC-V.</p>
 <figure>
-<img src="extensions_00.svg" alt="Suggested standard RISC-V instruction encoding space sizes." id="encodingspaces" /><figcaption>Suggested standard RISC-V instruction encoding space sizes.<span label="encodingspaces"></span></figcaption>
+<img src="extensions_00.svg" id="encodingspaces" alt="" /><figcaption>Suggested standard RISC-V instruction encoding space sizes.</figcaption>
 </figure>
-<h3 id="greenfield-versus-brownfield-extensions" class="unnumbered">Greenfield versus Brownfield Extensions</h3>
+</section>
+<section id="greenfield-versus-brownfield-extensions" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Greenfield versus Brownfield Extensions</h3>
 <p>We use the term <span><em>greenfield extension</em></span> to describe an extension
 that begins populating a new instruction encoding space, and hence can
 only cause encoding conflicts at the prefix level. We use the term
@@ -132,7 +140,9 @@ supervisor-level system or possibly to the standard calling
 convention.</p>
 <p>Note that RV64I is not considered an extension of RV32I, but a
 different complete base encoding.</p>
-<h3 id="standard-compatible-global-encodings" class="unnumbered">Standard-Compatible Global Encodings</h3>
+</section>
+<section id="standard-compatible-global-encodings" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Standard-Compatible Global Encodings</h3>
 <p>A complete or <span><em>global</em></span> encoding of an ISA for an actual RISC-V
 implementation must allocate a unique non-conflicting prefix for every
 included instruction encoding space. The bases and every standard
@@ -150,11 +160,16 @@ standard-compatible global encoding, but otherwise its prefix is free
 to be reallocated. These constraints allow a common toolchain to
 target the standard subset of any RISC-V standard-compatible global
 encoding.</p>
-<h3 id="guaranteed-non-standard-encoding-space" class="unnumbered">Guaranteed Non-Standard Encoding Space</h3>
+</section>
+<section id="guaranteed-non-standard-encoding-space" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Guaranteed Non-Standard Encoding Space</h3>
 <p>To support development of proprietary custom extensions, portions of
 the encoding space are guaranteed to never be used by standard
 extensions.</p>
-<h2 id="risc-v-extension-design-philosophy"><span class="header-section-number">26.2</span> RISC-V Extension Design Philosophy</h2>
+</section>
+</section>
+<section id="risc-v-extension-design-philosophy" data-number="1.2">
+<h2 data-number="26.2"><span class="header-section-number">26.2</span> RISC-V Extension Design Philosophy</h2>
 <p>We intend to support a large number of independently developed
 extensions by encouraging extension developers to operate within
 instruction encoding spaces, and by providing tools to pack these into
@@ -195,21 +210,26 @@ for developing implementations with new instruction-set extensions.
 These are mostly intended for use in highly customized, educational,
 or experimental architectures rather than for the main line of RISC-V
 ISA development.</p>
-<h2 id="fix32b"><span class="header-section-number">26.3</span> Extensions within fixed-width 32-bit instruction format</h2>
+</section>
+<section id="fix32b" data-number="1.3">
+<h2 data-number="26.3"><span class="header-section-number">26.3</span> Extensions within fixed-width 32-bit instruction format</h2>
 <p>In this section, we discuss adding extensions to implementations that
 only support the base fixed-width 32-bit instruction format.</p>
 <div class=commentary>
 <p>We anticipate the simplest fixed-width 32-bit encoding will be popular for
 many restricted accelerators and research prototypes.</p>
 </div>
-<h3 id="available-30-bit-instruction-encoding-spaces" class="unnumbered">Available 30-bit instruction encoding spaces</h3>
+<section id="available-30-bit-instruction-encoding-spaces" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Available 30-bit instruction encoding spaces</h3>
 <p>In the standard encoding, three of the available 30-bit instruction
 encoding spaces (those with 2-bit prefixes 00, 01, and 10) are used to
 enable the optional compressed instruction extension. However, if the
 compressed instruction-set extension is not required, then these three
 further 30-bit encoding spaces become available. This quadruples the
 available encoding space within the 32-bit format.</p>
-<h3 id="available-25-bit-instruction-encoding-spaces" class="unnumbered">Available 25-bit instruction encoding spaces</h3>
+</section>
+<section id="available-25-bit-instruction-encoding-spaces" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Available 25-bit instruction encoding spaces</h3>
 <p>A 25-bit instruction encoding space corresponds to a major opcode in
 the base and standard extension encodings.</p>
 <p>There are four major opcodes expressly reserved for custom extensions
@@ -231,7 +251,9 @@ marked in gray in Table <a href="opcode-map.html#opcodemap" data-reference-type
 opcodes, leaving up to 18 available for extensions. The base RV64I
 encoding uses only 13 major opcodes plus 3 reserved opcodes, leaving
 up to 16 available for extensions.</p>
-<h3 id="available-22-bit-instruction-encoding-spaces" class="unnumbered">Available 22-bit instruction encoding spaces</h3>
+</section>
+<section id="available-22-bit-instruction-encoding-spaces" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Available 22-bit instruction encoding spaces</h3>
 <p>A 22-bit encoding space corresponds to a funct3 minor opcode space in
 the base and standard extension encodings. Several major opcodes have
 a funct3 field minor opcode that is not completely occupied, leaving
@@ -240,10 +262,15 @@ available several 22-bit encoding spaces.</p>
 the remaining bits of the instruction, and ideally, an extension
 should follow the operand format of the major opcode to simplify
 hardware decoding.</p>
-<h3 id="other-spaces" class="unnumbered">Other spaces</h3>
+</section>
+<section id="other-spaces" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Other spaces</h3>
 <p>Smaller spaces are available under certain major opcodes, and not all
 minor opcodes are entirely filled.</p>
-<h2 id="adding-aligned-64-bit-instruction-extensions"><span class="header-section-number">26.4</span> Adding aligned 64-bit instruction extensions</h2>
+</section>
+</section>
+<section id="adding-aligned-64-bit-instruction-extensions" data-number="1.4">
+<h2 data-number="26.4"><span class="header-section-number">26.4</span> Adding aligned 64-bit instruction extensions</h2>
 <p>The simplest approach to provide space for extensions that are too
 large for the base 32-bit fixed-width instruction format is to add
 naturally aligned 64-bit instructions. The implementation must still
@@ -263,12 +290,15 @@ zero bits in the first two bits of an instruction.</p>
 units capable of automatically handling any combination of supported
 variable-length instruction encodings.</p>
 </div>
-<h2 id="supporting-vliw-encodings"><span class="header-section-number">26.5</span> Supporting VLIW encodings</h2>
+</section>
+<section id="supporting-vliw-encodings" data-number="1.5">
+<h2 data-number="26.5"><span class="header-section-number">26.5</span> Supporting VLIW encodings</h2>
 <p>Although RISC-V was not designed as a base for a pure VLIW machine,
 VLIW encodings can be added as extensions using several alternative
 approaches. In all cases, the base 32-bit encoding has to be supported
 to allow use of any standard software tools.</p>
-<h3 id="fixed-size-instruction-group" class="unnumbered">Fixed-size instruction group</h3>
+<section id="fixed-size-instruction-group" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Fixed-size instruction group</h3>
 <p>The simplest approach is to define a single large naturally aligned
 instruction format (e.g., 128 bits) within which VLIW operations are
 encoded. In a conventional VLIW, this approach would tend to waste
@@ -276,7 +306,9 @@ instruction memory to hold NOPs, but a RISC-V-compatible
 implementation would have to also support the base 32-bit
 instructions, confining the VLIW code size expansion to
 VLIW-accelerated functions.</p>
-<h3 id="encoded-length-groups" class="unnumbered">Encoded-Length Groups</h3>
+</section>
+<section id="encoded-length-groups" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Encoded-Length Groups</h3>
 <p>Another approach is to use the standard length encoding from
 Figure <a href="intro.html#instlengthcode" data-reference-type="ref" data-reference="instlengthcode">[instlengthcode]</a> to encode parallel instruction groups,
 allowing NOPs to be compressed out of the VLIW instruction. For
@@ -292,14 +324,18 @@ VLIW instructions, and misaligned instruction fetch for larger groups.
 One simplification is to not allow VLIW instructions to straddle
 certain microarchitecturally significant boundaries (e.g., cache lines
 or virtual memory pages).</p>
-<h3 id="fixed-size-instruction-bundles" class="unnumbered">Fixed-Size Instruction Bundles</h3>
+</section>
+<section id="fixed-size-instruction-bundles" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">Fixed-Size Instruction Bundles</h3>
 <p>Another approach, similar to Itanium, is to use a larger naturally
 aligned fixed instruction bundle size (e.g., 128 bits) across which
 parallel operation groups are encoded. This simplifies instruction
 fetch, but shifts the complexity to the group execution engine. To
 remain RISC-V compatible, the base 32-bit instruction would still have
 to be supported.</p>
-<h3 id="end-of-group-bits-in-prefix" class="unnumbered">End-of-Group bits in Prefix</h3>
+</section>
+<section id="end-of-group-bits-in-prefix" class="unnumbered" data-number="">
+<h3 class="unnumbered" data-number="25">End-of-Group bits in Prefix</h3>
 <p>None of the above approaches retains the RISC-V encoding for the
 individual operations within a VLIW instruction. Yet another approach
 is to repurpose the two prefix bits in the fixed-width 32-bit
@@ -313,6 +349,9 @@ group and not predicated.</p>
 complex predication support usually required in an aggressive VLIW
 system, and it is difficult to add space to specify more predicate
 registers in the standard 30-bit encoding space.</p>
+</section>
+</section>
+</section>
 
 </body>
 </html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,7 +13,7 @@
 <tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/dep-table.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -28,19 +29,19 @@
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;"><span>fflags</span></td>
+<td style="text-align: left;"><span><code>fflags</code></span></td>
 <td style="text-align: left;">Bits 4, 3, 2, 1, 0</td>
-<td style="text-align: left;"><span>fcsr</span></td>
+<td style="text-align: left;"><span><code>fcsr</code></span></td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><span>frm</span></td>
+<td style="text-align: left;"><span><code>frm</code></span></td>
 <td style="text-align: left;">entire CSR</td>
-<td style="text-align: left;"><span>fcsr</span></td>
+<td style="text-align: left;"><span><code>fcsr</code></span></td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;"><span>fcsr</span></td>
+<td style="text-align: left;"><span><code>fcsr</code></span></td>
 <td style="text-align: left;">Bits 7-5, 4, 3, 2, 1, 0</td>
-<td style="text-align: left;"><span>fflags</span>, <span>frm</span></td>
+<td style="text-align: left;"><span><code>fflags</code></span>, <span><code>frm</code></span></td>
 </tr>
 </tbody>
 </table>
@@ -51,10 +52,10 @@ These listings are used in the definition of syntactic dependencies in Section 
 <p>The term “accumulating CSR” is used to describe a CSR that is both a source and a destination register, but which carries a dependency only from itself to itself.</p>
 <p>Instructions carry a dependency from each source register in the “Source Registers” column to each destination register in the “Destination Registers” column, from each source register in the “Source Registers” column to each CSR in the “Accumulating CSRs” column, and from each CSR in the “Accumulating CSRs” column to itself, except where annotated otherwise.</p>
 <p>Key:</p>
-<p><span class="math inline"><em></em><sup><em>A</em></sup></span>Address source register</p>
-<p><span class="math inline"><em></em><sup><em>D</em></sup></span>Data source register</p>
-<p><span class="math inline"><em></em><sup>†</sup></span>The instruction does not carry a dependency from any source register to any destination register</p>
-<p><span class="math inline"><em></em><sup>‡</sup></span>The instruction carries dependencies from source register(s) to destination register(s) as specified</p>
+<p><span class="math inline"><sup><em>A</em></sup></span>Address source register</p>
+<p><span class="math inline"><sup><em>D</em></sup></span>Data source register</p>
+<p><span class="math inline"><sup>†</sup></span>The instruction does not carry a dependency from any source register to any destination register</p>
+<p><span class="math inline"><sup>‡</sup></span>The instruction carries dependencies from source register(s) to destination register(s) as specified</p>
 <p><img src="dep-table_00.svg" alt="image" /></p>
 <p><img src="dep-table_01.svg" alt="image" /></p>
 <p><img src="dep-table_02.svg" alt="image" /></p>

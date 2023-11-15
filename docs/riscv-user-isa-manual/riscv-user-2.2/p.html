@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/p.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="sec:packedsimd"><span class="header-section-number">20</span> “P” Standard Extension for Packed-SIMD Instructions,
+<section id="sec:packedsimd" data-number="1">
+<h1 data-number="20"><span class="header-section-number">20</span> “P” Standard Extension for Packed-SIMD Instructions,
 Version 0.1</h1>
 <div class=commentary>
 <p>Discussions at the 5th RISC-V workshop indicated a desire to drop
@@ -51,7 +53,7 @@ data-parallel execution then designs based on traditional vector
 architectures are a better choice and should use the V extension.</p>
 </div>
 <p>A RISC-V packed-SIMD extension reuses the floating-point registers
-(<span>f0</span>-<span>f31</span>). These registers can be defined to have widths
+(<span><code>f0</code></span>-<span><code>f31</code></span>). These registers can be defined to have widths
 of FLEN=32 to FLEN=1024. The standard floating-point instruction
 subsets require registers of width 32 bits (“F”), 64 bits (“D”),
 or 128 bits (“Q”).</p>
@@ -68,7 +70,7 @@ for packed-SIMD values does make it more difficult to use a recoded
 internal format for floating-point values.</p>
 </div>
 <p>The existing floating-point load and store instructions are used to
-load and store various-sized words from memory to the <span>f</span>
+load and store various-sized words from memory to the <span><code>f</code></span>
 registers. The base ISA supports 32-bit and 64-bit loads and stores,
 but the LOAD-FP and STORE-FP instruction encodings allows 8 different
 widths to be encoded as shown in Table <a href="p.html#psimdwidth" data-reference-type="ref" data-reference="psimdwidth">[psimdwidth]</a>. When used
@@ -126,7 +128,7 @@ aligned loads and stores in hardware.</p>
 </tbody>
 </table>
 <p>Packed-SIMD computational instructions operate on packed values in
-<span>f</span> registers. Each value can be 8-bit, 16-bit, 32-bit, 64-bit,
+<span><code>f</code></span> registers. Each value can be 8-bit, 16-bit, 32-bit, 64-bit,
 or 128-bit, and both integer and floating-point representations can be
 supported. For example, a 64-bit packed-SIMD extension can treat each
 register as 1<span class="math inline">×</span>64-bit, 2<span class="math inline">×</span>32-bit, 4<span class="math inline">×</span>16-bit, or
@@ -136,6 +138,7 @@ register as 1<span class="math inline">×</span>64-bit, 2<span class="math inlin
 opcodes, but more extensive packed-SIMD extensions will likely require
 a dedicated 30-bit instruction space.</p>
 </div>
+</section>
 
 </body>
 </html>

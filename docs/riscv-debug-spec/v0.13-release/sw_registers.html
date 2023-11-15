@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,12 +8,12 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>sw_registers.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
@@ -34,19 +35,19 @@ also accessing those same registers.</p>
 <tbody>
 <tr class="odd">
 <td style="text-align: right;">virtual</td>
-<td style="text-align: left;">Privilege Level (<span>priv</span>)</td>
+<td style="text-align: left;">Privilege Level (<span><code>priv</code></span>)</td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
-<h2 id="privilege-level-priv-at-virtual">Privilege Level (<span>priv</span>, at virtual)</h2>
+<h2 id="privilege-level-priv-at-virtual">Privilege Level (<span><code>priv</code></span>, at virtual)</h2>
 <p><span id="priv" label="priv">[priv]</span>
 Users can read this register to inspect the privilege level that
 the hart was running in when the hart halted.
 Users can write this register to change the privilege level that
 the hart will run in when it resumes.</p>
-<p>This register contains from <span><span>dcsr</span></span>, but in a place that the user
-is expected to access. The user should not access <span><span>dcsr</span></span>directly,
+<p>This register contains <span><code>prv</code></span>from <span><code>dcsr</code></span>, but in a place that the user
+is expected to access. The user should not access <span><code>dcsr</code></span>directly,
 because doing so might interfere with the debugger.</p>
 <table>
 <thead>
@@ -71,6 +72,7 @@ because doing so might interfere with the debugger.</p>
 </tbody>
 </table>
 <p><img src="sw_registers_00.svg" alt="image" /></p>
+<div id="prv">
 <table>
 <thead>
 <tr class="header">
@@ -100,6 +102,7 @@ value to change the hart’s privilege level when exiting Debug Mode.</td>
 </tr>
 </tbody>
 </table>
+</div>
 
 </body>
 </html>

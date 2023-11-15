@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> Priv-v1.12</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/zihintpause.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="chap:zihintpause"><span class="header-section-number">4</span> “Zihintpause” Pause Hint, Version 2.0</h1>
+<section id="chap:zihintpause" data-number="1">
+<h1 data-number="4"><span class="header-section-number">4</span> “Zihintpause” Pause Hint, Version 2.0</h1>
 <p>The PAUSE instruction is a HINT that indicates the current hart’s rate of
 instruction retirement should be temporarily reduced or paused. The duration of its
 effect must be bounded and may be zero. No architectural state is changed.</p>
@@ -46,7 +48,7 @@ be used before re-evaluating loop conditions, else the hart might stall longer
 than optimal on some implementations, degrading system performance.</p>
 </div>
 <p>PAUSE is encoded as a FENCE instruction with <span><em>pred</em></span>=W, <span><em>succ</em></span>=0,
-<span><em>fm</em></span>=0, <span><em>rd</em></span>=<span>x0</span>, and <span><em>rs1</em></span>=<span>x0</span>.</p>
+<span><em>fm</em></span>=0, <span><em>rd</em></span>=<span><code>x0</code></span>, and <span><em>rs1</em></span>=<span><code>x0</code></span>.</p>
 <div class=commentary>
 <p>PAUSE is encoded as a hint within the FENCE opcode because some
 implementations are expected to deliberately stall the PAUSE instruction until outstanding
@@ -59,6 +61,7 @@ without voiding the forward-progress guarantee.</p>
 null.
 Other HINTs similar to PAUSE might be encoded with other predecessor sets.</p>
 </div>
+</section>
 
 </body>
 </html>

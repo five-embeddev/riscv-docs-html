@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,22 +8,24 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>jtagdtm.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="sec:jtagdtm"><span class="header-section-number">8</span> JTAG Debug Transport Module</h1>
+<section id="sec:jtagdtm" data-number="1">
+<h1 data-number="8"><span class="header-section-number">8</span> JTAG Debug Transport Module</h1>
 <p>This Debug Transport Module is based around a normal JTAG Test Access Port
 (TAP). The JTAG TAP allows access to arbitrary JTAG registers by first
 selecting one using the JTAG instruction register (IR), and then accessing it
 through the JTAG data register (DR).</p>
-<h2 id="jtag-background"><span class="header-section-number">8.1</span> JTAG Background</h2>
+<section id="jtag-background" data-number="1.1">
+<h2 data-number="8.1"><span class="header-section-number">8.1</span> JTAG Background</h2>
 <p>JTAG refers to IEEE Std 1149.1-2013. It is a standard that defines test logic
 that can be included in an integrated circuit to test the interconnections
 between integrated circuits, test the integrated circuit itself, and observe or
@@ -31,7 +34,9 @@ This specification uses the latter functionality.
 The JTAG standard defines a Test Access Port (TAP) that
 can be used to read and write a few custom registers, which can be used to
 communicate with debug hardware in a component.</p>
-<h2 id="jtag-dtm-registers"><span class="header-section-number">8.2</span> JTAG DTM Registers</h2>
+</section>
+<section id="jtag-dtm-registers" data-number="1.2">
+<h2 data-number="8.2"><span class="header-section-number">8.2</span> JTAG DTM Registers</h2>
 <p>JTAG TAPs used as a DTM must have an IR of at least 5 bits.
 When the TAP is reset, IR must default to
 00001, selecting the IDCODE instruction. A full list of JTAG registers along
@@ -43,7 +48,9 @@ The only regular JTAG registers a debugger might use are BYPASS and IDCODE, but 
 specification leaves IR space for many other standard JTAG instructions.
 Unimplemented instructions must select the BYPASS register.</p>
 <p><a href="jtag_registers.html" data-reference-type="ref" data-reference="jtag_registers.tex">[jtag_registers.tex]</a></p>
-<h2 id="recommended-jtag-connector"><span class="header-section-number">8.3</span> Recommended JTAG Connector</h2>
+</section>
+<section id="recommended-jtag-connector" data-number="1.3">
+<h2 data-number="8.3"><span class="header-section-number">8.3</span> Recommended JTAG Connector</h2>
 <p>To make it easy to acquire debug hardware, this spec recommends a connector
 that is compatible with the MIPI-10 .05 inch connector specification, as described
 in the MIPI Alliance Recommendation for Debug and Trace Connectors, Version
@@ -162,10 +169,12 @@ connector is show in Table <a href="jtagdtm.html#tab:mipitwenty" data-reference
 </tbody>
 </table>
 <figure>
-<img src="jtagdtm_00.svg" alt="JTAG Connector Pinout" id="tab:pinout" /><figcaption>JTAG Connector Pinout<span label="tab:pinout"></span></figcaption>
+<img src="jtagdtm_00.svg" id="tab:pinout" alt="" /><figcaption>JTAG Connector Pinout</figcaption>
 </figure>
 <p>The same connectors can be used for 2-wire cJTAG. In that case TMS is used for
 TMSC, and TCK is used for TCKC.</p>
+</section>
+</section>
 
 </body>
 </html>

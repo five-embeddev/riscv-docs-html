@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> riscv-priv-1.10</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/m.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="m-standard-extension-for-integer-multiplication-and-division-version-2.0"><span class="header-section-number">8</span> “M” Standard Extension for Integer Multiplication and
+<section id="m-standard-extension-for-integer-multiplication-and-division-version-2.0" data-number="1">
+<h1 data-number="8"><span class="header-section-number">8</span> “M” Standard Extension for Integer Multiplication and
 Division, Version 2.0</h1>
 <p>This chapter describes the standard integer multiplication and
 division instruction extension, which is named “M” and contains
@@ -29,7 +31,8 @@ low-end implementations, or for applications where integer multiply
 and divide operations are either infrequent or better handled in
 attached accelerators.</p>
 </div>
-<h2 id="multiplication-operations"><span class="header-section-number">8.1</span> Multiplication Operations</h2>
+<section id="multiplication-operations" data-number="1.1">
+<h2 data-number="8.1"><span class="header-section-number">8.1</span> Multiplication Operations</h2>
 <p><img src="m_00.svg" alt="image" /></p>
 <p>MUL performs an XLEN-bit<span class="math inline">×</span>XLEN-bit multiplication and places the
 lower XLEN bits in the destination register. MULH, MULHU, and MULHSU
@@ -48,7 +51,9 @@ lower 32 bits of the result into the destination register. MUL can be
 used to obtain the upper 32 bits of the 64-bit product, but signed
 arguments must be proper 32-bit signed values, whereas unsigned
 arguments must have their upper 32 bits clear.</p>
-<h2 id="division-operations"><span class="header-section-number">8.2</span> Division Operations</h2>
+</section>
+<section id="division-operations" data-number="1.2">
+<h2 data-number="8.2"><span class="header-section-number">8.2</span> Division Operations</h2>
 <p><img src="m_01.svg" alt="image" /></p>
 <p>DIV and DIVU perform signed and unsigned integer division of XLEN
 bits by XLEN bits. REM and REMU provide the remainder of the
@@ -128,6 +133,8 @@ instructions are only valid for RV64, and provide the corresponding
 signed and unsigned remainder operations respectively. Both REMW and
 REMUW always sign-extend the 32-bit result to 64 bits, including on a
 divide by zero.</p>
+</section>
+</section>
 
 </body>
 </html>

@@ -1,0 +1,264 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/zimop.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="zimop">1. "Zimop" May-Be-Operations Extension, Version 0.1</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter defines the "Zimop" extension, which introduces the concept of
+instructions that <em>may be operations</em> (MOPs).  MOPs are initially defined to
+simply write zero to <code>x[rd]</code>, but are designed to be redefined by later
+extensions to perform some other action.
+The Zimop extension defines an encoding space for 40 MOPs.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>It is sometimes desirable to define instruction-set extensions whose
+instructions, rather than raising illegal-instruction exceptions when the extension is
+not implemented, take no useful action (beyond writing <code>x[rd]</code>).
+For example, programs with control-flow integrity checks can
+execute correctly on implementations without the corresponding extension,
+provided the checks are simply ignored.  Implementing these checks as MOPs
+allows the same programs to run on implementations with or without the
+corresponding extension.</p>
+</div>
+<div class="paragraph">
+<p>Although similar in some respects to HINTs, MOPs cannot be encoded as HINTs,
+because unlike HINTs, MOPs are allowed to alter architectural state.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The Zimop extension defines 32 MOP instructions named <code>mop.r.<em>n</em></code>, where
+<em>n</em> is an integer between 0 and 31, inclusive.
+Unless redefined by another extension, these instructions simply write 0 to
+<code>x[rd]</code>.  Their encoding allows future extensions to define them to read <code>x[rs1]</code>,
+as well as write <code>x[rd]</code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nNTUnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgNTUnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTEnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDE3KSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMjQnLz48bGluZSB4Mj0nNzkxJyB5MT0nMjQnIHkyPScyNCcvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPScyNCcvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPScyJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMicvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzInLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPScyJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMicvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzInLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPScyNCcvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPScyJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMicvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzInLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPScyJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMjQnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMicvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzInLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPScyNCcvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPScyJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMicvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzInLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPScyJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMjQnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMicvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzI0Jy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTI9JzInLz48bGluZSB4MT0nMjIyJyB4Mj0nMjIyJyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkyPScyJy8+PGxpbmUgeDE9JzE5OCcgeDI9JzE5OCcgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nMTczJyB4Mj0nMTczJyB5Mj0nMicvPjxsaW5lIHgxPScxNzMnIHgyPScxNzMnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzI0Jy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTI9JzInLz48bGluZSB4MT0nMTI0JyB4Mj0nMTI0JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMjQnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzInLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzI0Jy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkyPScyNCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nMTE1JyBoZWlnaHQ9JzI0JyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzI0JyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JzMScgaGVpZ2h0PScyNCcgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMTcwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nMjk3Jy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMCknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI0NyknPjx0ZXh0IHk9JzYnPjIxPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz4yMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTQ4KSc+PHRleHQgeT0nNic+MjU8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyNCknPjx0ZXh0IHk9JzYnPjI2PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjI3PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCknPjx0ZXh0IHk9JzYnPjI4PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OSknPjx0ZXh0IHk9JzYnPjI5PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNSknPjx0ZXh0IHk9JzYnPjMwPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MzE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwxMCknPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0MiknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDcxNyknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY2NyknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY0MyknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz48dHNwYW4+cmQ8L3RzcGFuPjwvdGV4dD48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDcwKSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDQ1KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjYwKSc+PHRleHQgeT0nNic+PHRzcGFuPm5bMTowXTwvdHNwYW4+PC90ZXh0PjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz4xPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxOTgpJz48dGV4dCB5PSc2Jz4xPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNzMpJz48dGV4dCB5PSc2Jz4xPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTExKSc+PHRleHQgeT0nNic+PHRzcGFuPm5bMzoyXTwvdHNwYW4+PC90ZXh0PjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI1KSc+PHRleHQgeT0nNic+PHRzcGFuPm5bNF08L3RzcGFuPjwvdGV4dD48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMjkpJz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+U1lTVEVNPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="55">
+</div>
+</div>
+<div id="mop-r" class="paragraph">
+<p>The Zimop extension additionally defines 8 MOP instructions named
+<code>mop.rr.<em>n</em></code>, where <em>n</em> is an integer between 0 and 7, inclusive.
+Unless redefined by another extension, these instructions simply
+write 0 to <code>x[rd]</code>.  Their encoding allows future extensions to define them to
+read <code>x[rs1]</code> and <code>x[rs2]</code>, as well as write <code>x[rd]</code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nNTUnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgNTUnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTEnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDE3KSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMjQnLz48bGluZSB4Mj0nNzkxJyB5MT0nMjQnIHkyPScyNCcvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPScyNCcvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPScyJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMicvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzInLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPScyJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMicvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzInLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPScyNCcvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPScyJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMicvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzInLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPScyJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMjQnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMicvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzInLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPScyNCcvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPScyJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMicvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzInLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPScyJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMjQnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMicvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzInLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPScyJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMicvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPScyNCcgeTI9JzIyJy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzI0Jy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzI0Jy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTI9JzInLz48bGluZSB4MT0nMTI0JyB4Mj0nMTI0JyB5MT0nMjQnIHkyPScyMicvPjxsaW5lIHgxPSc5OScgeDI9Jzk5JyB5Mj0nMjQnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzInLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzI0JyB5Mj0nMjInLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzI0Jy8+PGxpbmUgeDE9JzI1JyB4Mj0nMjUnIHkyPScyNCcvPjwvZz48Zz48Zz48cmVjdCBmaWVsZD0nMTE1JyBoZWlnaHQ9JzI0JyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMScgd2lkdGg9JzE3MycgeD0nNjE4Jy8+PHJlY3QgZmllbGQ9J3JkJyBoZWlnaHQ9JzI0JyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nNDk0Jy8+PHJlY3QgZmllbGQ9J3JzMScgaGVpZ2h0PScyNCcgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMTcwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nMjk3Jy8+PHJlY3QgZmllbGQ9J3JzMicgaGVpZ2h0PScyNCcgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMTcwLDEwMCUsNTAlKScgd2lkdGg9JzEyNCcgeD0nMTczJy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMCknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE3MyknPjx0ZXh0IHk9JzYnPjI0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4yNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTI0KSc+PHRleHQgeT0nNic+MjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDk5KSc+PHRleHQgeT0nNic+Mjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0KSc+PHRleHQgeT0nNic+Mjg8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+Mjk8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI1KSc+PHRleHQgeT0nNic+MzA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDApJz48dGV4dCB5PSc2Jz4zMTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDEwKSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzY2KSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzQyKSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzE3KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjY3KSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjQzKSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjE4KSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yZDwvdHNwYW4+PC90ZXh0PjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0MjApJz48dGV4dCB5PSc2Jz4xPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+cnMyPC90c3Bhbj48L3RleHQ+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0OCknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMTEpJz48dGV4dCB5PSc2Jz48dHNwYW4+blsxOjBdPC90c3Bhbj48L3RleHQ+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDkpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjUpJz48dGV4dCB5PSc2Jz48dHNwYW4+blsyXTwvdHNwYW4+PC90ZXh0PjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxMiwyOSknPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5TWVNURU08L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="55">
+</div>
+</div>
+<div id="mop-rr" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The recommended assembly syntax for <code>mop.r.<em>n</em></code> is <code>mop.r.<em>n</em> rd, rs1</code>,
+with any <code>x</code>-register specifier being valid for either argument.  Similarly for
+<code>mop.rr.<em>n</em></code>, the recommended syntax is <code>mop.rr.<em>n</em> rd, rs1, rs2</code>.
+The extension that redefines a MOP may define an alternate assembly mnemonic.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+These MOPs are encoded in the SYSTEM major opcode in part because it is
+expected their behavior will be modulated by privileged CSR state.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+These MOPs are defined to write zero to <code>x[rd]</code>, rather than performing
+no operation, to simplify instruction decoding and to allow testing the
+presence of features by branching on the zeroness of the result.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The MOPs defined in the Zimop extension do not carry a syntactic dependency
+from <code>x[rs1]</code> or <code>x[rs2]</code> to <code>x[rd]</code>, though an extension that redefines the
+MOP may impose such a requirement.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Not carrying a syntactic dependence relieves straightforward
+implementations of reading <code>x[rs1]</code> and <code>x[rs2]</code>.
+</td>
+</tr>
+</table>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="sect2">
+<h3 id="_zcmop_compressed_may_be_operations_extension_version_0_1">1.1. "Zcmop" Compressed May-Be-Operations Extension, Version 0.1</h3>
+<div class="paragraph">
+<p>This section defines the "Zcmop" extension, which defines eight 16-bit MOP
+instructions named <code>c.mop.<em>n</em></code>, where <em>n</em> is an integer between 0 and 7,
+inclusive.  <code>c.mop.<em>n</em></code> is encoded in the reserved encoding space
+corresponding to <code>c.lui x<em>m</em>, 0</code>, where <em>m</em>=2<em>n</em>+1, as shown in Table
+<a href="#tab:c-mop">Table 1</a>.
+Unlike the MOPs defined in the Zimop extension, the <code>c.mop.<em>n</em></code> instructions
+are defined to <em>not</em> write any register.
+Their encoding allows future extensions to define them to read register
+<code>x[<em>m</em>]</code>.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nNTYnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgNTYnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkyPSczJy8+PGxpbmUgeDE9Jzc0MicgeDI9Jzc0MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjkyJyB4Mj0nNjkyJyB5Mj0nMzEnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5Mj0nMycvPjxsaW5lIHgxPSc2NDMnIHgyPSc2NDMnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTI9JzMnLz48bGluZSB4MT0nNTkzJyB4Mj0nNTkzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1NDQnIHgyPSc1NDQnIHkyPSczJy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMycvPjxsaW5lIHgxPSc0OTQnIHgyPSc0OTQnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMxJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTI9JzMxJy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyOTcnIHgyPScyOTcnIHkyPSczJy8+PGxpbmUgeDE9JzI5NycgeDI9JzI5NycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5Mj0nMzEnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMzEnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5Mj0nMzEnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTI9JzMnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzMnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTE9JzMxJyB5Mj0nMjgnLz48L2c+PGc+PGc+PHJlY3QgZmllbGQ9JzEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nOTknIHg9JzY5MicvPjxyZWN0IGZpZWxkPScxJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nNDknIHg9JzM5NicvPjxyZWN0IGZpZWxkPSduWzI6MF0nIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxNDgnIHg9JzI0NycvPjxyZWN0IGZpZWxkPScwJyBoZWlnaHQ9JzMxJyBzdHlsZT0nZmlsbC1vcGFjaXR5OjAuMTtmaWxsOmhzbCgxNzAsMTAwJSw1MCUpJyB3aWR0aD0nNDknIHg9JzE5OCcvPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNSwtMTEpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NDIpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz4xPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2NDMpJz48dGV4dCB5PSc2Jz4yPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz42PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzOTYpJz48dGV4dCB5PSc2Jz43PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYpJz48dGV4dCB5PSc2Jz44PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNDcpJz48dGV4dCB5PSc2Jz4xMDwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTk4KSc+PHRleHQgeT0nNic+MTE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0OCknPjx0ZXh0IHk9JzYnPjEyPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjEzPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgwKSc+PHRleHQgeT0nNic+MTU8L3RleHQ+PC9nPjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyNSwxNSknPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0MiknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2NDMpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1OTMpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg1NDQpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0OTQpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz4wPC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzk2KSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDI5NyknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5uWzI6MF08L3RzcGFuPjwvdGV4dD48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTk4KSc+PHRleHQgeT0nNic+MDwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE0OCknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg5OSknPjx0ZXh0IHk9JzYnPjE8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5KSc+PHRleHQgeT0nNic+MTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjUsMzkpJy8+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="56">
+</div>
+</div>
+<div id="c-mop" class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Very few suitable 16-bit encoding spaces exist.  This space was chosen
+because it already has unusual behavior with respect to the <code>rd</code>/<code>rs1</code>
+field&#8212;&#8203;it encodes <code>c.addi16sp</code> when the field contains <code>x2</code>--and is
+therefore of lower value for most purposes.
+</td>
+</tr>
+</table>
+</div>
+<table id="tab:c-mop" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. <code>c.mop.<em>n</em></code> instruction encoding.</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Mnemonic</th>
+<th class="tableblock halign-left valign-top">Encoding</th>
+<th class="tableblock halign-left valign-top">Redefinable to read register</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110000010000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x1</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110000110000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x3</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110001010000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x5</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110001110000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x7</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110010010000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x9</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110010110000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x11</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.6</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110011010000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x13</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">c.mop.7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>0110011110000001</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>x15</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The recommended assembly syntax for <code>c.mop.<em>n</em></code> is simply the nullary
+<code>c.mop.<em>n</em></code>.  The possibly accessed register is implicitly <code>x<em>m</em></code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The expectation is that each Zcmop instruction is equivalent to some
+Zimop instruction, but the choice of expansion (if any) is left to the
+extension that redefines the MOP.
+Note, a Zcmop instruction that does not write a value can expand into a write
+to <code>x0</code>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
 </head>
 <body>
@@ -12,12 +13,13 @@
 <tr><th>Git Revision</th><td> IMFDQC-Ratification-20190305</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
 <tr><th>Source</th><td>src/rv32.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="rv32"><span class="header-section-number">2</span> RV32I Base Integer Instruction Set, Version 2.1</h1>
+<section id="rv32" data-number="1">
+<h1 data-number="2"><span class="header-section-number">2</span> RV32I Base Integer Instruction Set, Version 2.1</h1>
 <p>This chapter describes version 2.0 of the RV32I base integer
 instruction set.</p>
 <div class=commentary>
@@ -41,30 +43,30 @@ SYSTEM and FENCE instructions as a single trap.</p>
 <div class=commentary>
 <p>Most of the commentary for RV32I also applies to the RV64I base.</p>
 </div>
-<h2 id="programmers-model-for-base-integer-isa"><span class="header-section-number">2.1</span> Programmers’ Model for Base Integer ISA</h2>
+<section id="programmers-model-for-base-integer-isa" data-number="1.1">
+<h2 data-number="2.1"><span class="header-section-number">2.1</span> Programmers’ Model for Base Integer ISA</h2>
 <p>Figure <a href="rv32.html#gprs" data-reference-type="ref" data-reference="gprs">1.1</a> shows the unprivileged state for the base integer
-ISA. For RV32I, the 32 <span>x</span> registers are each 32 bits wide, i.e.,
-XLEN=32. Register <span>x0</span> is hardwired with all bits equal to 0.
-General purpose registers <span>x1</span>–<span>x31</span> hold values that various
+ISA. For RV32I, the 32 <span><code>x</code></span> registers are each 32 bits wide, i.e.,
+XLEN=32. Register <span><code>x0</code></span> is hardwired with all bits equal to 0.
+General purpose registers <span><code>x1</code></span>–<span><code>x31</code></span> hold values that various
 instructions interpret as a collection of Boolean values, or as two’s
 complement signed binary integers or unsigned binary integers.</p>
-<p>There is one additional unprivileged register: the program counter <span>pc</span>
+<p>There is one additional unprivileged register: the program counter <span><code>pc</code></span>
 holds the address of the current instruction.</p>
 <div class=commentary>
 <p>There is no dedicated stack pointer or subroutine return address link
 register in the Base Integer ISA; the instruction encoding allows any
-<span>x</span> register to be used for these purposes. However, the standard
-software calling convention uses register <span>x1</span> to hold the return
-address for a call, with register <span>x5</span> available as an alternate
+<span><code>x</code></span> register to be used for these purposes. However, the standard
+software calling convention uses register <span><code>x1</code></span> to hold the return
+address for a call, with register <span><code>x5</code></span> available as an alternate
 link register.
-The standard calling convention uses register <span>x2</span> as the stack
+The standard calling convention uses register <span><code>x2</code></span> as the stack
 pointer.</p>
 <p>Hardware might choose to accelerate function calls and returns that
-use <span>x1</span> or <span>x5</span>. See the descriptions of the JAL and JALR
+use <span><code>x1</code></span> or <span><code>x5</code></span>. See the descriptions of the JAL and JALR
 instructions.</p>
 <p>The optional compressed 16-bit instruction format is designed around
-the assumption that <span>x1</span> is the return address register and <span>
-x2</span> is the stack pointer. Software using other conventions will
+the assumption that <span><code>x1</code></span> is the return address register and <span><code> x2</code></span> is the stack pointer. Software using other conventions will
 operate correctly but may have greater code size.</p>
 <p>The number of available architectural registers can have large impacts
 on code size, performance, and energy consumption. Although 16
@@ -92,9 +94,11 @@ instruction-set extensions could support a much larger register space
 RV32E subset, which only has 16 registers (Chapter <a href="rv32e.html#rv32e" data-reference-type="ref" data-reference="rv32e">[rv32e]</a>).</p>
 </div>
 <figure>
-<img src="rv32_00.svg" alt="RISC-V base unprivileged integer register state." id="gprs" /><figcaption>RISC-V base unprivileged integer register state.<span label="gprs"></span></figcaption>
+<img src="rv32_00.svg" id="gprs" alt="" /><figcaption>RISC-V base unprivileged integer register state.</figcaption>
 </figure>
-<h2 id="base-instruction-formats"><span class="header-section-number">2.2</span> Base Instruction Formats</h2>
+</section>
+<section id="base-instruction-formats" data-number="1.2">
+<h2 data-number="2.2"><span class="header-section-number">2.2</span> Base Instruction Formats</h2>
 <p>In the base RV32I ISA, there are four core instruction formats
 (R/I/S/U), as shown in Figure <a href="rv32.html#fig:baseinstformats" data-reference-type="ref" data-reference="fig:baseinstformats">1.2</a>. All are a
 fixed 32 bits in length and must be aligned on a four-byte boundary in
@@ -114,10 +118,10 @@ and to simplify hardware design for systems with IALIGN=32, where these
 are the only places where misalignment can occur.</p>
 </div>
 <figure>
-<img src="rv32_01.svg" alt="RISC-V base instruction formats. Each immediate subfield is labeled with the bit position (imm[x ]) in the immediate value being produced, rather than the bit position within the instruction’s immediate field as is usually done. " id="fig:baseinstformats" /><figcaption>RISC-V base instruction formats. Each immediate subfield is
+<img src="rv32_01.svg" id="fig:baseinstformats" alt="" /><figcaption>RISC-V base instruction formats. Each immediate subfield is
 labeled with the bit position (imm[<span><em>x</em></span> ]) in the immediate
 value being produced, rather than the bit position within the
-instruction’s immediate field as is usually done. <span label="fig:baseinstformats"></span></figcaption>
+instruction’s immediate field as is usually done. </figcaption>
 </figure>
 <p>The RISC-V ISA keeps the source (<span><em>rs1</em></span> and <span><em>rs2</em></span>) and
 destination (<span><em>rd</em></span>) registers at the same position in all formats
@@ -141,12 +145,14 @@ bits) to increase the opcode space available for regular instructions.</p>
 using zero-extension for some immediates as in the MIPS ISA and wanted
 to keep the ISA as simple as possible.</p>
 </div>
-<h2 id="immediate-encoding-variants"><span class="header-section-number">2.3</span> Immediate Encoding Variants</h2>
+</section>
+<section id="immediate-encoding-variants" data-number="1.3">
+<h2 data-number="2.3"><span class="header-section-number">2.3</span> Immediate Encoding Variants</h2>
 <p>There are a further two variants of the instruction formats (B/J)
 based on the handling of immediates, as shown in
 Figure <a href="rv32.html#fig:baseinstformatsimm" data-reference-type="ref" data-reference="fig:baseinstformatsimm">1.3</a>.</p>
 <figure>
-<img src="rv32_02.svg" alt="RISC-V base instruction formats showing immediate variants." id="fig:baseinstformatsimm" /><figcaption>RISC-V base instruction formats showing immediate variants.<span label="fig:baseinstformatsimm"></span></figcaption>
+<img src="rv32_02.svg" id="fig:baseinstformatsimm" alt="" /><figcaption>RISC-V base instruction formats showing immediate variants.</figcaption>
 </figure>
 <p>The only difference between the S and B formats is that the 12-bit
 immediate field is used to encode branch offsets in multiples of 2 in
@@ -164,9 +170,9 @@ maximize overlap with the other formats and with each other.</p>
 base instruction formats, and is labeled to show which instruction
 bit (inst[<span><em>y</em></span> ]) produces each bit of the immediate value.</p>
 <figure>
-<img src="rv32_03.svg" alt="Types of immediate produced by RISC-V instructions. The fields are labeled with the instruction bits used to construct their value. Sign extension always uses inst[31]." id="fig:immtypes" /><figcaption>Types of immediate produced by RISC-V instructions. The fields are labeled with the
+<img src="rv32_03.svg" id="fig:immtypes" alt="" /><figcaption>Types of immediate produced by RISC-V instructions. The fields are labeled with the
 instruction bits used to construct their value. Sign extension
-always uses inst[31].<span label="fig:immtypes"></span></figcaption>
+always uses inst[31].</figcaption>
 </figure>
 <div class=commentary>
 <p>Sign-extension is one of the most critical operations on immediates
@@ -186,7 +192,9 @@ generation of instructions, there is some small additional
 overhead, but the most common short forward branches have
 straightforward immediate encodings.</p>
 </div>
-<h2 id="integer-computational-instructions"><span class="header-section-number">2.4</span> Integer Computational Instructions</h2>
+</section>
+<section id="integer-computational-instructions" data-number="1.4">
+<h2 data-number="2.4"><span class="header-section-number">2.4</span> Integer Computational Instructions</h2>
 <p>Most integer computational instructions operate on XLEN bits of values
 held in the integer register file. Integer computational instructions
 are either encoded as register-immediate operations using the I-type
@@ -216,7 +224,8 @@ negative.</p>
 <p>In RV64I, checks of 32-bit signed additions can be optimized further by
 comparing the results of ADD and ADDW on the operands.</p>
 </div>
-<h4 id="integer-register-immediate-instructions" class="unnumbered">Integer Register-Immediate Instructions</h4>
+<section id="integer-register-immediate-instructions" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="1">Integer Register-Immediate Instructions</h4>
 <p><img src="rv32_04.svg" alt="image" /></p>
 <p>ADDI adds the sign-extended 12-bit immediate to register <span><em>rs1</em></span>.
 Arithmetic overflow is ignored and the result is simply the low
@@ -249,10 +258,10 @@ into the vacated upper bits).</p>
 the U-type format. LUI places the U-immediate value in the top 20
 bits of the destination register <span><em>rd</em></span>, filling in the lowest 12
 bits with zeros.</p>
-<p>AUIPC (add upper immediate to <span>pc</span>) is used to build <span>pc</span>-relative
+<p>AUIPC (add upper immediate to <span><code>pc</code></span>) is used to build <span><code>pc</code></span>-relative
 addresses and uses the U-type format. AUIPC forms a 32-bit offset from the
 20-bit U-immediate, filling in the lowest 12 bits with zeros, adds this offset
-to the <span>pc</span> of the AUIPC instruction, then places the result in register <span><em>rd</em></span>.</p>
+to the <span><code>pc</code></span> of the AUIPC instruction, then places the result in register <span><em>rd</em></span>.</p>
 <div class=commentary>
 <p>The AUIPC instruction supports two-instruction sequences to access
 arbitrary offsets from the PC for both control-flow transfers and data
@@ -266,7 +275,9 @@ PC (of the instruction following the JAL), it might cause pipeline
 breaks in simpler microarchitectures or pollute BTB structures in more
 complex microarchitectures.</p>
 </div>
-<h4 id="integer-register-register-operations" class="unnumbered">Integer Register-Register Operations</h4>
+</section>
+<section id="integer-register-register-operations" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="1">Integer Register-Register Operations</h4>
 <p>RV32I defines several arithmetic R-type operations. All operations
 read the <span><em>rs1</em></span> and <span><em>rs2</em></span> registers as source operands and
 write the result into register <span><em>rd</em></span>. The <span><em>funct7</em></span> and <span>
@@ -276,17 +287,19 @@ write the result into register <span><em>rd</em></span>. The <span><em>funct7</e
 subtraction of <span><em>rs2</em></span> from <span><em>rs1</em></span>. Overflows are ignored and the low XLEN
 bits of results are written to the destination <span><em>rd</em></span>.
 SLT and SLTU perform signed and unsigned compares
-respectively, writing 1 to <span><em>rd</em></span> if <span class="math inline"><em>rs1</em>  &lt; <em>rs2</em></span>, 0 otherwise. Note, SLTU <span><em>rd</em></span>, <span><em>x0</em></span>, <span><em>rs2</em></span> sets
+respectively, writing 1 to <span><em>rd</em></span> if <span class="math inline"><em>rs1</em>  &lt;  <em>rs2</em></span>, 0 otherwise. Note, SLTU <span><em>rd</em></span>, <span><em>x0</em></span>, <span><em>rs2</em></span> sets
 <span><em>rd</em></span> to 1 if <span><em>rs2</em></span> is not equal to zero, otherwise sets <span>
 <em>rd</em></span> to zero (assembler pseudoinstruction SNEZ <span><em>rd, rs</em></span>). AND, OR, and
 XOR perform bitwise logical operations.</p>
 <p>SLL, SRL, and SRA perform logical left, logical right, and arithmetic
 right shifts on the value in register <span><em>rs1</em></span> by the shift amount
 held in the lower 5 bits of register <span><em>rs2</em></span>.</p>
-<h4 id="nop-instruction" class="unnumbered">NOP Instruction</h4>
+</section>
+<section id="nop-instruction" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="1">NOP Instruction</h4>
 <p><img src="rv32_08.svg" alt="image" /></p>
 <p>The NOP instruction does not change any architecturally visible state, except for
-advancing the <span>pc</span> and incrementing any applicable performance
+advancing the <span><code>pc</code></span> and incrementing any applicable performance
 counters. NOP is encoded as ADDI <span><em>x0, x0, 0</em></span>.</p>
 <div class=commentary>
 <p>NOPs can be used to align code segments to microarchitecturally
@@ -306,37 +319,41 @@ execute ADDI using the same hardware needed for base+offset address
 calculations, while register-register ADD or logical/shift operations
 require additional hardware.</p>
 </div>
-<h2 id="control-transfer-instructions"><span class="header-section-number">2.5</span> Control Transfer Instructions</h2>
+</section>
+</section>
+<section id="control-transfer-instructions" data-number="1.5">
+<h2 data-number="2.5"><span class="header-section-number">2.5</span> Control Transfer Instructions</h2>
 <p>RV32I provides two types of control transfer instructions:
 unconditional jumps and conditional branches. Control transfer
 instructions in RV32I do <span><em>not</em></span> have architecturally visible delay
 slots.</p>
-<h4 id="unconditional-jumps" class="unnumbered">Unconditional Jumps</h4>
+<section id="unconditional-jumps" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="1">Unconditional Jumps</h4>
 <p>The jump and link (JAL) instruction uses the J-type
 format, where the J-immediate encodes a signed offset in multiples of
-2 bytes. The offset is sign-extended and added to the <span>pc</span>
+2 bytes. The offset is sign-extended and added to the <span><code>pc</code></span>
 to form the jump target address. Jumps can therefore target a
-<span class="math inline">±</span><span>1</span><span>MiB</span> range. JAL stores the address of the instruction
-following the jump (<span>pc</span>+4) into register <span><em>rd</em></span>. The standard
-software calling convention uses <span>x1</span> as the return address
-register and <span>x5</span> as an alternate link register.</p>
+<span class="math inline">±</span><span>1</span> <span>MiB</span> range. JAL stores the address of the instruction
+following the jump (<span><code>pc</code></span>+4) into register <span><em>rd</em></span>. The standard
+software calling convention uses <span><code>x1</code></span> as the return address
+register and <span><code>x5</code></span> as an alternate link register.</p>
 <div class=commentary>
 <p>The alternate link register supports calling millicode routines (e.g.,
 those to save and restore registers in compressed code) while
-preserving the regular return address register. The register <span>x5</span>
+preserving the regular return address register. The register <span><code>x5</code></span>
 was chosen as the alternate link register as it maps to a temporary in
 the standard calling convention, and has an encoding that is only one
 bit different than the regular link register.</p>
 </div>
 <p>Plain unconditional jumps (assembler pseudoinstruction J) are encoded as a JAL
-with <span><em>rd</em></span>=<span>x0</span>.</p>
+with <span><em>rd</em></span>=<span><code>x0</code></span>.</p>
 <p><img src="rv32_09.svg" alt="image" /></p>
 <p>The indirect jump instruction JALR (jump and link register) uses the
 I-type encoding. The target address is obtained by adding the sign-extended
 12-bit I-immediate to the register <span><em>rs1</em></span>, then setting the
 least-significant bit of the result to zero. The address of
-the instruction following the jump (<span>pc</span>+4) is written to register
-<span><em>rd</em></span>. Register <span>x0</span> can be used as the destination if the
+the instruction following the jump (<span><code>pc</code></span>+4) is written to register
+<span><em>rd</em></span>. Register <span><code>x0</code></span> can be used as the destination if the
 result is not required.</p>
 <p><img src="rv32_10.svg" alt="image" /></p>
 <div class=commentary>
@@ -346,7 +363,7 @@ defined to enable a two-instruction sequence to jump anywhere in a
 32-bit absolute address range. A LUI instruction can first load <span>
 <em>rs1</em></span> with the upper 20 bits of a target address, then JALR can add
 in the lower bits. Similarly, AUIPC then JALR can jump
-anywhere in a 32-bit <span>pc</span>-relative address range.</p>
+anywhere in a 32-bit <span><code>pc</code></span>-relative address range.</p>
 <p>Note that the JALR instruction does not treat the 12-bit immediate as
 multiples of 2 bytes, unlike the conditional branch instructions.
 This avoids one more immediate format in hardware. In
@@ -359,9 +376,9 @@ low bit of function pointers to be used to store auxiliary
 information. Although there is potentially a slight loss of error
 checking in this case, in practice jumps to an incorrect instruction
 address will usually quickly raise an exception.</p>
-<p>When used with a base <span><em>rs1</em></span><span class="math inline">=</span><span>x0</span>, JALR can be used to implement
-a single instruction subroutine call to the lowest <span>2</span><span>KiB</span> or highest
-<span>2</span><span>KiB</span> address region from anywhere in the address space, which could
+<p>When used with a base <span><em>rs1</em></span><span class="math inline">=</span><span><code>x0</code></span>, JALR can be used to implement
+a single instruction subroutine call to the lowest <span>2</span> <span>KiB</span> or highest
+<span>2</span> <span>KiB</span> address region from anywhere in the address space, which could
 be used to implement fast calls to a small runtime library. Alternatively,
 an ABI could dedicate a general-purpose register to point to a library
 elsewhere in the address space.</p>
@@ -380,7 +397,7 @@ detection of instructions used for procedure calls and returns to be
 effective. For RISC-V, hints as to the instructions’ usage are encoded
 implicitly via the register numbers used. A JAL instruction should
 push the return address onto a return-address stack (RAS) only when
-<span><em>rd</em></span><span class="math inline">=</span><span>x1</span>/<span>x5</span>. JALR instructions should push/pop a
+<span><em>rd</em></span><span class="math inline">=</span><span><code>x1</code></span>/<span><code>x5</code></span>. JALR instructions should push/pop a
 RAS as shown in the Table <a href="rv32.html#rashints" data-reference-type="ref" data-reference="rashints">[rashints]</a>.</p>
 <table>
 <thead>
@@ -429,18 +446,21 @@ RAS as shown in the Table <a href="rv32.html#rashints" data-reference-type="ref
 to guide return-address stack manipulation. We use implicit hinting tied to
 register numbers and the calling convention to reduce the encoding space used
 for these hints.</p>
-<p>When two different link registers (<span>x1</span> and <span>x5</span>) are given as
+<p>When two different link registers (<span><code>x1</code></span> and <span><code>x5</code></span>) are given as
 <span><em>rs1</em></span> and <span><em>rd</em></span>, then the RAS is both popped and pushed to
 support coroutines. If <span><em>rs1</em></span> and <span><em>rd</em></span> are the same link
-register (either <span>x1</span> or <span>x5</span>), the RAS is only pushed to
-enable macro-op fusion of the sequences:  and  <span>auipc ra, imm20; jalr ra, imm12(ra)</span></p>
+register (either <span><code>x1</code></span> or <span><code>x5</code></span>), the RAS is only pushed to
+enable macro-op fusion of the sequences:
+<span><code>lui ra, imm20; jalr ra, imm12(ra)</code></span>  and  <span><code>auipc ra, imm20; jalr ra, imm12(ra)</code></span></p>
 </div>
-<h4 id="conditional-branches" class="unnumbered">Conditional Branches</h4>
+</section>
+<section id="conditional-branches" class="unnumbered" data-number="">
+<h4 class="unnumbered" data-number="1">Conditional Branches</h4>
 <p>All branch instructions use the B-type instruction format. The
 12-bit B-immediate encodes signed offsets in multiples of 2 bytes.
 The offset is sign-extended and added
-to the current <span>pc</span> to give the target address. The
-conditional branch range is <span class="math inline">±</span><span>4</span><span>KiB</span>.</p>
+to the current <span><code>pc</code></span> to give the target address. The
+conditional branch range is <span class="math inline">±</span><span>4</span> <span>KiB</span>.</p>
 <p><img src="rv32_11.svg" alt="image" /></p>
 <p>Branch instructions compare two registers. BEQ and BNE take the
 branch if registers <span><em>rs1</em></span> and <span><em>rs2</em></span> are equal or unequal
@@ -461,7 +481,7 @@ predicted taken and forward branches as not taken, at least the
 first time they are encountered. Dynamic predictors should quickly
 learn any predictable branch behavior.</p>
 <p>Unlike some other architectures, the RISC-V jump (JAL with <span>
-<em>rd</em></span>=<span>x0</span>) instruction should always be used for unconditional
+<em>rd</em></span>=<span><code>x0</code></span>) instruction should always be used for unconditional
 branches instead of a conditional branch instruction with an
 always-true condition. RISC-V jumps are also PC-relative and support
 a much wider offset range than branches, and will not pollute
@@ -530,14 +550,17 @@ instruction-address-misaligned exception will not be raised.</p>
 that support extensions with 16-bit aligned instructions, such as the
 compressed instruction-set extension, C.</p>
 </div>
-<h2 id="load-and-store-instructions"><span class="header-section-number">2.6</span> Load and Store Instructions</h2>
+</section>
+</section>
+<section id="load-and-store-instructions" data-number="1.6">
+<h2 data-number="2.6"><span class="header-section-number">2.6</span> Load and Store Instructions</h2>
 <p>RV32I is a load-store architecture, where only load and store
 instructions access memory and arithmetic instructions only operate on
 CPU registers. RV32I provides a 32-bit address space that is
 byte-addressed and little-endian. The EEI will
 define what portions of the address space are legal to access with
 which instructions (e.g., some addresses might be read only, or
-support word access only). Loads with a destination of <span>x0</span> must
+support word access only). Loads with a destination of <span><code>x0</code></span> must
 still raise any exceptions and cause any other side effects even
 though the load value is discarded.</p>
 <p><img src="rv32_12.svg" alt="image" /></p>
@@ -618,7 +641,9 @@ simply using regular load and store instructions. Hardware can then
 automatically optimize accesses depending on whether runtime addresses
 are aligned.</p>
 </div>
-<h2 id="sec:fence"><span class="header-section-number">2.7</span> Memory Ordering Instructions</h2>
+</section>
+<section id="sec:fence" data-number="1.7">
+<h2 data-number="2.7"><span class="header-section-number">2.7</span> Memory Ordering Instructions</h2>
 <p><img src="rv32_14.svg" alt="image" /></p>
 <p>The FENCE instruction is used to order device I/O and
 memory accesses as viewed by other RISC-V harts and external devices
@@ -640,7 +665,7 @@ Instruction-set extensions might also describe new I/O
 instructions that will also be ordered using the I and O bits in a
 FENCE.</p>
 <figure>
-<img src="rv32_15.svg" alt="Fence mode encoding." id="fm" /><figcaption>Fence mode encoding.<span label="fm"></span></figcaption>
+<img src="rv32_15.svg" id="fm" alt="" /><figcaption>Fence mode encoding.</figcaption>
 </figure>
 <p>The fence mode field <span><em>fm</em></span> defines the semantics of the FENCE. A
 FENCE with <span><em>fm</em></span>=0000 orders all memory operations in its
@@ -675,7 +700,9 @@ to control added coprocessors or I/O devices. Simple implementations
 may additionally ignore the <span><em>predecessor</em></span> and <span><em>successor</em></span>
 fields and always execute a conservative fence on all operations.</p>
 </div>
-<h2 id="environment-call-and-breakpoints"><span class="header-section-number">2.8</span> Environment Call and Breakpoints</h2>
+</section>
+<section id="environment-call-and-breakpoints" data-number="1.8">
+<h2 data-number="2.8"><span class="header-section-number">2.8</span> Environment Call and Breakpoints</h2>
 <p>SYSTEM instructions are used to access system functionality that might
 require privileged access and are encoded using the I-type instruction
 format. These can be divided into two main classes: those that
@@ -733,22 +760,23 @@ service ABI with an existing standard.</p>
 <p>We note that ARM processors have also moved to using SVC instead of
 BKPT for semihosting calls in newer designs.</p>
 </div>
-<h2 id="sec:rv32i-hints"><span class="header-section-number">2.9</span> HINT Instructions</h2>
+</section>
+<section id="sec:rv32i-hints" data-number="1.9">
+<h2 data-number="2.9"><span class="header-section-number">2.9</span> HINT Instructions</h2>
 <p>RV32I reserves a large encoding space for HINT instructions, which are
 usually used to communicate performance hints to the
 microarchitecture. HINTs are encoded as integer computational
-instructions with <span><em>rd</em></span>=<span>x0</span>. Hence, like the NOP instruction,
+instructions with <span><em>rd</em></span>=<span><code>x0</code></span>. Hence, like the NOP instruction,
 HINTs do not change any architecturally visible state, except for
-advancing the <span>pc</span> and any applicable performance counters.
+advancing the <span><code>pc</code></span> and any applicable performance counters.
 Implementations are always allowed to ignore the encoded hints.</p>
 <div class=commentary>
 <p>This HINT encoding has been chosen so that simple implementations can ignore
 HINTs altogether, and instead execute a HINT as a regular computational
 instruction that happens not to mutate the architectural state. For example, ADD is
-a HINT if the destination register is <span>x0</span>; the five-bit <span><em>rs1</em></span> and <span>
+a HINT if the destination register is <span><code>x0</code></span>; the five-bit <span><em>rs1</em></span> and <span>
 <em>rs2</em></span> fields encode arguments to the HINT. However, a simple implementation can
-simply execute the HINT as an ADD of <span><em>rs1</em></span> and <span><em>rs2</em></span> that writes <span>
-x0</span>, which has no architecturally visible effect.</p>
+simply execute the HINT as an ADD of <span><em>rs1</em></span> and <span><em>rs2</em></span> that writes <span><code> x0</code></span>, which has no architecturally visible effect.</p>
 </div>
 <p>Table <a href="rv32.html#tab:rv32i-hints" data-reference-type="ref" data-reference="tab:rv32i-hints">1.6</a> lists all RV32I HINT code points. 91% of the HINT
 space is reserved for standard HINTs, but none are presently defined. The
@@ -762,8 +790,10 @@ hints, security tags, and instrumentation flags for
 simulation/emulation.</p>
 </div>
 <figure>
-<img src="rv32_17.svg" alt="RV32I HINT instructions." id="tab:rv32i-hints" /><figcaption>RV32I HINT instructions.<span label="tab:rv32i-hints"></span></figcaption>
+<img src="rv32_17.svg" id="tab:rv32i-hints" alt="" /><figcaption>RV32I HINT instructions.</figcaption>
 </figure>
+</section>
+</section>
 
 </body>
 </html>

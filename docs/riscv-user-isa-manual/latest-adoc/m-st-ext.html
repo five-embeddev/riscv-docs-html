@@ -1,0 +1,276 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>RISC-V Instruction Set Manual, Volume I: RISC-V User-Level ISA</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> user</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/m-st-ext.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="mstandard">1. "M" Standard Extension for Integer Multiplication and Division, Version 2.0</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This chapter describes the standard integer multiplication and division
+instruction extension, which is named "M" and contains instructions
+that multiply or divide values held in two integer registers.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We separate integer multiply and divide out from the base to simplify
+low-end implementations, or for applications where integer multiply and
+divide operations are either infrequent or better handled in attached
+accelerators.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_multiplication_operations">1.1. Multiplication Operations</h3>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nOTgnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgOTgnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczJy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTI9JzMnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzMnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzMnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTI9JzMnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTE9JzMxJyB5Mj0nMjgnLz48L2c+PGc+PGc+PHJlY3QgZmllbGQ9J29wY29kZScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxNzMnIHg9JzYxOCcvPjxyZWN0IGZpZWxkPSdyZCcgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzQ5NCcvPjxyZWN0IGZpZWxkPSdmdW5jdDMnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdyczInIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzE3MycvPjxyZWN0IGZpZWxkPSdmdW5jdDcnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTczJy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE3MyknPjx0ZXh0IHk9JzYnPjI0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4yNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjMxPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMTUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+b3Bjb2RlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZnVuY3QzPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mdW5jdDc8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPk9QPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5PUC0zMjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5NVUwvTVVMSFtbU11VXTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+TVVMVzwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMzQ2LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPm11bHRpcGxpY2FuZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+bXVsdGlwbGljYW5kPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIpJz48dGV4dCB5PSc2Jz48dHNwYW4+NTwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMTQpJz48dGV4dCB5PSc2Jz48dHNwYW4+bXVsdGlwbGllcjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyMjIsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+bXVsdGlwbGllcjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzQpJz48dGV4dCB5PSc2Jz48dHNwYW4+NzwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5NVUxESVY8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNzQsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+TVVMRElWPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48L2c+PC9nPjwvZz48L2c+PC9zdmc+" alt="Diagram" width="800" height="98">
+</div>
+</div>
+<div id="m-st-ext-for-int-mult" class="paragraph">
+<p>
+
+</p>
+</div>
+<div class="paragraph">
+<p>MUL performs an XLEN-bit×XLEN-bit multiplication of
+<em>rs1</em> by <em>rs2</em> and places the lower XLEN bits in the destination
+register. MULH, MULHU, and MULHSU perform the same multiplication but
+return the upper XLEN bits of the full 2×XLEN-bit
+product, for signed×signed,
+unsigned×unsigned, and <em>rs1</em>×unsigned <em>rs2</em> multiplication, respectively.
+If both the high and low bits of the same product are required, then the recommended code sequence is: MULH[[S]U] <em>rdh, rs1, rs2</em>; MUL <em>rdl, rs1, rs2</em> (source register specifiers must be in same order and <em>rdh</em> cannot be the same as <em>rs1</em> or <em>rs2</em>). Microarchitectures can then fuse these into a single multiply operation instead of performing two separate multiplies.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>MULHSU is used in multi-word signed multiplication to multiply the
+most-significant word of the multiplicand (which contains the sign bit)
+with the less-significant words of the multiplier (which are unsigned).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>MULW is an RV64 instruction that multiplies the lower 32 bits of the
+source registers, placing the sign-extension of the lower 32 bits of the
+result into the destination register.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In RV64, MUL can be used to obtain the upper 32 bits of the 64-bit
+product, but signed arguments must be proper 32-bit signed values,
+whereas unsigned arguments must have their upper 32 bits clear. If the
+arguments are not known to be sign- or zero-extended, an alternative is
+to shift both arguments left by 32 bits, then use MULH[[S]U].</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_division_operations">1.2. Division Operations</h3>
+<div class="imageblock">
+<div class="content">
+<img src="data:image/svg+xml;base64,PHN2ZyBjbGFzcz0nV2F2ZURyb20nIGhlaWdodD0nOTgnIHByZXNlcnZlQXNwZWN0UmF0aW89J3hNaWRZTWlkIG1lZXQnIHZpZXdCb3g9JzAgMCA4MDAgOTgnIHdpZHRoPSc4MDAnIHhtbG5zPSdodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2Zyc+PGcgZm9udC1mYW1pbHk9J3NhbnMtc2VyaWYnIGZvbnQtc2l6ZT0nMTQnIGZvbnQtd2VpZ2h0PSdub3JtYWwnIHRleHQtYW5jaG9yPSdtaWRkbGUnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDAuNSwwLjUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0LDIxKSc+PGcgc3Ryb2tlPSdibGFjaycgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2Utd2lkdGg9JzEnPjxsaW5lIHgyPSc3OTEnLz48bGluZSB5Mj0nMzEnLz48bGluZSB4Mj0nNzkxJyB5MT0nMzEnIHkyPSczMScvPjxsaW5lIHgxPSc3OTEnIHgyPSc3OTEnIHkyPSczMScvPjxsaW5lIHgxPSc3NjYnIHgyPSc3NjYnIHkyPSczJy8+PGxpbmUgeDE9Jzc2NicgeDI9Jzc2NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQyJyB4Mj0nNzQyJyB5Mj0nMycvPjxsaW5lIHgxPSc3NDInIHgyPSc3NDInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzcxNycgeDI9JzcxNycgeTI9JzMnLz48bGluZSB4MT0nNzE3JyB4Mj0nNzE3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2OTInIHgyPSc2OTInIHkyPSczJy8+PGxpbmUgeDE9JzY5MicgeDI9JzY5MicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNjY3JyB4Mj0nNjY3JyB5Mj0nMycvPjxsaW5lIHgxPSc2NjcnIHgyPSc2NjcnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzY0MycgeDI9JzY0MycgeTI9JzMnLz48bGluZSB4MT0nNjQzJyB4Mj0nNjQzJyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc2MTgnIHgyPSc2MTgnIHkyPSczMScvPjxsaW5lIHgxPSc1OTMnIHgyPSc1OTMnIHkyPSczJy8+PGxpbmUgeDE9JzU5MycgeDI9JzU5MycgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNTY5JyB4Mj0nNTY5JyB5Mj0nMycvPjxsaW5lIHgxPSc1NjknIHgyPSc1NjknIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzU0NCcgeDI9JzU0NCcgeTI9JzMnLz48bGluZSB4MT0nNTQ0JyB4Mj0nNTQ0JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc1MTknIHgyPSc1MTknIHkyPSczJy8+PGxpbmUgeDE9JzUxOScgeDI9JzUxOScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDk0JyB4Mj0nNDk0JyB5Mj0nMzEnLz48bGluZSB4MT0nNDcwJyB4Mj0nNDcwJyB5Mj0nMycvPjxsaW5lIHgxPSc0NzAnIHgyPSc0NzAnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzQ0NScgeDI9JzQ0NScgeTI9JzMnLz48bGluZSB4MT0nNDQ1JyB4Mj0nNDQ1JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSc0MjAnIHgyPSc0MjAnIHkyPSczMScvPjxsaW5lIHgxPSczOTYnIHgyPSczOTYnIHkyPSczJy8+PGxpbmUgeDE9JzM5NicgeDI9JzM5NicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMzcxJyB4Mj0nMzcxJyB5Mj0nMycvPjxsaW5lIHgxPSczNzEnIHgyPSczNzEnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzM0NicgeDI9JzM0NicgeTI9JzMnLz48bGluZSB4MT0nMzQ2JyB4Mj0nMzQ2JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPSczMjEnIHgyPSczMjEnIHkyPSczJy8+PGxpbmUgeDE9JzMyMScgeDI9JzMyMScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjk3JyB4Mj0nMjk3JyB5Mj0nMzEnLz48bGluZSB4MT0nMjcyJyB4Mj0nMjcyJyB5Mj0nMycvPjxsaW5lIHgxPScyNzInIHgyPScyNzInIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzI0NycgeDI9JzI0NycgeTI9JzMnLz48bGluZSB4MT0nMjQ3JyB4Mj0nMjQ3JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScyMjInIHgyPScyMjInIHkyPSczJy8+PGxpbmUgeDE9JzIyMicgeDI9JzIyMicgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMTk4JyB4Mj0nMTk4JyB5Mj0nMycvPjxsaW5lIHgxPScxOTgnIHgyPScxOTgnIHkxPSczMScgeTI9JzI4Jy8+PGxpbmUgeDE9JzE3MycgeDI9JzE3MycgeTI9JzMxJy8+PGxpbmUgeDE9JzE0OCcgeDI9JzE0OCcgeTI9JzMnLz48bGluZSB4MT0nMTQ4JyB4Mj0nMTQ4JyB5MT0nMzEnIHkyPScyOCcvPjxsaW5lIHgxPScxMjQnIHgyPScxMjQnIHkyPSczJy8+PGxpbmUgeDE9JzEyNCcgeDI9JzEyNCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTI9JzMnLz48bGluZSB4MT0nOTknIHgyPSc5OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTI9JzMnLz48bGluZSB4MT0nNzQnIHgyPSc3NCcgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTI9JzMnLz48bGluZSB4MT0nNDknIHgyPSc0OScgeTE9JzMxJyB5Mj0nMjgnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTI9JzMnLz48bGluZSB4MT0nMjUnIHgyPScyNScgeTE9JzMxJyB5Mj0nMjgnLz48L2c+PGc+PGc+PHJlY3QgZmllbGQ9J29wY29kZScgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjEnIHdpZHRoPScxNzMnIHg9JzYxOCcvPjxyZWN0IGZpZWxkPSdyZCcgaGVpZ2h0PSczMScgc3R5bGU9J2ZpbGwtb3BhY2l0eTowLjE7ZmlsbDpoc2woMCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzQ5NCcvPjxyZWN0IGZpZWxkPSdmdW5jdDMnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nNzQnIHg9JzQyMCcvPjxyZWN0IGZpZWxkPSdyczEnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzI5NycvPjxyZWN0IGZpZWxkPSdyczInIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xO2ZpbGw6aHNsKDE3MCwxMDAlLDUwJSknIHdpZHRoPScxMjQnIHg9JzE3MycvPjxyZWN0IGZpZWxkPSdmdW5jdDcnIGhlaWdodD0nMzEnIHN0eWxlPSdmaWxsLW9wYWNpdHk6MC4xJyB3aWR0aD0nMTczJy8+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLC0xMSknPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc2NiknPjx0ZXh0IHk9JzYnPjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDYxOCknPjx0ZXh0IHk9JzYnPjY8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU5MyknPjx0ZXh0IHk9JzYnPjc8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ5NCknPjx0ZXh0IHk9JzYnPjExPC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NzApJz48dGV4dCB5PSc2Jz4xMjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNDIwKSc+PHRleHQgeT0nNic+MTQ8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM5NiknPjx0ZXh0IHk9JzYnPjE1PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgyOTcpJz48dGV4dCB5PSc2Jz4xOTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjcyKSc+PHRleHQgeT0nNic+MjA8L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDE3MyknPjx0ZXh0IHk9JzYnPjI0PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgxNDgpJz48dGV4dCB5PSc2Jz4yNTwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMCknPjx0ZXh0IHk9JzYnPjMxPC90ZXh0PjwvZz48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMTIsMTUpJz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg2OTIpJz48dGV4dCB5PSc2Jz48dHNwYW4+b3Bjb2RlPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDU0NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg0NDUpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZnVuY3QzPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5yczE8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoMjIyKSc+PHRleHQgeT0nNic+PHRzcGFuPnJzMjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5mdW5jdDc8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDEyLDM5KSc+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyKSc+PHRleHQgeT0nNic+PHRzcGFuPjc8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNjkyLDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPk9QPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDY5MiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5PUC0zMjwvdHNwYW4+PC90ZXh0PjwvZz48L2c+PGc+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0KSc+PHRleHQgeT0nNic+PHRzcGFuPjU8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PGcgdHJhbnNmb3JtPSd0cmFuc2xhdGUoNTQ0LDI4KSc+PHRleHQgeT0nNic+PHRzcGFuPmRlc3Q8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSknPjx0ZXh0IHk9JzYnPjx0c3Bhbj4zPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5ESVZbVV0vUkVNW1VdPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDQ0NSwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5ESVZbVV1XL1JFTVtVXVc8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDM0NiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kaXZpZGVuZDwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSgzNDYsMjgpJz48dGV4dCB5PSc2Jz48dHNwYW4+ZGl2aWRlbmQ8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjxnPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiknPjx0ZXh0IHk9JzYnPjx0c3Bhbj41PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiwxNCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kaXZpc29yPC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDIyMiwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5kaXZpc29yPC90c3Bhbj48L3RleHQ+PC9nPjwvZz48Zz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj43PC90c3Bhbj48L3RleHQ+PC9nPjxnIHRyYW5zZm9ybT0ndHJhbnNsYXRlKDc0LDE0KSc+PHRleHQgeT0nNic+PHRzcGFuPk1VTERJVjwvdHNwYW4+PC90ZXh0PjwvZz48ZyB0cmFuc2Zvcm09J3RyYW5zbGF0ZSg3NCwyOCknPjx0ZXh0IHk9JzYnPjx0c3Bhbj5NVUxESVY8L3RzcGFuPjwvdGV4dD48L2c+PC9nPjwvZz48L2c+PC9nPjwvZz48L3N2Zz4=" alt="Diagram" width="800" height="98">
+</div>
+</div>
+<div id="division-op" class="paragraph">
+<p>
+</p>
+</div>
+<div class="paragraph">
+<p>DIV and DIVU perform an XLEN bits by XLEN bits signed and unsigned
+integer division of <em>rs1</em> by <em>rs2</em>, rounding towards zero. REM and REMU
+provide the remainder of the corresponding division operation. For REM,
+the sign of a nonzero result equals the sign of the dividend.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For both signed and unsigned division, except in the case of overflow, it holds
+that
+\(\textrm{dividend} = \textrm{divisor} \times \textrm{quotient} + \textrm{remainder}\).</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>If both the quotient and remainder are required from the same division,
+the recommended code sequence is: DIV[U] <em>rdq, rs1, rs2</em>; REM[U] <em>rdr,
+rs1, rs2</em> (<em>rdq</em> cannot be the same as <em>rs1</em> or <em>rs2</em>).
+Microarchitectures can then fuse these into a single divide operation
+instead of performing two separate divides.</p>
+</div>
+<div class="paragraph">
+<p>DIVW and DIVUW are RV64 instructions that divide the lower 32 bits of
+<em>rs1</em> by the lower 32 bits of <em>rs2</em>, treating them as signed and
+unsigned integers respectively, placing the 32-bit quotient in <em>rd</em>,
+sign-extended to 64 bits. REMW and REMUW are RV64 instructions that
+provide the corresponding signed and unsigned remainder operations
+respectively. Both REMW and REMUW always sign-extend the 32-bit result
+to 64 bits, including on a divide by zero.
+</p>
+</div>
+<div class="paragraph">
+<p>The semantics for division by zero and division overflow are summarized
+in <a href="#divby0">Table 1</a>. The quotient of division by zero has all bits
+set, and the remainder of division by zero equals the dividend. Signed
+division overflow occurs only when the most-negative integer is divided
+by \(-1\). The quotient of a signed division with overflow is
+equal to the dividend, and the remainder is zero. Unsigned division
+overflow cannot occur.</p>
+</div>
+<table id="divby0" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Semantics for division by zero and division overflow. L is the width of the operation in bits: XLEN for DIV[U] and REM[U], or 32 for DIV[U]W and REM[U]W.</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Condition</th>
+<th class="tableblock halign-center valign-top">Dividend</th>
+<th class="tableblock halign-center valign-top">Divisor</th>
+<th class="tableblock halign-center valign-top">DIVU[W]</th>
+<th class="tableblock halign-center valign-top">REMU[W]</th>
+<th class="tableblock halign-center valign-top">DIV[W]</th>
+<th class="tableblock halign-center valign-top">REM[W]</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Division by zero<br>
+Overflow (signed only)</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">\(x\)<br>
+\(-2^{L-1}\)</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">0<br>
+\(-1\)</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">\(2^{L}-1\)<br>
+ -</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">\(x\)<br>
+ -</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">\(-1\)<br>
+ \(-2^{L-1}\)<br></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">\(x\)<br>
+  0</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>We considered raising exceptions on integer divide by zero, with these
+exceptions causing a trap in most execution environments. However, this
+would be the only arithmetic trap in the standard ISA (floating-point
+exceptions set flags and write default values, but do not cause traps)
+and would require language implementors to interact with the execution
+environment&#8217;s trap handlers for this case. Further, where language
+standards mandate that a divide-by-zero exception must cause an
+immediate control flow change, only a single branch instruction needs to
+be added to each divide operation, and this branch instruction can be
+inserted after the divide and should normally be very predictably not
+taken, adding little runtime overhead.</p>
+</div>
+<div class="paragraph">
+<p>The value of all bits set is returned for both unsigned and signed
+divide by zero to simplify the divider circuitry. The value of all 1s is
+both the natural value to return for unsigned divide, representing the
+largest unsigned number, and also the natural result for simple unsigned
+divider implementations. Signed division is often implemented using an
+unsigned division circuit and specifying the same overflow result
+simplifies the hardware.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_zmmul_extension_version_1_0">1.3. Zmmul Extension, Version 1.0</h3>
+<div class="paragraph">
+<p>The Zmmul extension implements the multiplication subset of the M
+extension. It adds all of the instructions defined in
+<a href="#_multiplication_operations">Section 1.1</a>, namely: MUL, MULH, MULHU,
+MULHSU, and (for RV64 only) MULW. The encodings are identical to those
+of the corresponding M-extension instructions. M implies Zmmul.
+</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <strong>Zmmul</strong> extension enables low-cost implementations that require
+multiplication operations but not division. For many microcontroller
+applications, division operations are too infrequent to justify the cost
+of divider hardware. By contrast, multiplication operations are more
+frequent, making the cost of multiplier hardware more justifiable.
+Simple FPGA soft cores particularly benefit from eliminating division
+but retaining multiplication, since many FPGAs provide hardwired
+multipliers but require dividers be implemented in soft logic.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

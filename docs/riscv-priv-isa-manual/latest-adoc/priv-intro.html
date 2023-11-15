@@ -1,0 +1,354 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../assets/docs.css">
+<title>The RISC-V Instruction Set Manual, Volume II: Privileged Architecture</title>
+</head>
+<body>
+
+<table>
+<tr><th colspan=2>Metadata Table</th></tr>
+<tr><th>Manual Type</th><td> priv</td></tr>
+<tr><th>Spec Revision</th><td> </td></tr>
+<tr><th>Spec Release Date</th><td> </td></tr>
+<tr><th>Git Revision</th><td> riscv-isa-release-1239329-2023-05-23-96-g1ee25e1</td></tr>
+<tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-isa-manual.git>https://github.com/riscv/riscv-isa-manual.git</a></td></tr>
+<tr><th>Source</th><td>src/priv-intro.adoc</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
+<tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
+</table>
+
+<div class="sect1">
+<h2 id="priv-intro">1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This document describes the RISC-V privileged architecture, which covers
+all aspects of RISC-V systems beyond the unprivileged ISA, including
+privileged instructions as well as additional functionality required for
+running operating systems and attaching external devices.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Commentary on our design decisions is formatted as in this paragraph,
+and can be skipped if the reader is only interested in the specification
+itself.</p>
+</div>
+<hr>
+<div class="paragraph">
+<p>We briefly note that the entire privileged-level design described in
+this document could be replaced with an entirely different
+privileged-level design without changing the unprivileged ISA, and
+possibly without even changing the ABI. In particular, this privileged
+specification was designed to run existing popular operating systems,
+and so embodies the conventional level-based protection model. Alternate
+privileged specifications could embody other more flexible
+protection-domain models. For simplicity of expression, the text is
+written as if this was the only possible privileged architecture.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_risc_v_privileged_software_stack_terminology">1.1. RISC-V Privileged Software Stack Terminology</h3>
+<div class="paragraph">
+<p>This section describes the terminology we use to describe components of
+the wide range of possible privileged software stacks for RISC-V.</p>
+</div>
+<div class="paragraph">
+<p><a href="#privimps">Figure 1</a> shows some of the possible software stacks
+that can be supported by the RISC-V architecture. The left-hand side
+shows a simple system that supports only a single application running on
+an application execution environment (AEE). The application is coded to
+run with a particular application binary interface (ABI). The ABI
+includes the supported user-level ISA plus a set of ABI calls to
+interact with the AEE. The ABI hides details of the AEE from the
+application to allow greater flexibility in implementing the AEE. The
+same ABI could be implemented natively on multiple different host OSs,
+or could be supported by a user-mode emulation environment running on a
+machine with a different native ISA.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Our graphical convention represents abstract interfaces using black
+boxes with white text, to separate them from concrete instances of
+components implementing the interfaces.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div id="privimps" class="imageblock">
+<div class="content">
+<img src="data:image/png;base64,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" alt="privimps">
+</div>
+<div class="title">Figure 1. Different implementation stacks supporting various forms of privileged execution.</div>
+</div>
+<div class="paragraph">
+<p>The middle configuration shows a conventional operating system (OS) that
+can support multiprogrammed execution of multiple applications. Each
+application communicates over an ABI with the OS, which provides the
+AEE. Just as applications interface with an AEE via an ABI, RISC-V
+operating systems interface with a supervisor execution environment
+(SEE) via a supervisor binary interface (SBI). An SBI comprises the
+user-level and supervisor-level ISA together with a set of SBI function
+calls. Using a single SBI across all SEE implementations allows a single
+OS binary image to run on any SEE. The SEE can be a simple boot loader
+and BIOS-style IO system in a low-end hardware platform, or a
+hypervisor-provided virtual machine in a high-end server, or a thin
+translation layer over a host operating system in an architecture
+simulation environment.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Most supervisor-level ISA definitions do not separate the SBI from the
+execution environment and/or the hardware platform, complicating
+virtualization and bring-up of new hardware platforms.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The rightmost configuration shows a virtual machine monitor
+configuration where multiple multiprogrammed OSs are supported by a
+single hypervisor. Each OS communicates via an SBI with the hypervisor,
+which provides the SEE. The hypervisor communicates with the hypervisor
+execution environment (HEE) using a hypervisor binary interface (HBI),
+to isolate the hypervisor from details of the hardware platform.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The ABI, SBI, and HBI are still a work-in-progress, but we are now
+prioritizing support for Type-2 hypervisors where the SBI is provided
+recursively by an S-mode OS.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Hardware implementations of the RISC-V ISA will generally require
+additional features beyond the privileged ISA to support the various
+execution environments (AEE, SEE, or HEE).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_privilege_levels">1.2. Privilege Levels</h3>
+<div class="paragraph">
+<p>At any time, a RISC-V hardware thread (<em>hart</em>) is running at some
+privilege level encoded as a mode in one or more CSRs (control and
+status registers). Three RISC-V privilege levels are currently defined
+as shown in <a href="#privlevels">Table 1</a>.</p>
+</div>
+<table id="privlevels" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 1. RISC-V privilege levels.</caption>
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Level</th>
+<th class="tableblock halign-center valign-top">Encoding</th>
+<th class="tableblock halign-center valign-top">Name</th>
+<th class="tableblock halign-center valign-top">Abbreviation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">0<br>
+1<br>
+2<br>
+3</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>00</code><br>
+<code>01</code><br>
+<code>10</code><br>
+<code>11</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">User/Application<br>
+Supervisor<br>
+<em>Reserved</em><br>
+Machine</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">U<br>
+S<br>
+&#160;<br>
+M</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Privilege levels are used to provide protection between different
+components of the software stack, and attempts to perform operations not
+permitted by the current privilege mode will cause an exception to be
+raised. These exceptions will normally cause traps into an underlying
+execution environment.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In the description, we try to separate the privilege level for which
+code is written, from the privilege mode in which it runs, although the
+two are often tied. For example, a supervisor-level operating system can
+run in supervisor-mode on a system with three privilege modes, but can
+also run in user-mode under a classic virtual machine monitor on systems
+with two or more privilege modes. In both cases, the same
+supervisor-level operating system binary code can be used, coded to a
+supervisor-level SBI and hence expecting to be able to use
+supervisor-level privileged instructions and CSRs. When running a guest
+OS in user mode, all supervisor-level actions will be trapped and
+emulated by the SEE running in the higher-privilege level.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The machine level has the highest privileges and is the only mandatory
+privilege level for a RISC-V hardware platform. Code run in machine-mode
+(M-mode) is usually inherently trusted, as it has low-level access to
+the machine implementation. M-mode can be used to manage secure
+execution environments on RISC-V. User-mode (U-mode) and supervisor-mode
+(S-mode) are intended for conventional application and operating system
+usage respectively.</p>
+</div>
+<div class="paragraph">
+<p>Each privilege level has a core set of privileged ISA extensions with
+optional extensions and variants. For example, machine-mode supports an
+optional standard extension for memory protection. Also, supervisor mode
+can be extended to support Type-2 hypervisor execution as described in
+<a href="#hypervisor">[hypervisor]</a>.</p>
+</div>
+<div class="paragraph">
+<p>Implementations might provide anywhere from 1 to 3 privilege modes
+trading off reduced isolation for lower implementation cost, as shown in
+<a href="#privcombs">Table 2</a>.</p>
+</div>
+<table id="privcombs" class="tableblock frame-all grid-all fit-content center">
+<caption class="title">Table 2. Supported combination of privilege modes.</caption>
+<colgroup>
+<col>
+<col>
+<col>
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Number of levels</th>
+<th class="tableblock halign-left valign-top">Supported Modes</th>
+<th class="tableblock halign-left valign-top">Intended Usage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">1<br>
+2<br>
+3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">M<br>
+M, U<br>
+M, S, U</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simple embedded systems<br>
+Secure embedded systems<br>
+Systems running Unix-like operating systems</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>All hardware implementations must provide M-mode, as this is the only
+mode that has unfettered access to the whole machine. The simplest
+RISC-V implementations may provide only M-mode, though this will provide
+no protection against incorrect or malicious application code.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The lock feature of the optional PMP facility can provide some limited
+protection even with only M-mode implemented.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Many RISC-V implementations will also support at least user mode
+(U-mode) to protect the rest of the system from application code.
+Supervisor mode (S-mode) can be added to provide isolation between a
+supervisor-level operating system and the SEE.</p>
+</div>
+<div class="paragraph">
+<p>A hart normally runs application code in U-mode until some trap (e.g., a
+supervisor call or a timer interrupt) forces a switch to a trap handler,
+which usually runs in a more privileged mode. The hart will then execute
+the trap handler, which will eventually resume execution at or after the
+original trapped instruction in U-mode. Traps that increase privilege
+level are termed <em>vertical</em> traps, while traps that remain at the same
+privilege level are termed <em>horizontal</em> traps. The RISC-V privileged
+architecture provides flexible routing of traps to different privilege
+layers.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Horizontal traps can be implemented as vertical traps that return
+control to a horizontal trap handler in the less-privileged mode.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_debug_mode">1.3. Debug Mode</h3>
+<div class="paragraph">
+<p>Implementations may also include a debug mode to support off-chip
+debugging and/or manufacturing test. Debug mode (D-mode) can be
+considered an additional privilege mode, with even more access than
+M-mode. The separate debug specification proposal describes operation of
+a RISC-V hart in debug mode. Debug mode reserves a few CSR addresses
+that are only accessible in D-mode, and may also reserve some portions
+of the physical address space on a platform.</p>
+</div>
+</div>
+</div>
+</div>
+
+</body>
+</html>

@@ -1,5 +1,6 @@
 <html>
 <head>
+<link rel="stylesheet" href="../../assets/docs.css">
 <title>RISC-V External Debug Support</title>
 </head>
 <body>
@@ -7,47 +8,67 @@
 <table>
 <tr><th colspan=2>Metadata Table</th></tr>
 <tr><th>Manual Type</th><td> debug</td></tr>
-<tr><th>Spec Revision</th><td> 0.13.2</td></tr>
+<tr><th>Spec Revision</th><td> 0.13.2 </td></tr>
 <tr><th>Spec Release Date</th><td> 2019-03-25</td></tr>
 <tr><th>Git Revision</th><td> task_group_vote-4-g4e0bb0f</td></tr>
 <tr><th>Git URL</th><td><a href=https://github.com/riscv/riscv-debug-spec.git>https://github.com/riscv/riscv-debug-spec.git</a></td></tr>
 <tr><th>Source</th><td>reading_order.tex</td></tr>
-<tr><th>Conversion Date</th><td>2023/10/11</td></tr>
+<tr><th>Conversion Date</th><td>2023/11/12</td></tr>
 <tr><th>License</th><td><a href=https://creativecommons.org/licenses/by/4.0/>CC-by-4.0</a></td></tr>
 </table>
 
 
-<h1 id="reading-order"><span class="header-section-number">2</span> Reading Order</h1>
+<section id="reading-order" data-number="1">
+<h1 data-number="2"><span class="header-section-number">2</span> Reading Order</h1>
 <p>This section describes the minimal parts of the spec required to understand a
 given piece of functionality. It’s still best to read the whole thing, but it
 might help you get started better than reading it all start to finish. No
 matter what you want to learn about, it’s best to read Section <a href="overview.html#overview" data-reference-type="ref" data-reference="overview">[overview]</a>
 first.</p>
-<h3 id="haltresume"><span class="header-section-number">2.0.1</span> Halt/Resume</h3>
+<section id="haltresume" data-number="1.0.1">
+<h3 data-number="2.0.1"><span class="header-section-number">2.0.1</span> Halt/Resume</h3>
 <p>Sections <a href="debug_module.html#dmi" data-reference-type="ref" data-reference="dmi">[dmi]</a>, <a href="debug_module.html#selectingharts" data-reference-type="ref" data-reference="selectingharts">[selectingharts]</a>, <a href="#haltcontrol" data-reference-type="ref" data-reference="haltcontrol">[haltcontrol]</a>, <a href="dm_registers.html#dmcontrol" data-reference-type="ref" data-reference="dmcontrol">[dmcontrol]</a>, <a href="dm_registers.html#dmstatus" data-reference-type="ref" data-reference="dmstatus">[dmstatus]</a>,
 <a href="#haltsum" data-reference-type="ref" data-reference="haltsum">[haltsum]</a>, <a href="debugger_implementation.html#deb:halt" data-reference-type="ref" data-reference="deb:halt">[deb:halt]</a>.</p>
-<h3 id="abstract-register-access"><span class="header-section-number">2.0.2</span> Abstract Register Access</h3>
+</section>
+<section id="abstract-register-access" data-number="1.0.2">
+<h3 data-number="2.0.2"><span class="header-section-number">2.0.2</span> Abstract Register Access</h3>
 <p>Sections <a href="debug_module.html#abstractcommands" data-reference-type="ref" data-reference="abstractcommands">[abstractcommands]</a>, <a href="dm_registers.html#abstractcs" data-reference-type="ref" data-reference="abstractcs">[abstractcs]</a>, <a href="dm_registers.html#command" data-reference-type="ref" data-reference="command">[command]</a>,
 <a href="dm_registers.html#data0" data-reference-type="ref" data-reference="data0">[data0]</a>, <a href="debugger_implementation.html#deb:abstractreg" data-reference-type="ref" data-reference="deb:abstractreg">[deb:abstractreg]</a>.</p>
-<h3 id="program-buffer"><span class="header-section-number">2.0.3</span> Program Buffer</h3>
+</section>
+<section id="program-buffer" data-number="1.0.3">
+<h3 data-number="2.0.3"><span class="header-section-number">2.0.3</span> Program Buffer</h3>
 <p>Sections <a href="debug_module.html#programbuffer" data-reference-type="ref" data-reference="programbuffer">[programbuffer]</a>, <a href="#progbufcs" data-reference-type="ref" data-reference="progbufcs">[progbufcs]</a>, <a href="dm_registers.html#progbuf0" data-reference-type="ref" data-reference="progbuf0">[progbuf0]</a>, <a href="#access
 register" data-reference-type="ref" data-reference="access
 register">[access
 register]</a>, <a href="core_debug.html#debugmode" data-reference-type="ref" data-reference="debugmode">[debugmode]</a>, <a href="debugger_implementation.html#deb:regprogbuf" data-reference-type="ref" data-reference="deb:regprogbuf">[deb:regprogbuf]</a>, <a href="debugger_implementation.html#deb:mrprogbuf" data-reference-type="ref" data-reference="deb:mrprogbuf">[deb:mrprogbuf]</a>.</p>
-<h3 id="jtag-debug-transport-module"><span class="header-section-number">2.0.4</span> JTAG Debug Transport Module</h3>
+</section>
+<section id="jtag-debug-transport-module" data-number="1.0.4">
+<h3 data-number="2.0.4"><span class="header-section-number">2.0.4</span> JTAG Debug Transport Module</h3>
 <p>Sections <a href="dtm.html#dtm" data-reference-type="ref" data-reference="dtm">[dtm]</a>, <a href="jtagdtm.html" data-reference-type="ref" data-reference="jtagdtm">[jtagdtm]</a>, <a href="#dbusaccess" data-reference-type="ref" data-reference="dbusaccess">[dbusaccess]</a>.</p>
-<h3 id="system-bus-master"><span class="header-section-number">2.0.5</span> System Bus Master</h3>
+</section>
+<section id="system-bus-master" data-number="1.0.5">
+<h3 data-number="2.0.5"><span class="header-section-number">2.0.5</span> System Bus Master</h3>
 <p>Sections <a href="debug_module.html#systembusaccess" data-reference-type="ref" data-reference="systembusaccess">[systembusaccess]</a>, <a href="dm_registers.html#sbcs" data-reference-type="ref" data-reference="sbcs">[sbcs]</a>, <a href="dm_registers.html#sbaddress0" data-reference-type="ref" data-reference="sbaddress0">[sbaddress0]</a>, <a href="dm_registers.html#sbaddress1" data-reference-type="ref" data-reference="sbaddress1">[sbaddress1]</a>,
 <a href="dm_registers.html#sbaddress2" data-reference-type="ref" data-reference="sbaddress2">[sbaddress2]</a>, <a href="dm_registers.html#sbdata0" data-reference-type="ref" data-reference="sbdata0">[sbdata0]</a>, <a href="dm_registers.html#sbdata1" data-reference-type="ref" data-reference="sbdata1">[sbdata1]</a>, <a href="dm_registers.html#sbdata2" data-reference-type="ref" data-reference="sbdata2">[sbdata2]</a>, <a href="dm_registers.html#sbdata3" data-reference-type="ref" data-reference="sbdata3">[sbdata3]</a>,
 <a href="debugger_implementation.html#deb:mrsysbus" data-reference-type="ref" data-reference="deb:mrsysbus">[deb:mrsysbus]</a>.</p>
-<h3 id="reset"><span class="header-section-number">2.0.6</span> Reset</h3>
+</section>
+<section id="reset" data-number="1.0.6">
+<h3 data-number="2.0.6"><span class="header-section-number">2.0.6</span> Reset</h3>
 <p>TODO</p>
-<h3 id="security"><span class="header-section-number">2.0.7</span> Security</h3>
+</section>
+<section id="security" data-number="1.0.7">
+<h3 data-number="2.0.7"><span class="header-section-number">2.0.7</span> Security</h3>
 <p>TODO</p>
-<h3 id="triggers"><span class="header-section-number">2.0.8</span> Triggers</h3>
+</section>
+<section id="triggers" data-number="1.0.8">
+<h3 data-number="2.0.8"><span class="header-section-number">2.0.8</span> Triggers</h3>
 <p>TODO</p>
-<h3 id="serial-ports"><span class="header-section-number">2.0.9</span> Serial Ports</h3>
+</section>
+<section id="serial-ports" data-number="1.0.9">
+<h3 data-number="2.0.9"><span class="header-section-number">2.0.9</span> Serial Ports</h3>
 <p>TODO</p>
+</section>
+</section>
 
 </body>
 </html>
