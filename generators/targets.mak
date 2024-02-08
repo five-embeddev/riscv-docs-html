@@ -1,19 +1,19 @@
 all text :: ${TARGETS}
 
-menu : ${MENU_DST_DIR}/${DOC}.yaml
+menu : ${MENU_DST_DIR}/menu.yaml
 
 COLLECT_HEADING=${SCRIPTS}/collect-headings.rb
 
-${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml : \
+${MENU_DST_DIR}/menu.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml : \
 			${COLLECT_HEADING} \
 			${ALL:%=${HTML_DST_DIR}/%.html}
 	-mkdir -p ${MENU_DST_DIR} 2> /dev/null
-	rm -rf ${MENU_DST_DIR}/${DOC}.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml
+	rm -rf ${MENU_DST_DIR}/menu.yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml
 	ruby ${COLLECT_HEADING} \
 		--keywords-yaml ${MENU_DST_DIR}/${DOC}-keywords.yaml \
 		--base-path ${DOCS_OUTPUT_DIR} \
-		--yaml-out ${MENU_DST_DIR}/${DOC}.yaml \
-		--html-out ${HTML_DST_DIR}/00-${DOC}.html \
+		--yaml-out ${MENU_DST_DIR}/menu.yaml \
+		--html-out ${HTML_DST_DIR}/00-index.html \
 		${ALL:%=${HTML_DST_DIR}/%.html}  
 
 ${KEYWORDS_YAML} : ${KEYWORDS_DOCS:%=${MENU_OUTPUT_DIR}/%}
@@ -24,6 +24,7 @@ ${KEYWORDS_YAML} : ${KEYWORDS_DOCS:%=${MENU_OUTPUT_DIR}/%}
 .PHONY : menu	
 
 info ::
+	@echo "*** INFO(targets.mak) ${CURDIR}"
 	@echo DOC=${DOC}
 	@echo TITLE=${TITLE}
 	@echo SPECREV=${SPECREV} 
@@ -32,6 +33,9 @@ info ::
 	@echo SRC_DIR=${SRC_DIR}
 	@echo KEYWORDS_YAML=${KEYWORDS_YAML}
 	@echo KEYWORDS_DOCS=${KEYWORDS_DOCS}
+	@echo GITREV=$(GITREV)
+	@echo GITURL=$(GITURL)
+	cd ${SRC_DIR} && git remote get-url origin
 
 VERSIONS_TEX=\
 	latest-latex \

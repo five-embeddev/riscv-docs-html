@@ -33,9 +33,12 @@ HTML_FILES=${ADOC_INCLUDES:%.adoc=%.html}
 ALL=${ADOC_FILES:${SRC_DIR}/%.adoc=%}
 
 
-SPEC_DATE:=$(shell cd ${dir ${TOP_FILE}} &&  git show --pretty='%as' HEAD | head -n1)
+TARGETS=${HTML_FILES:%=${HTML_DST_DIR}/%} \
+			${MENU_DST_DIR}/menu.yaml
 
-TARGETS=${HTML_FILES:%=${HTML_DST_DIR}/%}
+
+ASCIIDOCTOR_FLAGS=\
+	   	--require=asciidoctor-bibtex 
 
 asciidoctor: ${TARGETS} 
 

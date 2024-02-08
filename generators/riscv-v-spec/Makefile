@@ -16,9 +16,9 @@ ADOC_FILES=${wildcard ${SRC_DIR}/v-spec.adoc}
 HTML_FILES=${ADOC_FILES:${SRC_DIR}/%.adoc=%.html}
 ALL=${ADOC_FILES:${SRC_DIR}/%.adoc=%}
 TOP_FILE=${SRC_DIR}/v-spec.adoc
-SPEC_DATE:=$(shell cd ${dir ${TOP_FILE}} &&  git show --pretty='%as' HEAD | head -n1)
 
-TARGETS=${HTML_FILES:%=${HTML_DST_DIR}/%}
+TARGETS=${HTML_FILES:%=${HTML_DST_DIR}/%} \
+		${MENU_DST_DIR}/menu.yaml
 
 
 asciidoctor: ${TARGETS} 

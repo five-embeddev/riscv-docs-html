@@ -7,7 +7,7 @@ options = {
   :base_path=>"../../",
   :keywords_yaml=>"../../data/keywords.yaml",
   :menu_yaml_out=>"menu.yaml",
-  :menu_html_out=>"menu.html"
+  :menu_html_out=>"00-index.html"
 }
 
 OptionParser.new do |opt|
@@ -158,6 +158,7 @@ end
                       
 File.open(options[:menu_yaml_out],"w") do | fout |
   fout.write(menu_top.to_yaml)
+  print("Completed Write to #{options[:menu_yaml_out]}\n")
 end
 File.open(options[:menu_html_out],"w") do | fout |
   fout.puts("<html><head></head><body>")
@@ -180,4 +181,5 @@ File.open(options[:menu_html_out],"w") do | fout |
   end
   html_write(fout, menu_top)
   fout.puts("</body></html>")
+  print("Completed Write to #{options[:menu_html_out]}\n")
 end

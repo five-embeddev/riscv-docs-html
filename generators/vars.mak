@@ -21,7 +21,7 @@ TEMPLATES=${THIS_DIR}/templates/
 DOCS_OUTPUT_DIR=${TOP_DIR}/references
 MENU_OUTPUT_DIR=${TOP_DIR}/data
 DATA_OUTPUT_DIR=${TOP_DIR}/data
-OUTPUT_FORMAT=plain
+OUTPUT_FORMAT?=plain
 
 #VERSION_user=riscv-user-2.2
 VERSION_user=Priv-v1.12
@@ -29,6 +29,8 @@ VERSION_priv=Priv-v1.12
 VERSION_vector=v1.0
 VERSION_debug=v0.13-release
 VERSION_bitmanip=1.0.0
+
+SPECREV?=${VERSION}
 
 #VERSION?=${VERSION_${DOC}}
 
@@ -53,9 +55,12 @@ DOCS_OPCODE_YAML=${DOCS_OUTPUT_DIR}/opcodes.yaml
 
 # Helper Vars
 CONVERT_DATE:=${shell date +%Y/%m/%d}
-GITREV:=$(shell cd ${SRC_DIR} && git describe --tags HEAD || git rev-parse --short HEAD)
+GITSRC:=$(shell cd ${SRC_DIR} && git rev-parse --show-prefix)
+GITREV:=$(shell cd ${SRC_DIR} && git describe --tags HEAD || git rev-parse --short HEAD | tr '_' '-')
 GITURL:=$(shell cd ${SRC_DIR} && git remote get-url origin)
-SPEC_REV=${GITREV}
+SPECREV=${GITREV}
+SPEC_DATE:=$(shell cd ${SRC_DIR} && git log --format=%ad --date=format:'%Y/%m/%d' | head -n1)
+SPECMONTHYEAR:=${SPEC_DATE}
 
 # Helper commands
 HTML_TMP0_DIR=tmp.${VERSION}

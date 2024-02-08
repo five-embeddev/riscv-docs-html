@@ -13,7 +13,7 @@ PANDOC_TEMPLATE=${PANDOC_TEMPLATE_${OUTPUT_FORMAT}}
 HTML_TARGETS=${ALL:%=${HTML_DST_DIR}/%.html} 
 
 TARGETS=${HTML_TARGETS} \
-		${MENU_DST_DIR}/${DOC}.yaml
+		${MENU_DST_DIR}/menu.yaml
 
 include ${THIS_DIR}/targets.mak
 
@@ -21,11 +21,18 @@ dep : ${TEX_EXTRA_FILES} ${PREAMBLE_FILES} ${IMG_PREAMBLE_FILES}
 
 
 info ::
+	@echo "*** INFO(targets-tex.mak) AT ${CURDIR} ***"
 	@echo CHAPTERS=${CHAPTERS}
 	@echo BIB_FILES=${BIB_FILES:%=${HTML_TMP0_DIR}/%.yaml}
 	@echo TARGETS=${TARGETS}
 	@echo ALL=${ALL}
 	@echo PREAMBLE_FILES=${PREAMBLE_FILES}
+	@echo SPECREV=${SPECREV}
+	@echo SPECMONTHYEAR=${SPECMONTHYEAR}
+	@echo "SPEC_DATE=${SPEC_DATE}"
+	@echo GITSRC=$(GITSRC)
+	@echo GITREV=$(GITREV)
+	@echo GITURL=$(GITURL)
 
 #new-commands.tex :
 #	grep  newcommand ${ALL:%=${SRC_DIR}/%.tex} | cut -f2- -d: > $@
@@ -87,7 +94,7 @@ ${HTML_TMP0_DIR}/%.html : \
 		--variable order=${shell ruby -e 'v=%w{${CHAPTERS}}; i=1; i=v.index("${*}") if v.include?("${*}"); print i;'} \
 		--variable specrev="${SPECREV}" \
 		--variable specmonthyear="${SPECMONTHYEAR}" \
-		--variable source="$(shell cd ${SRC_DIR} &&  git rev-parse --show-prefix)${notdir $<}" \
+		--variable source="${GITSRC}${notdir $<}" \
 		--variable gitrev="$(GITREV)" \
 		--variable giturl="$(GITURL)" \
 		--variable convert_date="${CONVERT_DATE}" \
@@ -103,8 +110,9 @@ ${HTML_DST_DIR}/%.html : ${HTML_TMP0_DIR}/%.html ${SCRIPTS}/post-process.re ${HT
 	${__MKDIR_DST}
 	perl -p  ${SCRIPTS}/post-process.re ${HTML_TMP0_DIR}/${@F} > ${HTML_TMP0_DIR}/${@F}.1
 	perl -p  ${HTML_TMP0_DIR}/html-links.re ${HTML_TMP0_DIR}/${@F}.1 > $@
-	-cp ${HTML_TMP0_DIR}/${*}_*.png ${@D}/ 2> /dev/null
 	-cp ${HTML_TMP0_DIR}/${*}_*.svg ${@D}/ 2> /dev/null
+
+#	-cp ${HTML_TMP0_DIR}/${*}_*.png ${@D}/ 2> /dev/null
 
 
 ${ALL} :
