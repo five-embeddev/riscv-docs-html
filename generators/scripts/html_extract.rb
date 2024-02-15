@@ -85,6 +85,7 @@ def visit(depth, output, headers, text, parent, elem)
       end
     end
     if elem.is_a?(Nokogiri::XML::Element)
+
       if elem.name.to_s =~ /^h(\d)/
         elem.attributes.each do | type, attr |
           if type == "id"
@@ -93,6 +94,17 @@ def visit(depth, output, headers, text, parent, elem)
           end
         end
       end
+
+      if elem.name.to_s =~ /^section/
+        elem.attributes.each do | type, attr |
+          if type == "id"
+            text[:id] = "#" + attr.value
+            print "FIND:" + text[:id] + "\n"
+          end
+        end
+      end
+
+
     end
 
   end
