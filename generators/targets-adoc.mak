@@ -57,6 +57,7 @@ ${HTML_DST_DIR}/%.html : ${SRC_DIR}/%.adoc ${HEADER}
 		--attribute=source="$(GITSRC)${notdir $<}" \
 		--attribute=gitrev="$(GITREV)" \
 		--attribute=giturl="$(GITURL)" \
+		--attribute=data-uri="" \
 		--attribute=convert_date="${CONVERT_DATE}" \
 		--trace \
 		${ADOC_ATTRIBUTES} \

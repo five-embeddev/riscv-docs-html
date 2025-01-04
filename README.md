@@ -21,6 +21,8 @@ The files are:
 Build Modes
 -----------
 
+(Set via OUTPUT_FORMAT)
+
 plain 
 : HTML output for gh-pages.
 
